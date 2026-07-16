@@ -1,0 +1,77 @@
+---
+import { site } from '../data/site';
+
+const { lead, more } = site.bio;
+const hasMore = more.length > 0;
+const moreLabel = site.ui.more;
+const lessLabel = site.ui.less;
+---
+
+<section class="bio">
+	<p class="bio-lead">
+		<span class="i18n-en" lang="en">{lead.en}</span>
+		<span class="i18n-zh" lang="zh-CN">{lead.zh}</span>
+		{
+			hasMore && (
+				<>
+					<span class="home-intro_expand-ellipsis">… </span>
+					<button
+						type="button"
+						class="home-intro_expand-link"
+						data-bio-toggle
+						aria-expanded="false"
+						data-label-more-en={moreLabel.en}
+						data-label-more-zh={moreLabel.zh}
+						data-label-less-en={lessLabel.en}
+						data-label-less-zh={lessLabel.zh}
+					>
+						<span class="i18n-en" lang="en">{moreLabel.en}</span>
+						<span class="i18n-zh" lang="zh-CN">{moreLabel.zh}</span>
+					</button>
+				</>
+			)
+		}
+	</p>
+	{
+		hasMore && (
+			<div class="home-intro_expand-content" data-bio-panel>
+				<div class="home-intro_expand-inner">
+					{more.map((para) => (
+						<p>
+							<span class="i18n-en" lang="en">
+								{para.en}
+							</span>
+							<span class="i18n-zh" lang="zh-CN">
+								{para.zh}
+							</span>
+						</p>
+					))}
+				</div>
+			</div>
+		)
+	}
+</section>
+
+<script>
+	const toggle = document.querySelector('[data-bio-toggle]');
+	const panel = document.querySelector('[data-bio-panel]');
+	if (toggle instanceof HTMLButtonElement && panel instanceof HTMLElement) {
+		const enMore = toggle.dataset.labelMoreEn ?? 'More';
+		const zhMore = toggle.dataset.labelMoreZh ?? '更多';
+		const enLess = toggle.dataset.labelLessEn ?? 'Less';
+		const zhLess = toggle.dataset.labelLessZh ?? '收起';
+
+		function setLabel(open: boolean) {
+			const en = toggle.querySelector('.i18n-en');
+			const zh = toggle.querySelector('.i18n-zh');
+			if (en) en.textContent = open ? enLess : enMore;
+			if (zh) zh.textContent = open ? zhLess : zhMore;
+		}
+
+		toggle.addEventListener('click', () => {
+			const open = panel.classList.toggle('is-open');
+			toggle.setAttribute('aria-expanded', String(open));
+			setLabel(open);
+		});
+	}
+</script>

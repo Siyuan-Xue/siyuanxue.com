@@ -1,0 +1,41 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+import LangToggle from './LangToggle.astro';
+import TocToggle from './TocToggle.astro';
+import I18n from './I18n.astro';
+import { site } from '../data/site';
+
+interface Props {
+	showTocToggle?: boolean;
+}
+
+const { showTocToggle = false } = Astro.props;
+const isArchive = Astro.url.pathname.replace(/\/$/, '') === '/archive';
+---
+
+<header class="header">
+	<div class="container cc-narrow header-inner">
+		<a
+			href="/"
+			class="header-name-link"
+			aria-current={Astro.url.pathname === '/' ? 'page' : undefined}
+		>
+			<h1 class="header-name">
+				<I18n t={site.name} />
+			</h1>
+		</a>
+		{
+			!isArchive && (
+				<a href="/archive" class="header-archive">
+					<I18n t={site.ui.archive} />
+				</a>
+			)
+		}
+		<div class="header-spacer"></div>
+		<div class="header-controls">
+			{showTocToggle && <TocToggle />}
+			<LangToggle />
+			<ThemeToggle />
+		</div>
+	</div>
+</header>

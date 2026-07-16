@@ -1,0 +1,149 @@
+---
+import type { Heading } from '../utils/headings';
+import type { Bi } from '../i18n/types';
+
+interface Props {
+	en: Heading[];
+	zh: Heading[];
+}
+
+const { en, zh } = Astro.props;
+const hasEn = en.length > 0;
+const hasZh = zh.length > 0;
+const hasAny = hasEn || hasZh;
+
+const tocLabel: Bi = { en: 'Contents', zh: '目录' };
+---
+
+{
+	hasAny && (
+		<nav id="site-toc" class="toc-container" data-toc-container data-toc-visibility>
+			<div class="container cc-narrow cc-toc">
+				<h2 class="h3 toc-contents-title">
+					<span class="i18n-en" lang="en">
+						{tocLabel.en}
+					</span>
+					<span class="i18n-zh" lang="zh-CN">
+						{tocLabel.zh}
+					</span>
+				</h2>
+				<div data-toc-list class="toc-list-wrap">
+					{hasEn && (
+						<ul class="toc-list lang-body-en" lang="en">
+							{en.map((h) => (
+								<li class:list={['toc-list_item', h.depth === 3 && 'toc-list_item--h3']}>
+									<a href={`#${h.id}`} class="toc-link" data-toc-link={h.id}>
+										{h.text}
+									</a>
+								</li>
+							))}
+						</ul>
+					)}
+					{hasZh && (
+						<ul class="toc-list lang-body-zh" lang="zh-CN">
+							{zh.map((h) => (
+								<li class:list={['toc-list_item', h.depth === 3 && 'toc-list_item--h3']}>
+									<a href={`#${h.id}`} class="toc-link" data-toc-link={h.id}>
+										{h.text}
+									</a>
+								</li>
+							))}
+						</ul>
+					)}
+				</div>
+			</div>
+		</nav>
+	)
+}
+
+<script>
+	const container = document.querySelector('[data-toc-container]');
+	const toggle = document.querySelector('[data-toc-toggle]');
+	if (!(container instanceof HTMLElement)) {
+		// no toc
+	} else {
+		// Must match CSS: side panel only from 1480px; below = drawer
+		const mqDrawer = window.matchMedia('(max-width: 1479px)');
+
+		function setOpen(open: boolean) {
+			if (mqDrawer.matches) {
+				container.style.display = open ? 'block' : 'none';
+				document.body.style.overflow = open ? 'hidden' : '';
+			} else {
+				container.style.display = '';
+				document.body.style.overflow = '';
+			}
+			if (toggle instanceof HTMLButtonElement) {
+				toggle.setAttribute('aria-expanded', String(open && mqDrawer.matches));
+				toggle.classList.toggle('is-open', open && mqDrawer.matches);
+			}
+		}
+
+		function syncForViewport() {
+			if (mqDrawer.matches) {
+				setOpen(false);
+			} else {
+				container.style.display = '';
+				document.body.style.overflow = '';
+				if (toggle instanceof HTMLButtonElement) {
+					toggle.setAttribute('aria-expanded', 'false');
+					toggle.classList.remove('is-open');
+				}
+			}
+		}
+
+		syncForViewport();
+		mqDrawer.addEventListener('change', syncForViewport);
+
+		if (toggle instanceof HTMLButtonElement) {
+			toggle.hidden = false;
+			toggle.addEventListener('click', () => {
+				const open = container.style.display !== 'block';
+				setOpen(open);
+			});
+		}
+
+		container.querySelectorAll('a.toc-link').forEach((a) => {
+			a.addEventListener('click', () => {
+				if (mqDrawer.matches) setOpen(false);
+			});
+		});
+
+		// Active link: opacity 1 via .cc-active (Dario)
+		const links = Array.from(container.querySelectorAll<HTMLAnchorElement>('a[data-toc-link]'));
+		const headings = Array.from(
+			document.querySelectorAll<HTMLElement>('.prose h2[id], .prose h3[id]'),
+		);
+
+		if (headings.length && 'IntersectionObserver' in window) {
+			const visible = new Set<string>();
+			const io = new IntersectionObserver(
+				(entries) => {
+					for (const e of entries) {
+						if (!(e.target instanceof HTMLElement) || !e.target.id) continue;
+						if (e.isIntersecting) visible.add(e.target.id);
+						else visible.delete(e.target.id);
+					}
+					let active: string | null = null;
+					for (const h of headings) {
+						if (visible.has(h.id)) {
+							active = h.id;
+							break;
+						}
+					}
+					if (!active) {
+						for (let i = headings.length - 1; i >= 0; i--) {
+							if (headings[i].getBoundingClientRect().top <= 140) {
+								active = headings[i].id;
+								break;
+							}
+						}
+					}
+					links.forEach((a) => a.classList.toggle('cc-active', a.dataset.tocLink === active));
+				},
+				{ rootMargin: '-12% 0px -70% 0px', threshold: [0, 1] },
+			);
+			headings.forEach((h) => io.observe(h));
+		}
+	}
+</script>

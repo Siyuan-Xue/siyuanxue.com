@@ -1,0 +1,82 @@
+---
+import Base from '../layouts/Base.astro';
+import BioExpand from '../components/BioExpand.astro';
+import BulletList from '../components/BulletList.astro';
+import I18n from '../components/I18n.astro';
+import { site } from '../data/site';
+import { getEssayPairs, getPostPairs } from '../utils/content';
+
+const essays = await getEssayPairs();
+const posts = await getPostPairs();
+
+const essayItems = essays.map((e) => ({
+	title: e.title,
+	href: `/essay/${e.slug}/`,
+}));
+
+const postItems = posts.map((p) => ({
+	title: p.title,
+	href: `/post/${p.slug}/`,
+}));
+---
+
+<Base>
+	<div class="container cc-narrow">
+		<BioExpand />
+
+		{
+			essayItems.length > 0 && (
+				<section class="u-mt-sm">
+					<h2 class="h3">
+						<I18n t={site.ui.essays} />
+					</h2>
+					<BulletList items={essayItems} />
+				</section>
+			)
+		}
+
+		{
+			postItems.length > 0 && (
+				<section class="u-mt-sm">
+					<h2 class="h3">
+						<I18n t={site.ui.posts} />
+					</h2>
+					<BulletList items={postItems} />
+				</section>
+			)
+		}
+
+		{
+			site.projects.length > 0 && (
+				<section class="u-mt-sm">
+					<h2 class="h3">
+						<I18n t={site.ui.projects} />
+					</h2>
+					<BulletList items={site.projects} />
+				</section>
+			)
+		}
+
+		{
+			site.externalWriting.length > 0 && (
+				<section class="u-mt-sm">
+					<h2 class="h3">
+						<I18n t={site.ui.externalWriting} />
+					</h2>
+					<BulletList items={site.externalWriting} />
+				</section>
+			)
+		}
+
+		{
+			site.appearances.length > 0 && (
+				<section class="u-mt-sm u-mb-lg">
+					<h2 class="h3">
+						<I18n t={site.ui.appearances} />
+					</h2>
+					<BulletList items={site.appearances} />
+				</section>
+			)
+		}
+	</div>
+</Base>

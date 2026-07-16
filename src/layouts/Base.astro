@@ -1,0 +1,35 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import type { Bi } from '../i18n/types';
+
+interface Props {
+	title?: Bi | string;
+	description?: Bi | string;
+	htmlClass?: string;
+	/** Show hamburger in header (essay pages with TOC) */
+	showTocToggle?: boolean;
+	/** body class for pages with a left TOC panel */
+	hasToc?: boolean;
+}
+
+const { title, description, htmlClass = '', showTocToggle = false, hasToc = false } = Astro.props;
+const bodyClass = hasToc ? 'has-toc' : undefined;
+---
+
+<!doctype html>
+<html lang="en" data-lang="en" class={htmlClass}>
+	<head>
+		<BaseHead title={title} description={description} />
+	</head>
+	<body class={bodyClass}>
+		<div class="page-wrapper">
+			<Header showTocToggle={showTocToggle} />
+			{/* Dario: nav.toc-container sits between header and main */}
+			<slot name="toc" />
+			<main class="page-main">
+				<slot />
+			</main>
+		</div>
+	</body>
+</html>

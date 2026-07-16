@@ -1,0 +1,59 @@
+---
+import type { Bi } from '../i18n/types';
+import I18n from './I18n.astro';
+
+export type BulletItem = {
+	title: Bi;
+	href: string;
+	venue?: Bi;
+	year?: string | number;
+	external?: boolean;
+};
+
+interface Props {
+	items: BulletItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+	items.length > 0 && (
+		<ul class="bullet-list">
+			{items.map((item) => {
+				const year = item.year != null && item.year !== '' ? String(item.year) : '';
+				const isExternal = item.external ?? /^https?:\/\//.test(item.href);
+				return (
+					<li class="bullet-list_item">
+						<a
+							href={item.href}
+							class="bullet-list_link"
+							target={isExternal ? '_blank' : undefined}
+							rel={isExternal ? 'noopener noreferrer' : undefined}
+						>
+							<I18n t={item.title} />
+						</a>
+						{(item.venue || year) && (
+							<span class="bullet-list_meta">
+								(
+								{item.venue && (
+									<>
+										<span class="i18n-en" lang="en">
+											{item.venue.en}
+										</span>
+										<span class="i18n-zh" lang="zh-CN">
+											{item.venue.zh}
+										</span>
+										{year ? ', ' : ''}
+									</>
+								)}
+								{year}
+								)
+							</span>
+						)}
+					</li>
+				);
+			})}
+		</ul>
+	)
+}

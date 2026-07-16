@@ -1,0 +1,106 @@
+---
+import { Font } from 'astro:assets';
+import { site } from '../data/site';
+import type { Bi } from '../i18n/types';
+import '../styles/base.css';
+
+interface Props {
+	title?: Bi | string;
+	description?: Bi | string;
+}
+
+const { title, description } = Astro.props;
+
+function asBi(v: Bi | string | undefined, fallback: Bi): Bi {
+	if (!v) return fallback;
+	if (typeof v === 'string') return { en: v, zh: v };
+	return v;
+}
+
+const titleBi = asBi(title, site.title);
+const descBi = asBi(description, site.description);
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" href="/favicon.ico" />
+
+{/* Default meta is English; client can update document.title on lang switch */}
+<title data-title-en={`${titleBi.en === site.name.en ? site.name.en : `${titleBi.en} — ${site.name.en}`}`} data-title-zh={`${titleBi.zh === site.name.zh ? site.name.zh : `${titleBi.zh} — ${site.name.zh}`}`}>
+	{titleBi.en === site.name.en ? site.name.en : `${titleBi.en} — ${site.name.en}`}
+</title>
+<meta name="description" content={descBi.en} data-desc-en={descBi.en} data-desc-zh={descBi.zh} />
+<link rel="canonical" href={canonical} />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={titleBi.en} />
+<meta property="og:description" content={descBi.en} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content="en_US" />
+<meta property="og:locale:alternate" content="zh_CN" />
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={titleBi.en} />
+<meta name="twitter:description" content={descBi.en} />
+
+<meta name="generator" content={Astro.generator} />
+
+<Font cssVariable="--font-newsreader" preload />
+<Font cssVariable="--font-noto-serif-sc" preload />
+
+{/* FOUC prevention: lang default en, theme from storage */}
+<script is:inline>
+	(function () {
+		try {
+			var root = document.documentElement;
+			var lang = localStorage.getItem('site-lang');
+			root.setAttribute('data-lang', lang === 'zh' ? 'zh' : 'en');
+			root.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
+
+			var theme = localStorage.getItem('color-mode');
+			var dark =
+				theme === 'dark' ||
+				(theme === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+			if (dark) root.classList.add('u-mode-invert');
+
+			var t = document.querySelector('title[data-title-en]');
+			if (t && lang === 'zh') {
+				document.title = t.getAttribute('data-title-zh') || document.title;
+			}
+			var d = document.querySelector('meta[name="description"][data-desc-zh]');
+			if (d && lang === 'zh') {
+				d.setAttribute('content', d.getAttribute('data-desc-zh') || '');
+			}
+		} catch (_) {}
+	})();
+</script>
+
+<script is:inline>
+	(function () {
+		function syncMeta() {
+			var lang = document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+			var t = document.querySelector('title[data-title-en]');
+			if (t) {
+				document.title =
+					lang === 'zh'
+						? t.getAttribute('data-title-zh') || ''
+						: t.getAttribute('data-title-en') || '';
+			}
+			var d = document.querySelector('meta[name="description"][data-desc-en]');
+			if (d) {
+				d.setAttribute(
+					'content',
+					lang === 'zh' ? d.getAttribute('data-desc-zh') || '' : d.getAttribute('data-desc-en') || '',
+				);
+			}
+		}
+		document.addEventListener('click', function (e) {
+			var t = e.target;
+			if (t && t.closest && t.closest('[data-set-lang]')) {
+				setTimeout(syncMeta, 0);
+			}
+		});
+	})();
+</script>

@@ -1,0 +1,35 @@
+---
+import { site } from '../data/site';
+---
+
+<div class="lang-toggle" role="group" aria-label={site.ui.langToggle.en}>
+	<button type="button" data-set-lang="en" aria-pressed="true">EN</button>
+	<button type="button" data-set-lang="zh" aria-pressed="false">中</button>
+</div>
+
+<script is:inline>
+	(function () {
+		const KEY = 'site-lang';
+		const root = document.documentElement;
+
+		function apply(lang) {
+			const next = lang === 'zh' ? 'zh' : 'en';
+			root.setAttribute('data-lang', next);
+			root.setAttribute('lang', next === 'zh' ? 'zh-CN' : 'en');
+			document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
+				btn.setAttribute('aria-pressed', btn.getAttribute('data-set-lang') === next ? 'true' : 'false');
+			});
+		}
+
+		const stored = localStorage.getItem(KEY);
+		apply(stored === 'zh' ? 'zh' : 'en');
+
+		document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
+			btn.addEventListener('click', function () {
+				const lang = btn.getAttribute('data-set-lang') === 'zh' ? 'zh' : 'en';
+				localStorage.setItem(KEY, lang);
+				apply(lang);
+			});
+		});
+	})();
+</script>

@@ -1,0 +1,25 @@
+{
+  "name": "xuesiyuan.grok",
+  "type": "module",
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/markdown-remark": "^7.2.1",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.0.9",
+    "github-slugger": "^2.0.0",
+    "rehype-slug": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/github-slugger": "^2.0.0",
+    "typescript": "~6.0.2"
+  }
+}

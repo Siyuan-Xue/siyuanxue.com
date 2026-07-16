@@ -1,0 +1,647 @@
+@import './tokens.css';
+@import './prose.css';
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	background-color: var(--bg);
+	color: var(--fg-body);
+	font-family: var(--font-serif);
+	font-size: var(--font-size-body);
+	font-weight: 400;
+	line-height: var(--line-height-body);
+	transition:
+		color var(--ease-color),
+		background-color var(--ease-color);
+}
+
+.page-wrapper {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+	background-color: var(--bg);
+	color: var(--fg-body);
+}
+
+.page-main {
+	flex: 1;
+	padding-bottom: 4rem;
+}
+
+.container {
+	width: 100%;
+	max-width: var(--narrow);
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: var(--page-pad-x);
+	padding-right: var(--page-pad-x);
+}
+
+.cc-narrow {
+	max-width: var(--narrow);
+}
+
+a {
+	color: var(--fg);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.15em;
+	transition: color var(--ease-color);
+}
+
+a:hover {
+	color: var(--fg-muted);
+}
+
+a:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 2px;
+}
+
+.h3 {
+	margin: 0 0 0.7em;
+	color: var(--fg);
+	font-size: var(--font-size-h3);
+	font-weight: 600;
+	line-height: 1.2;
+}
+
+.u-mt-sm {
+	margin-top: var(--section-gap);
+}
+
+.u-mb-lg {
+	margin-bottom: 4rem;
+}
+
+.u-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* ==========================================================================
+   TOC — Dario-like panel, but reading column ALWAYS centers on the full
+   viewport (never shifted with padding-left).
+
+   Side panel only when left gutter is wide enough to hold it without
+   covering the centered column:
+     100vw >= --narrow + 2 * (--toc-width + gap)
+   Below that breakpoint → hamburger drawer (content still centered).
+   ========================================================================== */
+
+body.has-toc {
+	/* Panel width; slightly under Dario’s 23rem so it fits earlier */
+	--toc-width: 15.5rem;
+	--toc-gap: 1.25rem;
+	/* Side mode from this width up (56rem content + 2×(15.5+1.25)rem ≈ 1456px) */
+	--toc-side-min: 92.5rem; /* 1480px */
+}
+
+/* Reading column: always viewport-centered (do not offset for TOC) */
+.container.cc-narrow {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.toc-container {
+	z-index: 4;
+	background-color: var(--bg);
+	padding: 130px 1.25rem 25px;
+	transition-property: color, background-color;
+	transition-duration: 0.2s, 0.2s;
+	transition-timing-function: ease, ease;
+	position: fixed;
+	overflow-y: auto;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.toc-container::-webkit-scrollbar {
+	display: none;
+}
+
+.container.cc-narrow.cc-toc {
+	padding-left: 0;
+	padding-right: 0;
+	position: relative;
+	max-width: none;
+	margin: 0;
+	width: 100%;
+}
+
+.toc-contents-title {
+	margin-top: 0;
+}
+
+.toc-list {
+	list-style: none;
+	margin: 30px 0 0;
+	padding-left: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.toc-list_item {
+	margin: 0;
+	padding: 0;
+}
+
+.toc-list_item--h3 {
+	padding-left: 0.85em;
+}
+
+/* Dario: inactive links dimmed; active = full opacity */
+.toc-link {
+	opacity: 0.5;
+	margin-bottom: 0.2em;
+	text-decoration: none;
+	color: var(--fg);
+	transition:
+		color 0.2s,
+		opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+	display: inline-block;
+	font-size: 1rem;
+	line-height: 1.35;
+}
+
+.toc-link:hover {
+	opacity: 0.85;
+	color: var(--fg);
+}
+
+.toc-link.cc-active {
+	opacity: 1;
+}
+
+/* Scroll offset for headings (Dario toc-heading) */
+.prose h2[id],
+.prose h3[id] {
+	padding-top: 130px;
+	margin-top: calc(1em - 130px) !important;
+}
+
+.toc-toggle {
+	background-color: transparent;
+	justify-content: center;
+	align-items: center;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	display: none;
+	position: relative;
+	border: 0;
+	color: var(--fg);
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.toc-toggle:focus-visible {
+	outline: 2px solid var(--fg);
+	outline-offset: 2px;
+}
+
+.toc-toggle_icon {
+	width: 24px;
+	height: 24px;
+	display: block;
+}
+
+.toc-toggle_icon.cc-close {
+	display: none;
+}
+
+.toc-toggle_icon.cc-hamburger {
+	display: block;
+}
+
+.toc-toggle.is-open .toc-toggle_icon.cc-close {
+	display: block;
+}
+
+.toc-toggle.is-open .toc-toggle_icon.cc-hamburger {
+	display: none;
+}
+
+/*
+ * Wide screens: dock TOC in the left gutter beside the centered column.
+ * left = contentLeft - tocWidth - gap, so panel never overlaps content.
+ */
+@media screen and (min-width: 1480px) {
+	body.has-toc .toc-container {
+		display: block;
+		top: 0;
+		bottom: 0;
+		width: var(--toc-width);
+		max-width: 18rem;
+		/* Content column is centered: left edge at 50% - narrow/2 */
+		left: max(
+			0.75rem,
+			calc(50% - (var(--narrow) / 2) - var(--toc-width) - var(--toc-gap))
+		);
+		right: auto;
+		padding: 130px 1.25rem 25px;
+	}
+
+	body.has-toc .toc-toggle {
+		display: none;
+	}
+}
+
+/*
+ * Narrower than side-mode: full-viewport-centered content + hamburger drawer.
+ * (Includes tablet/phone and mid desktop where a left panel would cover text.)
+ */
+@media screen and (max-width: 1479px) {
+	body.has-toc .toc-container {
+		display: none; /* JS opens with display:block */
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		max-width: none;
+		padding: 100px 1.5rem 2rem;
+	}
+
+	body.has-toc .toc-link {
+		opacity: 1;
+	}
+
+	body.has-toc .toc-toggle {
+		display: flex;
+	}
+
+	body.has-toc .toc-toggle[hidden] {
+		display: none;
+	}
+}
+
+/* Header */
+.header {
+	padding: 2rem 0 1.5rem;
+}
+
+.header-inner {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.5rem 0.75rem;
+}
+
+.header-name-link {
+	text-decoration: none;
+	color: var(--fg);
+}
+
+.header-name-link:hover {
+	color: var(--fg-muted);
+}
+
+.header-name {
+	margin: 0;
+	font-size: var(--font-size-header-name);
+	font-weight: 600;
+	line-height: 1;
+	color: inherit;
+	transition: color var(--ease-color);
+}
+
+.header-name .i18n-en,
+.header-name .i18n-zh {
+	display: inline;
+}
+
+.header-archive {
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--fg-muted);
+	text-decoration: none;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	padding: 0.2em 0.55em;
+	line-height: 1.2;
+}
+
+.header-archive:hover {
+	color: var(--fg);
+	border-color: var(--border-soft);
+}
+
+.header-spacer {
+	flex: 1;
+	min-width: 0.5rem;
+}
+
+.header-controls {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+}
+
+/* Lang toggle — compact EN | 中 pill */
+.lang-toggle {
+	display: inline-flex;
+	align-items: center;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	overflow: hidden;
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: 1;
+}
+
+.lang-toggle button {
+	appearance: none;
+	border: 0;
+	background: transparent;
+	color: var(--fg-muted);
+	padding: 0.35em 0.55em;
+	cursor: pointer;
+	font: inherit;
+	font-family: var(--font-serif);
+	transition:
+		color var(--ease-color),
+		background-color var(--ease-color);
+}
+
+.lang-toggle button:hover {
+	color: var(--fg);
+}
+
+.lang-toggle button[aria-pressed='true'] {
+	background: var(--bg-elevated);
+	color: var(--fg);
+}
+
+.lang-toggle button:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 1px;
+	z-index: 1;
+}
+
+/* Theme toggle */
+.toggle-switch {
+	position: relative;
+	width: 2.5rem;
+	height: 1.35rem;
+	flex-shrink: 0;
+}
+
+.toggle-checkbox {
+	position: absolute;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	cursor: pointer;
+	z-index: 1;
+}
+
+.toggle-label {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: 999px;
+	background: var(--bg-elevated);
+	border: 1px solid var(--border);
+	cursor: pointer;
+	position: relative;
+	transition:
+		background-color var(--ease-color),
+		border-color var(--ease-color);
+}
+
+.toggle-label::after {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: calc(1.35rem - 6px);
+	height: calc(1.35rem - 6px);
+	border-radius: 50%;
+	background: var(--fg);
+	transition: transform var(--ease-color);
+}
+
+.toggle-checkbox:checked + .toggle-label::after {
+	transform: translateX(1.15rem);
+}
+
+.toggle-checkbox:focus-visible + .toggle-label {
+	outline: 2px solid var(--focus);
+	outline-offset: 2px;
+}
+
+/* Bio */
+.bio-lead {
+	margin: 0;
+	color: var(--fg-body);
+}
+
+.home-intro_expand-link {
+	color: var(--fg-muted);
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+	cursor: pointer;
+	background: none;
+	border: 0;
+	padding: 0;
+	font: inherit;
+}
+
+.home-intro_expand-link:hover {
+	color: var(--fg);
+}
+
+.home-intro_expand-content {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 0.25s ease;
+}
+
+.home-intro_expand-content.is-open {
+	grid-template-rows: 1fr;
+}
+
+.home-intro_expand-content > .home-intro_expand-inner {
+	overflow: hidden;
+}
+
+.home-intro_expand-inner p {
+	margin: 1em 0 0;
+	color: var(--fg-body);
+}
+
+.home-intro_expand-ellipsis {
+	color: var(--fg-muted);
+}
+
+/* Bullet lists */
+.bullet-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--list-gap);
+}
+
+.bullet-list_item {
+	padding-left: 1em;
+	position: relative;
+	line-height: 1.4;
+}
+
+.bullet-list_item::before {
+	content: '•';
+	position: absolute;
+	left: 0;
+	color: var(--fg-muted);
+}
+
+.bullet-list_link {
+	margin-right: 0.25em;
+	text-decoration: none;
+	color: var(--fg);
+	border-bottom: 1px solid transparent;
+}
+
+.bullet-list_link:hover {
+	color: var(--fg-muted);
+	border-bottom-color: var(--border);
+}
+
+.bullet-list_meta {
+	display: inline;
+	color: var(--fg-muted);
+	font-size: var(--font-size-meta);
+	white-space: nowrap;
+}
+
+/* Article */
+.post-header {
+	margin-bottom: 1.75rem;
+}
+
+.post-title {
+	margin: 0 0 0.35em;
+	color: var(--fg);
+	font-size: clamp(1.75rem, 4vw, 2.75rem);
+	font-weight: 700;
+	line-height: 1.15;
+}
+
+.post-subtitle {
+	margin: 0 0 0.75em;
+	color: var(--fg-body);
+	font-size: 1.25em;
+	font-weight: 400;
+	line-height: 1.3;
+}
+
+.post-date {
+	margin: 0;
+	color: var(--fg-muted);
+	font-size: var(--font-size-meta);
+}
+
+.back-to-top {
+	display: inline-block;
+	margin-top: 2.5rem;
+	font-size: var(--font-size-meta);
+	color: var(--fg-muted);
+	text-decoration: none;
+}
+
+.back-to-top:hover {
+	color: var(--fg);
+}
+
+/* Archive */
+.archive-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.65em;
+}
+
+.archive-item {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35em 0.75em;
+	align-items: baseline;
+	padding-left: 1em;
+	position: relative;
+}
+
+.archive-item::before {
+	content: '•';
+	position: absolute;
+	left: 0;
+	color: var(--fg-muted);
+}
+
+.archive-type {
+	font-size: 0.75rem;
+	font-weight: 500;
+	color: var(--fg-muted);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.archive-date {
+	font-size: var(--font-size-meta);
+	color: var(--fg-faint);
+	margin-left: auto;
+}
+
+@media (max-width: 480px) {
+	:root {
+		--font-size-body: 1.125rem;
+		--page-pad-x: 1rem;
+	}
+
+	.header {
+		padding-top: 1.5rem;
+	}
+
+	.archive-date {
+		margin-left: 0;
+		width: 100%;
+	}
+}

@@ -1,0 +1,43 @@
+---
+import { site } from '../data/site';
+---
+
+<div class="toggle-switch">
+	<input
+		type="checkbox"
+		id="color-mode"
+		name="Color Mode"
+		class="toggle-checkbox"
+		aria-label={site.ui.themeToggle.en}
+	/>
+	<label for="color-mode" class="toggle-label"></label>
+</div>
+
+<script is:inline>
+	(function () {
+		const KEY = 'color-mode';
+		const root = document.documentElement;
+		const input = document.getElementById('color-mode');
+
+		function systemDark() {
+			return window.matchMedia('(prefers-color-scheme: dark)').matches;
+		}
+
+		function apply(dark) {
+			root.classList.toggle('u-mode-invert', dark);
+			if (input) input.checked = dark;
+		}
+
+		const stored = localStorage.getItem(KEY);
+		const initial = stored === 'dark' || (stored === null && systemDark());
+		apply(initial);
+
+		if (input) {
+			input.addEventListener('change', function () {
+				const dark = input.checked;
+				apply(dark);
+				localStorage.setItem(KEY, dark ? 'dark' : 'light');
+			});
+		}
+	})();
+</script>

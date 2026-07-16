@@ -1,0 +1,23 @@
+---
+import type { Bi } from '../i18n/types';
+
+interface Props {
+	/** Bilingual object */
+	t?: Bi;
+	en?: string;
+	zh?: string;
+	/** Optional wrapper element; default span */
+	as?: 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'li' | 'div' | 'time' | 'a';
+	class?: string;
+	[key: string]: unknown;
+}
+
+const { t, en, zh, as: Tag = 'span', class: className, ...rest } = Astro.props;
+const enText = t?.en ?? en ?? '';
+const zhText = t?.zh ?? zh ?? '';
+---
+
+<Tag class:list={['i18n', className]} {...rest}>
+	<span class="i18n-en" lang="en">{enText}</span>
+	<span class="i18n-zh" lang="zh-CN">{zhText}</span>
+</Tag>
