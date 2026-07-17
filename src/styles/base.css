@@ -602,19 +602,18 @@ html.u-mode-invert .theme-toggle_icon--moon {
 	display: block;
 }
 
-/* Bio — text + fixed-size portrait (independent of copy height) */
+/* Bio — raw portrait floated through the introductory copy at every width */
 .home-container {
 	display: flow-root;
 }
 
-.bio {
-	display: flex;
-	align-items: flex-start;
-	gap: 1.75rem 2rem;
+.bio::after {
+	content: '';
+	display: block;
+	clear: both;
 }
 
 .bio-copy {
-	flex: 1 1 0;
 	min-width: 0;
 }
 
@@ -628,40 +627,25 @@ html.u-mode-invert .theme-toggle_icon--moon {
 	color: var(--fg-body);
 }
 
-/* Fixed portrait size; keep 2:3 aspect ratio */
 .bio-portrait {
-	position: relative;
-	flex: 0 0 auto;
-	width: 12.5rem;
-	margin: 0;
+	float: right;
+	width: clamp(12rem, 30%, 16.5rem);
+	margin: 0 0 1.5rem 2rem;
 	line-height: 0;
-	overflow: hidden;
 }
 
 .bio-portrait_img {
 	display: block;
 	width: 100%;
 	height: auto;
-	aspect-ratio: 2 / 3;
-	object-fit: cover;
-	object-position: 50% 18%;
 }
 
 @media (max-width: 720px) {
-	.bio {
-		flex-direction: column;
-		gap: 1.25rem;
-	}
-
-	.bio-copy {
-		flex: 1 1 auto;
-		order: 1;
-	}
-
 	.bio-portrait {
-		order: 2;
-		align-self: flex-start;
-		width: 10.5rem;
+		width: min(46vw, calc(100% - 10rem));
+		min-width: min(8rem, calc(100% - 10rem));
+		max-width: 12rem;
+		margin: 0 0 1rem 1rem;
 	}
 }
 

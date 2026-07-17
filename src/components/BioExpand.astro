@@ -9,19 +9,6 @@ const paragraphs = [lead, ...more];
 ---
 
 <section class="bio">
-	<div class="bio-copy">
-		{paragraphs.map((para, i) => (
-			<p class:list={[i === 0 ? 'bio-lead' : 'bio-para']}>
-				<span class="i18n-en" lang="en">
-					{para.en}
-				</span>
-				<span class="i18n-zh" lang="zh-CN">
-					{para.zh}
-				</span>
-			</p>
-		))}
-	</div>
-
 	{
 		portrait && (
 			<figure class="bio-portrait">
@@ -41,6 +28,19 @@ const paragraphs = [lead, ...more];
 			</figure>
 		)
 	}
+
+	<div class="bio-copy">
+		{paragraphs.map((para, i) => (
+			<p class:list={[i === 0 ? 'bio-lead' : 'bio-para']}>
+				<span class="i18n-en" lang="en">
+					{para.en}
+				</span>
+				<span class="i18n-zh" lang="zh-CN">
+					{para.zh}
+				</span>
+			</p>
+		))}
+	</div>
 </section>
 
 <script>
