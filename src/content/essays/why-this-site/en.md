@@ -19,7 +19,7 @@ The layout follows [darioamodei.com](https://darioamodei.com): a narrow column, 
 
 ## v1 is intentionally sparse
 
-There are few posts; project links may still be placeholders. The frame comes first: add a Markdown pair (English + Chinese) and it shows up on the home page and archive. Thin and true beats padded adjectives.
+There are few posts; project links may still be placeholders. The frame comes first: add a Markdown pair (English + Chinese) and it shows up on the home page. Thin and true beats padded adjectives.
 
 ## Next
 

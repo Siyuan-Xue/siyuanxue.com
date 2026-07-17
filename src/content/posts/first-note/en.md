@@ -5,7 +5,7 @@ description: Shipping notes for v1 — structure first, content fills in.
 draft: false
 ---
 
-Today the first skeleton of this site is live: home, essays, short posts, archive, color mode, and language toggle.
+Today the first skeleton of this site is live: home, essays, short posts, color mode, and language toggle.
 
 Content is still thin — that is expected. A **structure I can extend** matters more than stuffing the homepage on day one. After this, I only add Markdown (English + Chinese pairs) without touching routes.
 

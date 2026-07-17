@@ -96,11 +96,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 				);
 			}
 		}
-		document.addEventListener('click', function (e) {
-			var t = e.target;
-			if (t && t.closest && t.closest('[data-set-lang]')) {
-				setTimeout(syncMeta, 0);
-			}
-		});
+		document.addEventListener('site:language-change', syncMeta);
 	})();
 </script>

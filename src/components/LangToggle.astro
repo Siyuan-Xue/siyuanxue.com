@@ -1,35 +1,57 @@
 ---
 import { site } from '../data/site';
+import { Languages } from '@lucide/astro';
 ---
 
-<div class="lang-toggle" role="group" aria-label={site.ui.langToggle.en}>
-	<button type="button" data-set-lang="en" aria-pressed="true">EN</button>
-	<button type="button" data-set-lang="zh" aria-pressed="false">中</button>
-</div>
+<button
+	type="button"
+	class="header-control-button lang-toggle"
+	data-language-toggle
+	data-label-when-en={site.ui.switchToChinese.en}
+	data-label-when-zh={site.ui.switchToEnglish.zh}
+	aria-label={site.ui.switchToChinese.en}
+	title={site.ui.switchToChinese.en}
+>
+	<Languages class="lang-toggle_icon" size={18} stroke-width={1.8} />
+	<span class="lang-toggle_state" data-language-state>EN</span>
+</button>
 
 <script is:inline>
 	(function () {
 		const KEY = 'site-lang';
 		const root = document.documentElement;
+		const button = document.querySelector('[data-language-toggle]');
+		const state = button && button.querySelector('[data-language-state]');
 
 		function apply(lang) {
 			const next = lang === 'zh' ? 'zh' : 'en';
 			root.setAttribute('data-lang', next);
 			root.setAttribute('lang', next === 'zh' ? 'zh-CN' : 'en');
-			document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
-				btn.setAttribute('aria-pressed', btn.getAttribute('data-set-lang') === next ? 'true' : 'false');
-			});
+
+			if (button) {
+				const label =
+					next === 'zh' ? button.getAttribute('data-label-when-zh') : button.getAttribute('data-label-when-en');
+				button.setAttribute('data-target-lang', next === 'zh' ? 'en' : 'zh');
+				button.setAttribute('aria-label', label || 'Switch language');
+				button.setAttribute('title', label || 'Switch language');
+			}
+
+			if (state) state.textContent = next === 'zh' ? '中' : 'EN';
+
+			document.dispatchEvent(
+				new CustomEvent('site:language-change', { detail: { lang: next } }),
+			);
 		}
 
 		const stored = localStorage.getItem(KEY);
 		apply(stored === 'zh' ? 'zh' : 'en');
 
-		document.querySelectorAll('[data-set-lang]').forEach(function (btn) {
-			btn.addEventListener('click', function () {
-				const lang = btn.getAttribute('data-set-lang') === 'zh' ? 'zh' : 'en';
+		if (button) {
+			button.addEventListener('click', function () {
+				const lang = button.getAttribute('data-target-lang') === 'zh' ? 'zh' : 'en';
 				localStorage.setItem(KEY, lang);
 				apply(lang);
 			});
-		});
+		}
 	})();
 </script>

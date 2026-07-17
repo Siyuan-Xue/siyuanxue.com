@@ -1,43 +1,63 @@
 ---
 import { site } from '../data/site';
+import { Moon, Sun } from '@lucide/astro';
 ---
 
-<div class="toggle-switch">
-	<input
-		type="checkbox"
-		id="color-mode"
-		name="Color Mode"
-		class="toggle-checkbox"
-		aria-label={site.ui.themeToggle.en}
-	/>
-	<label for="color-mode" class="toggle-label"></label>
-</div>
+<button
+	type="button"
+	class="header-control-button theme-toggle"
+	data-theme-toggle
+	data-label-dark-en={site.ui.switchToDark.en}
+	data-label-dark-zh={site.ui.switchToDark.zh}
+	data-label-light-en={site.ui.switchToLight.en}
+	data-label-light-zh={site.ui.switchToLight.zh}
+	aria-label={site.ui.switchToDark.en}
+	aria-pressed="false"
+	title={site.ui.switchToDark.en}
+>
+	<Sun class="theme-toggle_icon theme-toggle_icon--sun" size={18} stroke-width={1.8} />
+	<Moon class="theme-toggle_icon theme-toggle_icon--moon" size={18} stroke-width={1.8} />
+</button>
 
 <script is:inline>
 	(function () {
 		const KEY = 'color-mode';
 		const root = document.documentElement;
-		const input = document.getElementById('color-mode');
+		const button = document.querySelector('[data-theme-toggle]');
 
 		function systemDark() {
 			return window.matchMedia('(prefers-color-scheme: dark)').matches;
 		}
 
+		function updateLabel(dark) {
+			if (!button) return;
+			const lang = root.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+			const nextMode = dark ? 'light' : 'dark';
+			const label = button.getAttribute('data-label-' + nextMode + '-' + lang);
+			button.setAttribute('aria-label', label || 'Switch color mode');
+			button.setAttribute('title', label || 'Switch color mode');
+		}
+
 		function apply(dark) {
 			root.classList.toggle('u-mode-invert', dark);
-			if (input) input.checked = dark;
+			if (button) button.setAttribute('aria-pressed', String(dark));
+			updateLabel(dark);
 		}
 
 		const stored = localStorage.getItem(KEY);
 		const initial = stored === 'dark' || (stored === null && systemDark());
 		apply(initial);
 
-		if (input) {
-			input.addEventListener('change', function () {
-				const dark = input.checked;
+		if (button) {
+			button.addEventListener('click', function () {
+				const dark = !root.classList.contains('u-mode-invert');
 				apply(dark);
 				localStorage.setItem(KEY, dark ? 'dark' : 'light');
 			});
 		}
+
+		document.addEventListener('site:language-change', function () {
+			updateLabel(root.classList.contains('u-mode-invert'));
+		});
 	})();
 </script>

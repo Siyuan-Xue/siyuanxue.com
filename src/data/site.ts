@@ -18,7 +18,6 @@ export const site = {
 	),
 
 	ui: {
-		archive: bi('Archive', '归档'),
 		more: bi('More', '更多'),
 		less: bi('Less', '收起'),
 		backToTop: bi('Back to top', '回到顶部'),
@@ -27,9 +26,10 @@ export const site = {
 		projects: bi('Projects', '项目'),
 		externalWriting: bi('Writing', '写作与表达'),
 		appearances: bi('Stage & activities', '舞台与活动'),
-		langToggle: bi('Language', '语言'),
-		themeToggle: bi('Color mode', '深浅色'),
-		emptyArchive: bi('No posts yet.', '暂无文章。'),
+		switchToEnglish: bi('Switch to English', '切换到英文'),
+		switchToChinese: bi('Switch to Chinese', '切换到中文'),
+		switchToLight: bi('Switch to light mode', '切换到浅色模式'),
+		switchToDark: bi('Switch to dark mode', '切换到深色模式'),
 	},
 
 	bio: {

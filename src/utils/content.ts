@@ -130,12 +130,3 @@ export function formatDate(date: Date, locale: Locale = 'en'): string {
 		day: 'numeric',
 	});
 }
-
-export function formatDateShort(date: Date, locale: Locale = 'en'): string {
-	const tag = locale === 'zh' ? 'zh-CN' : 'en-US';
-	return date.toLocaleDateString(tag, {
-		year: 'numeric',
-		month: 'short',
-		day: 'numeric',
-	});
-}

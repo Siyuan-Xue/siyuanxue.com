@@ -10,7 +10,6 @@ interface Props {
 }
 
 const { showTocToggle = false } = Astro.props;
-const isArchive = Astro.url.pathname.replace(/\/$/, '') === '/archive';
 ---
 
 <header class="header">
@@ -24,13 +23,6 @@ const isArchive = Astro.url.pathname.replace(/\/$/, '') === '/archive';
 				<I18n t={site.name} />
 			</h1>
 		</a>
-		{
-			!isArchive && (
-				<a href="/archive" class="header-archive">
-					<I18n t={site.ui.archive} />
-				</a>
-			)
-		}
 		<div class="header-spacer"></div>
 		<div class="header-controls">
 			{showTocToggle && <TocToggle />}

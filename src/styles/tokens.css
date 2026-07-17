@@ -45,19 +45,6 @@ html.u-mode-invert {
 	--border-soft: #5e5d59;
 }
 
-html.page-archive {
-	--bg: #0a0a0a;
-	--fg: #f0eee6;
-	--fg-body: #d1cfc5;
-	--fg-muted: #b0aea5;
-	--border: #2a2a2a;
-}
-
-html.page-archive.u-mode-invert {
-	--bg: #0a0a0a;
-	--fg: #faf9f5;
-}
-
 /* Language visibility — default English */
 html[data-lang='en'] .i18n-zh,
 html:not([data-lang]) .i18n-zh {
