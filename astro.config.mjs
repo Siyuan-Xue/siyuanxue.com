@@ -23,13 +23,21 @@ export default defineConfig({
 			styles: ['normal', 'italic'],
 			fallbacks: ['Times New Roman', 'serif'],
 		},
+		// 思源宋体 SC — modern Song with true multi-weight (400/600/700), pairs with Newsreader.
 		{
 			provider: fontProviders.fontsource(),
 			name: 'Noto Serif SC',
 			cssVariable: '--font-noto-serif-sc',
 			weights: [400, 600, 700],
 			styles: ['normal'],
-			fallbacks: ['Songti SC', 'SimSun', 'serif'],
+			fallbacks: [
+				'Source Han Serif SC',
+				'Noto Serif CJK SC',
+				'Songti SC',
+				'STSong',
+				'SimSun',
+				'serif',
+			],
 		},
 	],
 });

@@ -37,6 +37,45 @@
 	font-weight: 600;
 }
 
+/* Chinese prose — Noto Serif SC hierarchy */
+html[data-lang='zh'] .prose,
+.prose .lang-body-zh {
+	letter-spacing: var(--letter-spacing-zh-body);
+	line-height: var(--line-height-body-zh);
+	text-align: justify;
+	text-justify: inter-ideograph;
+}
+
+html[data-lang='zh'] .prose p,
+.prose .lang-body-zh p {
+	margin-bottom: 1.35em;
+}
+
+/* Match EN prose headings (600) with Noto Serif SC masters */
+html[data-lang='zh'] .prose h2,
+.prose .lang-body-zh h2 {
+	font-weight: 600;
+	letter-spacing: var(--letter-spacing-zh-heading);
+	line-height: 1.35;
+	margin-top: 2em;
+	margin-bottom: 0.75em;
+}
+
+html[data-lang='zh'] .prose h3,
+.prose .lang-body-zh h3 {
+	font-weight: 600;
+	letter-spacing: var(--letter-spacing-zh-heading);
+	line-height: 1.4;
+	margin-top: 1.75em;
+	margin-bottom: 0.65em;
+}
+
+html[data-lang='zh'] .prose h4,
+.prose .lang-body-zh h4 {
+	font-weight: 600;
+	letter-spacing: var(--letter-spacing-zh-body);
+}
+
 .prose ul,
 .prose ol {
 	margin: 0 0 1em;
@@ -64,13 +103,55 @@
 	margin-bottom: 0;
 }
 
+/* blockquote: CJK skips italic */
+html[data-lang='zh'] .prose blockquote,
+.prose .lang-body-zh blockquote {
+	font-style: normal;
+	border-left-width: 3px;
+	padding-left: 1.1em;
+	margin-left: 0.15em;
+	color: var(--fg-muted);
+}
+
 .prose strong {
 	color: var(--fg);
-	font-weight: 600;
+	font-weight: 700;
 }
 
 .prose em {
 	font-style: italic;
+}
+
+html[data-lang='zh'] .prose em,
+.prose .lang-body-zh em {
+	font-style: normal;
+	font-weight: 400;
+	color: var(--fg);
+}
+
+/* Semantic bold: same Noto Serif SC, weight 700 (no Hei) — mirrors EN prose strong */
+html[data-lang='zh'] .prose strong,
+.prose .lang-body-zh strong {
+	font-family: inherit;
+	font-weight: 700;
+	font-synthesis: none;
+	color: var(--fg);
+	letter-spacing: 0.03em;
+}
+
+html[data-lang='zh'] .prose li,
+.prose .lang-body-zh li {
+	line-height: 1.7;
+	margin-bottom: 0.45em;
+}
+
+/* Keep code Latin-first; Chinese comments still readable */
+html[data-lang='zh'] .prose code,
+.prose .lang-body-zh code {
+	letter-spacing: 0;
+	font-family:
+		ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, 'Microsoft YaHei',
+		'PingFang SC', monospace;
 }
 
 .prose a {

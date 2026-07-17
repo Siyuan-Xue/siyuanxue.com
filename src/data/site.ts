@@ -18,12 +18,11 @@ export const site = {
 	),
 
 	ui: {
-		more: bi('More', '更多'),
-		less: bi('Less', '收起'),
 		backToTop: bi('Back to top', '回到顶部'),
 		essays: bi('Essays', '长文'),
 		posts: bi('Short posts', '短记'),
 		projects: bi('Projects', '项目'),
+		research: bi('Research', '研究'),
 		externalWriting: bi('Writing', '写作与表达'),
 		appearances: bi('Stage & activities', '舞台与活动'),
 		switchToEnglish: bi('Switch to English', '切换到英文'),
@@ -51,12 +50,29 @@ export const site = {
 		],
 	},
 
+	/** Editorial lifestyle portrait beside the home bio. */
+	portrait: {
+		src: '/images/portrait.jpg',
+		width: 2560,
+		height: 3840,
+		alt: bi(
+			'Siyuan Xue outdoors in light athletic wear against concrete architecture',
+			'薛思远生活照：浅色运动外套，建筑庭院背景',
+		),
+	},
+
 	projects: [
 		{
-			title: bi('YouQu Math + iMathBook', '邮趣数学 + iMathBook'),
-			href: '#',
+			title: bi('ProbFun', '邮趣数学'),
+			href: 'https://umathhub.com',
 			year: 2025,
-			external: false,
+			external: true,
+		},
+		{
+			title: bi('iMathBook', 'iMathBook'),
+			href: 'https://imathbook.com',
+			year: 2025,
+			external: true,
 		},
 		{
 			title: bi('LeDA Agent', 'LeDA 智能体'),
@@ -65,9 +81,19 @@ export const site = {
 			external: false,
 		},
 		{
+			title: bi('PixelDone', '像素清单'),
+			href: 'https://github.com/Siyuan-Xue/PixelDone',
+			year: 2026,
+			external: true,
+		},
+	] satisfies LinkItem[],
+
+	research: [
+		{
 			title: bi('Yuheng · multimodal metaphor detection', '语衡 · 多模态隐喻检测'),
 			href: '#',
-			year: 2025,
+			venue: bi('NLPCC', 'NLPCC'),
+			year: 2026,
 			external: false,
 		},
 	] satisfies LinkItem[],
@@ -80,9 +106,9 @@ export const site = {
 				'Walking with Light · Beijing Collegiate Drama Festival',
 				'《与光同行》· 北京市大学生戏剧节',
 			),
-			href: '#',
+			href: 'https://www.bupt.edu.cn/info/1079/90114.htm',
 			year: 2025,
-			external: false,
+			external: true,
 		},
 	] satisfies LinkItem[],
 };

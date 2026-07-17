@@ -21,7 +21,7 @@ const postItems = posts.map((p) => ({
 ---
 
 <Base>
-	<div class="container cc-narrow">
+	<div class="container cc-narrow home-container">
 		<BioExpand />
 
 		{
@@ -53,6 +53,17 @@ const postItems = posts.map((p) => ({
 						<I18n t={site.ui.projects} />
 					</h2>
 					<BulletList items={site.projects} />
+				</section>
+			)
+		}
+
+		{
+			site.research.length > 0 && (
+				<section class="u-mt-sm">
+					<h2 class="h3">
+						<I18n t={site.ui.research} />
+					</h2>
+					<BulletList items={site.research} />
 				</section>
 			)
 		}

@@ -1,16 +1,32 @@
-/* Design tokens aligned with darioamodei.com (warm ivory + slate) */
+/*
+ * Color tokens from darioamodei.com Webflow CSS swatches:
+ *   ivory-light #faf9f5 · ivory-medium #f0eee6 · ivory-dark #e8e6dc
+ *   slate-dark  #1f1e1d · slate-medium #3d3d3a · slate-light #5e5d59
+ *   cloud-light #d1cfc5 · cloud-medium #b0aea5 · cloud-dark  #87867f
+ *
+ * Light page bg = ivory-medium; dark page bg = slate-dark (html.u-mode-invert).
+ */
 
 :root {
-	--bg: #faf9f5;
-	--bg-elevated: #f0eee6;
+	/* --colors--background: ivory-medium */
+	--bg: #f0eee6;
+	/* ivory-light — slightly lifted surfaces (code, chips) */
+	--bg-elevated: #faf9f5;
+	/* ivory-dark */
 	--bg-soft: #e8e6dc;
 
+	/* --colors--text: slate-dark */
 	--fg: #1f1e1d;
-	--fg-body: #3d3d3a;
+	/* body copy matches Dario primary text (not slate-medium) */
+	--fg-body: #1f1e1d;
+	/* --colors--text-secondary: slate-light */
 	--fg-muted: #5e5d59;
+	/* cloud-dark */
 	--fg-faint: #87867f;
 
+	/* --colors--border: cloud-light */
 	--border: #d1cfc5;
+	/* cloud-medium */
 	--border-soft: #b0aea5;
 
 	/* Dario is 38.75rem; further widened per preference */
@@ -19,30 +35,52 @@
 	--section-gap: 2.5rem;
 	--list-gap: 0.8em;
 
-	--font-serif: var(--font-newsreader), var(--font-noto-serif-sc), 'Times New Roman',
-		Georgia, serif;
+	/*
+	 * Latin: Newsreader (site brand).
+	 * CJK: Noto Serif SC / 思源宋体 — modern Song with true 400/600/700 (no Hei swap).
+	 */
+	--font-serif-latin: var(--font-newsreader), 'Times New Roman', 'PT Serif', Georgia, Times,
+		serif;
+	--font-serif-cjk: var(--font-noto-serif-sc), 'Source Han Serif SC', 'Noto Serif CJK SC',
+		'Songti SC', 'STSong', 'SimSun', '宋体', serif;
+	/* Mixed: Newsreader (Latin unicode-range) then Noto Serif SC for Han */
+	--font-serif: var(--font-serif-latin), var(--font-serif-cjk);
 	--font-size-body: 1.25rem;
 	--line-height-body: 1.6;
+	/* Chinese body: slightly denser size, taller leading */
+	--font-size-body-zh: 1.1875rem;
+	--line-height-body-zh: 1.75;
 	--font-size-h1: 3.1em;
 	--font-size-h2: 1.6em;
 	--font-size-h3: 1.2em;
 	--font-size-header-name: 1.44em;
 	--font-size-meta: 0.9em;
+	/* CJK title tracking — light newspaper-style openness */
+	--letter-spacing-zh-title: 0.04em;
+	--letter-spacing-zh-heading: 0.06em;
+	--letter-spacing-zh-body: 0.02em;
 
 	--ease-color: 0.2s linear;
 	--focus: #0066cc;
 }
 
+/* Dario .u-mode-invert: bg = slate-dark, text = ivory-medium */
 html.u-mode-invert {
-	--bg: #1a1918;
-	--bg-elevated: #242322;
-	--bg-soft: #2e2d2b;
+	--bg: #1f1e1d;
+	/* slate-medium — elevated / code surfaces */
+	--bg-elevated: #3d3d3a;
+	--bg-soft: #3d3d3a;
+	/* --colors--text: ivory-medium */
 	--fg: #f0eee6;
-	--fg-body: #d1cfc5;
+	--fg-body: #f0eee6;
+	/* --colors--text-secondary: cloud-medium */
 	--fg-muted: #b0aea5;
+	/* cloud-dark */
 	--fg-faint: #87867f;
-	--border: #3d3d3a;
-	--border-soft: #5e5d59;
+	/* --colors--border: slate-light */
+	--border: #5e5d59;
+	/* slate-medium / input-border */
+	--border-soft: #3d3d3a;
 }
 
 /* Language visibility — default English */
@@ -62,4 +100,14 @@ html:not([data-lang]) .lang-body-zh {
 
 html[data-lang='zh'] .lang-body-en {
 	display: none !important;
+}
+
+/* Chinese UI mode metrics */
+html[data-lang='zh'] {
+	--font-size-body: var(--font-size-body-zh);
+	--line-height-body: var(--line-height-body-zh);
+	--list-gap: 0.7em;
+	--font-size-h2: 1.45em;
+	--font-size-h3: 1.15em;
+	--font-size-header-name: 1.32em;
 }

@@ -2,7 +2,7 @@
 
 Local project folder for the personal site at `siyuanxue.com`.
 
-Personal site in the spirit of [darioamodei.com](https://darioamodei.com): narrow column, serif type, expandable bio, lists by genre — plus **EN / 中** language toggle (default **English**) next to the color-mode switch.
+Personal site in the spirit of [darioamodei.com](https://darioamodei.com): narrow column, serif type, full bio, lists by genre — plus **EN / 中** language toggle (default **English**) next to the color-mode switch.
 
 ## Stack
 

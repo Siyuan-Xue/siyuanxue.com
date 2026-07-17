@@ -12,6 +12,12 @@ html {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	scroll-behavior: smooth;
+	/* Match Dario: full canvas uses theme background (overscroll / invert) */
+	background-color: var(--bg);
+	color: var(--fg);
+	transition:
+		color var(--ease-color),
+		background-color var(--ease-color);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -39,6 +45,124 @@ body {
 	transition:
 		color var(--ease-color),
 		background-color var(--ease-color);
+}
+
+/*
+ * Chinese: Noto Serif SC (思源宋体) — same family for body + true bold.
+ * Bold policy:
+ *   Semantic strong — weight 700
+ *   Mirror English hierarchy: header-name/h3 600, post-title 700, lang toggle 600
+ *   em — no italic; color only
+ */
+html[data-lang='zh'] body {
+	font-family: var(--font-serif);
+	font-weight: 400;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	letter-spacing: var(--letter-spacing-zh-body);
+	word-break: normal;
+	overflow-wrap: break-word;
+	line-break: strict;
+	hanging-punctuation: allow-end;
+}
+
+/*
+ * CJK face only — do NOT set font-weight here.
+ * I18n wraps text in .i18n-zh spans; an explicit 400 on the span was overriding
+ * parent bold (.header-name 600, .h3 600, .post-title 700), so 薛思远/长文/项目
+ * looked regular while Siyuan Xue / Essays / Projects looked bold.
+ */
+.i18n-zh,
+.lang-body-zh,
+[lang='zh-CN'] {
+	font-family: var(--font-serif);
+	font-synthesis: none;
+	letter-spacing: var(--letter-spacing-zh-body);
+	line-break: strict;
+	overflow-wrap: break-word;
+}
+
+/*
+ * Match English weight hierarchy (inherit into .i18n-zh children):
+ *   EN header-name 600 · post-title 700 · .h3 600 · prose h2/h3/h4 600
+ */
+html[data-lang='zh'] .header-name,
+html[data-lang='zh'] .header-name .i18n-zh {
+	font-weight: 600;
+	letter-spacing: var(--letter-spacing-zh-title);
+}
+
+html[data-lang='zh'] .post-title,
+html[data-lang='zh'] .post-title .i18n-zh {
+	font-weight: 700;
+	letter-spacing: var(--letter-spacing-zh-title);
+	line-height: 1.3;
+}
+
+html[data-lang='zh'] .post-subtitle,
+html[data-lang='zh'] .post-subtitle .i18n-zh {
+	font-weight: 400;
+	letter-spacing: var(--letter-spacing-zh-body);
+	line-height: 1.45;
+}
+
+/* Home section labels: Essays / Projects → 长文 / 项目 */
+html[data-lang='zh'] .h3,
+html[data-lang='zh'] .h3 .i18n-zh {
+	font-weight: 600;
+	letter-spacing: var(--letter-spacing-zh-heading);
+	line-height: 1.35;
+}
+
+/* Links stay regular (same as EN) */
+html[data-lang='zh'] .toc-link,
+html[data-lang='zh'] .toc-link .i18n-zh,
+html[data-lang='zh'] .bullet-list_link,
+html[data-lang='zh'] .bullet-list_link .i18n-zh {
+	font-weight: 400;
+}
+
+/* Match EN .lang-toggle { font-weight: 600 } */
+html[data-lang='zh'] .lang-toggle,
+html[data-lang='zh'] .lang-toggle .i18n-zh {
+	font-weight: 600;
+}
+
+/* Semantic bold: same Noto Serif SC, master 700 */
+html[data-lang='zh'] strong,
+.i18n-zh strong,
+.lang-body-zh strong,
+[lang='zh-CN'] strong {
+	font-family: inherit;
+	font-weight: 700;
+	font-synthesis: none;
+	color: var(--fg);
+	letter-spacing: 0.03em;
+}
+
+/* Emphasis: never italic for CJK */
+html[data-lang='zh'] em,
+.i18n-zh em,
+.lang-body-zh em,
+[lang='zh-CN'] em {
+	font-style: normal;
+	font-weight: 400;
+	color: var(--fg);
+}
+
+html[data-lang='zh'] .bullet-list_item {
+	line-height: 1.55;
+}
+
+html[data-lang='zh'] .toc-link {
+	letter-spacing: var(--letter-spacing-zh-body);
+	line-height: 1.5;
+}
+
+html[data-lang='zh'] .bio-lead,
+html[data-lang='zh'] .bio-para {
+	letter-spacing: var(--letter-spacing-zh-body);
+	font-weight: 400;
 }
 
 .page-wrapper {
@@ -325,21 +449,30 @@ body.has-toc .toc-toggle[hidden] {
 	}
 }
 
-/* Header */
+/*
+ * Header — name + language + theme share one bottom edge (no divider).
+ */
 .header {
+	--header-control-size: 2.25rem;
 	padding: 2rem 0 1.5rem;
 }
 
 .header-inner {
 	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 0.5rem 0.75rem;
+	align-items: flex-end;
+	flex-wrap: nowrap;
+	gap: 0.75rem;
 }
 
 .header-name-link {
+	display: inline-flex;
+	align-items: flex-end;
+	justify-content: flex-start;
 	text-decoration: none;
 	color: var(--fg);
+	flex-shrink: 1;
+	min-width: 0;
+	line-height: 0;
 }
 
 .header-name-link:hover {
@@ -348,26 +481,39 @@ body.has-toc .toc-toggle[hidden] {
 
 .header-name {
 	margin: 0;
+	padding: 0;
 	font-size: var(--font-size-header-name);
 	font-weight: 600;
 	line-height: 1;
+	height: auto;
+	display: block;
 	color: inherit;
 	transition: color var(--ease-color);
+}
+
+.header-name .i18n {
+	display: block;
+	line-height: 1;
 }
 
 .header-name .i18n-en,
 .header-name .i18n-zh {
 	display: inline;
+	line-height: 1;
+	vertical-align: baseline;
 }
 
 .header-spacer {
-	flex: 1;
-	min-width: 0;
+	flex: 1 1 auto;
+	min-width: 0.5rem;
+	align-self: flex-end;
+	height: 0;
+	border: 0;
 }
 
 .header-controls {
 	display: flex;
-	align-items: center;
+	align-items: flex-end;
 	gap: 0.45rem;
 	flex-shrink: 0;
 }
@@ -378,7 +524,9 @@ body.has-toc .toc-toggle[hidden] {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	height: 2.25rem;
+	height: var(--header-control-size);
+	box-sizing: border-box;
+	margin: 0;
 	border: 1px solid var(--border);
 	background: transparent;
 	color: var(--fg-muted);
@@ -420,12 +568,11 @@ body.has-toc .toc-toggle[hidden] {
 }
 
 .lang-toggle_state {
-	align-self: stretch;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	min-width: 1.25rem;
-	padding-top: 1px;
+	padding: 0;
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
 	line-height: 1;
 	text-align: center;
@@ -455,48 +602,67 @@ html.u-mode-invert .theme-toggle_icon--moon {
 	display: block;
 }
 
-/* Bio */
+/* Bio — text + fixed-size portrait (independent of copy height) */
+.home-container {
+	display: flow-root;
+}
+
+.bio {
+	display: flex;
+	align-items: flex-start;
+	gap: 1.75rem 2rem;
+}
+
+.bio-copy {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
 .bio-lead {
 	margin: 0;
 	color: var(--fg-body);
 }
 
-.home-intro_expand-link {
-	color: var(--fg-muted);
-	text-decoration: underline;
-	text-underline-offset: 0.15em;
-	cursor: pointer;
-	background: none;
-	border: 0;
-	padding: 0;
-	font: inherit;
-}
-
-.home-intro_expand-link:hover {
-	color: var(--fg);
-}
-
-.home-intro_expand-content {
-	display: grid;
-	grid-template-rows: 0fr;
-	transition: grid-template-rows 0.25s ease;
-}
-
-.home-intro_expand-content.is-open {
-	grid-template-rows: 1fr;
-}
-
-.home-intro_expand-content > .home-intro_expand-inner {
-	overflow: hidden;
-}
-
-.home-intro_expand-inner p {
+.bio-para {
 	margin: 1em 0 0;
 	color: var(--fg-body);
 }
 
-.home-intro_expand-ellipsis {
-	color: var(--fg-muted);
+/* Fixed portrait size; keep 2:3 aspect ratio */
+.bio-portrait {
+	position: relative;
+	flex: 0 0 auto;
+	width: 12.5rem;
+	margin: 0;
+	line-height: 0;
+	overflow: hidden;
+}
+
+.bio-portrait_img {
+	display: block;
+	width: 100%;
+	height: auto;
+	aspect-ratio: 2 / 3;
+	object-fit: cover;
+	object-position: 50% 18%;
+}
+
+@media (max-width: 720px) {
+	.bio {
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.bio-copy {
+		flex: 1 1 auto;
+		order: 1;
+	}
+
+	.bio-portrait {
+		order: 2;
+		align-self: flex-start;
+		width: 10.5rem;
+	}
 }
 
 /* Bullet lists */
@@ -583,6 +749,7 @@ html.u-mode-invert .theme-toggle_icon--moon {
 @media (max-width: 480px) {
 	:root {
 		--font-size-body: 1.125rem;
+		--font-size-body-zh: 1.0625rem;
 		--page-pad-x: 1rem;
 	}
 
