@@ -26,11 +26,10 @@ const {
 } = Astro.props;
 const dateEn = formatDate(date, 'en');
 const dateZh = formatDate(date, 'zh');
-const showToc = headingsEn.length > 0 || headingsZh.length > 0;
 ---
 
-<Base title={title} description={description} showTocToggle={showToc} hasToc={showToc}>
-	{showToc && <Toc slot="toc" en={headingsEn} zh={headingsZh} />}
+<Base title={title} description={description} showTocToggle hasToc>
+	<Toc slot="toc" en={headingsEn} zh={headingsZh} fallback={title} />
 
 	<article>
 		<div class="container cc-narrow">

@@ -1,18 +1,20 @@
 ---
-/**
- * Dario places the hamburger in the header row (essay pages only).
- * Hidden in side-panel mode; used below 1480px to open the full TOC drawer.
- */
+import { site } from '../data/site';
 ---
 
 <button
 	type="button"
 	class="toc-toggle"
 	data-toc-toggle
+	data-label-open-en={site.ui.openContents.en}
+	data-label-open-zh={site.ui.openContents.zh}
+	data-label-close-en={site.ui.closeContents.en}
+	data-label-close-zh={site.ui.closeContents.zh}
 	hidden
 	aria-expanded="false"
 	aria-controls="site-toc"
-	aria-label="Table of contents"
+	aria-label={site.ui.openContents.en}
+	title={site.ui.openContents.en}
 >
 	<svg
 		xmlns="http://www.w3.org/2000/svg"

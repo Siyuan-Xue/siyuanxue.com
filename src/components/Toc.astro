@@ -5,19 +5,21 @@ import type { Bi } from '../i18n/types';
 interface Props {
 	en: Heading[];
 	zh: Heading[];
+	fallback: Bi;
 }
 
-const { en, zh } = Astro.props;
-const hasEn = en.length > 0;
-const hasZh = zh.length > 0;
-const hasAny = hasEn || hasZh;
+const { en, zh, fallback } = Astro.props;
+const enItems: Heading[] = en.length > 0
+	? en
+	: [{ depth: 2, text: fallback.en, id: 'top' }];
+const zhItems: Heading[] = zh.length > 0
+	? zh
+	: [{ depth: 2, text: fallback.zh, id: 'top' }];
 
 const tocLabel: Bi = { en: 'Contents', zh: '目录' };
 ---
 
-{
-	hasAny && (
-		<nav id="site-toc" class="toc-container" data-toc-container data-toc-visibility>
+	<nav id="site-toc" class="toc-container" data-toc-container data-toc-visibility>
 			<div class="container cc-narrow cc-toc">
 				<h2 class="h3 toc-contents-title">
 					<span class="i18n-en" lang="en">
@@ -28,78 +30,94 @@ const tocLabel: Bi = { en: 'Contents', zh: '目录' };
 					</span>
 				</h2>
 				<div data-toc-list class="toc-list-wrap">
-					{hasEn && (
-						<ul class="toc-list lang-body-en" lang="en">
-							{en.map((h) => (
+					<ul class="toc-list lang-body-en" lang="en">
+							{enItems.map((h) => (
 								<li class:list={['toc-list_item', h.depth === 3 && 'toc-list_item--h3']}>
 									<a href={`#${h.id}`} class="toc-link" data-toc-link={h.id}>
 										{h.text}
 									</a>
 								</li>
 							))}
-						</ul>
-					)}
-					{hasZh && (
-						<ul class="toc-list lang-body-zh" lang="zh-CN">
-							{zh.map((h) => (
+					</ul>
+					<ul class="toc-list lang-body-zh" lang="zh-CN">
+							{zhItems.map((h) => (
 								<li class:list={['toc-list_item', h.depth === 3 && 'toc-list_item--h3']}>
 									<a href={`#${h.id}`} class="toc-link" data-toc-link={h.id}>
 										{h.text}
 									</a>
 								</li>
 							))}
-						</ul>
-					)}
+					</ul>
 				</div>
 			</div>
 		</nav>
-	)
-}
 
 <script>
 	const container = document.querySelector('[data-toc-container]');
 	const toggle = document.querySelector('[data-toc-toggle]');
+	let hideTimer: number | undefined;
+	let isOpen = false;
+
 	if (!(container instanceof HTMLElement)) {
 		// no toc
 	} else {
-		// Must match CSS: side panel only from 1480px; below = drawer
+		// Keep the wider breakpoint required by this site's broader reading column.
 		const mqDrawer = window.matchMedia('(max-width: 1479px)');
 
-		function setOpen(open: boolean) {
-			if (mqDrawer.matches) {
-				container.style.display = open ? 'block' : 'none';
-				document.body.style.overflow = open ? 'hidden' : '';
-			} else {
-				container.style.display = '';
-				document.body.style.overflow = '';
-			}
+		function updateToggle(open: boolean) {
 			if (toggle instanceof HTMLButtonElement) {
-				toggle.setAttribute('aria-expanded', String(open && mqDrawer.matches));
-				toggle.classList.toggle('is-open', open && mqDrawer.matches);
+				const lang = document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+				const action = open ? 'close' : 'open';
+				const label = toggle.getAttribute(`data-label-${action}-${lang}`) || 'Contents';
+
+				toggle.setAttribute('aria-expanded', String(open));
+				toggle.setAttribute('aria-label', label);
+				toggle.setAttribute('title', label);
+				toggle.classList.toggle('is-open', open);
 			}
 		}
 
-		function syncForViewport() {
-			if (mqDrawer.matches) {
-				setOpen(false);
+		function setOpen(open: boolean, animate = true) {
+			if (hideTimer !== undefined) {
+				window.clearTimeout(hideTimer);
+				hideTimer = undefined;
+			}
+
+			isOpen = open;
+			updateToggle(open);
+			document.body.style.overflow = open && mqDrawer.matches ? 'hidden' : '';
+
+			if (open) {
+				container.style.display = 'block';
+				if (animate) {
+					container.classList.add('is-closed');
+					void container.offsetWidth;
+				}
+				container.classList.remove('is-closed');
 			} else {
-				container.style.display = '';
-				document.body.style.overflow = '';
-				if (toggle instanceof HTMLButtonElement) {
-					toggle.setAttribute('aria-expanded', 'false');
-					toggle.classList.remove('is-open');
+				container.classList.add('is-closed');
+				if (animate) {
+					hideTimer = window.setTimeout(() => {
+						if (!isOpen) container.style.display = 'none';
+					}, 300);
+				} else {
+					container.style.display = 'none';
 				}
 			}
 		}
 
+		function syncForViewport() {
+			// Dario behavior: open by default beside the article, closed by default as a drawer.
+			setOpen(!mqDrawer.matches, false);
+		}
+
+		if (toggle instanceof HTMLButtonElement) toggle.hidden = false;
 		syncForViewport();
 		mqDrawer.addEventListener('change', syncForViewport);
 
 		if (toggle instanceof HTMLButtonElement) {
-			toggle.hidden = false;
 			toggle.addEventListener('click', () => {
-				const open = container.style.display !== 'block';
-				setOpen(open);
+				setOpen(!isOpen);
 			});
 		}
 
@@ -108,6 +126,15 @@ const tocLabel: Bi = { en: 'Contents', zh: '目录' };
 				if (mqDrawer.matches) setOpen(false);
 			});
 		});
+
+		document.addEventListener('keydown', (event) => {
+			if (event.key === 'Escape' && mqDrawer.matches && isOpen) {
+				setOpen(false);
+				toggle instanceof HTMLButtonElement && toggle.focus();
+			}
+		});
+
+		document.addEventListener('site:language-change', () => updateToggle(isOpen));
 
 		// Active link: opacity 1 via .cc-active (Dario)
 		const links = Array.from(container.querySelectorAll<HTMLAnchorElement>('a[data-toc-link]'));

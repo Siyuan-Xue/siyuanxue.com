@@ -30,6 +30,8 @@ export const site = {
 		switchToChinese: bi('Switch to Chinese', '切换到中文'),
 		switchToLight: bi('Switch to light mode', '切换到浅色模式'),
 		switchToDark: bi('Switch to dark mode', '切换到深色模式'),
+		openContents: bi('Open contents', '打开目录'),
+		closeContents: bi('Close contents', '关闭目录'),
 	},
 
 	bio: {
