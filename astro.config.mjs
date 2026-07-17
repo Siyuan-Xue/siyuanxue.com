@@ -7,7 +7,7 @@ import rehypeSlug from 'rehype-slug';
 // https://astro.build/config
 // Use unified (not Sätteri) so rehype-slug can add heading ids for the left TOC.
 export default defineConfig({
-	site: 'https://xuesiyuan.com',
+	site: 'https://siyuanxue.com',
 	integrations: [sitemap()],
 	markdown: {
 		processor: unified({

@@ -1,6 +1,6 @@
-# xuesiyuan.grok
+# siyuanxue.com
 
-Local project folder for the personal site (public domain target remains `xuesiyuan.com`).
+Local project folder for the personal site at `siyuanxue.com`.
 
 Personal site in the spirit of [darioamodei.com](https://darioamodei.com): narrow column, serif type, expandable bio, lists by genre — plus **EN / 中** language toggle (default **English**) next to the color-mode switch.
 
@@ -52,4 +52,13 @@ If either locale is missing, the article is skipped (console warning).
 bun run build   # → dist/
 ```
 
-Point any static host at `dist/`. Set `site` in `astro.config.mjs` to your real domain.
+Pull requests are build-checked by GitHub Actions. A successful push to `main`
+deploys `dist/` to the production server and rolls back automatically if the
+post-deploy health check fails.
+
+Production serves the site from `http://82.156.77.131` until DNS, ICP filing,
+and HTTPS are configured separately. The canonical site URL used by Astro and
+the sitemap is `https://siyuanxue.com`.
+
+See [`ops/README.md`](ops/README.md) for one-time server bootstrap, GitHub
+Environment configuration, deployment diagnostics, and manual rollback.
