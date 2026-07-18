@@ -731,6 +731,182 @@ html.u-mode-invert .theme-toggle_icon--moon {
 	color: var(--fg);
 }
 
+/* Under construction / WIP placeholder */
+.wip {
+	display: flex;
+	justify-content: center;
+	padding: 3rem 0 5rem;
+}
+
+.wip-panel {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.25rem;
+	text-align: center;
+	max-width: 22rem;
+}
+
+.wip-hammer {
+	/* Site ink color so light/dark both work (replaces #8fbffa / #2859c5) */
+	color: var(--fg);
+	width: 6.5rem;
+	height: 6.5rem;
+}
+
+.wip-hammer_svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+/* Pivot on handle (viewBox 0–14) — head swings down onto the block */
+.wip-gavel {
+	transform-box: view-box;
+	transform-origin: 10.2px 7.6px;
+	animation: wip-gavel-swing 1s cubic-bezier(0.45, 0.05, 0.25, 1) infinite;
+}
+
+.wip-block {
+	transform-origin: 50% 100%;
+	animation: wip-block-thud 1s ease-in-out infinite;
+}
+
+/* Spark burst — star rays scale out from strike point at impact (~42%) */
+.wip-sparks {
+	pointer-events: none;
+}
+
+.wip-spark {
+	transform-box: view-box;
+	transform-origin: 6.8px 10.35px;
+	opacity: 0;
+	animation: wip-spark-ray 1s ease-out infinite;
+}
+
+.wip-spark-dot {
+	opacity: 0;
+	transform-box: view-box;
+	transform-origin: 6.8px 10.35px;
+	animation: wip-spark-core 1s ease-out infinite;
+}
+
+.wip-text {
+	margin: 0;
+	font-size: 1.35em;
+	font-weight: 600;
+	color: var(--fg);
+	letter-spacing: 0.04em;
+}
+
+.wip-back {
+	margin: 0.25rem 0 0;
+	font-size: var(--font-size-meta);
+}
+
+.wip-back a {
+	color: var(--fg-muted);
+	text-decoration: none;
+	border-bottom: 1px solid transparent;
+}
+
+.wip-back a:hover {
+	color: var(--fg);
+	border-bottom-color: var(--border);
+}
+
+@keyframes wip-gavel-swing {
+	0%,
+	100% {
+		transform: rotate(-22deg);
+	}
+	42% {
+		transform: rotate(12deg);
+	}
+	50% {
+		transform: rotate(10deg);
+	}
+	58% {
+		transform: rotate(14deg);
+	}
+}
+
+@keyframes wip-block-thud {
+	0%,
+	44%,
+	100% {
+		transform: translateY(0);
+	}
+	48% {
+		transform: translateY(0.35px);
+	}
+	54% {
+		transform: translateY(0);
+	}
+}
+
+/* Rays burst at contact with gavel (~42%), then fade while still expanding */
+@keyframes wip-spark-ray {
+	0%,
+	40%,
+	100% {
+		opacity: 0;
+		transform: rotate(var(--rot, 0deg)) scale(0.15);
+	}
+	42% {
+		opacity: 1;
+		transform: rotate(var(--rot, 0deg)) scale(0.55);
+	}
+	50% {
+		opacity: 0.85;
+		transform: rotate(var(--rot, 0deg)) scale(1);
+	}
+	58% {
+		opacity: 0;
+		transform: rotate(var(--rot, 0deg)) scale(1.2);
+	}
+}
+
+@keyframes wip-spark-core {
+	0%,
+	40%,
+	100% {
+		opacity: 0;
+		transform: scale(0.3);
+	}
+	42% {
+		opacity: 1;
+		transform: scale(1.5);
+	}
+	50% {
+		opacity: 0.55;
+		transform: scale(0.9);
+	}
+	58% {
+		opacity: 0;
+		transform: scale(0.4);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.wip-gavel,
+	.wip-block,
+	.wip-spark,
+	.wip-spark-dot {
+		animation: none;
+	}
+
+	.wip-gavel {
+		transform: rotate(-8deg);
+	}
+
+	.wip-spark,
+	.wip-spark-dot {
+		opacity: 0;
+	}
+}
+
 @media (max-width: 480px) {
 	:root {
 		--font-size-body: 1.125rem;

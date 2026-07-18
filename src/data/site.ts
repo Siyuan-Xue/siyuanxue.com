@@ -1,5 +1,8 @@
 import { bi, type Bi } from '../i18n/types';
 
+/** Shared placeholder for entries without a real public URL yet */
+export const WIP_HREF = '/wip/';
+
 export type LinkItem = {
 	title: Bi;
 	href: string;
@@ -24,7 +27,7 @@ export const site = {
 		projects: bi('Projects', '项目'),
 		research: bi('Research', '研究'),
 		externalWriting: bi('Writing', '写作与表达'),
-		appearances: bi('Stage & activities', '舞台与活动'),
+		appearances: bi('Interests', '兴趣爱好'),
 		switchToEnglish: bi('Switch to English', '切换到英文'),
 		switchToChinese: bi('Switch to Chinese', '切换到中文'),
 		switchToLight: bi('Switch to light mode', '切换到浅色模式'),
@@ -91,7 +94,7 @@ export const site = {
 	research: [
 		{
 			title: bi('Yuheng · multimodal metaphor detection', '语衡 · 多模态隐喻检测'),
-			href: '#',
+			href: WIP_HREF,
 			venue: bi('NLPCC', 'NLPCC'),
 			year: 2026,
 			external: false,
@@ -109,6 +112,14 @@ export const site = {
 			href: 'https://www.bupt.edu.cn/info/1079/90114.htm',
 			year: 2025,
 			external: true,
+		},
+		{
+			title: bi(
+				'BUPT volleyball · school team & college team',
+				'校排球队 · 院排球队',
+			),
+			href: WIP_HREF,
+			external: false,
 		},
 	] satisfies LinkItem[],
 };
