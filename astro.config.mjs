@@ -23,19 +23,24 @@ export default defineConfig({
 			styles: ['normal', 'italic'],
 			fallbacks: ['Times New Roman', 'serif'],
 		},
-		// 思源宋体 SC — modern Song with true multi-weight (400/600/700), pairs with Newsreader.
+		// 思源宋体 SC — must include chinese-simplified (default subset is latin-only,
+		// which left Safari falling back to system sans for Han glyphs).
 		{
 			provider: fontProviders.fontsource(),
 			name: 'Noto Serif SC',
 			cssVariable: '--font-noto-serif-sc',
 			weights: [400, 600, 700],
 			styles: ['normal'],
+			subsets: ['chinese-simplified', 'latin'],
 			fallbacks: [
+				// Real CJK serifs first — never put a Latin-only face as CJK fallback
+				'Songti SC',
+				'STSongti-SC-Regular',
+				'STSong',
 				'Source Han Serif SC',
 				'Noto Serif CJK SC',
-				'Songti SC',
-				'STSong',
 				'SimSun',
+				'宋体',
 				'serif',
 			],
 		},

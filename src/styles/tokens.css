@@ -37,13 +37,14 @@
 
 	/*
 	 * Latin: Newsreader (site brand).
-	 * CJK: Noto Serif SC / 思源宋体 — modern Song with true 400/600/700 (no Hei swap).
+	 * CJK: Noto Serif SC with chinese-simplified subset (see astro.config fonts).
 	 */
 	--font-serif-latin: var(--font-newsreader), 'Times New Roman', 'PT Serif', Georgia, Times,
 		serif;
-	--font-serif-cjk: var(--font-noto-serif-sc), 'Source Han Serif SC', 'Noto Serif CJK SC',
-		'Songti SC', 'STSong', 'SimSun', '宋体', serif;
-	/* Mixed: Newsreader (Latin unicode-range) then Noto Serif SC for Han */
+	/* Prefer Noto SC first; system Song as backup — never a sans (PingFang) */
+	--font-serif-cjk: var(--font-noto-serif-sc), 'Songti SC', 'STSongti-SC-Regular', 'STSong',
+		'Source Han Serif SC', 'Noto Serif CJK SC', 'SimSun', '宋体', serif;
+	/* EN: Latin first. ZH overrides to CJK-first so Safari picks Song/Noto for Han. */
 	--font-serif: var(--font-serif-latin), var(--font-serif-cjk);
 	--font-size-body: 1.25rem;
 	--line-height-body: 1.6;
@@ -102,8 +103,9 @@ html[data-lang='zh'] .lang-body-en {
 	display: none !important;
 }
 
-/* Chinese UI mode metrics */
+/* Chinese UI: metrics + CJK-first stack (critical for iOS Safari Han rendering) */
 html[data-lang='zh'] {
+	--font-serif: var(--font-serif-cjk), var(--font-serif-latin);
 	--font-size-body: var(--font-size-body-zh);
 	--line-height-body: var(--line-height-body-zh);
 	--list-gap: 0.7em;

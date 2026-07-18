@@ -72,10 +72,11 @@ html[data-lang='zh'] body {
  * parent bold (.header-name 600, .h3 600, .post-title 700), so 薛思远/长文/项目
  * looked regular while Siyuan Xue / Essays / Projects looked bold.
  */
+/* Always CJK-first on Chinese text nodes (even if page lang is still en during FOUC) */
 .i18n-zh,
 .lang-body-zh,
 [lang='zh-CN'] {
-	font-family: var(--font-serif);
+	font-family: var(--font-serif-cjk), var(--font-serif-latin);
 	font-synthesis: none;
 	letter-spacing: var(--letter-spacing-zh-body);
 	line-break: strict;

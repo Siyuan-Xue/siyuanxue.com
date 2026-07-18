@@ -76,9 +76,9 @@ export const site = {
 		},
 		{
 			title: bi('LeDA Agent', 'LeDA 智能体'),
-			href: '#',
+			href: 'https://win.bupt.edu.cn/program.do?id=9909',
 			year: 2026,
-			external: false,
+			external: true,
 		},
 		{
 			title: bi('PixelDone', '像素清单'),
