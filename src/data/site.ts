@@ -25,6 +25,10 @@ export type SecretPortrait = {
 	caption: Bi;
 	dialogLabel: Bi;
 	closeLabel: Bi;
+	turnOnLabel: Bi;
+	turnOffLabel: Bi;
+	modeOnMessage: Bi;
+	modeOffMessage: Bi;
 	storageKey: string;
 	statusMessages: readonly SecretPortraitStatus[];
 };
@@ -94,6 +98,10 @@ export const site = {
 		),
 		dialogLabel: bi('Romantic Mode portrait', '心动模式肖像'),
 		closeLabel: bi('Close Romantic Mode portrait', '关闭心动模式肖像'),
+		turnOnLabel: bi('Turn on Romantic Mode', '开启心动模式'),
+		turnOffLabel: bi('Turn off Romantic Mode', '关闭心动模式'),
+		modeOnMessage: bi('Romantic Mode on.', '心动模式已开启。'),
+		modeOffMessage: bi('Romantic Mode off.', '心动模式已关闭。'),
 		storageKey: ROMANTIC_MODE_STORAGE_KEY,
 		statusMessages: [
 			{

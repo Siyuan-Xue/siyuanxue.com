@@ -27,7 +27,7 @@ describe('Romantic Mode state machine', () => {
 		expect(ROMANTIC_MODE_UNLOCK_TAPS).toBe(7);
 		let state = createRomanticModeState();
 
-		expect(state).toEqual({ activationCount: 0, unlocked: false });
+		expect(state).toEqual({ activationCount: 0, unlocked: false, active: false });
 
 		for (let activation = 1; activation <= ROMANTIC_MODE_UNLOCK_TAPS; activation += 1) {
 			const step = advanceRomanticMode(state);
@@ -35,8 +35,10 @@ describe('Romantic Mode state machine', () => {
 
 			expect(state.activationCount).toBe(activation);
 			expect(state.unlocked).toBe(activation === ROMANTIC_MODE_UNLOCK_TAPS);
+			expect(state.active).toBe(activation === ROMANTIC_MODE_UNLOCK_TAPS);
 			expect(step.remaining).toBe(ROMANTIC_MODE_UNLOCK_TAPS - activation);
 			expect(step.unlockedNow).toBe(activation === ROMANTIC_MODE_UNLOCK_TAPS);
+			expect(step.toggledNow).toBe(false);
 		}
 	});
 
@@ -71,17 +73,23 @@ describe('Romantic Mode state machine', () => {
 		]);
 	});
 
-	test('does not unlock or announce again after becoming unlocked', () => {
-		const unlockedState = createRomanticModeState(true);
-		const step = advanceRomanticMode(unlockedState);
+	test('toggles the active mode after it has been unlocked', () => {
+		const activeState = createRomanticModeState(true);
+		const offStep = advanceRomanticMode(activeState);
 
-		expect(unlockedState).toEqual({ activationCount: 7, unlocked: true });
-		expect(step).toEqual({
-			state: unlockedState,
+		expect(activeState).toEqual({ activationCount: 7, unlocked: true, active: true });
+		expect(offStep).toEqual({
+			state: { activationCount: 7, unlocked: true, active: false },
 			remaining: 0,
 			unlockedNow: false,
-			shouldAnnounce: false,
+			toggledNow: true,
+			shouldAnnounce: true,
 		});
+
+		const onStep = advanceRomanticMode(offStep.state);
+		expect(onStep.state).toEqual(activeState);
+		expect(onStep.toggledNow).toBe(true);
+		expect(onStep.shouldAnnounce).toBe(true);
 	});
 });
 
@@ -93,6 +101,15 @@ describe('Romantic Mode session persistence', () => {
 		expect(persistRomanticMode(storage, unlockedState)).toBe(true);
 		expect(storage.values.get(ROMANTIC_MODE_STORAGE_KEY)).toBe('1');
 		expect(restoreRomanticMode(storage)).toEqual(unlockedState);
+	});
+
+	test('round-trips an unlocked but inactive mode through the session key', () => {
+		const storage = createMemoryStorage();
+		const inactiveState = createRomanticModeState(true, false);
+
+		expect(persistRomanticMode(storage, inactiveState)).toBe(true);
+		expect(storage.values.get(ROMANTIC_MODE_STORAGE_KEY)).toBe('2');
+		expect(restoreRomanticMode(storage)).toEqual(inactiveState);
 	});
 
 	test('keeps a new session locked when no unlock marker exists', () => {

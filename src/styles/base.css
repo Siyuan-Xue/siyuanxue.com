@@ -711,12 +711,12 @@ html.u-mode-invert .theme-toggle_icon--moon {
 	object-fit: cover;
 }
 
-.romantic-portrait.is-unlocked .romantic-portrait_primary {
+.romantic-portrait.is-active .romantic-portrait_primary {
 	filter: drop-shadow(0 0.65rem 0.9rem rgb(31 30 29 / 18%));
 	transform: translateX(-9%) rotate(-1deg);
 }
 
-.romantic-portrait.is-unlocked .romantic-portrait_secret {
+.romantic-portrait.is-active .romantic-portrait_secret {
 	box-shadow: 0 0.85rem 2rem rgb(31 30 29 / 24%);
 	transform: translateX(14%) rotate(2deg);
 }
@@ -845,11 +845,11 @@ html.u-mode-invert .theme-toggle_icon--moon {
 }
 
 @media (max-width: 960px) {
-	.romantic-portrait.is-unlocked .romantic-portrait_primary {
+	.romantic-portrait.is-active .romantic-portrait_primary {
 		transform: translateX(-7%) rotate(-1deg);
 	}
 
-	.romantic-portrait.is-unlocked .romantic-portrait_secret {
+	.romantic-portrait.is-active .romantic-portrait_secret {
 		transform: translateX(10%) rotate(2deg);
 	}
 }

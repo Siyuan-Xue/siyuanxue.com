@@ -4,31 +4,38 @@ export const ROMANTIC_MODE_STORAGE_KEY = 'romantic-mode-unlocked-v1';
 export type RomanticModeState = Readonly<{
 	activationCount: number;
 	unlocked: boolean;
+	active: boolean;
 }>;
 
 export type RomanticModeStep = Readonly<{
 	state: RomanticModeState;
 	remaining: number;
 	unlockedNow: boolean;
+	toggledNow: boolean;
 	shouldAnnounce: boolean;
 }>;
 
 export type RomanticModeStorage = Pick<Storage, 'getItem' | 'setItem'>;
 
-export function createRomanticModeState(unlocked = false): RomanticModeState {
+export function createRomanticModeState(
+	unlocked = false,
+	active = unlocked,
+): RomanticModeState {
 	return {
 		activationCount: unlocked ? ROMANTIC_MODE_UNLOCK_TAPS : 0,
 		unlocked,
+		active: unlocked && active,
 	};
 }
 
 export function advanceRomanticMode(state: RomanticModeState): RomanticModeStep {
 	if (state.unlocked) {
 		return {
-			state,
+			state: { ...state, active: !state.active },
 			remaining: 0,
 			unlockedNow: false,
-			shouldAnnounce: false,
+			toggledNow: true,
+			shouldAnnounce: true,
 		};
 	}
 
@@ -39,9 +46,10 @@ export function advanceRomanticMode(state: RomanticModeState): RomanticModeStep 
 	const unlocked = activationCount === ROMANTIC_MODE_UNLOCK_TAPS;
 
 	return {
-		state: { activationCount, unlocked },
+		state: { activationCount, unlocked, active: unlocked },
 		remaining: ROMANTIC_MODE_UNLOCK_TAPS - activationCount,
 		unlockedNow: unlocked,
+		toggledNow: false,
 		shouldAnnounce: true,
 	};
 }
@@ -51,7 +59,10 @@ export function restoreRomanticMode(
 	key = ROMANTIC_MODE_STORAGE_KEY,
 ): RomanticModeState {
 	try {
-		return createRomanticModeState(storage?.getItem(key) === '1');
+		const stored = storage?.getItem(key);
+		if (stored === '1') return createRomanticModeState(true);
+		if (stored === '2') return createRomanticModeState(true, false);
+		return createRomanticModeState();
 	} catch {
 		return createRomanticModeState();
 	}
@@ -64,7 +75,8 @@ export function persistRomanticMode(
 ): boolean {
 	try {
 		if (!storage) return false;
-		storage.setItem(key, state.unlocked ? '1' : '0');
+		const stored = state.unlocked ? (state.active ? '1' : '2') : '0';
+		storage.setItem(key, stored);
 		return true;
 	} catch {
 		return false;

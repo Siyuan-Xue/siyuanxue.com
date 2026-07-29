@@ -72,11 +72,27 @@ describe('Romantic Mode production output', () => {
 
 		for (let activation = 1; activation <= 7; activation += 1) {
 			expect(html).toMatch(
-				new RegExp(`data-status-${activation}-en=["'][^"']+["']`),
+				new RegExp(`data-status${activation}-en=["'][^"']+["']`),
 			);
 			expect(html).toMatch(
-				new RegExp(`data-status-${activation}-zh=["'][^"']+["']`),
+				new RegExp(`data-status${activation}-zh=["'][^"']+["']`),
 			);
+		}
+	});
+
+	test('the original portrait includes localized mode-switch feedback', () => {
+		const html = readFileSync(indexPath, 'utf8');
+		for (const attribute of [
+			'data-turn-on-label-en',
+			'data-turn-on-label-zh',
+			'data-turn-off-label-en',
+			'data-turn-off-label-zh',
+			'data-mode-on-en',
+			'data-mode-on-zh',
+			'data-mode-off-en',
+			'data-mode-off-zh',
+		]) {
+			expect(html).toMatch(new RegExp(`${attribute}=["'][^"']+["']`));
 		}
 	});
 

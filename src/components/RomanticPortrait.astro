@@ -24,20 +24,28 @@ const captionId = 'romantic-mode-caption';
 	data-dialog-label-zh={secret.dialogLabel.zh}
 	data-close-label-en={secret.closeLabel.en}
 	data-close-label-zh={secret.closeLabel.zh}
-	data-status-1-en={status1.message.en}
-	data-status-1-zh={status1.message.zh}
-	data-status-2-en={status2.message.en}
-	data-status-2-zh={status2.message.zh}
-	data-status-3-en={status3.message.en}
-	data-status-3-zh={status3.message.zh}
-	data-status-4-en={status4.message.en}
-	data-status-4-zh={status4.message.zh}
-	data-status-5-en={status5.message.en}
-	data-status-5-zh={status5.message.zh}
-	data-status-6-en={status6.message.en}
-	data-status-6-zh={status6.message.zh}
-	data-status-7-en={status7.message.en}
-	data-status-7-zh={status7.message.zh}
+	data-turn-on-label-en={secret.turnOnLabel.en}
+	data-turn-on-label-zh={secret.turnOnLabel.zh}
+	data-turn-off-label-en={secret.turnOffLabel.en}
+	data-turn-off-label-zh={secret.turnOffLabel.zh}
+	data-mode-on-en={secret.modeOnMessage.en}
+	data-mode-on-zh={secret.modeOnMessage.zh}
+	data-mode-off-en={secret.modeOffMessage.en}
+	data-mode-off-zh={secret.modeOffMessage.zh}
+	data-status1-en={status1.message.en}
+	data-status1-zh={status1.message.zh}
+	data-status2-en={status2.message.en}
+	data-status2-zh={status2.message.zh}
+	data-status3-en={status3.message.en}
+	data-status3-zh={status3.message.zh}
+	data-status4-en={status4.message.en}
+	data-status4-zh={status4.message.zh}
+	data-status5-en={status5.message.en}
+	data-status5-zh={status5.message.zh}
+	data-status6-en={status6.message.en}
+	data-status6-zh={status6.message.zh}
+	data-status7-en={status7.message.en}
+	data-status7-zh={status7.message.zh}
 >
 	<div
 		class="romantic-portrait_stage"
@@ -152,8 +160,10 @@ const captionId = 'romantic-mode-caption';
 
 		const storageKey = root.dataset.storageKey;
 		let state = restoreRomanticMode(storage, storageKey);
-		let activeStatusCount = 0;
+		let activeStatusName: string | null = null;
 		let toastTimer: number | undefined;
+		let concealTimer: number | undefined;
+		let revealFrame: number | undefined;
 		let secretImage: HTMLImageElement | null = null;
 		let dialogImage: HTMLImageElement | null = null;
 		let dialogOpener: HTMLElement | null = null;
@@ -165,9 +175,6 @@ const captionId = 'romantic-mode-caption';
 			const suffix = locale() === 'zh' ? 'Zh' : 'En';
 			return root.dataset[`${name}${suffix}`] ?? '';
 		};
-
-		const statusMessage = (activationCount: number) =>
-			localized(`status${activationCount}`);
 
 		const makeSecretImage = (className: string) => {
 			const image = document.createElement('img');
@@ -199,45 +206,119 @@ const captionId = 'romantic-mode-caption';
 			secretCard.setAttribute('aria-label', localized('dialogLabel'));
 			dialog.setAttribute('aria-label', localized('dialogLabel'));
 			closeButton.setAttribute('aria-label', localized('closeLabel'));
+			if (state.unlocked) {
+				trigger.setAttribute(
+					'aria-label',
+					localized(state.active ? 'turnOffLabel' : 'turnOnLabel'),
+				);
+			} else {
+				trigger.removeAttribute('aria-label');
+			}
 			if (secretImage) secretImage.alt = localized('secretAlt');
 			if (dialogImage) dialogImage.alt = localized('secretAlt');
-			if (activeStatusCount > 0) {
-				status.textContent = statusMessage(activeStatusCount);
+			if (activeStatusName) {
+				status.textContent = localized(activeStatusName);
 			}
 		};
 
-		const showStatus = (activationCount: number) => {
-			activeStatusCount = activationCount;
-			status.textContent = statusMessage(activationCount);
+		const showStatus = (name: string, duration = 2800) => {
+			activeStatusName = name;
+			status.textContent = localized(name);
 			status.classList.add('is-visible');
 			if (toastTimer !== undefined) window.clearTimeout(toastTimer);
 			toastTimer = window.setTimeout(() => {
 				status.classList.remove('is-visible');
 				status.textContent = '';
-				activeStatusCount = 0;
-			}, activationCount === 7 ? 3600 : 2800);
+				activeStatusName = null;
+			}, duration);
+		};
+
+		const syncTriggerState = () => {
+			trigger.setAttribute('aria-expanded', String(state.active));
+			if (state.unlocked) {
+				trigger.setAttribute('aria-pressed', String(state.active));
+				trigger.setAttribute(
+					'aria-label',
+					localized(state.active ? 'turnOffLabel' : 'turnOnLabel'),
+				);
+			} else {
+				trigger.removeAttribute('aria-pressed');
+				trigger.removeAttribute('aria-label');
+			}
 		};
 
 		const reveal = (animate: boolean) => {
+			if (concealTimer !== undefined) {
+				window.clearTimeout(concealTimer);
+				concealTimer = undefined;
+			}
+			if (revealFrame !== undefined) {
+				window.cancelAnimationFrame(revealFrame);
+				revealFrame = undefined;
+			}
 			ensureSecretImage();
-			trigger.setAttribute('aria-expanded', 'true');
+			syncTriggerState();
 
 			if (!animate) {
-				root.classList.add('is-unlocked');
 				secretCard.hidden = false;
+				root.classList.add('is-active');
 				return;
 			}
 
 			secretCard.hidden = false;
 			void secretCard.offsetWidth;
-			window.requestAnimationFrame(() => root.classList.add('is-unlocked'));
+			revealFrame = window.requestAnimationFrame(() => {
+				if (state.active) root.classList.add('is-active');
+				revealFrame = undefined;
+			});
+		};
+
+		const conceal = (animate: boolean) => {
+			if (concealTimer !== undefined) window.clearTimeout(concealTimer);
+			if (revealFrame !== undefined) {
+				window.cancelAnimationFrame(revealFrame);
+				revealFrame = undefined;
+			}
+			root.classList.remove('is-active');
+			syncTriggerState();
+
+			const reducedMotion = window.matchMedia(
+				'(prefers-reduced-motion: reduce)',
+			).matches;
+			if (!animate || reducedMotion) {
+				secretCard.hidden = true;
+				concealTimer = undefined;
+				return;
+			}
+
+			concealTimer = window.setTimeout(() => {
+				if (!state.active) secretCard.hidden = true;
+				concealTimer = undefined;
+			}, 600);
 		};
 
 		trigger.addEventListener('click', () => {
 			const step = advanceRomanticMode(state);
 			state = step.state;
 
-			if (step.shouldAnnounce) showStatus(state.activationCount);
+			if (step.toggledNow) {
+				persistRomanticMode(storage, state, storageKey);
+				if (state.active) {
+					reveal(true);
+					showStatus('modeOn');
+				} else {
+					conceal(true);
+					showStatus('modeOff');
+				}
+				return;
+			}
+
+			if (step.shouldAnnounce) {
+				showStatus(
+					`status${state.activationCount}`,
+					step.unlockedNow ? 3600 : 2800,
+				);
+			}
 			if (step.unlockedNow) {
 				persistRomanticMode(storage, state, storageKey);
 				reveal(true);
@@ -272,6 +353,10 @@ const captionId = 'romantic-mode-caption';
 		document.addEventListener('site:language-change', syncLanguage);
 
 		syncLanguage();
-		if (state.unlocked) reveal(false);
+		if (state.active) {
+			reveal(false);
+		} else if (state.unlocked) {
+			conceal(false);
+		}
 	});
 </script>
