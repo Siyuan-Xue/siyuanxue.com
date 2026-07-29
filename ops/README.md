@@ -1,9 +1,11 @@
 # Production deployment
 
 The production target is the Tencent Cloud Lighthouse server at
-`82.156.77.131`. Nginx serves the static Astro build over HTTP from
-`/var/www/siyuanxue.com/current`. DNS, ICP filing, and HTTPS are intentionally
-outside this setup.
+`82.156.77.131`. Nginx serves the static Astro build from
+`/var/www/siyuanxue.com/current`; the canonical public origin is
+`https://siyuanxue.com`. Domain certificate issuance, staged alternate-domain
+activation, renewal, and HTTPS rollback are documented in
+[`HTTPS.md`](./HTTPS.md).
 
 ## 1. Generate the CI-only SSH key
 
@@ -39,8 +41,9 @@ bootstrap release. It does not modify Docker or the existing `ubuntu` password
 login. Re-running it updates the managed configuration without resetting an
 existing `current` release.
 
-In the Tencent Cloud Lighthouse firewall, allow inbound TCP 80 from the public
-internet. TCP 22 must remain reachable by GitHub-hosted runners for deployment.
+In the Tencent Cloud Lighthouse firewall, allow inbound TCP 80 and 443 from the
+public internet. TCP 22 must remain reachable by GitHub-hosted runners for
+deployment.
 
 Verify key-only deployment access from the local machine:
 
@@ -64,7 +67,7 @@ Environment variables:
 | `DEPLOY_PORT` | `22` |
 | `DEPLOY_USER` | `deploy` |
 | `DEPLOY_ROOT` | `/var/www/siyuanxue.com` |
-| `DEPLOY_ORIGIN` | `http://82.156.77.131` |
+| `DEPLOY_ORIGIN` | `https://siyuanxue.com` |
 
 Environment secrets:
 
@@ -90,8 +93,11 @@ bootstrap fallback.
 Useful diagnostics:
 
 ```bash
-curl --fail http://82.156.77.131/__health
+curl --fail https://siyuanxue.com/__health
+curl --fail http://82.156.77.131/__health  # emergency origin
 sudo nginx -t
+sudo certbot certificates
+sudo certbot renew --dry-run
 sudo systemctl status nginx fail2ban
 sudo fail2ban-client status sshd
 sudo tail -n 100 /var/log/nginx/siyuanxue.error.log

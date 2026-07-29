@@ -29,12 +29,26 @@ jobs:
       - name: Install frozen dependencies
         run: bun install --frozen-lockfile
 
+      - name: Install Nginx configuration validator
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends nginx
+
       - name: Validate operations scripts
         run: |
           bash -n ops/bootstrap-remote.sh
           bash -n ops/bootstrap-server.sh
+          bash -n ops/enable-https.sh
+          bash -n ops/install-nginx-config.sh
+          bash -n ops/reload-nginx-after-renewal.sh
           bash -n ops/release.sh
+          bash -n ops/test-enable-https.sh
+          bash -n ops/test-install-nginx-config.sh
+          bash -n ops/test-nginx-config.sh
           bash -n ops/test-release.sh
+          bash ops/test-enable-https.sh
+          bash ops/test-install-nginx-config.sh
+          bash ops/test-nginx-config.sh
           bash ops/test-release.sh
 
       - name: Build production site
