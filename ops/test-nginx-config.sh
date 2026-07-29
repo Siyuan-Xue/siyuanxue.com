@@ -50,6 +50,10 @@ render_config() {
 		-e "s#/var/lib/letsencrypt#$TEST_ROOT/var/lib/letsencrypt#g" \
 		-e "s#/var/www/siyuanxue.com#$TEST_ROOT/var/www/siyuanxue.com#g" \
 		-e "s#/var/log/nginx#$TEST_ROOT/var/log/nginx#g" \
+		-e 's/listen 80/listen 18080/g' \
+		-e 's/\[::\]:80/[::]:18080/g' \
+		-e 's/listen 443/listen 18443/g' \
+		-e 's/\[::\]:443/[::]:18443/g' \
 		"$source" > "$target"
 }
 
@@ -61,6 +65,7 @@ pid $TEST_ROOT/nginx.pid;
 error_log stderr;
 events {}
 http {
+	access_log off;
 	include $include_pattern;
 }
 EOF
