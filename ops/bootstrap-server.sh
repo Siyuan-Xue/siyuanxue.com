@@ -119,14 +119,30 @@ configure_site_tree() {
 }
 
 configure_services() {
+	local https_tools=/usr/local/lib/siyuanxue-https
+	local template
+
 	install -o root -g root -m 0755 "$SCRIPT_DIR/release.sh" /usr/local/bin/siyuanxue-release
-	install -o root -g root -m 0644 "$SCRIPT_DIR/nginx-siyuanxue.conf" \
-		/etc/nginx/sites-available/siyuanxue
+	install -d -o root -g root -m 0755 "$https_tools/nginx" /usr/local/sbin
+	install -o root -g root -m 0755 "$SCRIPT_DIR/enable-https.sh" \
+		"$https_tools/enable-https.sh"
+	install -o root -g root -m 0755 "$SCRIPT_DIR/reload-nginx-after-renewal.sh" \
+		"$https_tools/reload-nginx-after-renewal.sh"
+	for template in "$SCRIPT_DIR"/nginx/*; do
+		[[ -f "$template" ]] || continue
+		install -o root -g root -m 0644 "$template" \
+			"$https_tools/nginx/${template##*/}"
+	done
+	ln -sfn "$https_tools/enable-https.sh" /usr/local/sbin/siyuanxue-enable-https
 	install -o root -g root -m 0644 "$SCRIPT_DIR/fail2ban-sshd.local" \
 		/etc/fail2ban/jail.d/siyuanxue-sshd.local
 
 	rm -f /etc/nginx/sites-enabled/default
-	ln -sfn /etc/nginx/sites-available/siyuanxue /etc/nginx/sites-enabled/siyuanxue
+	bash "$SCRIPT_DIR/install-nginx-config.sh" \
+		"$SCRIPT_DIR/nginx-siyuanxue.conf" \
+		/etc/nginx/sites-available \
+		/etc/nginx/sites-enabled \
+		/etc/letsencrypt
 	nginx -t
 	systemctl enable --now nginx fail2ban
 	systemctl reload nginx

@@ -56,9 +56,11 @@ Pull requests are build-checked by GitHub Actions. A successful push to `main`
 deploys `dist/` to the production server and rolls back automatically if the
 post-deploy health check fails.
 
-Production serves the site from `http://82.156.77.131` until DNS, ICP filing,
-and HTTPS are configured separately. The canonical site URL used by Astro and
-the sitemap is `https://siyuanxue.com`.
+The canonical production URL is `https://siyuanxue.com`. The registered
+alternate domains `xuesiyuan.com` and `xuesiyuan.com.cn` are enabled only after
+their individual ICP filings complete; once enabled, their apex and `www`
+hosts redirect to the canonical URL. Certificate issuance, renewal, cutover,
+and rollback are documented in [`ops/HTTPS.md`](ops/HTTPS.md).
 
 See [`ops/README.md`](ops/README.md) for one-time server bootstrap, GitHub
 Environment configuration, deployment diagnostics, and manual rollback.

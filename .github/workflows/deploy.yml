@@ -59,7 +59,10 @@ jobs:
           (( DEPLOY_PORT >= 1 && DEPLOY_PORT <= 65535 ))
           [[ "$DEPLOY_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
           [[ "$DEPLOY_ROOT" == /var/www/siyuanxue.com ]]
-          [[ "$DEPLOY_ORIGIN" == http://82.156.77.131 ]]
+          case "$DEPLOY_ORIGIN" in
+            https://siyuanxue.com|http://82.156.77.131) ;;
+            *) exit 1 ;;
+          esac
 
       - name: Install frozen dependencies
         run: bun install --frozen-lockfile
@@ -68,8 +71,15 @@ jobs:
         run: |
           bash -n ops/bootstrap-remote.sh
           bash -n ops/bootstrap-server.sh
+          bash -n ops/enable-https.sh
+          bash -n ops/install-nginx-config.sh
+          bash -n ops/reload-nginx-after-renewal.sh
           bash -n ops/release.sh
+          bash -n ops/test-enable-https.sh
+          bash -n ops/test-install-nginx-config.sh
           bash -n ops/test-release.sh
+          bash ops/test-enable-https.sh
+          bash ops/test-install-nginx-config.sh
           bash ops/test-release.sh
 
       - name: Build production site
@@ -192,7 +202,10 @@ jobs:
           (( DEPLOY_PORT >= 1 && DEPLOY_PORT <= 65535 ))
           [[ "$DEPLOY_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
           [[ "$DEPLOY_ROOT" == /var/www/siyuanxue.com ]]
-          [[ "$DEPLOY_ORIGIN" == http://82.156.77.131 ]]
+          case "$DEPLOY_ORIGIN" in
+            https://siyuanxue.com|http://82.156.77.131) ;;
+            *) exit 1 ;;
+          esac
           [[ "$ROLLBACK_SHA" =~ ^[0-9a-f]{40}$ ]]
 
       - name: Configure strict SSH authentication
