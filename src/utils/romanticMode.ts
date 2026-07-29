@@ -42,7 +42,7 @@ export function advanceRomanticMode(state: RomanticModeState): RomanticModeStep 
 		state: { activationCount, unlocked },
 		remaining: ROMANTIC_MODE_UNLOCK_TAPS - activationCount,
 		unlockedNow: unlocked,
-		shouldAnnounce: activationCount >= 4,
+		shouldAnnounce: true,
 	};
 }
 

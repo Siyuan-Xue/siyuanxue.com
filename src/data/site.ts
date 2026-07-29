@@ -13,7 +13,7 @@ export type LinkItem = {
 };
 
 export type SecretPortraitStatus = {
-	activationCount: 4 | 5 | 6 | 7;
+	activationCount: 1 | 2 | 3 | 4 | 5 | 6 | 7;
 	message: Bi;
 };
 
@@ -96,6 +96,27 @@ export const site = {
 		closeLabel: bi('Close Romantic Mode portrait', '关闭心动模式肖像'),
 		storageKey: ROMANTIC_MODE_STORAGE_KEY,
 		statusMessages: [
+			{
+				activationCount: 1,
+				message: bi(
+					'6 taps away from Romantic Mode.',
+					'再点 6 次，解锁心动模式。',
+				),
+			},
+			{
+				activationCount: 2,
+				message: bi(
+					'5 taps away from Romantic Mode.',
+					'再点 5 次，解锁心动模式。',
+				),
+			},
+			{
+				activationCount: 3,
+				message: bi(
+					'4 taps away from Romantic Mode.',
+					'再点 4 次，解锁心动模式。',
+				),
+			},
 			{
 				activationCount: 4,
 				message: bi(

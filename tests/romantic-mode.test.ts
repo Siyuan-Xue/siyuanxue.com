@@ -40,7 +40,7 @@ describe('Romantic Mode state machine', () => {
 		}
 	});
 
-	test('announces only the 3, 2, 1, and unlocked thresholds', () => {
+	test('announces a countdown line after every activation', () => {
 		let state = createRomanticModeState();
 		const timeline: Array<{
 			activation: number;
@@ -61,9 +61,9 @@ describe('Romantic Mode state machine', () => {
 		}
 
 		expect(timeline).toEqual([
-			{ activation: 1, remaining: 6, shouldAnnounce: false, unlockedNow: false },
-			{ activation: 2, remaining: 5, shouldAnnounce: false, unlockedNow: false },
-			{ activation: 3, remaining: 4, shouldAnnounce: false, unlockedNow: false },
+			{ activation: 1, remaining: 6, shouldAnnounce: true, unlockedNow: false },
+			{ activation: 2, remaining: 5, shouldAnnounce: true, unlockedNow: false },
+			{ activation: 3, remaining: 4, shouldAnnounce: true, unlockedNow: false },
 			{ activation: 4, remaining: 3, shouldAnnounce: true, unlockedNow: false },
 			{ activation: 5, remaining: 2, shouldAnnounce: true, unlockedNow: false },
 			{ activation: 6, remaining: 1, shouldAnnounce: true, unlockedNow: false },

@@ -66,6 +66,20 @@ function jpegDimensions(bytes: Uint8Array): { width: number; height: number } {
 }
 
 describe('Romantic Mode production output', () => {
+	test('the original portrait includes a localized line for every activation', () => {
+		expect(existsSync(indexPath)).toBe(true);
+		const html = readFileSync(indexPath, 'utf8');
+
+		for (let activation = 1; activation <= 7; activation += 1) {
+			expect(html).toMatch(
+				new RegExp(`data-status-${activation}-en=["'][^"']+["']`),
+			);
+			expect(html).toMatch(
+				new RegExp(`data-status-${activation}-zh=["'][^"']+["']`),
+			);
+		}
+	});
+
 	test('the secret portrait is not emitted as an eager resource', () => {
 		expect(existsSync(indexPath)).toBe(true);
 		const html = readFileSync(indexPath, 'utf8');
