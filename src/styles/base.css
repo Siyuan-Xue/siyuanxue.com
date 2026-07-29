@@ -630,6 +630,8 @@ html.u-mode-invert .theme-toggle_icon--moon {
 
 .bio-portrait {
 	float: right;
+	position: relative;
+	z-index: 1;
 	width: clamp(12rem, 30%, 16.5rem);
 	margin: 0 0 1.5rem 2rem;
 	line-height: 0;
@@ -641,12 +643,231 @@ html.u-mode-invert .theme-toggle_icon--moon {
 	height: auto;
 }
 
+.romantic-portrait_stage {
+	position: relative;
+	isolation: isolate;
+	width: 100%;
+	aspect-ratio: var(--romantic-portrait-aspect, 2 / 3);
+}
+
+.romantic-portrait_primary,
+.romantic-portrait_secret {
+	appearance: none;
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	line-height: 0;
+}
+
+.romantic-portrait_primary {
+	z-index: 2;
+	cursor: default;
+	transform: translateX(0) rotate(0);
+	transform-origin: 50% 80%;
+	transition:
+		transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+		filter 520ms ease;
+}
+
+.romantic-portrait_secret {
+	z-index: 1;
+	cursor: pointer;
+	overflow: hidden;
+	background: var(--bg-soft);
+	box-shadow: 0 0.75rem 2rem rgb(31 30 29 / 0%);
+	transform: translateX(0) rotate(1deg);
+	transform-origin: 50% 80%;
+	transition:
+		transform 580ms cubic-bezier(0.22, 1, 0.36, 1),
+		box-shadow 580ms ease;
+}
+
+.romantic-portrait_secret[hidden] {
+	display: none;
+}
+
+.romantic-portrait_primary:focus-visible,
+.romantic-portrait_secret:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 4px;
+}
+
+.romantic-portrait_image,
+.romantic-portrait_secret-media {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.romantic-portrait_image {
+	object-fit: cover;
+}
+
+.romantic-portrait.is-unlocked .romantic-portrait_primary {
+	filter: drop-shadow(0 0.65rem 0.9rem rgb(31 30 29 / 18%));
+	transform: translateX(-9%) rotate(-1deg);
+}
+
+.romantic-portrait.is-unlocked .romantic-portrait_secret {
+	box-shadow: 0 0.85rem 2rem rgb(31 30 29 / 24%);
+	transform: translateX(14%) rotate(2deg);
+}
+
+.romantic-mode_toast {
+	position: fixed;
+	z-index: 20;
+	left: 50%;
+	bottom: max(1.25rem, env(safe-area-inset-bottom));
+	width: max-content;
+	max-width: min(34rem, calc(100vw - 2rem));
+	margin: 0;
+	padding: 0.65rem 0.9rem;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	background: var(--bg-elevated);
+	box-shadow: 0 0.75rem 2.2rem rgb(31 30 29 / 20%);
+	color: var(--fg);
+	font-family: var(--font-serif);
+	font-size: 0.875rem;
+	line-height: 1.35;
+	text-align: center;
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, 0.75rem);
+	visibility: hidden;
+	transition:
+		opacity 180ms ease,
+		transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+		visibility 0s linear 260ms,
+		color var(--ease-color),
+		background-color var(--ease-color),
+		border-color var(--ease-color);
+}
+
+.romantic-mode_toast.is-visible {
+	opacity: 1;
+	transform: translate(-50%, 0);
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+.romantic-dialog {
+	width: min(32rem, calc(100vw - 2rem));
+	max-width: none;
+	max-height: calc(100dvh - 2rem);
+	margin: auto;
+	padding: 0;
+	overflow: visible;
+	border: 0;
+	background: transparent;
+	color: var(--fg);
+}
+
+.romantic-dialog::backdrop {
+	background: rgb(31 30 29 / 72%);
+	backdrop-filter: blur(3px);
+}
+
+.romantic-dialog_panel {
+	position: relative;
+	overflow: hidden;
+	border: 1px solid var(--border);
+	border-radius: 0.35rem;
+	background: var(--bg-elevated);
+	box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 35%);
+}
+
+.romantic-dialog_close {
+	appearance: none;
+	position: absolute;
+	z-index: 1;
+	top: 0.7rem;
+	right: 0.7rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	margin: 0;
+	padding: 0 0 0.1rem;
+	border: 1px solid var(--border);
+	border-radius: 50%;
+	background: var(--bg-elevated);
+	box-shadow: 0 0.2rem 0.75rem rgb(31 30 29 / 18%);
+	color: var(--fg);
+	cursor: pointer;
+	font-family: system-ui, sans-serif;
+	font-size: 1.55rem;
+	font-weight: 300;
+	line-height: 1;
+}
+
+.romantic-dialog_close:hover {
+	background: var(--bg-soft);
+}
+
+.romantic-dialog_close:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 2px;
+}
+
+.romantic-dialog_figure {
+	margin: 0;
+}
+
+.romantic-dialog_media {
+	min-height: 12rem;
+	background: var(--bg-soft);
+	line-height: 0;
+}
+
+.romantic-dialog_image {
+	display: block;
+	width: 100%;
+	max-height: calc(100dvh - 8rem);
+	object-fit: contain;
+}
+
+.romantic-dialog_caption {
+	padding: 0.85rem 1rem 0.95rem;
+	color: var(--fg-body);
+	font-size: 0.95rem;
+	line-height: 1.45;
+	text-align: center;
+}
+
+@media (max-width: 960px) {
+	.romantic-portrait.is-unlocked .romantic-portrait_primary {
+		transform: translateX(-7%) rotate(-1deg);
+	}
+
+	.romantic-portrait.is-unlocked .romantic-portrait_secret {
+		transform: translateX(10%) rotate(2deg);
+	}
+}
+
 @media (max-width: 720px) {
 	.bio-portrait {
 		width: min(46vw, calc(100% - 10rem));
 		min-width: min(8rem, calc(100% - 10rem));
 		max-width: 12rem;
 		margin: 0 0 1rem 1rem;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.romantic-portrait_primary,
+	.romantic-portrait_secret,
+	.romantic-mode_toast {
+		transition: none;
 	}
 }
 

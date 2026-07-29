@@ -1,4 +1,5 @@
 import { bi, type Bi } from '../i18n/types';
+import { ROMANTIC_MODE_STORAGE_KEY } from '../utils/romanticMode';
 
 /** Shared placeholder for entries without a real public URL yet */
 export const WIP_HREF = '/wip/';
@@ -9,6 +10,23 @@ export type LinkItem = {
 	venue?: Bi;
 	year?: string | number;
 	external?: boolean;
+};
+
+export type SecretPortraitStatus = {
+	activationCount: 4 | 5 | 6 | 7;
+	message: Bi;
+};
+
+export type SecretPortrait = {
+	src: string;
+	width: number;
+	height: number;
+	alt: Bi;
+	caption: Bi;
+	dialogLabel: Bi;
+	closeLabel: Bi;
+	storageKey: string;
+	statusMessages: readonly SecretPortraitStatus[];
 };
 
 export const site = {
@@ -63,6 +81,48 @@ export const site = {
 			'薛思远生活照：浅色运动外套，建筑庭院背景',
 		),
 	},
+
+	/** Session-scoped, seven-activation portrait Easter egg. */
+	secretPortrait: {
+		src: '/images/p-202.jpg',
+		width: 1200,
+		height: 1800,
+		alt: bi('A portrait in Romantic Mode', '心动模式中的一张肖像'),
+		caption: bi(
+			'Some stories are still in draft.',
+			'有些故事还停在草稿里。',
+		),
+		dialogLabel: bi('Romantic Mode portrait', '心动模式肖像'),
+		closeLabel: bi('Close Romantic Mode portrait', '关闭心动模式肖像'),
+		storageKey: ROMANTIC_MODE_STORAGE_KEY,
+		statusMessages: [
+			{
+				activationCount: 4,
+				message: bi(
+					'3 taps away from a questionable deployment.',
+					'再点 3 次，完成一次可疑部署。',
+				),
+			},
+			{
+				activationCount: 5,
+				message: bi(
+					'2 taps away from Romantic Mode.',
+					'再点 2 次，解锁心动模式。',
+				),
+			},
+			{
+				activationCount: 6,
+				message: bi(
+					'1 tap away. No rollback.',
+					'还差 1 次。不可回滚。',
+				),
+			},
+			{
+				activationCount: 7,
+				message: bi('Romantic Mode unlocked.', '心动模式已解锁。'),
+			},
+		],
+	} satisfies SecretPortrait,
 
 	projects: [
 		{

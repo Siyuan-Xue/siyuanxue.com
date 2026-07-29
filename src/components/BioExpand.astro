@@ -1,33 +1,13 @@
 ---
+import RomanticPortrait from './RomanticPortrait.astro';
 import { site } from '../data/site';
 
 const { lead, more } = site.bio;
-const portrait = site.portrait;
-const altEn = portrait?.alt.en ?? site.name.en;
-const altZh = portrait?.alt.zh ?? site.name.zh;
 const paragraphs = [lead, ...more];
 ---
 
 <section class="bio">
-	{
-		portrait && (
-			<figure class="bio-portrait">
-				<img
-					class="bio-portrait_img"
-					src={portrait.src}
-					alt={altEn}
-					data-alt-en={altEn}
-					data-alt-zh={altZh}
-					width={portrait.width}
-					height={portrait.height}
-					loading="eager"
-					fetchpriority="high"
-					decoding="async"
-					data-portrait-img
-				/>
-			</figure>
-		)
-	}
+	<RomanticPortrait />
 
 	<div class="bio-copy">
 		{paragraphs.map((para, i) => (
@@ -42,15 +22,3 @@ const paragraphs = [lead, ...more];
 		))}
 	</div>
 </section>
-
-<script>
-	const portraitImg = document.querySelector<HTMLImageElement>('[data-portrait-img]');
-	function syncPortraitAlt() {
-		if (!portraitImg) return;
-		const zh = document.documentElement.getAttribute('data-lang') === 'zh';
-		const next = zh ? portraitImg.dataset.altZh : portraitImg.dataset.altEn;
-		if (next) portraitImg.alt = next;
-	}
-	syncPortraitAlt();
-	document.addEventListener('site:language-change', syncPortraitAlt);
-</script>

@@ -1,0 +1,270 @@
+---
+import { site } from '../data/site';
+
+const portrait = site.portrait;
+const secret = site.secretPortrait;
+const [status4, status5, status6, status7] = secret.statusMessages;
+const dialogId = 'romantic-mode-dialog';
+const captionId = 'romantic-mode-caption';
+---
+
+<div
+	class="bio-portrait romantic-portrait"
+	data-romantic-mode
+	data-storage-key={secret.storageKey}
+	data-secret-src={secret.src}
+	data-secret-width={secret.width}
+	data-secret-height={secret.height}
+	data-primary-alt-en={portrait.alt.en}
+	data-primary-alt-zh={portrait.alt.zh}
+	data-secret-alt-en={secret.alt.en}
+	data-secret-alt-zh={secret.alt.zh}
+	data-dialog-label-en={secret.dialogLabel.en}
+	data-dialog-label-zh={secret.dialogLabel.zh}
+	data-close-label-en={secret.closeLabel.en}
+	data-close-label-zh={secret.closeLabel.zh}
+	data-status-4-en={status4.message.en}
+	data-status-4-zh={status4.message.zh}
+	data-status-5-en={status5.message.en}
+	data-status-5-zh={status5.message.zh}
+	data-status-6-en={status6.message.en}
+	data-status-6-zh={status6.message.zh}
+	data-status-7-en={status7.message.en}
+	data-status-7-zh={status7.message.zh}
+>
+	<div
+		class="romantic-portrait_stage"
+		style={`--romantic-portrait-aspect: ${portrait.width} / ${portrait.height}`}
+	>
+		<button
+			type="button"
+			class="romantic-portrait_primary"
+			data-romantic-trigger
+			aria-controls="romantic-secret-card"
+			aria-expanded="false"
+		>
+			<img
+				class="bio-portrait_img romantic-portrait_image"
+				src={portrait.src}
+				alt={portrait.alt.en}
+				width={portrait.width}
+				height={portrait.height}
+				loading="eager"
+				fetchpriority="high"
+				decoding="async"
+				data-primary-image
+			/>
+		</button>
+
+		<button
+			id="romantic-secret-card"
+			type="button"
+			class="romantic-portrait_secret"
+			aria-controls={dialogId}
+			aria-label={secret.dialogLabel.en}
+			data-secret-card
+			hidden
+		>
+			<span class="romantic-portrait_secret-media" data-secret-image-slot></span>
+		</button>
+	</div>
+
+	<p
+		class="romantic-mode_toast"
+		role="status"
+		aria-live="polite"
+		aria-atomic="true"
+		data-romantic-status
+	></p>
+
+	<dialog
+		id={dialogId}
+		class="romantic-dialog"
+		aria-label={secret.dialogLabel.en}
+		data-romantic-dialog
+	>
+		<div class="romantic-dialog_panel">
+			<button
+				type="button"
+				class="romantic-dialog_close"
+				aria-label={secret.closeLabel.en}
+				data-romantic-dialog-close
+				autofocus
+			>
+				<span aria-hidden="true">×</span>
+			</button>
+
+			<figure class="romantic-dialog_figure">
+				<div class="romantic-dialog_media" data-dialog-image-slot></div>
+				<figcaption id={captionId} class="romantic-dialog_caption">
+					<span class="i18n-en" lang="en">{secret.caption.en}</span>
+					<span class="i18n-zh" lang="zh-CN">{secret.caption.zh}</span>
+				</figcaption>
+			</figure>
+		</div>
+	</dialog>
+</div>
+
+<script>
+	import {
+		advanceRomanticMode,
+		persistRomanticMode,
+		restoreRomanticMode,
+		type RomanticModeStorage,
+	} from '../utils/romanticMode';
+
+	document.querySelectorAll<HTMLElement>('[data-romantic-mode]').forEach((root) => {
+		const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]');
+		const primaryImage = root.querySelector<HTMLImageElement>('[data-primary-image]');
+		const secretCard = root.querySelector<HTMLButtonElement>('[data-secret-card]');
+		const secretImageSlot = root.querySelector<HTMLElement>('[data-secret-image-slot]');
+		const status = root.querySelector<HTMLElement>('[data-romantic-status]');
+		const dialog = root.querySelector<HTMLDialogElement>('[data-romantic-dialog]');
+		const dialogImageSlot = root.querySelector<HTMLElement>('[data-dialog-image-slot]');
+		const closeButton = root.querySelector<HTMLButtonElement>('[data-romantic-dialog-close]');
+
+		if (
+			!trigger ||
+			!primaryImage ||
+			!secretCard ||
+			!secretImageSlot ||
+			!status ||
+			!dialog ||
+			!dialogImageSlot ||
+			!closeButton
+		) {
+			return;
+		}
+
+		let storage: RomanticModeStorage | null = null;
+		try {
+			storage = window.sessionStorage;
+		} catch {
+			// The interaction still works when browser privacy settings block storage.
+		}
+
+		const storageKey = root.dataset.storageKey;
+		let state = restoreRomanticMode(storage, storageKey);
+		let activeStatusCount = 0;
+		let toastTimer: number | undefined;
+		let secretImage: HTMLImageElement | null = null;
+		let dialogImage: HTMLImageElement | null = null;
+		let dialogOpener: HTMLElement | null = null;
+
+		const locale = () =>
+			document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
+
+		const localized = (name: string) => {
+			const suffix = locale() === 'zh' ? 'Zh' : 'En';
+			return root.dataset[`${name}${suffix}`] ?? '';
+		};
+
+		const statusMessage = (activationCount: number) =>
+			localized(`status${activationCount}`);
+
+		const makeSecretImage = (className: string) => {
+			const image = document.createElement('img');
+			image.className = className;
+			image.alt = localized('secretAlt');
+			image.width = Number(root.dataset.secretWidth) || 1200;
+			image.height = Number(root.dataset.secretHeight) || 1800;
+			image.decoding = 'async';
+			image.src = root.dataset.secretSrc ?? '';
+			return image;
+		};
+
+		const ensureSecretImage = () => {
+			if (secretImage) return;
+			secretImage = makeSecretImage(
+				'bio-portrait_img romantic-portrait_image romantic-portrait_secret-image',
+			);
+			secretImageSlot.append(secretImage);
+		};
+
+		const ensureDialogImage = () => {
+			if (dialogImage) return;
+			dialogImage = makeSecretImage('romantic-dialog_image');
+			dialogImageSlot.append(dialogImage);
+		};
+
+		const syncLanguage = () => {
+			primaryImage.alt = localized('primaryAlt');
+			secretCard.setAttribute('aria-label', localized('dialogLabel'));
+			dialog.setAttribute('aria-label', localized('dialogLabel'));
+			closeButton.setAttribute('aria-label', localized('closeLabel'));
+			if (secretImage) secretImage.alt = localized('secretAlt');
+			if (dialogImage) dialogImage.alt = localized('secretAlt');
+			if (activeStatusCount > 0) {
+				status.textContent = statusMessage(activeStatusCount);
+			}
+		};
+
+		const showStatus = (activationCount: number) => {
+			activeStatusCount = activationCount;
+			status.textContent = statusMessage(activationCount);
+			status.classList.add('is-visible');
+			if (toastTimer !== undefined) window.clearTimeout(toastTimer);
+			toastTimer = window.setTimeout(() => {
+				status.classList.remove('is-visible');
+				status.textContent = '';
+				activeStatusCount = 0;
+			}, activationCount === 7 ? 3600 : 2800);
+		};
+
+		const reveal = (animate: boolean) => {
+			ensureSecretImage();
+			trigger.setAttribute('aria-expanded', 'true');
+
+			if (!animate) {
+				root.classList.add('is-unlocked');
+				secretCard.hidden = false;
+				return;
+			}
+
+			secretCard.hidden = false;
+			void secretCard.offsetWidth;
+			window.requestAnimationFrame(() => root.classList.add('is-unlocked'));
+		};
+
+		trigger.addEventListener('click', () => {
+			const step = advanceRomanticMode(state);
+			state = step.state;
+
+			if (step.shouldAnnounce) showStatus(state.activationCount);
+			if (step.unlockedNow) {
+				persistRomanticMode(storage, state, storageKey);
+				reveal(true);
+			}
+		});
+
+		secretCard.addEventListener('click', () => {
+			ensureDialogImage();
+			dialogOpener = secretCard;
+			if (typeof dialog.showModal === 'function') {
+				if (!dialog.open) dialog.showModal();
+			} else {
+				dialog.setAttribute('open', '');
+				closeButton.focus();
+			}
+		});
+
+		const closeDialog = () => {
+			if (typeof dialog.close === 'function') {
+				if (dialog.open) dialog.close();
+			} else {
+				dialog.removeAttribute('open');
+				dialogOpener?.focus();
+			}
+		};
+
+		closeButton.addEventListener('click', closeDialog);
+		dialog.addEventListener('click', (event) => {
+			if (event.target === dialog) closeDialog();
+		});
+		dialog.addEventListener('close', () => dialogOpener?.focus());
+		document.addEventListener('site:language-change', syncLanguage);
+
+		syncLanguage();
+		if (state.unlocked) reveal(false);
+	});
+</script>

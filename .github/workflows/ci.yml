@@ -51,11 +51,15 @@ jobs:
           bash ops/test-nginx-config.sh
           bash ops/test-release.sh
 
+      - name: Test Romantic Mode state
+        run: bun run test
+
       - name: Build production site
         run: bun run build
 
       - name: Validate production output
         run: |
+          bun run test:output
           test -s dist/index.html
           test -s dist/sitemap-index.xml
           grep -Rqs 'https://siyuanxue.com' dist
