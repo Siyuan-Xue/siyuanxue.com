@@ -35,6 +35,7 @@ export function advanceRomanticMode(state: RomanticModeState): RomanticModeStep 
 			remaining: 0,
 			unlockedNow: false,
 			toggledNow: true,
+			// On/off feedback only after the secret is already known.
 			shouldAnnounce: true,
 		};
 	}
@@ -50,6 +51,7 @@ export function advanceRomanticMode(state: RomanticModeState): RomanticModeStep 
 		remaining: ROMANTIC_MODE_UNLOCK_TAPS - activationCount,
 		unlockedNow: unlocked,
 		toggledNow: false,
+		// Toast every tap; copy must not name the mode or remaining taps until unlock.
 		shouldAnnounce: true,
 	};
 }

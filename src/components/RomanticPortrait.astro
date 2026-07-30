@@ -1,4 +1,5 @@
 ---
+import LoadingBlocks from './LoadingBlocks.astro';
 import { site } from '../data/site';
 
 const portrait = site.portrait;
@@ -47,10 +48,18 @@ const captionId = 'romantic-mode-caption';
 	data-status7-en={status7.message.en}
 	data-status7-zh={status7.message.zh}
 >
+	{/*
+	  Portrait stage: md blocks, faint tone over soft veil — sits in the float column.
+	  Secret card & dialog use the same loader pattern at md / lg.
+	*/}
 	<div
-		class="romantic-portrait_stage"
+		class="romantic-portrait_stage loading-slot is-loading"
 		style={`--romantic-portrait-aspect: ${portrait.width} / ${portrait.height}`}
+		data-primary-loading-slot
 	>
+		<span class="loading-slot_indicator loading-slot_indicator--veil" data-primary-loader>
+			<LoadingBlocks size="md" tone="faint" decorative />
+		</span>
 		<button
 			type="button"
 			class="romantic-portrait_primary"
@@ -74,12 +83,15 @@ const captionId = 'romantic-mode-caption';
 		<button
 			id="romantic-secret-card"
 			type="button"
-			class="romantic-portrait_secret"
+			class="romantic-portrait_secret loading-slot"
 			aria-controls={dialogId}
 			aria-label={secret.dialogLabel.en}
 			data-secret-card
 			hidden
 		>
+			<span class="loading-slot_indicator loading-slot_indicator--veil" data-secret-loader>
+				<LoadingBlocks size="md" tone="faint" decorative />
+			</span>
 			<span class="romantic-portrait_secret-media" data-secret-image-slot></span>
 		</button>
 	</div>
@@ -110,7 +122,11 @@ const captionId = 'romantic-mode-caption';
 			</button>
 
 			<figure class="romantic-dialog_figure">
-				<div class="romantic-dialog_media" data-dialog-image-slot></div>
+				<div class="romantic-dialog_media loading-slot" data-dialog-image-slot data-dialog-loading-slot>
+					<span class="loading-slot_indicator loading-slot_indicator--veil" data-dialog-loader>
+						<LoadingBlocks size="lg" tone="faint" decorative />
+					</span>
+				</div>
 				<figcaption id={captionId} class="romantic-dialog_caption">
 					<span class="i18n-en" lang="en">{secret.caption.en}</span>
 					<span class="i18n-zh" lang="zh-CN">{secret.caption.zh}</span>
@@ -131,11 +147,13 @@ const captionId = 'romantic-mode-caption';
 	document.querySelectorAll<HTMLElement>('[data-romantic-mode]').forEach((root) => {
 		const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]');
 		const primaryImage = root.querySelector<HTMLImageElement>('[data-primary-image]');
+		const primaryLoadingSlot = root.querySelector<HTMLElement>('[data-primary-loading-slot]');
 		const secretCard = root.querySelector<HTMLButtonElement>('[data-secret-card]');
 		const secretImageSlot = root.querySelector<HTMLElement>('[data-secret-image-slot]');
 		const status = root.querySelector<HTMLElement>('[data-romantic-status]');
 		const dialog = root.querySelector<HTMLDialogElement>('[data-romantic-dialog]');
 		const dialogImageSlot = root.querySelector<HTMLElement>('[data-dialog-image-slot]');
+		const dialogLoadingSlot = root.querySelector<HTMLElement>('[data-dialog-loading-slot]');
 		const closeButton = root.querySelector<HTMLButtonElement>('[data-romantic-dialog-close]');
 
 		if (
@@ -176,6 +194,28 @@ const captionId = 'romantic-mode-caption';
 			return root.dataset[`${name}${suffix}`] ?? '';
 		};
 
+		const setLoading = (slot: HTMLElement | null | undefined, loading: boolean) => {
+			if (!slot) return;
+			slot.classList.toggle('is-loading', loading);
+		};
+
+		const bindImageLoading = (
+			image: HTMLImageElement,
+			slot: HTMLElement | null | undefined,
+		) => {
+			const finish = () => setLoading(slot, false);
+			if (image.complete && image.naturalWidth > 0) {
+				finish();
+				return;
+			}
+			setLoading(slot, true);
+			image.addEventListener('load', finish, { once: true });
+			image.addEventListener('error', finish, { once: true });
+		};
+
+		// Primary portrait — md/faint loader until first paint of the photo.
+		bindImageLoading(primaryImage, primaryLoadingSlot);
+
 		const makeSecretImage = (className: string) => {
 			const image = document.createElement('img');
 			image.className = className;
@@ -189,15 +229,19 @@ const captionId = 'romantic-mode-caption';
 
 		const ensureSecretImage = () => {
 			if (secretImage) return;
+			setLoading(secretCard, true);
 			secretImage = makeSecretImage(
 				'bio-portrait_img romantic-portrait_image romantic-portrait_secret-image',
 			);
+			bindImageLoading(secretImage, secretCard);
 			secretImageSlot.append(secretImage);
 		};
 
 		const ensureDialogImage = () => {
 			if (dialogImage) return;
+			setLoading(dialogLoadingSlot ?? dialogImageSlot, true);
 			dialogImage = makeSecretImage('romantic-dialog_image');
+			bindImageLoading(dialogImage, dialogLoadingSlot ?? dialogImageSlot);
 			dialogImageSlot.append(dialogImage);
 		};
 

@@ -1,0 +1,83 @@
+---
+/**
+ * Blocks-shuffle loading placeholder.
+ * Color inherits via currentColor — set `color` on the host or use size/tone modifiers.
+ *
+ * Placement guide (site contexts):
+ * - page boot overlay → size="xl" tone="muted" (centered full-viewport)
+ * - portrait / secret card → size="md" tone="faint" (centered over media)
+ * - dialog lightbox → size="lg" tone="faint" (centered in media frame)
+ * - inline / chips → size="sm" tone="muted"
+ */
+interface Props {
+	/** Visual scale of the 3×3 block grid */
+	size?: 'sm' | 'md' | 'lg' | 'xl';
+	/** Theme palette tone: muted (default) or softer faint */
+	tone?: 'muted' | 'faint' | 'ink';
+	/** Extra class names on the root */
+	class?: string;
+	/** Accessible label (default: Loading / 加载中) */
+	labelEn?: string;
+	labelZh?: string;
+	/** When true, root is decorative only (parent provides status text) */
+	decorative?: boolean;
+}
+
+const {
+	size = 'md',
+	tone = 'muted',
+	class: className = '',
+	labelEn = 'Loading',
+	labelZh = '加载中',
+	decorative = false,
+} = Astro.props;
+
+const rootClass = ['loading-blocks', `loading-blocks--${size}`, `loading-blocks--${tone}`, className]
+	.filter(Boolean)
+	.join(' ');
+---
+
+<span
+	class={rootClass}
+	role={decorative ? undefined : 'status'}
+	aria-live={decorative ? undefined : 'polite'}
+	aria-hidden={decorative ? 'true' : undefined}
+>
+	{
+		!decorative && (
+			<span class="u-sr-only">
+				<span class="i18n-en" lang="en">
+					{labelEn}
+				</span>
+				<span class="i18n-zh" lang="zh-CN">
+					{labelZh}
+				</span>
+			</span>
+		)
+	}
+	{/*
+	  Blocks-shuffle grid. fill uses currentColor so light/dark theme tokens drive ink.
+	  Animation keyframes live in base.css (.loading-blocks_cell).
+	*/}
+	<svg
+		class="loading-blocks_svg"
+		xmlns="http://www.w3.org/2000/svg"
+		viewBox="0 0 36 36"
+		width="36"
+		height="36"
+		focusable="false"
+		aria-hidden="true"
+	>
+		<g>
+			<rect class="loading-blocks_cell" x="13" y="1" rx="1" width="10" height="10"></rect>
+			<rect class="loading-blocks_cell" x="13" y="1" rx="1" width="10" height="10"></rect>
+			<rect class="loading-blocks_cell" x="25" y="25" rx="1" width="10" height="10"></rect>
+			<rect class="loading-blocks_cell" x="13" y="13" rx="1" width="10" height="10"></rect>
+			<rect class="loading-blocks_cell" x="13" y="13" rx="1" width="10" height="10"></rect>
+			<rect class="loading-blocks_cell" x="25" y="13" rx="1" width="10" height="10"></rect>
+			<rect class="loading-blocks_cell" x="1" y="25" rx="1" width="10" height="10"></rect>
+			<rect class="loading-blocks_cell" x="13" y="25" rx="1" width="10" height="10"></rect>
+			<rect class="loading-blocks_cell" x="25" y="25" rx="1" width="10" height="10"></rect>
+		</g>
+	</svg>
+</span>

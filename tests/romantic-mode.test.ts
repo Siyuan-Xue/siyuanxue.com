@@ -42,7 +42,7 @@ describe('Romantic Mode state machine', () => {
 		}
 	});
 
-	test('announces a countdown line after every activation', () => {
+	test('announces every activation, but only unlocks on the final tap', () => {
 		let state = createRomanticModeState();
 		const timeline: Array<{
 			activation: number;

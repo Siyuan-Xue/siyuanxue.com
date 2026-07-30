@@ -1,6 +1,7 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
+import LoadingBlocks from '../components/LoadingBlocks.astro';
 import type { Bi } from '../i18n/types';
 
 interface Props {
@@ -23,6 +24,62 @@ const bodyClass = hasToc ? 'has-toc' : undefined;
 		<BaseHead title={title} description={description} />
 	</head>
 	<body class={bodyClass}>
+		{/*
+		  First-paint page boot: full-viewport, centered xl blocks in --loader (fg-muted).
+		  Hides on DOM ready; noscript removes it so content stays usable without JS.
+		*/}
+		<div class="page-boot" id="page-boot" role="status" aria-live="polite" data-page-boot>
+			<LoadingBlocks size="xl" tone="muted" decorative />
+			<span class="u-sr-only">
+				<span class="i18n-en" lang="en">Loading page</span>
+				<span class="i18n-zh" lang="zh-CN">页面加载中</span>
+			</span>
+		</div>
+		<script is:inline>
+			(function () {
+				var boot = document.getElementById('page-boot');
+				if (!boot) return;
+				var settled = false;
+				var revealed = false;
+				/* Only surface the overlay if the document is still loading past this delay. */
+				var revealTimer = window.setTimeout(function () {
+					if (settled) return;
+					revealed = true;
+					boot.classList.add('is-visible');
+				}, 140);
+				var done = function () {
+					if (settled) return;
+					settled = true;
+					window.clearTimeout(revealTimer);
+					if (!revealed) {
+						boot.setAttribute('hidden', '');
+						return;
+					}
+					boot.classList.remove('is-visible');
+					boot.classList.add('is-done');
+					window.setTimeout(function () {
+						if (boot.parentNode) boot.setAttribute('hidden', '');
+					}, 260);
+				};
+				if (document.readyState === 'complete' || document.readyState === 'interactive') {
+					window.requestAnimationFrame(function () {
+						window.requestAnimationFrame(done);
+					});
+				} else {
+					document.addEventListener('DOMContentLoaded', done, { once: true });
+				}
+				window.addEventListener('load', done, { once: true });
+				/* Safety: never leave the overlay up if readyState is stuck. */
+				window.setTimeout(done, 5000);
+			})();
+		</script>
+		<noscript>
+			<style>
+				.page-boot {
+					display: none !important;
+				}
+			</style>
+		</noscript>
 		<div class="page-wrapper">
 			<Header showTocToggle={showTocToggle} />
 			{/* Dario: nav.toc-container sits between header and main */}

@@ -66,7 +66,7 @@ function jpegDimensions(bytes: Uint8Array): { width: number; height: number } {
 }
 
 describe('Romantic Mode production output', () => {
-	test('the original portrait includes a localized line for every activation', () => {
+	test('pre-unlock toasts exist, avoid countdown copy, and only status7 names the mode', () => {
 		expect(existsSync(indexPath)).toBe(true);
 		const html = readFileSync(indexPath, 'utf8');
 
@@ -78,10 +78,29 @@ describe('Romantic Mode production output', () => {
 				new RegExp(`data-status${activation}-zh=["'][^"']+["']`),
 			);
 		}
-	});
 
-	test('the original portrait includes localized mode-switch feedback', () => {
-		const html = readFileSync(indexPath, 'utf8');
+		// No leftover “N taps remaining” style coaching.
+		expect(html).not.toMatch(/\d+\s+taps?\s+away/i);
+		expect(html).not.toMatch(/再点\s*\d+\s*次/);
+		expect(html).not.toMatch(/还差\s*\d+\s*次/);
+
+		// Status lines 1–6 must not name the secret mode.
+		for (let activation = 1; activation <= 6; activation += 1) {
+			const en = html.match(
+				new RegExp(`data-status${activation}-en=["']([^"']+)["']`),
+			)?.[1];
+			const zh = html.match(
+				new RegExp(`data-status${activation}-zh=["']([^"']+)["']`),
+			)?.[1];
+			expect(en).toBeTruthy();
+			expect(zh).toBeTruthy();
+			expect(en!.toLowerCase()).not.toContain('romantic mode');
+			expect(zh!).not.toContain('心动模式');
+		}
+
+		expect(html).toMatch(/data-status7-en=["'][^"']*Romantic Mode[^"']*["']/);
+		expect(html).toMatch(/data-status7-zh=["'][^"']*心动模式[^"']*["']/);
+
 		for (const attribute of [
 			'data-turn-on-label-en',
 			'data-turn-on-label-zh',

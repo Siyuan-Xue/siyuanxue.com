@@ -63,6 +63,14 @@
 
 	--ease-color: 0.2s linear;
 	--focus: #0066cc;
+
+	/*
+	 * Loading placeholder (blocks-shuffle) — theme palette tones via currentColor.
+	 * muted: secondary UI chrome; faint: soft over media; ink: full contrast.
+	 */
+	--loader: var(--fg-muted);
+	--loader-faint: var(--fg-faint);
+	--loader-ink: var(--fg);
 }
 
 /* Dario .u-mode-invert: bg = slate-dark, text = ivory-medium */

@@ -30,6 +30,10 @@ export type SecretPortrait = {
 	modeOnMessage: Bi;
 	modeOffMessage: Bi;
 	storageKey: string;
+	/**
+	 * Per-tap toasts (1–7). Pre-unlock lines are game-like Easter-egg flavor —
+	 * no remaining-tap counts, and “Romantic Mode” only on the unlock line (7).
+	 */
 	statusMessages: readonly SecretPortraitStatus[];
 };
 
@@ -107,43 +111,43 @@ export const site = {
 			{
 				activationCount: 1,
 				message: bi(
-					'6 taps away from Romantic Mode.',
-					'再点 6 次，解锁心动模式。',
+					'You poke the portrait. No tutorial appears.',
+					'你戳了戳肖像。没有弹出教程。',
 				),
 			},
 			{
 				activationCount: 2,
 				message: bi(
-					'5 taps away from Romantic Mode.',
-					'再点 5 次，解锁心动模式。',
+					'Side quest armed. Objective: classified.',
+					'支线任务已就绪。目标：保密。',
 				),
 			},
 			{
 				activationCount: 3,
 				message: bi(
-					'4 taps away from Romantic Mode.',
-					'再点 4 次，解锁心动模式。',
+					'The frame blinks first.',
+					'画框先眨了眨眼。',
 				),
 			},
 			{
 				activationCount: 4,
 				message: bi(
-					'3 taps away from a questionable deployment.',
-					'再点 3 次，完成一次可疑部署。',
+					'Inventory +1: unexplained curiosity.',
+					'物品栏 +1：说不清的好奇心。',
 				),
 			},
 			{
 				activationCount: 5,
 				message: bi(
-					'2 taps away from Romantic Mode.',
-					'再点 2 次，解锁心动模式。',
+					'A door without a map marker.',
+					'一扇没有地图标记的门。',
 				),
 			},
 			{
 				activationCount: 6,
 				message: bi(
-					'1 tap away. No rollback.',
-					'还差 1 次。不可回滚。',
+					'The latch clicks. Still no boss music.',
+					'门闩轻响。还是没有 Boss 音乐。',
 				),
 			},
 			{

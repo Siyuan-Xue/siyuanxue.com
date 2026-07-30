@@ -824,6 +824,7 @@ html.u-mode-invert .theme-toggle_icon--moon {
 }
 
 .romantic-dialog_media {
+	position: relative;
 	min-height: 12rem;
 	background: var(--bg-soft);
 	line-height: 0;
@@ -1139,4 +1140,442 @@ html.u-mode-invert .theme-toggle_icon--moon {
 		padding-top: 1.5rem;
 	}
 
+}
+
+/* ==========================================================================
+   Loading — blocks-shuffle placeholder (theme-aware via currentColor)
+   Color tokens: --loader / --loader-faint / --loader-ink (tokens.css)
+   ========================================================================== */
+
+.loading-blocks {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	line-height: 0;
+	color: var(--loader);
+	pointer-events: none;
+	user-select: none;
+}
+
+.loading-blocks--muted {
+	color: var(--loader);
+}
+
+.loading-blocks--faint {
+	color: var(--loader-faint);
+}
+
+.loading-blocks--ink {
+	color: var(--loader-ink);
+}
+
+.loading-blocks--sm {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.loading-blocks--md {
+	width: 2rem;
+	height: 2rem;
+}
+
+.loading-blocks--lg {
+	width: 2.75rem;
+	height: 2.75rem;
+}
+
+.loading-blocks--xl {
+	width: 3.5rem;
+	height: 3.5rem;
+}
+
+.loading-blocks_svg {
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+}
+
+.loading-blocks_cell {
+	fill: currentColor;
+	transform-origin: 50% 50%;
+}
+
+/* 9-cell shuffle cycle (~4s), ported from blocks-shuffle-4.svg */
+@keyframes loading-blocks-1 {
+	9.0909090909% {
+		transform: translate(-12px, 0);
+	}
+	18.1818181818%,
+	27.2727272727% {
+		transform: translate(0, 0);
+	}
+	36.3636363636% {
+		transform: translate(12px, 0);
+	}
+	45.4545454545%,
+	54.5454545455%,
+	63.6363636364% {
+		transform: translate(12px, 12px);
+	}
+	72.7272727273% {
+		transform: translate(12px, 0);
+	}
+	81.8181818182% {
+		transform: translate(0, 0);
+	}
+	90.9090909091% {
+		transform: translate(-12px, 0);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+@keyframes loading-blocks-2 {
+	9.0909090909% {
+		transform: translate(0, 0);
+	}
+	18.1818181818% {
+		transform: translate(12px, 0);
+	}
+	27.2727272727% {
+		transform: translate(0, 0);
+	}
+	36.3636363636% {
+		transform: translate(12px, 0);
+	}
+	45.4545454545%,
+	54.5454545455%,
+	63.6363636364%,
+	72.7272727273% {
+		transform: translate(12px, 12px);
+	}
+	81.8181818182%,
+	90.9090909091% {
+		transform: translate(0, 12px);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+@keyframes loading-blocks-3 {
+	9.0909090909%,
+	18.1818181818% {
+		transform: translate(-12px, 0);
+	}
+	27.2727272727% {
+		transform: translate(0, 0);
+	}
+	36.3636363636%,
+	45.4545454545%,
+	54.5454545455%,
+	63.6363636364%,
+	72.7272727273% {
+		transform: translate(-12px, 0);
+	}
+	81.8181818182% {
+		transform: translate(-12px, -12px);
+	}
+	90.9090909091% {
+		transform: translate(0, -12px);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+@keyframes loading-blocks-4 {
+	9.0909090909%,
+	18.1818181818% {
+		transform: translate(-12px, 0);
+	}
+	27.2727272727% {
+		transform: translate(-12px, -12px);
+	}
+	36.3636363636% {
+		transform: translate(0, -12px);
+	}
+	45.4545454545% {
+		transform: translate(0, 0);
+	}
+	54.5454545455%,
+	63.6363636364%,
+	72.7272727273% {
+		transform: translate(0, -12px);
+	}
+	81.8181818182% {
+		transform: translate(-12px, -12px);
+	}
+	90.9090909091% {
+		transform: translate(-12px, 0);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+@keyframes loading-blocks-5 {
+	9.0909090909%,
+	18.1818181818%,
+	27.2727272727% {
+		transform: translate(0, 0);
+	}
+	36.3636363636%,
+	45.4545454545%,
+	54.5454545455%,
+	63.6363636364%,
+	72.7272727273% {
+		transform: translate(12px, 0);
+	}
+	81.8181818182% {
+		transform: translate(12px, -12px);
+	}
+	90.9090909091% {
+		transform: translate(0, -12px);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+@keyframes loading-blocks-6 {
+	9.0909090909% {
+		transform: translate(0, 0);
+	}
+	18.1818181818%,
+	27.2727272727% {
+		transform: translate(-12px, 0);
+	}
+	36.3636363636%,
+	45.4545454545%,
+	54.5454545455%,
+	63.6363636364% {
+		transform: translate(0, 0);
+	}
+	72.7272727273% {
+		transform: translate(0, 12px);
+	}
+	81.8181818182% {
+		transform: translate(-12px, 12px);
+	}
+	90.9090909091% {
+		transform: translate(-12px, 0);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+@keyframes loading-blocks-7 {
+	9.0909090909%,
+	18.1818181818%,
+	27.2727272727% {
+		transform: translate(12px, 0);
+	}
+	36.3636363636% {
+		transform: translate(0, 0);
+	}
+	45.4545454545% {
+		transform: translate(0, -12px);
+	}
+	54.5454545455% {
+		transform: translate(12px, -12px);
+	}
+	63.6363636364%,
+	72.7272727273% {
+		transform: translate(0, -12px);
+	}
+	81.8181818182% {
+		transform: translate(0, 0);
+	}
+	90.9090909091% {
+		transform: translate(12px, 0);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+@keyframes loading-blocks-8 {
+	9.0909090909% {
+		transform: translate(0, 0);
+	}
+	18.1818181818% {
+		transform: translate(-12px, 0);
+	}
+	27.2727272727% {
+		transform: translate(-12px, -12px);
+	}
+	36.3636363636%,
+	45.4545454545%,
+	54.5454545455%,
+	63.6363636364%,
+	72.7272727273% {
+		transform: translate(0, -12px);
+	}
+	81.8181818182% {
+		transform: translate(12px, -12px);
+	}
+	90.9090909091% {
+		transform: translate(12px, 0);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+@keyframes loading-blocks-9 {
+	9.0909090909%,
+	18.1818181818% {
+		transform: translate(-12px, 0);
+	}
+	27.2727272727% {
+		transform: translate(0, 0);
+	}
+	36.3636363636% {
+		transform: translate(-12px, 0);
+	}
+	45.4545454545%,
+	54.5454545455% {
+		transform: translate(0, 0);
+	}
+	63.6363636364%,
+	72.7272727273% {
+		transform: translate(-12px, 0);
+	}
+	81.8181818182% {
+		transform: translate(-24px, 0);
+	}
+	90.9090909091% {
+		transform: translate(-12px, 0);
+	}
+	100% {
+		transform: translate(0, 0);
+	}
+}
+
+.loading-blocks_cell:nth-child(1) {
+	animation: loading-blocks-1 4s infinite;
+}
+.loading-blocks_cell:nth-child(2) {
+	animation: loading-blocks-2 4s infinite;
+}
+.loading-blocks_cell:nth-child(3) {
+	animation: loading-blocks-3 4s infinite;
+}
+.loading-blocks_cell:nth-child(4) {
+	animation: loading-blocks-4 4s infinite;
+}
+.loading-blocks_cell:nth-child(5) {
+	animation: loading-blocks-5 4s infinite;
+}
+.loading-blocks_cell:nth-child(6) {
+	animation: loading-blocks-6 4s infinite;
+}
+.loading-blocks_cell:nth-child(7) {
+	animation: loading-blocks-7 4s infinite;
+}
+.loading-blocks_cell:nth-child(8) {
+	animation: loading-blocks-8 4s infinite;
+}
+.loading-blocks_cell:nth-child(9) {
+	animation: loading-blocks-9 4s infinite;
+}
+
+/*
+ * Host that shows a centered loader over a media frame.
+ * Does NOT set position — callers keep their own positioning
+ * (e.g. .romantic-portrait_secret is already absolute).
+ * Absolute children still resolve against any positioned ancestor.
+ */
+.loading-slot {
+	isolation: isolate;
+}
+
+.loading-slot_indicator {
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	opacity: 0;
+	visibility: hidden;
+	transition:
+		opacity 180ms ease,
+		visibility 0s linear 180ms;
+}
+
+.loading-slot.is-loading .loading-slot_indicator {
+	opacity: 1;
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+/* Soft veil so the blocks read on photo-like surfaces */
+.loading-slot_indicator--veil {
+	background: color-mix(in srgb, var(--bg-soft) 72%, transparent);
+}
+
+/* Dialog media needs a positioned host for the absolute indicator */
+.romantic-dialog_media.loading-slot {
+	position: relative;
+}
+
+/*
+ * Full-page first-paint boot overlay.
+ * Starts hidden; JS adds .is-visible only if navigation is still loading
+ * after a short delay — avoids flash on fast/cached multi-page loads.
+ * Size: xl (3.5rem) centered; color: --loader (fg-muted).
+ */
+.page-boot {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	background: var(--bg);
+	color: var(--loader);
+	opacity: 0;
+	visibility: hidden;
+	transition:
+		opacity 220ms ease,
+		visibility 0s linear 220ms,
+		background-color var(--ease-color);
+	pointer-events: none;
+}
+
+.page-boot.is-visible {
+	opacity: 1;
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+.page-boot.is-done {
+	opacity: 0;
+	visibility: hidden;
+}
+
+.page-boot[hidden] {
+	display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.loading-blocks_cell {
+		animation: none !important;
+	}
+
+	.page-boot {
+		transition: none;
+	}
+
+	.loading-slot_indicator {
+		transition: none;
+	}
 }
