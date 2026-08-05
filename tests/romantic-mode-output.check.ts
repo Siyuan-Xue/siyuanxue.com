@@ -115,6 +115,19 @@ describe('Romantic Mode production output', () => {
 		}
 	});
 
+	test('emits one PhotoSwipe trigger without the previous native dialog', () => {
+		const html = readFileSync(indexPath, 'utf8');
+
+		expect(html).toContain('data-romantic-lightbox');
+		expect(html).toContain('data-romantic-lightbox-trigger');
+		expect(html).toContain('data-pswp-width="1200"');
+		expect(html).toContain('data-pswp-height="1800"');
+		expect(html).toContain('data-proof-label="VII · PRIVATE PROOF"');
+		expect(html).not.toMatch(/<dialog\b/i);
+		expect(html).not.toContain('data-romantic-dialog');
+		expect(html).not.toContain('data-romantic-dialog-close');
+	});
+
 	test('the secret portrait is not emitted as an eager resource', () => {
 		expect(existsSync(indexPath)).toBe(true);
 		const html = readFileSync(indexPath, 'utf8');

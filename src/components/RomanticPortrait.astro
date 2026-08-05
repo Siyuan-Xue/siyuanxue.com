@@ -6,13 +6,13 @@ const portrait = site.portrait;
 const secret = site.secretPortrait;
 const [status1, status2, status3, status4, status5, status6, status7] =
 	secret.statusMessages;
-const dialogId = 'romantic-mode-dialog';
 const captionId = 'romantic-mode-caption';
 ---
 
 <div
 	class="bio-portrait romantic-portrait"
 	data-romantic-mode
+	data-romantic-lightbox
 	data-storage-key={secret.storageKey}
 	data-secret-src={secret.src}
 	data-secret-width={secret.width}
@@ -25,6 +25,9 @@ const captionId = 'romantic-mode-caption';
 	data-dialog-label-zh={secret.dialogLabel.zh}
 	data-close-label-en={secret.closeLabel.en}
 	data-close-label-zh={secret.closeLabel.zh}
+	data-caption-en={secret.caption.en}
+	data-caption-zh={secret.caption.zh}
+	data-proof-label="VII · PRIVATE PROOF"
 	data-turn-on-label-en={secret.turnOnLabel.en}
 	data-turn-on-label-zh={secret.turnOnLabel.zh}
 	data-turn-off-label-en={secret.turnOffLabel.en}
@@ -50,7 +53,7 @@ const captionId = 'romantic-mode-caption';
 >
 	{/*
 	  Portrait stage: md blocks, faint tone over soft veil — sits in the float column.
-	  Secret card & dialog use the same loader pattern at md / lg.
+	  The secret card keeps the same loader pattern at md.
 	*/}
 	<div
 		class="romantic-portrait_stage loading-slot is-loading"
@@ -80,20 +83,23 @@ const captionId = 'romantic-mode-caption';
 			/>
 		</button>
 
-		<button
+		<a
 			id="romantic-secret-card"
-			type="button"
 			class="romantic-portrait_secret loading-slot"
-			aria-controls={dialogId}
+			href={secret.src}
 			aria-label={secret.dialogLabel.en}
+			aria-describedby={captionId}
 			data-secret-card
+			data-romantic-lightbox-trigger
+			data-pswp-width={secret.width}
+			data-pswp-height={secret.height}
 			hidden
 		>
 			<span class="loading-slot_indicator loading-slot_indicator--veil" data-secret-loader>
 				<LoadingBlocks size="md" tone="faint" decorative />
 			</span>
 			<span class="romantic-portrait_secret-media" data-secret-image-slot></span>
-		</button>
+		</a>
 	</div>
 
 	<p
@@ -104,36 +110,10 @@ const captionId = 'romantic-mode-caption';
 		data-romantic-status
 	></p>
 
-	<dialog
-		id={dialogId}
-		class="romantic-dialog"
-		aria-label={secret.dialogLabel.en}
-		data-romantic-dialog
-	>
-		<div class="romantic-dialog_panel">
-			<button
-				type="button"
-				class="romantic-dialog_close"
-				aria-label={secret.closeLabel.en}
-				data-romantic-dialog-close
-				autofocus
-			>
-				<span aria-hidden="true">×</span>
-			</button>
-
-			<figure class="romantic-dialog_figure">
-				<div class="romantic-dialog_media loading-slot" data-dialog-image-slot data-dialog-loading-slot>
-					<span class="loading-slot_indicator loading-slot_indicator--veil" data-dialog-loader>
-						<LoadingBlocks size="lg" tone="faint" decorative />
-					</span>
-				</div>
-				<figcaption id={captionId} class="romantic-dialog_caption">
-					<span class="i18n-en" lang="en">{secret.caption.en}</span>
-					<span class="i18n-zh" lang="zh-CN">{secret.caption.zh}</span>
-				</figcaption>
-			</figure>
-		</div>
-	</dialog>
+	<p id={captionId} class="u-sr-only" data-romantic-lightbox-description>
+		<span class="i18n-en" lang="en">{secret.caption.en}</span>
+		<span class="i18n-zh" lang="zh-CN">{secret.caption.zh}</span>
+	</p>
 </div>
 
 <script>
@@ -148,23 +128,16 @@ const captionId = 'romantic-mode-caption';
 		const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]');
 		const primaryImage = root.querySelector<HTMLImageElement>('[data-primary-image]');
 		const primaryLoadingSlot = root.querySelector<HTMLElement>('[data-primary-loading-slot]');
-		const secretCard = root.querySelector<HTMLButtonElement>('[data-secret-card]');
+		const secretCard = root.querySelector<HTMLAnchorElement>('[data-secret-card]');
 		const secretImageSlot = root.querySelector<HTMLElement>('[data-secret-image-slot]');
 		const status = root.querySelector<HTMLElement>('[data-romantic-status]');
-		const dialog = root.querySelector<HTMLDialogElement>('[data-romantic-dialog]');
-		const dialogImageSlot = root.querySelector<HTMLElement>('[data-dialog-image-slot]');
-		const dialogLoadingSlot = root.querySelector<HTMLElement>('[data-dialog-loading-slot]');
-		const closeButton = root.querySelector<HTMLButtonElement>('[data-romantic-dialog-close]');
 
 		if (
 			!trigger ||
 			!primaryImage ||
 			!secretCard ||
 			!secretImageSlot ||
-			!status ||
-			!dialog ||
-			!dialogImageSlot ||
-			!closeButton
+			!status
 		) {
 			return;
 		}
@@ -183,8 +156,6 @@ const captionId = 'romantic-mode-caption';
 		let concealTimer: number | undefined;
 		let revealFrame: number | undefined;
 		let secretImage: HTMLImageElement | null = null;
-		let dialogImage: HTMLImageElement | null = null;
-		let dialogOpener: HTMLElement | null = null;
 
 		const locale = () =>
 			document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
@@ -237,19 +208,9 @@ const captionId = 'romantic-mode-caption';
 			secretImageSlot.append(secretImage);
 		};
 
-		const ensureDialogImage = () => {
-			if (dialogImage) return;
-			setLoading(dialogLoadingSlot ?? dialogImageSlot, true);
-			dialogImage = makeSecretImage('romantic-dialog_image');
-			bindImageLoading(dialogImage, dialogLoadingSlot ?? dialogImageSlot);
-			dialogImageSlot.append(dialogImage);
-		};
-
 		const syncLanguage = () => {
 			primaryImage.alt = localized('primaryAlt');
 			secretCard.setAttribute('aria-label', localized('dialogLabel'));
-			dialog.setAttribute('aria-label', localized('dialogLabel'));
-			closeButton.setAttribute('aria-label', localized('closeLabel'));
 			if (state.unlocked) {
 				trigger.setAttribute(
 					'aria-label',
@@ -259,7 +220,6 @@ const captionId = 'romantic-mode-caption';
 				trigger.removeAttribute('aria-label');
 			}
 			if (secretImage) secretImage.alt = localized('secretAlt');
-			if (dialogImage) dialogImage.alt = localized('secretAlt');
 			if (activeStatusName) {
 				status.textContent = localized(activeStatusName);
 			}
@@ -369,31 +329,6 @@ const captionId = 'romantic-mode-caption';
 			}
 		});
 
-		secretCard.addEventListener('click', () => {
-			ensureDialogImage();
-			dialogOpener = secretCard;
-			if (typeof dialog.showModal === 'function') {
-				if (!dialog.open) dialog.showModal();
-			} else {
-				dialog.setAttribute('open', '');
-				closeButton.focus();
-			}
-		});
-
-		const closeDialog = () => {
-			if (typeof dialog.close === 'function') {
-				if (dialog.open) dialog.close();
-			} else {
-				dialog.removeAttribute('open');
-				dialogOpener?.focus();
-			}
-		};
-
-		closeButton.addEventListener('click', closeDialog);
-		dialog.addEventListener('click', (event) => {
-			if (event.target === dialog) closeDialog();
-		});
-		dialog.addEventListener('close', () => dialogOpener?.focus());
 		document.addEventListener('site:language-change', syncLanguage);
 
 		syncLanguage();
