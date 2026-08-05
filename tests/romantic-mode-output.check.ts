@@ -128,16 +128,28 @@ describe('Romantic Mode production output', () => {
 		expect(html).not.toContain('data-romantic-dialog-close');
 	});
 
-	test('builds the editorial PhotoSwipe skin without legacy dialog CSS', () => {
+	test('builds one darkroom proof layer without decorating the PhotoSwipe image', () => {
 		const css = allFiles(distDir)
 			.filter((path) => extname(path) === '.css')
 			.map((path) => readFileSync(path, 'utf8'))
 			.join('\n');
 
 		expect(css).toContain('.romantic-lightbox .pswp__img');
-		expect(css).toContain('.romantic-lightbox_caption');
+		expect(css).toContain('.romantic-lightbox_frame');
+		expect(css).toContain('.romantic-lightbox_reveal');
+		expect(css).toContain('.romantic-lightbox_reveal-band');
+		expect(css).toContain('.romantic-lightbox_footer');
 		expect(css).toContain('.romantic-lightbox_close');
 		expect(css).toContain('.romantic-lightbox_proof');
+		expect(css).toMatch(/\.pswp__img--placeholder[^}]*opacity:1!important/);
+
+		const imageRule = css.match(/\.romantic-lightbox \.pswp__img\{([^}]*)\}/)?.[1];
+		expect(imageRule).toBeTruthy();
+		expect(imageRule).not.toContain('box-sizing:content-box');
+		expect(imageRule).toContain('padding:0');
+		expect(imageRule).toContain('border:0');
+		expect(imageRule).toContain('outline:0');
+		expect(imageRule).toContain('box-shadow:none');
 		expect(css).not.toContain('.romantic-dialog_panel');
 		expect(css).not.toContain('.romantic-dialog_close');
 	});

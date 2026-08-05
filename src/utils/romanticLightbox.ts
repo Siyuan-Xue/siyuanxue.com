@@ -24,6 +24,13 @@ export type RomanticLightboxMotionProfile = Readonly<{
 	reducedMotion: boolean;
 }>;
 
+export function shouldKeepRomanticLightboxPlaceholder(
+	defaultKeep: boolean,
+	state: Readonly<{ isOpening: boolean; hasMountedImage: boolean }>,
+): boolean {
+	return defaultKeep || state.isOpening || !state.hasMountedImage;
+}
+
 export function getRomanticLightboxLayout(
 	viewport: Pick<Point, 'x' | 'y'>,
 ): RomanticLightboxLayout {

@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "test": "bun test ./tests/romantic-mode.test.ts ./tests/romantic-lightbox.test.ts",
+    "test": "bun test ./tests/romantic-mode.test.ts ./tests/romantic-lightbox.test.ts ./tests/romantic-lightbox-motion.test.ts",
     "test:output": "bun test ./tests/romantic-mode-output.check.ts",
     "preview": "astro preview",
     "astro": "astro"

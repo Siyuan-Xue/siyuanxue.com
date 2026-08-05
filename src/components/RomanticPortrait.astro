@@ -128,7 +128,13 @@ const captionId = 'romantic-mode-caption';
 	import {
 		createRomanticLightboxOptions,
 		getRomanticLightboxLayout,
+		getRomanticLightboxMotionProfile,
+		shouldKeepRomanticLightboxPlaceholder,
 	} from '../utils/romanticLightbox';
+	import {
+		createRomanticLightboxMotion,
+		type RomanticLightboxMotionController,
+	} from '../utils/romanticLightboxMotion';
 
 	document.querySelectorAll<HTMLElement>('[data-romantic-mode]').forEach((root) => {
 		const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]');
@@ -171,9 +177,14 @@ const captionId = 'romantic-mode-caption';
 			return root.dataset[`${name}${suffix}`] ?? '';
 		};
 
+		let lightboxFrame: HTMLElement | null = null;
+		let lightboxReveal: HTMLElement | null = null;
+		let lightboxRevealBand: HTMLElement | null = null;
+		let lightboxFooter: HTMLElement | null = null;
 		let lightboxCaptionText: HTMLElement | null = null;
 		let lightboxProof: HTMLElement | null = null;
 		let lightboxClose: HTMLElement | null = null;
+		let lightboxMotion: RomanticLightboxMotionController | null = null;
 
 		const lightbox = new PhotoSwipeLightbox({
 			gallery: root,
@@ -183,6 +194,12 @@ const captionId = 'romantic-mode-caption';
 		});
 
 		lightbox.addFilter('thumbEl', () => secretImage ?? secretCard);
+		lightbox.addFilter('isKeepingPlaceholder', (defaultKeep, content) =>
+			shouldKeepRomanticLightboxPlaceholder(defaultKeep, {
+				isOpening: lightbox.pswp?.opener.isOpening ?? false,
+				hasMountedImage: Boolean(content.element?.parentElement),
+			}),
+		);
 
 		const setLoading = (slot: HTMLElement | null | undefined, loading: boolean) => {
 			if (!slot) return;
@@ -257,10 +274,33 @@ const captionId = 'romantic-mode-caption';
 			if (!pswp) return;
 
 			pswp.ui.registerElement({
-				name: 'romantic-caption',
-				className: 'romantic-lightbox_caption',
+				name: 'romantic-frame',
+				className: 'romantic-lightbox_frame',
 				appendTo: 'root',
 				onInit: (element) => {
+					lightboxFrame = element;
+				},
+			});
+
+			pswp.ui.registerElement({
+				name: 'romantic-reveal',
+				className: 'romantic-lightbox_reveal',
+				appendTo: 'root',
+				onInit: (element) => {
+					lightboxReveal = element;
+					lightboxRevealBand = document.createElement('span');
+					lightboxRevealBand.className = 'romantic-lightbox_reveal-band';
+					lightboxRevealBand.setAttribute('aria-hidden', 'true');
+					element.append(lightboxRevealBand);
+				},
+			});
+
+			pswp.ui.registerElement({
+				name: 'romantic-footer',
+				className: 'romantic-lightbox_footer',
+				appendTo: 'root',
+				onInit: (element) => {
+					lightboxFooter = element;
 					lightboxCaptionText = document.createElement('span');
 					lightboxCaptionText.className = 'romantic-lightbox_caption-text';
 					lightboxProof = document.createElement('small');
@@ -294,9 +334,14 @@ const captionId = 'romantic-mode-caption';
 			const layout = getRomanticLightboxLayout(pswp.viewportSize);
 			const properties = {
 				'--romantic-lightbox-media-width': layout.mediaWidth,
-				'--romantic-lightbox-media-half-width': layout.mediaWidth / 2,
 				'--romantic-lightbox-media-height': layout.mediaHeight,
 				'--romantic-lightbox-media-top': layout.mediaTop,
+				'--romantic-lightbox-frame-width': layout.frameWidth,
+				'--romantic-lightbox-frame-half-width': layout.frameWidth / 2,
+				'--romantic-lightbox-frame-height': layout.frameHeight,
+				'--romantic-lightbox-frame-top': layout.frameTop,
+				'--romantic-lightbox-matte': layout.matte,
+				'--romantic-lightbox-footer-height': layout.footerHeight,
 			};
 
 			for (const [name, value] of Object.entries(properties)) {
@@ -306,6 +351,81 @@ const captionId = 'romantic-mode-caption';
 
 		lightbox.on('afterInit', syncLightboxLayout);
 		lightbox.on('resize', syncLightboxLayout);
+
+		const getCurrentMotionProfile = () =>
+			getRomanticLightboxMotionProfile(
+				{ x: window.innerWidth, y: window.innerHeight },
+				window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+			);
+
+		lightbox.on('firstUpdate', () => {
+			const pswp = lightbox.pswp;
+			if (!pswp) return;
+			const profile = getCurrentMotionProfile();
+			pswp.options.showAnimationDuration = profile.showDurationMs;
+			pswp.options.hideAnimationDuration = profile.hideDurationMs;
+		});
+
+		lightbox.on('openingAnimationStart', () => {
+			const pswp = lightbox.pswp;
+			if (
+				!pswp?.currSlide?.container ||
+				!lightboxFrame ||
+				!lightboxReveal ||
+				!lightboxRevealBand ||
+				!lightboxFooter ||
+				!lightboxProof ||
+				!lightboxClose
+			) {
+				return;
+			}
+
+			const images = Array.from(
+				pswp.currSlide.container.querySelectorAll<HTMLElement>('.pswp__img'),
+			);
+			if (images.length === 0) return;
+
+			pswp.options.easing = 'cubic-bezier(0.16,1,0.3,1)';
+			lightboxMotion?.destroy();
+			lightboxMotion = createRomanticLightboxMotion(
+				{
+					frame: lightboxFrame,
+					image: images,
+					reveal: lightboxReveal,
+					footer: lightboxFooter,
+					proof: lightboxProof,
+					close: lightboxClose,
+					sweep: lightboxRevealBand,
+				},
+				getCurrentMotionProfile(),
+			);
+			lightboxMotion.playOpen();
+		});
+
+		lightbox.on('openingAnimationEnd', () => {
+			if (lightbox.pswp) {
+				lightbox.pswp.options.easing = 'cubic-bezier(.4,0,.22,1)';
+			}
+		});
+
+		lightbox.on('closingAnimationStart', () => {
+			if (lightbox.pswp) {
+				lightbox.pswp.options.easing = 'cubic-bezier(0.7,0,0.84,0)';
+			}
+			lightboxMotion?.playClose();
+		});
+
+		lightbox.on('destroy', () => {
+			lightboxMotion?.destroy();
+			lightboxMotion = null;
+			lightboxFrame = null;
+			lightboxReveal = null;
+			lightboxRevealBand = null;
+			lightboxFooter = null;
+			lightboxCaptionText = null;
+			lightboxProof = null;
+			lightboxClose = null;
+		});
 
 		const showStatus = (name: string, duration = 2800) => {
 			activeStatusName = name;

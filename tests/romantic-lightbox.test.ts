@@ -3,6 +3,7 @@ import {
 	createRomanticLightboxOptions,
 	getRomanticLightboxLayout,
 	getRomanticLightboxMotionProfile,
+	shouldKeepRomanticLightboxPlaceholder,
 } from '../src/utils/romanticLightbox';
 
 describe('Romantic Mode lightbox layout', () => {
@@ -114,6 +115,33 @@ describe('Romantic Mode motion profile', () => {
 });
 
 describe('Romantic Mode PhotoSwipe options', () => {
+	test('keeps the decoded thumbnail until the full image is mounted', () => {
+		expect(
+			shouldKeepRomanticLightboxPlaceholder(false, {
+				isOpening: true,
+				hasMountedImage: false,
+			}),
+		).toBe(true);
+		expect(
+			shouldKeepRomanticLightboxPlaceholder(false, {
+				isOpening: false,
+				hasMountedImage: false,
+			}),
+		).toBe(true);
+		expect(
+			shouldKeepRomanticLightboxPlaceholder(false, {
+				isOpening: false,
+				hasMountedImage: true,
+			}),
+		).toBe(false);
+		expect(
+			shouldKeepRomanticLightboxPlaceholder(true, {
+				isOpening: false,
+				hasMountedImage: true,
+			}),
+		).toBe(true);
+	});
+
 	test('delegates zoom, focus, keyboard, and reduced-motion behavior to PhotoSwipe', () => {
 		const options = createRomanticLightboxOptions('Close Romantic Mode portrait');
 
