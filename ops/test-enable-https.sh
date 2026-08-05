@@ -138,6 +138,20 @@ run_enable() {
 		bash "$ENABLE_SCRIPT" "$@"
 }
 
+run_installed_enable() {
+	env \
+		PATH="$MOCK_BIN:$PATH" \
+		SIYUANXUE_ALLOW_NON_ROOT=1 \
+		SIYUANXUE_SYSTEM_ROOT="$SYSTEM_ROOT" \
+		SIYUANXUE_CERTBOT_BIN=certbot \
+		SIYUANXUE_NGINX_BIN=nginx \
+		MOCK_COMMAND_LOG="$COMMAND_LOG" \
+		MOCK_NGINX_COUNT="$NGINX_COUNT" \
+		MOCK_NGINX_FAIL_ON_CALL="${MOCK_NGINX_FAIL_ON_CALL:-0}" \
+		MOCK_CERTBOT_SKIP_SAVE="${MOCK_CERTBOT_SKIP_SAVE:-0}" \
+		"$SYSTEM_ROOT/usr/local/sbin/siyuanxue-enable-https" "$@"
+}
+
 test_rejects_unknown_domain() {
 	local output
 
@@ -173,6 +187,19 @@ test_valid_certificate_is_not_reissued() {
 	if grep -Fq 'certbot certonly' "$COMMAND_LOG"; then
 		fail "a valid exact-domain certificate was reissued"
 	fi
+}
+
+test_installed_command_can_activate_another_domain() {
+	local available certificate enabled
+
+	setup_case installed-command
+	available="$SYSTEM_ROOT/etc/nginx/sites-available/siyuanxue-xuesiyuan-com-cn"
+	enabled="$SYSTEM_ROOT/etc/nginx/sites-enabled/siyuanxue-xuesiyuan-com-cn"
+	certificate="$SYSTEM_ROOT/etc/letsencrypt/live/xuesiyuan.com.cn/fullchain.pem"
+	run_enable apply --domain siyuanxue.com --email owner@example.com
+	run_installed_enable apply --domain xuesiyuan.com.cn --email owner@example.com
+	[[ -f "$available" && -L "$enabled" && -s "$certificate" ]] \
+		|| fail "installed management command could not activate another domain"
 }
 
 test_nginx_failure_restores_previous_configuration() {
@@ -232,6 +259,7 @@ test_secondary_domain_rolls_back_without_touching_certificate() {
 test_rejects_unknown_domain
 test_staging_precedes_production_issuance
 test_valid_certificate_is_not_reissued
+test_installed_command_can_activate_another_domain
 test_nginx_failure_restores_previous_configuration
 test_certificate_validation_failure_cleans_up_transaction
 test_secondary_domain_rolls_back_without_touching_certificate

@@ -3,7 +3,13 @@
 set -Eeuo pipefail
 umask 027
 
-SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+SCRIPT_PATH=${BASH_SOURCE[0]}
+while [[ -L "$SCRIPT_PATH" ]]; do
+	SCRIPT_BASE=$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)
+	SCRIPT_PATH=$(readlink "$SCRIPT_PATH")
+	[[ "$SCRIPT_PATH" == /* ]] || SCRIPT_PATH="$SCRIPT_BASE/$SCRIPT_PATH"
+done
+SCRIPT_DIR=$(cd -P "$(dirname "$SCRIPT_PATH")" && pwd)
 readonly SCRIPT_DIR
 readonly SERVER_IP=82.156.77.131
 readonly DEFAULT_SYSTEM_ROOT=/
