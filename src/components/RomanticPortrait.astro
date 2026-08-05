@@ -117,12 +117,18 @@ const captionId = 'romantic-mode-caption';
 </div>
 
 <script>
+	import PhotoSwipeLightbox from 'photoswipe/lightbox';
+	import 'photoswipe/style.css';
 	import {
 		advanceRomanticMode,
 		persistRomanticMode,
 		restoreRomanticMode,
 		type RomanticModeStorage,
 	} from '../utils/romanticMode';
+	import {
+		createRomanticLightboxOptions,
+		getRomanticLightboxLayout,
+	} from '../utils/romanticLightbox';
 
 	document.querySelectorAll<HTMLElement>('[data-romantic-mode]').forEach((root) => {
 		const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]');
@@ -164,6 +170,19 @@ const captionId = 'romantic-mode-caption';
 			const suffix = locale() === 'zh' ? 'Zh' : 'En';
 			return root.dataset[`${name}${suffix}`] ?? '';
 		};
+
+		let lightboxCaptionText: HTMLElement | null = null;
+		let lightboxProof: HTMLElement | null = null;
+		let lightboxClose: HTMLElement | null = null;
+
+		const lightbox = new PhotoSwipeLightbox({
+			gallery: root,
+			children: '[data-romantic-lightbox-trigger]',
+			pswpModule: () => import('photoswipe'),
+			...createRomanticLightboxOptions(localized('closeLabel')),
+		});
+
+		lightbox.addFilter('thumbEl', () => secretImage ?? secretCard);
 
 		const setLoading = (slot: HTMLElement | null | undefined, loading: boolean) => {
 			if (!slot) return;
@@ -223,7 +242,68 @@ const captionId = 'romantic-mode-caption';
 			if (activeStatusName) {
 				status.textContent = localized(activeStatusName);
 			}
+
+			const caption = localized('caption');
+			const closeLabel = localized('closeLabel');
+			lightbox.options.closeTitle = closeLabel;
+			if (lightbox.pswp) lightbox.pswp.options.closeTitle = closeLabel;
+			if (lightboxCaptionText) lightboxCaptionText.textContent = caption;
+			if (lightboxProof) lightboxProof.textContent = root.dataset.proofLabel ?? '';
+			if (lightboxClose) lightboxClose.setAttribute('aria-label', closeLabel);
 		};
+
+		lightbox.on('uiRegister', () => {
+			const pswp = lightbox.pswp;
+			if (!pswp) return;
+
+			pswp.ui.registerElement({
+				name: 'romantic-caption',
+				className: 'romantic-lightbox_caption',
+				appendTo: 'root',
+				onInit: (element) => {
+					lightboxCaptionText = document.createElement('span');
+					lightboxCaptionText.className = 'romantic-lightbox_caption-text';
+					lightboxProof = document.createElement('small');
+					lightboxProof.className = 'romantic-lightbox_proof';
+					element.append(lightboxCaptionText, lightboxProof);
+					syncLanguage();
+				},
+			});
+
+			pswp.ui.registerElement({
+				name: 'romantic-close',
+				className: 'romantic-lightbox_close',
+				appendTo: 'root',
+				isButton: true,
+				ariaLabel: localized('closeLabel'),
+				html: '<span aria-hidden="true">×</span>',
+				onClick: 'close',
+				onInit: (element) => {
+					lightboxClose = element;
+					syncLanguage();
+				},
+			});
+		});
+
+		const syncLightboxLayout = () => {
+			const pswp = lightbox.pswp;
+			if (!pswp?.element) return;
+
+			const layout = getRomanticLightboxLayout(pswp.viewportSize);
+			const properties = {
+				'--romantic-lightbox-media-width': layout.mediaWidth,
+				'--romantic-lightbox-media-half-width': layout.mediaWidth / 2,
+				'--romantic-lightbox-media-height': layout.mediaHeight,
+				'--romantic-lightbox-media-top': layout.mediaTop,
+			};
+
+			for (const [name, value] of Object.entries(properties)) {
+				pswp.element.style.setProperty(name, `${value}px`);
+			}
+		};
+
+		lightbox.on('afterInit', syncLightboxLayout);
+		lightbox.on('resize', syncLightboxLayout);
 
 		const showStatus = (name: string, duration = 2800) => {
 			activeStatusName = name;
@@ -331,6 +411,7 @@ const captionId = 'romantic-mode-caption';
 
 		document.addEventListener('site:language-change', syncLanguage);
 
+		lightbox.init();
 		syncLanguage();
 		if (state.active) {
 			reveal(false);
