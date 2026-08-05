@@ -31,6 +31,12 @@ export function shouldKeepRomanticLightboxPlaceholder(
 	return defaultKeep || state.isOpening || !state.hasMountedImage;
 }
 
+export function isRomanticLightboxBackdropTarget(
+	classes: Readonly<{ contains: (name: string) => boolean }>,
+): boolean {
+	return classes.contains('pswp__item') || classes.contains('pswp__zoom-wrap');
+}
+
 export function getRomanticLightboxLayout(
 	viewport: Pick<Point, 'x' | 'y'>,
 ): RomanticLightboxLayout {
@@ -123,8 +129,14 @@ export function createRomanticLightboxOptions(closeTitle: string): PhotoSwipeOpt
 		returnFocus: true,
 		bgClickAction: 'close',
 		imageClickAction: 'zoom-or-close',
-		tapAction: 'toggle-controls',
+		tapAction(_point, originalEvent) {
+			const target = originalEvent.target;
+			if (target instanceof Element && isRomanticLightboxBackdropTarget(target.classList)) {
+				this.close();
+			}
+		},
 		doubleTapAction: 'zoom',
+		preloader: false,
 		preload: [0, 0],
 		closeTitle,
 		paddingFn: (viewport) => getRomanticLightboxLayout(viewport).padding,

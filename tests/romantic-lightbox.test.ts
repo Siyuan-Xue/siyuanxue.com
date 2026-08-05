@@ -3,6 +3,7 @@ import {
 	createRomanticLightboxOptions,
 	getRomanticLightboxLayout,
 	getRomanticLightboxMotionProfile,
+	isRomanticLightboxBackdropTarget,
 	shouldKeepRomanticLightboxPlaceholder,
 } from '../src/utils/romanticLightbox';
 
@@ -115,6 +116,16 @@ describe('Romantic Mode motion profile', () => {
 });
 
 describe('Romantic Mode PhotoSwipe options', () => {
+	test('only treats the uncovered PhotoSwipe canvas as a touch backdrop', () => {
+		const classes = (values: string[]) => ({
+			contains: (name: string) => values.includes(name),
+		});
+
+		expect(isRomanticLightboxBackdropTarget(classes(['pswp__item']))).toBe(true);
+		expect(isRomanticLightboxBackdropTarget(classes(['pswp__zoom-wrap']))).toBe(true);
+		expect(isRomanticLightboxBackdropTarget(classes(['pswp__img']))).toBe(false);
+	});
+
 	test('keeps the decoded thumbnail until the full image is mounted', () => {
 		expect(
 			shouldKeepRomanticLightboxPlaceholder(false, {
@@ -163,8 +174,10 @@ describe('Romantic Mode PhotoSwipe options', () => {
 			bgClickAction: 'close',
 			imageClickAction: 'zoom-or-close',
 			doubleTapAction: 'zoom',
+			preloader: false,
 			closeTitle: 'Close Romantic Mode portrait',
 		});
+		expect(typeof options.tapAction).toBe('function');
 
 		expect(options.paddingFn?.({ x: 320, y: 640 }, {}, 0)).toEqual({
 			top: 28,
