@@ -280,6 +280,8 @@ const captionId = 'romantic-mode-caption';
 				onClick: 'close',
 				onInit: (element) => {
 					lightboxClose = element;
+					// Preserve the thumbnail as PhotoSwipe's pointer-open focus target.
+					element.addEventListener('mousedown', (event) => event.preventDefault());
 					syncLanguage();
 				},
 			});

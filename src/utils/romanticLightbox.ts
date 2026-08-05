@@ -13,7 +13,7 @@ export function getRomanticLightboxLayout(
 	viewport: Pick<Point, 'x' | 'y'>,
 ): RomanticLightboxLayout {
 	const compact = viewport.x <= 720;
-	const side = compact ? 16 : 40;
+	const side = compact ? 24 : 40;
 	const top = compact ? 28 : 36;
 	const bottom = compact ? 112 : 124;
 	const availableWidth = Math.max(0, viewport.x - side * 2);

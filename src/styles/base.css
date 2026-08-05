@@ -759,90 +759,123 @@ html.u-mode-invert .theme-toggle_icon--moon {
 	transition-delay: 0s;
 }
 
-.romantic-dialog {
-	width: min(32rem, calc(100vw - 2rem));
-	max-width: none;
-	max-height: calc(100dvh - 2rem);
-	margin: auto;
-	padding: 0;
-	overflow: visible;
-	border: 0;
-	background: transparent;
-	color: var(--fg);
+.romantic-lightbox {
+	--romantic-lightbox-matte: 0.6rem;
+	--romantic-lightbox-paper: var(--bg-elevated);
+	--romantic-lightbox-rule: color-mix(in srgb, var(--border) 82%, var(--fg-muted));
+	--romantic-lightbox-media-width: 20rem;
+	--romantic-lightbox-media-half-width: 10rem;
+	--romantic-lightbox-media-height: 30rem;
+	--romantic-lightbox-media-top: 2rem;
 }
 
-.romantic-dialog::backdrop {
-	background: rgb(31 30 29 / 72%);
-	backdrop-filter: blur(3px);
+.romantic-lightbox .pswp__bg {
+	background: color-mix(in srgb, var(--fg) 86%, transparent);
+	backdrop-filter: blur(4px);
 }
 
-.romantic-dialog_panel {
-	position: relative;
-	overflow: hidden;
-	border: 1px solid var(--border);
-	border-radius: 0.35rem;
-	background: var(--bg-elevated);
-	box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 35%);
+.romantic-lightbox .pswp__img {
+	box-sizing: content-box;
+	padding: var(--romantic-lightbox-matte);
+	border: 1px solid var(--romantic-lightbox-rule);
+	outline: 1px solid color-mix(in srgb, var(--romantic-lightbox-rule) 46%, transparent);
+	outline-offset: 0.28rem;
+	background: var(--romantic-lightbox-paper);
+	box-shadow: 0 1.8rem 4.5rem rgb(0 0 0 / 34%);
 }
 
-.romantic-dialog_close {
-	appearance: none;
+.romantic-lightbox_caption {
 	position: absolute;
-	z-index: 1;
-	top: 0.7rem;
-	right: 0.7rem;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 2.25rem;
-	height: 2.25rem;
+	z-index: 2;
+	top: calc(
+		var(--romantic-lightbox-media-top) +
+			var(--romantic-lightbox-media-height) +
+			var(--romantic-lightbox-matte)
+	);
+	left: calc(50% + var(--romantic-lightbox-matte) + 1px);
+	display: grid;
+	gap: 0.3rem;
+	width: calc(
+		var(--romantic-lightbox-media-width) +
+			var(--romantic-lightbox-matte) * 2 +
+			2px
+	);
+	padding: 0.7rem 0.8rem 0.9rem;
+	border: 1px solid var(--romantic-lightbox-rule);
+	border-top: 0;
+	background: var(--romantic-lightbox-paper);
+	box-shadow: 0 1.2rem 2.4rem rgb(0 0 0 / 18%);
+	color: var(--fg-body);
+	line-height: 1.45;
+	text-align: center;
+	transform: translateX(-50%);
+	transition: opacity 180ms ease;
+	pointer-events: none;
+}
+
+.romantic-lightbox_caption-text {
+	font-family: var(--font-serif);
+	font-size: 0.95rem;
+}
+
+.romantic-lightbox_proof {
+	color: var(--fg-muted);
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 0.625rem;
+	letter-spacing: 0.14em;
+}
+
+.romantic-lightbox .romantic-lightbox_close {
+	position: absolute;
+	z-index: 3;
+	top: calc(var(--romantic-lightbox-media-top) - 1rem);
+	left: min(
+		calc(
+			50% +
+				var(--romantic-lightbox-media-half-width) -
+				0.8rem
+		),
+		calc(
+			100% -
+				2.75rem -
+				max(0.5rem, env(safe-area-inset-right))
+		)
+	);
+	display: inline-grid;
+	place-items: center;
+	width: 2.75rem;
+	height: 2.75rem;
 	margin: 0;
-	padding: 0 0 0.1rem;
-	border: 1px solid var(--border);
+	padding: 0 0 0.08rem;
+	border: 1px solid var(--romantic-lightbox-rule);
 	border-radius: 50%;
-	background: var(--bg-elevated);
-	box-shadow: 0 0.2rem 0.75rem rgb(31 30 29 / 18%);
+	background: var(--romantic-lightbox-paper);
+	box-shadow: 0 0.35rem 1rem rgb(0 0 0 / 20%);
 	color: var(--fg);
 	cursor: pointer;
 	font-family: system-ui, sans-serif;
-	font-size: 1.55rem;
+	font-size: 1.45rem;
 	font-weight: 300;
 	line-height: 1;
+	transition:
+		opacity 180ms ease,
+		background-color var(--ease-color),
+		border-color var(--ease-color);
 }
 
-.romantic-dialog_close:hover {
+.romantic-lightbox .romantic-lightbox_close:hover {
 	background: var(--bg-soft);
 }
 
-.romantic-dialog_close:focus-visible {
+.romantic-lightbox .romantic-lightbox_close:focus-visible {
 	outline: 2px solid var(--focus);
-	outline-offset: 2px;
+	outline-offset: 3px;
 }
 
-.romantic-dialog_figure {
-	margin: 0;
-}
-
-.romantic-dialog_media {
-	position: relative;
-	min-height: 12rem;
-	background: var(--bg-soft);
-	line-height: 0;
-}
-
-.romantic-dialog_image {
-	display: block;
-	width: 100%;
-	max-height: calc(100dvh - 8rem);
-	object-fit: contain;
-}
-
-.romantic-dialog_caption {
-	padding: 0.85rem 1rem 0.95rem;
-	color: var(--fg-body);
-	font-size: 0.95rem;
-	line-height: 1.45;
-	text-align: center;
+.romantic-lightbox.pswp--zoomed-in .romantic-lightbox_caption,
+.romantic-lightbox.pswp--zoomed-in .romantic-lightbox_close {
+	opacity: 0;
+	pointer-events: none;
 }
 
 @media (max-width: 960px) {
@@ -862,12 +895,34 @@ html.u-mode-invert .theme-toggle_icon--moon {
 		max-width: 12rem;
 		margin: 0 0 1rem 1rem;
 	}
+
+	.romantic-lightbox {
+		--romantic-lightbox-matte: 0.42rem;
+	}
+
+	.romantic-lightbox_caption {
+		gap: 0.22rem;
+		padding: 0.55rem 0.6rem 0.7rem;
+	}
+
+	.romantic-lightbox_caption-text {
+		font-size: 0.875rem;
+	}
+
+	.romantic-lightbox_proof {
+		font-size: 0.56rem;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
 	.romantic-portrait_primary,
 	.romantic-portrait_secret,
 	.romantic-mode_toast {
+		transition: none;
+	}
+
+	.romantic-lightbox_caption,
+	.romantic-lightbox_close {
 		transition: none;
 	}
 }
@@ -1519,11 +1574,6 @@ html.u-mode-invert .theme-toggle_icon--moon {
 /* Soft veil so the blocks read on photo-like surfaces */
 .loading-slot_indicator--veil {
 	background: color-mix(in srgb, var(--bg-soft) 72%, transparent);
-}
-
-/* Dialog media needs a positioned host for the absolute indicator */
-.romantic-dialog_media.loading-slot {
-	position: relative;
 }
 
 /*

@@ -17,10 +17,10 @@ describe('Romantic Mode lightbox layout', () => {
 	test('keeps the frame and corner tab inside a 320px viewport', () => {
 		const layout = getRomanticLightboxLayout({ x: 320, y: 640 });
 
-		expect(layout.padding).toEqual({ top: 28, bottom: 112, left: 16, right: 16 });
-		expect(layout.mediaWidth).toBe(288);
-		expect(layout.mediaHeight).toBe(432);
-		expect(layout.mediaTop).toBe(62);
+		expect(layout.padding).toEqual({ top: 28, bottom: 112, left: 24, right: 24 });
+		expect(layout.mediaWidth).toBe(272);
+		expect(layout.mediaHeight).toBe(408);
+		expect(layout.mediaTop).toBe(74);
 	});
 });
 
@@ -49,8 +49,8 @@ describe('Romantic Mode PhotoSwipe options', () => {
 		expect(options.paddingFn?.({ x: 320, y: 640 }, {}, 0)).toEqual({
 			top: 28,
 			bottom: 112,
-			left: 16,
-			right: 16,
+			left: 24,
+			right: 24,
 		});
 	});
 });

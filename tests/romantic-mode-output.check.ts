@@ -128,6 +128,20 @@ describe('Romantic Mode production output', () => {
 		expect(html).not.toContain('data-romantic-dialog-close');
 	});
 
+	test('builds the editorial PhotoSwipe skin without legacy dialog CSS', () => {
+		const css = allFiles(distDir)
+			.filter((path) => extname(path) === '.css')
+			.map((path) => readFileSync(path, 'utf8'))
+			.join('\n');
+
+		expect(css).toContain('.romantic-lightbox .pswp__img');
+		expect(css).toContain('.romantic-lightbox_caption');
+		expect(css).toContain('.romantic-lightbox_close');
+		expect(css).toContain('.romantic-lightbox_proof');
+		expect(css).not.toContain('.romantic-dialog_panel');
+		expect(css).not.toContain('.romantic-dialog_close');
+	});
+
 	test('the secret portrait is not emitted as an eager resource', () => {
 		expect(existsSync(indexPath)).toBe(true);
 		const html = readFileSync(indexPath, 'utf8');
