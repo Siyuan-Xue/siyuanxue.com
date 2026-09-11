@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import {t,locale} from '../i18n/locale';
+const copy={
+ title:t({en:'Chat with Hermes',zh:'与 Hermes 对话'}),
+ intro:t({en:'An AI conversation powered by GLM-5.3. Chat only, without tools or long-term memory. Your conversation is not shared with other visitors. History stays in this page until you clear it or leave.',zh:'由 GLM-5.3 驱动的 AI 对话，仅聊天，不使用工具或长期记忆。你的对话不会与其他访客共享。页面内的对话记录会在清空或离开后消失。'}),
+ empty:t({en:'What would you like to explore?',zh:'你想聊些什么？'}),label:t({en:'Your message',zh:'你的消息'}),send:t({en:'Send',zh:'发送'}),stop:t({en:'Stop',zh:'停止'}),fresh:t({en:'New conversation',zh:'新对话'}),busy:t({en:'Hermes is replying…',zh:'Hermes 正在回复…'}),error:t({en:'The reply could not be completed. Please try again.',zh:'回复未能完成，请重试。'}),limit:t({en:'Chat is busy or you have reached the request limit. Please wait a minute.',zh:'对话繁忙或请求次数已达上限，请稍等一分钟。'}),long:t({en:'This conversation has reached its length limit. Start a new conversation.',zh:'本次对话已达长度上限，请开始新对话。'}),stopped:t({en:'Reply stopped.',zh:'回复已停止。'}),you:t({en:'You',zh:'你'}),ready:t({en:'Reply complete.',zh:'回复完成。'})};
+---
+<Base title={copy.title} description={copy.intro}>
+<section class="chat container cc-narrow" data-chat data-copy={JSON.stringify(copy)}>
+ <h1>{copy.title}</h1><p class="intro">{copy.intro}</p>
+ <p data-empty>{copy.empty}</p><ol data-messages aria-label={locale==='zh'?'对话记录':'Conversation'}></ol>
+ <p data-status role="status" aria-live="polite"></p>
+ <form><label for="chat-message">{copy.label}</label><textarea id="chat-message" rows="3" maxlength="4000" required></textarea>
+ <div class="actions"><button type="submit" data-send>{copy.send}</button><button type="button" data-stop disabled>{copy.stop}</button><button type="button" data-new>{copy.fresh}</button></div>
+ </form>
+</section>
+</Base>
+<script>
+import {readChatStream,shouldSubmit} from '../utils/chat';
+const root=document.querySelector<HTMLElement>('[data-chat]')!;
+const copy=JSON.parse(root.dataset.copy!);const form=root.querySelector('form')!;const input=root.querySelector('textarea')!;const list=root.querySelector<HTMLOListElement>('[data-messages]')!;const status=root.querySelector<HTMLElement>('[data-status]')!;const empty=root.querySelector<HTMLElement>('[data-empty]')!;const send=root.querySelector<HTMLButtonElement>('[data-send]')!;const stop=root.querySelector<HTMLButtonElement>('[data-stop]')!;
+let history:{role:'user'|'assistant';content:string}[]=[];let controller:AbortController|null=null;let generation=0;
+function message(label:string,text:string){const li=document.createElement('li');const name=document.createElement('strong');name.textContent=label;const content=document.createElement('p');content.textContent=text;li.append(name,content);list.append(li);empty.hidden=true;return content;}
+function busy(value:boolean){send.disabled=value;stop.disabled=!value;input.disabled=value;root.setAttribute('aria-busy',String(value));}
+form.addEventListener('submit',async e=>{e.preventDefault();const text=input.value.trim();if(!text||controller)return;
+ const messages=[...history,{role:'user' as const,content:text}];if(messages.length>24||messages.reduce((n,m)=>n+m.content.length,0)>16000||new TextEncoder().encode(JSON.stringify({messages})).length>32768){status.textContent=copy.long;return;}
+ const turn=++generation;controller=new AbortController();const signal=controller.signal;message(copy.you,text);const reply=message('Hermes','');input.value='';busy(true);status.textContent=copy.busy;let answer='';
+ try{const response=await fetch('/chat-api',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages}),signal});if(!response.ok||!response.body)throw new Error(response.status===429?'limit':'error');await readChatStream(response.body,chunk=>{if(turn!==generation)return;answer+=chunk;reply.textContent=answer;});if(!answer.trim())throw new Error('error');if(turn===generation){history=[...messages,{role:'assistant',content:answer}];status.textContent=copy.ready;}}
+ catch(error){if(turn===generation){status.textContent=signal.aborted?copy.stopped:copy[error instanceof Error&&error.message==='limit'?'limit':'error'];input.value=text;}}
+ finally{if(turn===generation){controller=null;busy(false);input.focus();}}
+});
+input.addEventListener('keydown',e=>{if(shouldSubmit(e)){e.preventDefault();form.requestSubmit();}});
+stop.addEventListener('click',()=>controller?.abort());
+root.querySelector('[data-new]')!.addEventListener('click',()=>{generation++;controller?.abort();controller=null;history=[];list.replaceChildren();empty.hidden=false;status.textContent='';input.value='';busy(false);input.focus();});
+window.addEventListener('pagehide',()=>controller?.abort());
+</script>
+<style>
+.chat{padding-top:3rem;padding-bottom:4rem;max-width:48rem}.intro{opacity:.75;line-height:1.7}.chat h1{font-size:2rem}.chat ol{list-style:none;padding:0}.chat :global(li){padding:1rem 0;border-bottom:1px solid currentColor}.chat :global(li p){white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;margin:.5rem 0}label{display:block;margin-bottom:.5rem}textarea{display:block;width:100%;box-sizing:border-box;resize:vertical;font:inherit;color:inherit;background:transparent;border:1px solid currentColor;border-radius:.5rem;padding:.8rem}.actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.8rem}button{font:inherit;color:inherit;background:transparent;border:1px solid currentColor;border-radius:.5rem;padding:.5rem .9rem;cursor:pointer}button:disabled{opacity:.45;cursor:default}button:focus-visible,textarea:focus-visible{outline:2px solid currentColor;outline-offset:3px}[data-status]{min-height:1.6em} @media(max-width:600px){.chat{padding-top:1.5rem}.chat h1{font-size:1.7rem}}
+</style>

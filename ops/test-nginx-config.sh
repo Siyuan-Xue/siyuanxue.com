@@ -22,6 +22,8 @@ command -v "$NGINX_BIN" >/dev/null 2>&1 \
 		exit 1
 	}
 
+mkdir -p "$TEST_ROOT/etc/nginx/snippets"
+cp "$SCRIPT_DIR/nginx/hermes-chat.conf" "$TEST_ROOT/etc/nginx/snippets/hermes-chat.conf"
 mkdir -p \
 	"$TEST_ROOT/conf.d" \
 	"$TEST_ROOT/etc/letsencrypt/live" \
@@ -55,6 +57,7 @@ render_config() {
 	local target=$2
 
 	sed \
+		-e "s#/etc/nginx/snippets#$TEST_ROOT/etc/nginx/snippets#g" \
 		-e "s#/etc/letsencrypt#$TEST_ROOT/etc/letsencrypt#g" \
 		-e "s#/var/lib/letsencrypt#$TEST_ROOT/var/lib/letsencrypt#g" \
 		-e "s#/var/www/siyuanxue.com#$TEST_ROOT/var/www/siyuanxue.com#g" \

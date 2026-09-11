@@ -1,0 +1,13 @@
+# Hermes chat bridge
+
+Requires Node 22.12+; no npm dependencies. Run `HERMES_API_KEY=... node services/hermes-chat/server.mjs` with the secret supplied securely by the environment (never paste a real key into shell history). Production setup is in `ops/README.md`.
+
+The bridge trusts `X-Real-IP` only behind a loopback Nginx proxy which overwrites it. Do not expose port 8643. Only POST `/chat-api` and GET `/chat-api/health` exist. Accepted JSON is exactly `{messages:[{role:"user"|"assistant",content:string}]}`. No runtime overrides, tools, system messages, or caller sessions are accepted. Limits: 32 KiB body, 24 messages, 4000 UTF-16 code units/message, 16000 total; alternating from user, ending in user. Six requests per IP per rolling minute, two concurrent per IP, four total. Invalid body requests also consume admission quota. At most 10000 IP records are retained; idle records expire after a minute and a full table rejects new clients.
+
+Upstream requests use model alias `hermes`, `stream:true`, a random session ID, and the private profile API key. Profile configuration must fix GLM-5.3/high reasoning and disable tools/memory. The bridge does not provide tool isolation itself. Fresh sessions prevent cross-request history retrieval; Hermes may retain server-side sessions/logs according to its own configuration.
+
+SSE is decoded incrementally across UTF-8 boundaries. Only `choices[0].delta.content` is emitted; internal events, reasoning, IDs and headers are discarded. Success ends in `[DONE]`. Upstream errors/truncation produce a generic `event: error` with `{"error":"stream_error"}` and no DONE. Before headers, upstream failure returns HTTP 502. Total timeout is 120 seconds and downstream disconnect aborts upstream. No request body or upstream error is logged by the bridge. Health only indicates bridge availability, not model readiness.
+
+`createChatServer(options)` exports an unbound HTTP server for tests. Run `node --experimental-strip-types --test tests/hermes-chat.node.ts` for real Node socket behavior; `bun run test` invokes this suite too. The frontend keeps successful history in memory and renders all model text using `textContent`.
+
+Hermes v0.21.1 profile isolation: setting `platform_toolsets.api_server: []` alone can still recover the native kanban toolset. Set `agent.disabled_toolsets: ['all', 'context_engine']` as well and verify the effective `_get_platform_tools` and runtime tool list are empty. Use the same disable setting in the separate `wechat-public` profile. No Hermes source patch is required. Weixin administrative command gating must use the actual QR owner's ID in `allow_admin_from`; an empty list disables that gate. Other users should only have new/reset/stop commands.

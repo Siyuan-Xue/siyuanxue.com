@@ -9,5 +9,6 @@ bash ops/test-install-nginx-config.sh
 bash ops/test-bootstrap-health.sh
 bash ops/test-release.sh
 bash ops/test-migrate-dual-domain.sh
+bash ops/test-hermes-chat.sh
 bash ops/test-nginx-config.sh
 bun run build

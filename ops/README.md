@@ -61,3 +61,30 @@ The Actions manual `rollback` operation accepts a retained, successful bilingual
 ## Diagnostics
 
 Read `sudo nginx -t`, `sudo journalctl -u nginx --since '15 minutes ago'`, `sudo readlink /var/www/siyuanxue.com/current`, and both public `/__health` endpoints. Keep the old image denial active during recovery. Do not restart SSH or disable Fail2ban to diagnose an unrelated website issue.
+
+## Public Hermes chat
+
+First prepare the separate official `website-chat` Hermes profile at `127.0.0.1:8642`: GLM-5.3, high reasoning, no tools, skills, MCP, persistent/profile memory. Install its gateway through `hermes -p website-chat gateway install` and enable/start its official service. Keep the private default profile untouched. The bridge sends the configured profile's `hermes` model alias.
+
+As root, securely create `/etc/hermes-chat.env` owned by root with mode `0600`. It contains `HERMES_API_KEY=<website-profile-key>` and optional settings below. Do not put the GLM key in this file or commit any secret.
+
+```text
+HERMES_API_URL=http://127.0.0.1:8642/v1/chat/completions
+CHAT_HOST=127.0.0.1
+CHAT_PORT=8643
+ALLOWED_ORIGINS=https://siyuanxue.com,https://xuesiyuan.com
+```
+
+Keep default host/port for the supplied Nginx and health checks. Install reviewed files from the checked-out release source (not the static build archive):
+
+```sh
+sudo bash ops/install-hermes-chat.sh /usr/bin/node
+```
+
+Use an absolute executable Node 22.12+ binary path; symlinks and paths containing spaces are rejected. It must be outside protected home directories and accessible by the `hermes-chat` service account. The idempotent installer fails closed without a root-owned mode 600 key file, installs into `/opt/hermes-chat`, records backups in `/var/backups/hermes-chat.*`, installs/enables/restarts the hardened `hermes-chat.service`, and checks loopback health. It validates Nginx before and after snippet installation; it preserves existing vhosts and does not reload Nginx.
+
+Back up the active domain configs, then add `include /etc/nginx/snippets/hermes-chat.conf;` only inside both HTTPS apex content servers (and optionally the existing public-IP content server). The tracked templates already contain these includes; install the snippet before installing those templates. Preserve all certificates, default-deny servers, release roots, redirects and `/images/p-202.jpg` denial. Run `sudo nginx -t`, then `sudo systemctl reload nginx`. On validation failure restore the vhost backups before proceeding. Only the exact chat and health routes proxy; nested management paths return 404. Nginx overwrites client IP and strips Authorization/Cookie before bridge forwarding.
+
+Verify both public `/chat/` pages, anonymous streamed replies, `/chat-api/health`, rejection of `/chat-api/sessions`, and existing locale/HTTPS/photo-denial checks. Neither 8642 nor 8643 may be exposed externally. Bridge health is not a model health probe. Restore bridge/service/snippet from the recorded backups and restart the service to roll back; ordinary static release activation remains unchanged.
+
+For installed Hermes v0.21.1, empty `platform_toolsets.api_server`/`platform_toolsets.weixin` alone can still recover native kanban tools. Also set `agent.disabled_toolsets: ['all', 'context_engine']` in both public profiles, and verify effective `_get_platform_tools` and runtime tools are empty. For Weixin, populate `allow_admin_from` with the actual QR owner ID; an empty list disables the administrative gate. Regular users should only have new/reset/stop commands. These are profile configuration changes, not Hermes source patches.
