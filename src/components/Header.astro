@@ -2,32 +2,13 @@
 import ThemeToggle from './ThemeToggle.astro';
 import LangToggle from './LangToggle.astro';
 import TocToggle from './TocToggle.astro';
-import I18n from './I18n.astro';
 import { site } from '../data/site';
-
-interface Props {
-	showTocToggle?: boolean;
-}
-
+import { t } from '../i18n/locale';
+interface Props { showTocToggle?: boolean }
 const { showTocToggle = false } = Astro.props;
+const Brand = Astro.url.pathname === '/' ? 'h1' : 'span';
 ---
-
-<header class="header">
-	<div class="container cc-narrow header-inner">
-		<a
-			href="/"
-			class="header-name-link"
-			aria-current={Astro.url.pathname === '/' ? 'page' : undefined}
-		>
-			<h1 class="header-name">
-				<I18n t={site.name} />
-			</h1>
-		</a>
-		<div class="header-spacer"></div>
-		<div class="header-controls">
-			{showTocToggle && <TocToggle />}
-			<LangToggle />
-			<ThemeToggle />
-		</div>
-	</div>
-</header>
+<header class="header"><div class="container cc-narrow header-inner">
+ <a href="/" class="header-name-link" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}><Brand class="header-name">{t(site.name)}</Brand></a>
+ <div class="header-spacer"></div><div class="header-controls">{showTocToggle && <TocToggle />}<LangToggle /><ThemeToggle /></div>
+</div></header>

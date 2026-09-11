@@ -35,7 +35,6 @@ Usage:
 Allowed domains:
   siyuanxue.com
   xuesiyuan.com
-  xuesiyuan.com.cn
 USAGE
 	exit 2
 }
@@ -119,7 +118,7 @@ while (($# > 0)); do
 done
 
 case $domain in
-	siyuanxue.com | xuesiyuan.com | xuesiyuan.com.cn) ;;
+	siyuanxue.com | xuesiyuan.com) ;;
 	'') die 'domain is required' ;;
 	*) die "unsupported domain: $domain" ;;
 esac
@@ -166,6 +165,12 @@ preflight() {
 		|| die "$SITE_ROOT/current/index.html is missing"
 	[[ -f "$SITE_ROOT/current/__health" ]] \
 		|| die "$SITE_ROOT/current/__health is missing"
+	if [[ "$domain" == xuesiyuan.com ]]; then
+		[[ -s "$SITE_ROOT/current/zh/index.html" && -f "$SITE_ROOT/current/zh/__health" ]] \
+			|| die 'Chinese release must be deployed before activating its domain'
+		[[ "$(<"$SITE_ROOT/current/zh/__health")" == "$(<"$SITE_ROOT/current/__health")" ]] \
+			|| die 'Chinese and English release markers differ'
+	fi
 	ss -ltnp \
 		| grep -Eq 'LISTEN.*:80([^0-9]|$).*nginx' \
 		|| die 'Nginx is not listening on TCP 80'

@@ -8,6 +8,7 @@ describe('Romantic Mode darkroom motion', () => {
 		const spec = getRomanticLightboxMotionSpec(profile);
 
 		expect(spec.reducedMotion).toBe(false);
+		if (spec.reducedMotion) throw new Error('Expected animation');
 		expect(spec.open.frame).toEqual({
 			from: {
 				clipPath: 'inset(49% 0 49% 0 round 2px)',
@@ -56,6 +57,7 @@ describe('Romantic Mode darkroom motion', () => {
 		const profile = getRomanticLightboxMotionProfile({ x: 1280, y: 900 }, false);
 		const spec = getRomanticLightboxMotionSpec(profile);
 
+		if (spec.reducedMotion) throw new Error('Expected animation');
 		expect(spec.close.furniture).toEqual({
 			to: { opacity: 0, y: 6, duration: 0.15 },
 			at: 0,

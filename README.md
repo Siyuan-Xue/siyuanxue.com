@@ -1,66 +1,46 @@
-# siyuanxue.com
+# Siyuan Xue / 薛思远
 
-Local project folder for the personal site at `siyuanxue.com`.
+An Astro static personal blog inspired by [Dario Amodei](https://darioamodei.com/), with Markdown content, serif typography, light/dark themes and an optional seven-tap portrait Easter egg.
 
-Personal site in the spirit of [darioamodei.com](https://darioamodei.com): narrow column, serif type, full bio, lists by genre — plus **EN / 中** language toggle (default **English**) next to the color-mode switch.
+- **English:** https://siyuanxue.com
+- **中文：** https://xuesiyuan.com
+- Each `www` hostname redirects to its own apex. Language links navigate to the same article on the other domain; browser language and stored preferences never override the domain.
+- `xuesiyuan.com.cn` is retired from this website.
 
-## Stack
+## Development
 
-```
-Bun · Node ≥ 22.12 · Astro 7 · TypeScript 6 strict · plain CSS · static
-```
+Use Bun 1.3.14 and Node.js ≥22.12. Install with `bun install --frozen-lockfile`.
 
-Package manager and scripts: **Bun** (`bun install`, `bun run dev`, `bun run build`).
-
-## Commands
-
-```bash
-bun install
-bun run dev
+```sh
+bun run dev:en
+bun run dev:zh
+bun run check
+bun run test
 bun run build
-bun run preview
+bun run preview:en
+bun run preview:zh
 ```
 
-## Bilingual content
+`SITE_LOCALE` accepts `en` or `zh` and defaults to English in local development. A production build renders each language independently under `.build/`, then assembles English in `dist/` and Chinese in `dist/zh/`. The internal directory is not a public language prefix. Both outputs are required for publication.
 
-### Site chrome & lists
+`bash ops/verify.sh` is the shared CI/deploy check. It requires Nginx and Python 3 in addition to the frontend runtimes; Nginx integration tests run an isolated process on loopback ports 18080/18443.
 
-Edit `src/data/site.ts`. Every user-facing string is a `{ en, zh }` pair (`Bi` type).
+## Content
 
-### Essays & short posts
+Site labels and lists are authored as `{ en, zh }` pairs in `src/data/site.ts`. Pages render only the selected language.
 
-One folder per article; **both** locales required:
+Each article has `en.md` and `zh.md` under `src/content/essays/<slug>/` or `src/content/posts/<slug>/`. Published pairs require matching dates and valid unique IDs. Missing translations or mismatched dates fail the build; a draft in either language excludes the pair. Article headings and TOC anchors come from the same Markdown renderer.
 
-```
-src/content/essays/<slug>/en.md
-src/content/essays/<slug>/zh.md
-src/content/posts/<slug>/en.md
-src/content/posts/<slug>/zh.md
-```
+Each language has its own RSS feed at `/rss.xml`, sitemap, canonical URLs and reciprocal language alternates. Incomplete homepage entries are visibly marked; the compatibility `/wip/` page is not indexed.
 
-If either locale is missing, the article is skipped (console warning).
+## Assets and interaction
 
-### How the toggle works
+The normal portrait is optimized at build time with responsive AVIF/WebP/JPEG. The optional Romantic Mode uses a local neutral SVG; PhotoSwipe/GSAP load only after unlock or restoration of an unlocked session. The old secret photograph is removed, and its former URL is explicitly denied by Nginx even when reverting an older release.
 
-- Preference: `localStorage` key `site-lang` (`en` | `zh`)
-- Default: **English** when unset
-- UI strings and both article bodies ship in the HTML; CSS + `data-lang` show the active language (same idea as color mode)
+Fonts are bundled locally using Fontsource. Chinese font files use Unicode ranges and are not referenced by English font CSS. Feature styles are separate from shared typography/layout. Transitive dependency overrides keep the affected packages above the security-fix versions; review them when updating Astro/Vite.
 
-## Deploy
+## Deployment
 
-```bash
-bun run build   # → dist/
-```
+The tested English and Chinese outputs form one release, with a version-2 `release.json` and matching `__health` commit markers. Both domains move atomically through one `current` symlink; hashed assets are retained separately so old open pages can still load their chunks. Deployment consumes the artifact produced by the shared CI workflow, rather than rebuilding it.
 
-Pull requests are build-checked by GitHub Actions. A successful push to `main`
-deploys `dist/` to the production server and rolls back automatically if the
-post-deploy health check fails.
-
-The canonical production URL is `https://siyuanxue.com`. The registered
-alternate domains `xuesiyuan.com` and `xuesiyuan.com.cn` are enabled only after
-their individual ICP filings complete; once enabled, their apex and `www`
-hosts redirect to the canonical URL. Certificate issuance, renewal, cutover,
-and rollback are documented in [`ops/HTTPS.md`](ops/HTTPS.md).
-
-See [`ops/README.md`](ops/README.md) for one-time server bootstrap, GitHub
-Environment configuration, deployment diagnostics, and manual rollback.
+See [operations](ops/README.md) for SSH, GitHub configuration, deployment and rollback, and [HTTPS migration](ops/HTTPS.md) for domain routing and certificate maintenance. Server operations use SSH first; Tencent OrcaTerm is the fallback.

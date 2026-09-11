@@ -104,27 +104,73 @@ check_health() {
 validate_release() {
 	local release_dir=$1
 	local sha=$2
-
-	[[ -f "$release_dir/index.html" && ! -L "$release_dir/index.html" ]] \
-		|| die "release is missing a regular index.html"
-	[[ -f "$release_dir/__health" && ! -L "$release_dir/__health" ]] \
-		|| die "release is missing a regular __health file"
-	[[ $(<"$release_dir/__health") == "$sha" ]] \
-		|| die "release health marker does not match $sha"
+	python3 - "$release_dir" "$sha" <<'PY'
+import json, pathlib, sys
+root, sha = pathlib.Path(sys.argv[1]), sys.argv[2]
+try:
+    for path in root.rglob('*'):
+        if path.is_symlink():
+            raise ValueError('release contains a symbolic link')
+    manifest = json.loads((root / 'release.json').read_text())
+    if manifest != {'version': 2, 'sha': sha, 'locales': {'en': '.', 'zh': 'zh'}}:
+        raise ValueError('invalid bilingual release manifest')
+    for locale_root in (root, root / 'zh'):
+        if not (locale_root / 'index.html').is_file():
+            raise ValueError('release is missing a locale homepage')
+        if (locale_root / '__health').read_text().strip() != sha:
+            raise ValueError('locale health marker does not match commit')
+except (OSError, ValueError) as exc:
+    sys.exit('release: ' + str(exc))
+PY
 }
 
 validate_archive_entries() {
 	local archive=$1
-	local entry normalized
+	python3 - "$archive" <<'PY'
+import pathlib, sys, tarfile
+with tarfile.open(sys.argv[1], 'r:gz') as archive:
+    for entry in archive:
+        path = pathlib.PurePosixPath(entry.name)
+        if path.is_absolute() or '..' in path.parts or not (entry.isfile() or entry.isdir()):
+            sys.exit('release: unsafe archive entry: ' + entry.name)
+PY
+}
 
-	tar -tzf "$archive" >/dev/null || die "cannot read release archive"
-	while IFS= read -r entry; do
-		[[ "$entry" != /* ]] || die "archive contains an absolute path"
-		normalized=${entry#./}
-		case "/$normalized/" in
-			*/../*) die "archive contains a parent-directory path" ;;
-		esac
-	done < <(tar -tzf "$archive")
+stage_assets() {
+	local root=$1
+	local release_dir=$2
+	python3 - "$root" "$release_dir" <<'PY'
+import filecmp, os, pathlib, shutil, sys
+root, release = map(pathlib.Path, sys.argv[1:])
+target = root / 'shared' / '_astro'
+for directory in (root / 'shared', target):
+    if directory.is_symlink():
+        sys.exit('release: shared asset directory must not be a symlink')
+    directory.mkdir(exist_ok=True, mode=0o755)
+# Backfill retained versions before the first switch to shared asset serving.
+releases = [p for p in (root / 'releases').iterdir() if p.is_dir() and not p.is_symlink() and (p == release or (p / '.successful').is_file() or p == (root / 'current').resolve())]
+for candidate in releases:
+    for source in (candidate / '_astro', candidate / 'zh' / '_astro'):
+        if not source.is_dir():
+            continue
+        for path in source.rglob('*'):
+            if path.is_symlink():
+                sys.exit('release: asset must not be a symlink')
+            if not path.is_file():
+                continue
+            destination = target / path.relative_to(source)
+            if any(p.is_symlink() for p in [destination, *destination.parents] if p == root or root in p.parents):
+                sys.exit('release: unsafe shared asset destination')
+            destination.parent.mkdir(parents=True, exist_ok=True, mode=0o755)
+            if destination.exists():
+                if not filecmp.cmp(path, destination, shallow=False):
+                    sys.exit('release: fingerprint collision: ' + str(destination.relative_to(target)))
+                continue
+            temporary = destination.with_name(destination.name + '.tmp.' + str(os.getpid()))
+            shutil.copyfile(path, temporary)
+            temporary.chmod(0o644)
+            os.replace(temporary, destination)
+PY
 }
 
 activate() {
@@ -170,8 +216,13 @@ activate() {
 		CLEANUP_TEMP_DIR=''
 	fi
 
+	stage_assets "$root" "$release_dir"
 	rm -f -- "$archive" "$checksum_file"
 	old_target=$(current_target "$root")
+	if [[ "$old_target" == "releases/$sha" ]]; then
+		check_health "$health_url" "$sha" || die 'current release failed health check'
+		return
+	fi
 	atomic_link "$old_target" "$root/previous"
 	atomic_link "releases/$sha" "$root/current"
 
@@ -194,6 +245,8 @@ restore_previous() {
 		|| die "current release is not the failed release $failed_sha"
 	old_target=$(previous_target "$root")
 	expected=$(target_name "$old_target")
+	validate_sha "$expected"
+	validate_release "$root/$old_target" "$expected"
 	atomic_link "$old_target" "$root/current"
 
 	if ! check_health "$health_url" "$expected"; then
@@ -205,6 +258,7 @@ restore_previous() {
 	if [[ ! -f "$failed_dir/.successful" ]]; then
 		rm -rf -- "$failed_dir"
 	fi
+	printf '%s\n' "$expected"
 }
 
 rollback_to() {
@@ -219,6 +273,7 @@ rollback_to() {
 	[[ -d "$release_dir" && -f "$release_dir/.successful" ]] \
 		|| die "rollback target is not a retained successful release: $sha"
 	validate_release "$release_dir" "$sha"
+	stage_assets "$root" "$release_dir"
 	old_target=$(current_target "$root")
 
 	if [[ "$old_target" == "releases/$sha" ]]; then
@@ -319,6 +374,8 @@ finalize() {
 usage() {
 	cat >&2 <<'USAGE'
 Usage:
+  siyuanxue-release assets ROOT
+  siyuanxue-release check ROOT SHA
   siyuanxue-release activate ROOT SHA ARCHIVE_NAME HEALTH_URL
   siyuanxue-release restore-previous ROOT FAILED_SHA HEALTH_URL
   siyuanxue-release rollback ROOT SHA HEALTH_URL
@@ -329,6 +386,17 @@ USAGE
 
 command=${1:-}
 case "$command" in
+	assets)
+		[[ $# -eq 2 ]] || usage
+		validate_root "$2"
+		stage_assets "$2" "$2/$(current_target "$2")"
+		;;
+	check)
+		[[ $# -eq 3 ]] || usage
+		validate_root "$2"
+		validate_sha "$3"
+		validate_release "$2/releases/$3" "$3"
+		;;
 	activate)
 		[[ $# -eq 5 ]] || usage
 		activate "$2" "$3" "$4" "$5"

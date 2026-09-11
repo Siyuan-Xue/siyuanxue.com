@@ -137,7 +137,7 @@ export function createRomanticLightboxMotion(
 	const playOpen = () => {
 		killTimeline();
 
-		if ('final' in spec) {
+		if (spec.reducedMotion) {
 			gsap.set(elements.frame, spec.final.frame);
 			gsap.set(elements.image, spec.final.image);
 			gsap.set(elements.reveal, spec.final.reveal);
@@ -191,7 +191,7 @@ export function createRomanticLightboxMotion(
 	const playClose = () => {
 		killTimeline();
 
-		if ('final' in spec) {
+		if (spec.reducedMotion) {
 			gsap.set([
 				elements.footer,
 				elements.proof,

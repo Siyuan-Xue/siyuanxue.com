@@ -1,20 +1,20 @@
-.prose {
+.prose  {
 	color: var(--fg-body);
 }
 
-.prose > :first-child {
+.prose > :first-child  {
 	margin-top: 0;
 }
 
-.prose > :last-child {
+.prose > :last-child  {
 	margin-bottom: 0;
 }
 
-.prose p {
+.prose p  {
 	margin: 0 0 1em;
 }
 
-.prose h2 {
+.prose h2  {
 	margin: 1.75em 0 0.5em;
 	color: var(--fg);
 	font-size: var(--font-size-h2);
@@ -22,7 +22,7 @@
 	line-height: 1.2;
 }
 
-.prose h3 {
+.prose h3  {
 	margin: 1.5em 0 0.45em;
 	color: var(--fg);
 	font-size: var(--font-size-h3);
@@ -30,7 +30,7 @@
 	line-height: 1.25;
 }
 
-.prose h4 {
+.prose h4  {
 	margin: 1.25em 0 0.4em;
 	color: var(--fg);
 	font-size: 1.05em;
@@ -38,22 +38,19 @@
 }
 
 /* Chinese prose — Noto Serif SC hierarchy */
-html[data-lang='zh'] .prose,
-.prose .lang-body-zh {
+html[data-lang='zh'] .prose {
 	letter-spacing: var(--letter-spacing-zh-body);
 	line-height: var(--line-height-body-zh);
 	text-align: justify;
 	text-justify: inter-ideograph;
 }
 
-html[data-lang='zh'] .prose p,
-.prose .lang-body-zh p {
+html[data-lang='zh'] .prose p {
 	margin-bottom: 1.35em;
 }
 
 /* Match EN prose headings (600) with Noto Serif SC masters */
-html[data-lang='zh'] .prose h2,
-.prose .lang-body-zh h2 {
+html[data-lang='zh'] .prose h2 {
 	font-weight: 600;
 	letter-spacing: var(--letter-spacing-zh-heading);
 	line-height: 1.35;
@@ -61,8 +58,7 @@ html[data-lang='zh'] .prose h2,
 	margin-bottom: 0.75em;
 }
 
-html[data-lang='zh'] .prose h3,
-.prose .lang-body-zh h3 {
+html[data-lang='zh'] .prose h3 {
 	font-weight: 600;
 	letter-spacing: var(--letter-spacing-zh-heading);
 	line-height: 1.4;
@@ -70,42 +66,40 @@ html[data-lang='zh'] .prose h3,
 	margin-bottom: 0.65em;
 }
 
-html[data-lang='zh'] .prose h4,
-.prose .lang-body-zh h4 {
+html[data-lang='zh'] .prose h4 {
 	font-weight: 600;
 	letter-spacing: var(--letter-spacing-zh-body);
 }
 
 .prose ul,
-.prose ol {
+.prose ol  {
 	margin: 0 0 1em;
 	padding-left: 1.35em;
 }
 
-.prose li {
+.prose li  {
 	margin-bottom: 0.35em;
 }
 
 .prose li > ul,
-.prose li > ol {
+.prose li > ol  {
 	margin-top: 0.35em;
 	margin-bottom: 0;
 }
 
-.prose blockquote {
+.prose blockquote  {
 	margin: 0 0 1em;
 	padding: 0.15em 0 0.15em 1em;
 	border-left: 2px solid var(--border);
 	color: var(--fg-muted);
 }
 
-.prose blockquote p:last-child {
+.prose blockquote p:last-child  {
 	margin-bottom: 0;
 }
 
 /* blockquote: CJK skips italic */
-html[data-lang='zh'] .prose blockquote,
-.prose .lang-body-zh blockquote {
+html[data-lang='zh'] .prose blockquote {
 	font-style: normal;
 	border-left-width: 3px;
 	padding-left: 1.1em;
@@ -113,25 +107,23 @@ html[data-lang='zh'] .prose blockquote,
 	color: var(--fg-muted);
 }
 
-.prose strong {
+.prose strong  {
 	color: var(--fg);
 	font-weight: 700;
 }
 
-.prose em {
+.prose em  {
 	font-style: italic;
 }
 
-html[data-lang='zh'] .prose em,
-.prose .lang-body-zh em {
+html[data-lang='zh'] .prose em {
 	font-style: normal;
 	font-weight: 400;
 	color: var(--fg);
 }
 
 /* Semantic bold: same Noto Serif SC, weight 700 (no Hei) — mirrors EN prose strong */
-html[data-lang='zh'] .prose strong,
-.prose .lang-body-zh strong {
+html[data-lang='zh'] .prose strong {
 	font-family: inherit;
 	font-weight: 700;
 	font-synthesis: none;
@@ -139,38 +131,36 @@ html[data-lang='zh'] .prose strong,
 	letter-spacing: 0.03em;
 }
 
-html[data-lang='zh'] .prose li,
-.prose .lang-body-zh li {
+html[data-lang='zh'] .prose li {
 	line-height: 1.7;
 	margin-bottom: 0.45em;
 }
 
 /* Keep code Latin-first; Chinese comments still readable */
-html[data-lang='zh'] .prose code,
-.prose .lang-body-zh code {
+html[data-lang='zh'] .prose code {
 	letter-spacing: 0;
 	font-family:
 		ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, 'Microsoft YaHei',
 		'PingFang SC', monospace;
 }
 
-.prose a {
+.prose a  {
 	color: var(--fg);
 	text-decoration: underline;
 	text-underline-offset: 0.15em;
 }
 
-.prose a:hover {
+.prose a:hover  {
 	color: var(--fg-muted);
 }
 
-.prose hr {
+.prose hr  {
 	border: 0;
 	border-top: 1px solid var(--border);
 	margin: 2em 0;
 }
 
-.prose code {
+.prose code  {
 	font-family: ui-monospace, 'Cascadia Code', 'SF Mono', Menlo, Consolas, monospace;
 	font-size: 0.88em;
 	background: var(--bg-elevated);
@@ -178,7 +168,7 @@ html[data-lang='zh'] .prose code,
 	border-radius: 0.25em;
 }
 
-.prose pre {
+.prose pre  {
 	margin: 0 0 1em;
 	padding: 1em 1.1em;
 	overflow-x: auto;
@@ -188,18 +178,18 @@ html[data-lang='zh'] .prose code,
 	line-height: 1.5;
 }
 
-.prose pre code {
+.prose pre code  {
 	background: none;
 	padding: 0;
 	font-size: inherit;
 }
 
-.prose img {
+.prose img  {
 	max-width: 100%;
 	height: auto;
 }
 
-.prose .footnotes {
+.prose .footnotes  {
 	margin-top: 2.5rem;
 	padding-top: 1.25rem;
 	border-top: 1px solid var(--border);
@@ -207,7 +197,11 @@ html[data-lang='zh'] .prose code,
 	color: var(--fg-muted);
 }
 
-.prose .footnotes h2 {
+.prose .footnotes h2  {
 	font-size: 1em;
 	margin-top: 0;
 }
+
+.prose pre  { max-width: 100%; overflow-x: auto; }
+.prose table  { display: block; width: max-content; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.prose td, .prose th  { padding: .4em .7em; border: 1px solid var(--border); }

@@ -34,6 +34,7 @@ make_archive() {
 	local sha=$1
 	local suffix=$2
 	local include_index=${3:-yes}
+	local include_zh=${4:-yes}
 	local payload="$TEST_WORKSPACE/payload-$suffix"
 	local archive_name="site-${sha}-${suffix}.tar.gz"
 	local archive="$SITE_ROOT/incoming/$archive_name"
@@ -43,8 +44,19 @@ make_archive() {
 		printf '<!doctype html><title>%s</title>\n' "$sha" > "$payload/index.html"
 	fi
 	printf '%s' "$sha" > "$payload/__health"
-	printf 'asset-%s\n' "$sha" > "$payload/_astro/app.css"
-	tar -czf "$archive" -C "$payload" .
+	printf 'asset-%s\n' "$sha" > "$payload/_astro/app-$sha.css"
+	printf '{"version":2,"sha":"%s","locales":{"en":".","zh":"zh"}}\n' "$sha" > "$payload/release.json"
+	if [[ "$include_zh" == yes ]]; then
+		mkdir -p "$payload/zh/_astro"
+		printf '<!doctype html><html lang="zh-CN"><title>中文</title></html>\n' > "$payload/zh/index.html"
+		printf '%s' "$sha" > "$payload/zh/__health"
+		printf 'zh-asset-%s\n' "$sha" > "$payload/zh/_astro/zh-$sha.css"
+	fi
+	if [[ "$include_index" == yes && "$include_zh" == yes ]]; then
+		bash "$SCRIPT_DIR/package-release.sh" "$payload" "$sha" "$archive"
+	else
+		tar -czf "$archive" -C "$payload" .
+	fi
 	printf '%s  %s\n' "$(sha256_file "$archive")" "$archive_name" > "$archive.sha256"
 	printf '%s\n' "$archive_name"
 }
@@ -73,11 +85,21 @@ assert_target "$SITE_ROOT/current" "releases/$sha1"
 assert_target "$SITE_ROOT/previous" releases/bootstrap
 run_release finalize "$SITE_ROOT" "$sha1" 5
 
+# A daily recovery must never return to bootstrap or a legacy one-locale release.
+if run_release restore-previous "$SITE_ROOT" "$sha1" "$HEALTH_URL" 2>/dev/null; then
+    fail 'daily recovery accepted a legacy previous release'
+fi
+assert_target "$SITE_ROOT/current" "releases/$sha1"
+
 sha2=$(make_sha 2)
 archive2=$(make_archive "$sha2" second)
 run_release activate "$SITE_ROOT" "$sha2" "$archive2" "$HEALTH_URL"
 run_release finalize "$SITE_ROOT" "$sha2" 5
 assert_target "$SITE_ROOT/current" "releases/$sha2"
+assert_target "$SITE_ROOT/previous" "releases/$sha1"
+
+repeat_archive=$(make_archive "$sha2" repeated)
+run_release activate "$SITE_ROOT" "$sha2" "$repeat_archive" "$HEALTH_URL"
 assert_target "$SITE_ROOT/previous" "releases/$sha1"
 
 run_release rollback "$SITE_ROOT" "$sha1" "$HEALTH_URL"
@@ -87,6 +109,57 @@ assert_target "$SITE_ROOT/previous" "releases/$sha2"
 before=$(readlink "$SITE_ROOT/current")
 if run_release rollback "$SITE_ROOT" invalid-sha "$HEALTH_URL" 2>/dev/null; then
 	fail "an invalid rollback SHA was accepted"
+fi
+assert_target "$SITE_ROOT/current" "$before"
+
+missing_zh_sha=$(make_sha 90)
+missing_zh_archive=$(make_archive "$missing_zh_sha" missing-zh yes no)
+if run_release activate "$SITE_ROOT" "$missing_zh_sha" "$missing_zh_archive" "$HEALTH_URL" 2>/dev/null; then
+	fail "a release without its Chinese homepage was accepted"
+fi
+assert_target "$SITE_ROOT/current" "$before"
+
+# Exercise the actual producer/consumer contract, including malformed payloads.
+for kind in manifest zh-health traversal symlink collision; do
+    bad_sha=$(make_sha 92)
+    bad_archive=$(make_archive "$bad_sha" "bad-$kind")
+    python3 - "$TEST_WORKSPACE/payload-bad-$kind" "$SITE_ROOT/incoming/$bad_archive" "$kind" "$sha1" <<'PYTEST'
+import io, json, pathlib, sys, tarfile
+payload, archive, kind, original_sha = sys.argv[1:]
+root = pathlib.Path(payload)
+if kind == 'manifest':
+    (root / 'release.json').write_text(json.dumps({'version': 1}))
+elif kind == 'zh-health':
+    (root / 'zh' / '__health').write_text('wrong-sha')
+elif kind == 'collision':
+    (root / '_astro' / f'app-{original_sha}.css').write_text('different bytes')
+with tarfile.open(archive, 'w:gz') as output:
+    output.add(root, arcname='.')
+    if kind == 'traversal':
+        member = tarfile.TarInfo('../escaped'); member.size = 1
+        output.addfile(member, io.BytesIO(b'x'))
+    elif kind == 'symlink':
+        member = tarfile.TarInfo('linked'); member.type = tarfile.SYMTYPE; member.linkname = '/etc/passwd'
+        output.addfile(member)
+PYTEST
+    printf '%s  %s\n' "$(sha256_file "$SITE_ROOT/incoming/$bad_archive")" "$bad_archive" > "$SITE_ROOT/incoming/$bad_archive.sha256"
+    if run_release activate "$SITE_ROOT" "$bad_sha" "$bad_archive" "$HEALTH_URL" 2>/dev/null; then
+        fail "a $kind payload was accepted"
+    fi
+    assert_target "$SITE_ROOT/current" "$before"
+    [[ ! -e "$SITE_ROOT/releases/escaped" ]] || fail 'archive escaped extraction root'
+done
+
+[[ -f "$SITE_ROOT/shared/_astro/app-$sha1.css" ]] || fail "English fingerprint assets were not staged"
+[[ -f "$SITE_ROOT/shared/_astro/zh-$sha1.css" ]] || fail "Chinese fingerprint assets were not staged"
+
+legacy_sha=$(make_sha 91)
+mkdir -p "$SITE_ROOT/releases/$legacy_sha"
+printf '<html>legacy</html>' > "$SITE_ROOT/releases/$legacy_sha/index.html"
+printf '%s' "$legacy_sha" > "$SITE_ROOT/releases/$legacy_sha/__health"
+touch "$SITE_ROOT/releases/$legacy_sha/.successful"
+if run_release rollback "$SITE_ROOT" "$legacy_sha" "$HEALTH_URL" 2>/dev/null; then
+	fail "a legacy single-language rollback target was accepted"
 fi
 assert_target "$SITE_ROOT/current" "$before"
 
@@ -134,5 +207,6 @@ successful_count=$(find "$SITE_ROOT/releases" -mindepth 2 -maxdepth 2 -name .suc
 [[ -d "$SITE_ROOT/releases/bootstrap" ]] || fail "bootstrap release was removed"
 [[ -d "$SITE_ROOT/$(readlink "$SITE_ROOT/current")" ]] || fail "current release was pruned"
 [[ -d "$SITE_ROOT/$(readlink "$SITE_ROOT/previous")" ]] || fail "previous release was pruned"
+[[ -f "$SITE_ROOT/shared/_astro/app-$sha1.css" ]] || fail "old fingerprint assets disappeared during release pruning"
 
 printf 'release integration tests passed\n'

@@ -52,6 +52,9 @@ setup_case() {
 		> "$SYSTEM_ROOT/var/www/siyuanxue.com/releases/bootstrap/index.html"
 	printf '%s' bootstrap \
 		> "$SYSTEM_ROOT/var/www/siyuanxue.com/releases/bootstrap/__health"
+	mkdir -p "$SYSTEM_ROOT/var/www/siyuanxue.com/releases/bootstrap/zh"
+	cp "$SYSTEM_ROOT/var/www/siyuanxue.com/releases/bootstrap/index.html" "$SYSTEM_ROOT/var/www/siyuanxue.com/releases/bootstrap/zh/index.html"
+	printf '%s' bootstrap > "$SYSTEM_ROOT/var/www/siyuanxue.com/releases/bootstrap/zh/__health"
 	ln -s releases/bootstrap "$SYSTEM_ROOT/var/www/siyuanxue.com/current"
 	: > "$COMMAND_LOG"
 	printf '%s\n' 0 > "$NGINX_COUNT"
@@ -193,11 +196,11 @@ test_installed_command_can_activate_another_domain() {
 	local available certificate enabled
 
 	setup_case installed-command
-	available="$SYSTEM_ROOT/etc/nginx/sites-available/siyuanxue-xuesiyuan-com-cn"
-	enabled="$SYSTEM_ROOT/etc/nginx/sites-enabled/siyuanxue-xuesiyuan-com-cn"
-	certificate="$SYSTEM_ROOT/etc/letsencrypt/live/xuesiyuan.com.cn/fullchain.pem"
+	available="$SYSTEM_ROOT/etc/nginx/sites-available/siyuanxue-xuesiyuan-com"
+	enabled="$SYSTEM_ROOT/etc/nginx/sites-enabled/siyuanxue-xuesiyuan-com"
+	certificate="$SYSTEM_ROOT/etc/letsencrypt/live/xuesiyuan.com/fullchain.pem"
 	run_enable apply --domain siyuanxue.com --email owner@example.com
-	run_installed_enable apply --domain xuesiyuan.com.cn --email owner@example.com
+	run_installed_enable apply --domain xuesiyuan.com --email owner@example.com
 	[[ -f "$available" && -L "$enabled" && -s "$certificate" ]] \
 		|| fail "installed management command could not activate another domain"
 }
@@ -256,6 +259,18 @@ test_secondary_domain_rolls_back_without_touching_certificate() {
 		|| fail "secondary rollback modified the canonical site"
 }
 
+test_rejects_incomplete_chinese_release() {
+	setup_case missing-chinese
+	rm "$SYSTEM_ROOT/var/www/siyuanxue.com/current/zh/index.html"
+	if run_enable check --domain xuesiyuan.com >/dev/null 2>&1; then
+		fail 'Chinese host was enabled before its content exists'
+	fi
+	if run_enable check --domain xuesiyuan.com.cn >/dev/null 2>&1; then
+		fail 'retired domain was accepted'
+	fi
+}
+
+test_rejects_incomplete_chinese_release
 test_rejects_unknown_domain
 test_staging_precedes_production_issuance
 test_valid_certificate_is_not_reissued

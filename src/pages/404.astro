@@ -1,0 +1,6 @@
+---
+import Base from '../layouts/Base.astro';
+import { locale } from '../i18n/locale';
+const title = locale === 'en' ? 'Page not found' : '页面未找到';
+---
+<Base title={title} noindex><div class="container cc-narrow"><h1>{title}</h1><p>{locale === 'en' ? 'This page does not exist.' : '这个页面不存在。'}</p><a href="/">{locale === 'en' ? 'Back home' : '返回首页'}</a></div></Base>

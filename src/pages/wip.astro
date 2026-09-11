@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import { bi } from '../i18n/types';
+import { t, locale } from '../i18n/locale';
+import '../styles/wip.css';
 
 const title = bi('Under construction', '正在施工');
 const description = bi(
@@ -9,7 +11,7 @@ const description = bi(
 );
 ---
 
-<Base title={title} description={description}>
+<Base title={t(title)} description={t(description)} noindex>
 	<div class="container cc-narrow wip">
 		<div class="wip-panel" role="status" aria-live="polite">
 			{/*
@@ -101,15 +103,13 @@ const description = bi(
 				</svg>
 			</div>
 
-			<p class="wip-text">
-				<span class="i18n-en" lang="en">Under construction…</span>
-				<span class="i18n-zh" lang="zh-CN">正在施工...</span>
-			</p>
+			<h1 class="wip-text">
+				{locale === 'en' ? 'Under construction…' : '正在施工...'}
+			</h1>
 
 			<p class="wip-back">
 				<a href="/">
-					<span class="i18n-en" lang="en">Back home</span>
-					<span class="i18n-zh" lang="zh-CN">返回首页</span>
+					{locale === 'en' ? 'Back home' : '返回首页'}
 				</a>
 			</p>
 		</div>

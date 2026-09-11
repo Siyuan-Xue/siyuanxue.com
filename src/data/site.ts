@@ -81,7 +81,6 @@ export const site = {
 
 	/** Editorial lifestyle portrait beside the home bio. */
 	portrait: {
-		src: '/images/portrait.jpg',
 		width: 2560,
 		height: 3840,
 		alt: bi(
@@ -92,16 +91,16 @@ export const site = {
 
 	/** Session-scoped, seven-activation portrait Easter egg. */
 	secretPortrait: {
-		src: '/images/p-202.jpg',
+		src: '/images/romantic-placeholder.svg',
 		width: 1200,
 		height: 1800,
-		alt: bi('A portrait in Romantic Mode', '心动模式中的一张肖像'),
+		alt: bi('A neutral geometric illustration in Romantic Mode', '心动模式中的中性几何插画'),
 		caption: bi(
 			'Some stories are still in draft.',
 			'有些故事还停在草稿里。',
 		),
-		dialogLabel: bi('Romantic Mode portrait', '心动模式肖像'),
-		closeLabel: bi('Close Romantic Mode portrait', '关闭心动模式肖像'),
+		dialogLabel: bi('Romantic Mode illustration', '心动模式插画'),
+		closeLabel: bi('Close Romantic Mode illustration', '关闭心动模式插画'),
 		turnOnLabel: bi('Turn on Romantic Mode', '开启心动模式'),
 		turnOffLabel: bi('Turn off Romantic Mode', '关闭心动模式'),
 		modeOnMessage: bi('Romantic Mode on.', '心动模式已开启。'),

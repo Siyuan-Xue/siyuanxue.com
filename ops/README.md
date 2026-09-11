@@ -1,106 +1,63 @@
-# Production deployment
+# Deployment operations
 
-The production target is the Tencent Cloud Lighthouse server at
-`82.156.77.131`. Nginx serves the static Astro build from
-`/var/www/siyuanxue.com/current`; the canonical public origin is
-`https://siyuanxue.com`. Domain certificate issuance, staged alternate-domain
-activation, renewal, and HTTPS rollback are documented in
-[`HTTPS.md`](./HTTPS.md).
+Production is Ubuntu 24.04 / Nginx on Tencent Lighthouse. Connect to the verified public address:
 
-## 1. Generate the CI-only SSH key
-
-Generate an Ed25519 key outside the repository. The private key is intentionally
-unencrypted because GitHub Actions must use it unattended; protect it as a
-production credential.
-
-```bash
-ssh-keygen -t ed25519 -a 100 \
-  -C github-actions-siyuanxue \
-  -f /absolute/private/path/siyuanxue-deploy \
-  -N ''
+```sh
+ssh ubuntu@82.156.77.131
 ```
 
-Never commit either key. Keep the private key in a secure local backup and put
-its complete contents only in the GitHub `DEPLOY_SSH_KEY` Environment Secret.
+The previously reported `87.156.77.131` was the wrong address. SSH connectivity and authentication to the correct host were verified. Keep passwords and private keys out of this repository. Tencent OrcaTerm is the fallback when SSH is unavailable.
 
-## 2. Preflight and bootstrap Ubuntu
+## Layout and permissions
 
-From the repository root, run the bootstrap helper. The existing `ubuntu`
-password is entered only at the SSH and sudo prompts and is never recorded.
+`/var/www/siyuanxue.com` is owned by `deploy:www-data`; ordinary `ubuntu` directory access requires `sudo`. Its `current` and `previous` links point to `releases/<40-character-commit>`. English is at the release root; Chinese is under `zh`. Both expose the same commit at `/__health`. `release.json` records version 2 and locale roots `{ "en": ".", "zh": "zh" }`.
 
-```bash
-bash ops/bootstrap-remote.sh \
-  /absolute/private/path/siyuanxue-deploy.pub
-```
+`shared/_astro` is append-only and served by both domains. Activation backfills current/retained release assets and refuses filename/content collisions. It does not copy raw photos into that directory. Retain five successful releases; shared hashed assets have no automatic pruning in this version.
 
-The helper runs the read-only preflight before applying changes. It aborts if
-the host is not Ubuntu 24.04 or if a non-Nginx process owns TCP 80. The apply
-step installs Nginx and Fail2ban, creates the password-locked
-`deploy` user, installs `/usr/local/bin/siyuanxue-release`, and creates a
-bootstrap release. It does not modify Docker or the existing `ubuntu` password
-login. Re-running it updates the managed configuration without resetting an
-existing `current` release.
+## Validation and GitHub
 
-In the Tencent Cloud Lighthouse firewall, allow inbound TCP 80 and 443 from the
-public internet. TCP 22 must remain reachable by GitHub-hosted runners for
-deployment.
+`bash ops/verify.sh` runs type checks, frontend tests, shell tests, isolated Nginx route tests, both builds and semantic output checks. It requires Bun 1.3.14, supported Node, Python 3, Nginx, OpenSSL and curl. PR/manual CI and the deployment's reusable verification job call the same script. Only the resulting artifact is deployed.
 
-Verify key-only deployment access from the local machine:
-
-```bash
-ssh -i /absolute/private/path/siyuanxue-deploy \
-  -p 22 deploy@82.156.77.131 /usr/bin/id
-```
-
-The account must not be able to use `sudo`.
-
-## 3. Configure the GitHub production Environment
-
-Create the `production` Environment in repository settings, restrict deployment
-branches to `main`, and do not add required reviewers.
-
-Environment variables:
+GitHub `production` environment variables:
 
 | Name | Value |
-| --- | --- |
-| `DEPLOY_HOST` | `82.156.77.131` |
-| `DEPLOY_PORT` | `22` |
-| `DEPLOY_USER` | `deploy` |
-| `DEPLOY_ROOT` | `/var/www/siyuanxue.com` |
-| `DEPLOY_ORIGIN` | `https://siyuanxue.com` |
+|---|---|
+| DEPLOY_HOST | 82.156.77.131 |
+| DEPLOY_PORT | 22 |
+| DEPLOY_USER | deploy |
+| DEPLOY_ROOT | /var/www/siyuanxue.com |
+| DEPLOY_ORIGIN | https://siyuanxue.com |
 
-Environment secrets:
+Existing environment secrets are `DEPLOY_SSH_KEY` and `DEPLOY_KNOWN_HOSTS`. The workflow uses strict host-key validation; do not replace it with `StrictHostKeyChecking=no`. The `ubuntu` maintenance login and CI `deploy` account have separate responsibilities.
 
-| Name | Value |
-| --- | --- |
-| `DEPLOY_SSH_KEY` | Complete private Ed25519 key generated in step 1 |
-| `DEPLOY_KNOWN_HOSTS` | Complete `82.156.77.131 ssh-ed25519 ...` line printed by the bootstrap script |
+## Bootstrap and upgrade
 
-The known-hosts value must come from the trusted password-authenticated session;
-do not replace it with an unchecked `ssh-keyscan` result. No GitHub PAT, server
-password, root password, or Tencent Cloud API key is required.
+`sudo bash ops/bootstrap-server.sh --check` inventories a new server. `--apply /path/to/deploy-key.pub` installs the deployment account and tools. An existing HTTPS configuration is preserved on rerun, and health is compared with the current release rather than the literal `bootstrap` marker. Do not run the full bootstrap merely to update a website.
 
-## 4. Deploy and roll back
+For an existing server, install the reviewed `ops/release.sh` at `/usr/local/bin/siyuanxue-release` with root ownership and mode 0755. Update the HTTPS helper/templates under `/usr/local/lib/siyuanxue-https` as part of a reviewed maintenance change. The two-language route/certificate migration is documented in [HTTPS.md](HTTPS.md).
 
-A push to `main` automatically builds, uploads, activates, and verifies the new
-release. The workflow restores `previous` when the public health check fails.
+## Release and rollback
 
-For a manual deployment, run the **Deploy production** workflow with operation
-`deploy`. For rollback, choose operation `rollback` and enter a retained full
-40-character commit SHA. The server retains five successful releases plus the
-bootstrap fallback.
+Package only validated output, using the source commit that produced it:
 
-Useful diagnostics:
-
-```bash
-curl --fail https://siyuanxue.com/__health
-curl --fail http://82.156.77.131/__health  # emergency origin
-sudo nginx -t
-sudo certbot certificates
-sudo certbot renew --dry-run
-sudo systemctl status nginx fail2ban
-sudo fail2ban-client status sshd
-sudo tail -n 100 /var/log/nginx/siyuanxue.error.log
-readlink /var/www/siyuanxue.com/current
-readlink /var/www/siyuanxue.com/previous
+```sh
+bash ops/package-release.sh "$PWD/dist" "$(git rev-parse HEAD)" "/tmp/site-$(git rev-parse HEAD)-manual.tar.gz"
 ```
+
+Transfer the archive and checksum to `incoming/` as `deploy`. The installed release tool supports:
+
+```text
+siyuanxue-release activate ROOT SHA ARCHIVE_NAME HEALTH_URL
+siyuanxue-release check ROOT SHA
+siyuanxue-release restore-previous ROOT FAILED_SHA HEALTH_URL
+siyuanxue-release rollback ROOT SHA HEALTH_URL
+siyuanxue-release finalize ROOT SHA KEEP_COUNT
+```
+
+Use `http://127.0.0.1/__health` for the local check, then run `bash ops/verify-public.sh SHA` from outside the server. This checks both public language roots, complete SHA markers and the removed-image denial. Finalize only after these checks pass. A repeated activation of the current SHA preserves the previous link.
+
+The Actions manual `rollback` operation accepts a retained, successful bilingual release only. Single-language historical releases are not normal rollback targets after migration. If a newly activated release fails the public check, the workflow restores `previous`. During the first domain migration, Nginx configuration must be restored together with the migration baseline; follow the recorded server backup rather than applying a historical redirect configuration blindly.
+
+## Diagnostics
+
+Read `sudo nginx -t`, `sudo journalctl -u nginx --since '15 minutes ago'`, `sudo readlink /var/www/siyuanxue.com/current`, and both public `/__health` endpoints. Keep the old image denial active during recovery. Do not restart SSH or disable Fail2ban to diagnose an unrelated website issue.

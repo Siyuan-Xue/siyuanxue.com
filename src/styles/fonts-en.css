@@ -1,0 +1,3 @@
+@import '@fontsource-variable/newsreader';
+@import '@fontsource-variable/newsreader/wght-italic.css';
+:root { --font-newsreader: 'Newsreader Variable'; --font-noto-serif-sc: 'Noto Serif SC Variable'; }

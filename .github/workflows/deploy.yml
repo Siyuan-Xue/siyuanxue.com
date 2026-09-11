@@ -14,6 +14,11 @@ on:
           - rollback
         default: deploy
         required: true
+      migrate_domains:
+        description: One-time bilingual cutover after administrator preparation
+        type: boolean
+        default: false
+        required: false
       rollback_sha:
         description: Full 40-character commit SHA; required for rollback
         type: string
@@ -30,13 +35,18 @@ env:
   ASTRO_TELEMETRY_DISABLED: "1"
 
 jobs:
+  verify:
+    if: github.event_name == 'push' || inputs.operation == 'deploy'
+    uses: ./.github/workflows/ci.yml
   deploy:
-    name: Build and deploy
+    name: Deploy verified release
+    needs: verify
     if: github.event_name == 'push' || inputs.operation == 'deploy'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     environment: production
     env:
+      ARCHIVE_NAME: ${{ needs.verify.outputs.archive_name }}
       DEPLOY_HOST: ${{ vars.DEPLOY_HOST }}
       DEPLOY_PORT: ${{ vars.DEPLOY_PORT }}
       DEPLOY_USER: ${{ vars.DEPLOY_USER }}
@@ -47,11 +57,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
 
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
-        with:
-          bun-version: 1.3.14
-
       - name: Validate production configuration
         run: |
           [[ "$DEPLOY_HOST" =~ ^[A-Za-z0-9.-]+$ ]]
@@ -60,39 +65,16 @@ jobs:
           [[ "$DEPLOY_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
           [[ "$DEPLOY_ROOT" == /var/www/siyuanxue.com ]]
           case "$DEPLOY_ORIGIN" in
-            https://siyuanxue.com|http://82.156.77.131) ;;
+            https://siyuanxue.com) ;;
             *) exit 1 ;;
           esac
 
-      - name: Install frozen dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Test deployment scripts
-        run: |
-          bash -n ops/bootstrap-remote.sh
-          bash -n ops/bootstrap-server.sh
-          bash -n ops/enable-https.sh
-          bash -n ops/install-nginx-config.sh
-          bash -n ops/reload-nginx-after-renewal.sh
-          bash -n ops/release.sh
-          bash -n ops/test-enable-https.sh
-          bash -n ops/test-install-nginx-config.sh
-          bash -n ops/test-release.sh
-          bash ops/test-enable-https.sh
-          bash ops/test-install-nginx-config.sh
-          bash ops/test-release.sh
-
-      - name: Build production site
-        run: bun run build
-
-      - name: Package release
-        run: |
-          test -s dist/index.html
-          printf '%s' "$GITHUB_SHA" > dist/__health
-          archive_name="site-${GITHUB_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.tar.gz"
-          tar -czf "$archive_name" -C dist .
-          sha256sum "$archive_name" > "$archive_name.sha256"
-          printf 'ARCHIVE_NAME=%s\n' "$archive_name" >> "$GITHUB_ENV"
+      - name: Download verified release
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: ${{ needs.verify.outputs.artifact_name }}
+      - name: Check release checksum
+        run: sha256sum -c "$ARCHIVE_NAME.sha256"
 
       - name: Configure strict SSH authentication
         env:
@@ -134,25 +116,21 @@ jobs:
             "$DEPLOY_ROOT" "$GITHUB_SHA" "$ARCHIVE_NAME" \
             http://127.0.0.1/__health
 
-      - name: Verify release from the public internet
+      - name: Apply prepared domain migration
+        if: github.event_name == 'workflow_dispatch' && inputs.migrate_domains
         run: |
-          response=''
-          for attempt in 1 2 3 4 5; do
-            if response=$(curl --fail --silent --show-error --max-time 10 \
-              "$DEPLOY_ORIGIN/__health") && [[ "$response" == "$GITHUB_SHA" ]]; then
-              curl --fail --silent --show-error --max-time 10 "$DEPLOY_ORIGIN/" >/dev/null
-              exit 0
-            fi
-            sleep 2
-          done
-          printf 'Public health check failed: expected %s, got %s\n' \
-            "$GITHUB_SHA" "${response:-<no response>}" >&2
-          exit 1
+          ssh -i "$RUNNER_TEMP/ssh/deploy_key" -p "$DEPLOY_PORT" \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
+            "$DEPLOY_USER@$DEPLOY_HOST" sudo -n /usr/local/sbin/siyuanxue-domain-migration apply
+
+      - name: Verify both public locales
+        run: bash ops/verify-public.sh "$GITHUB_SHA"
 
       - name: Restore previous release after failed public check
-        if: failure() && steps.activate.outcome == 'success'
+        if: failure() && steps.activate.outcome == 'success' && !inputs.migrate_domains
         run: |
-          ssh \
+          restored_sha=$(ssh \
             -i "$RUNNER_TEMP/ssh/deploy_key" \
             -p "$DEPLOY_PORT" \
             -o BatchMode=yes \
@@ -161,7 +139,16 @@ jobs:
             -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
             "$DEPLOY_USER@$DEPLOY_HOST" \
             /usr/local/bin/siyuanxue-release restore-previous \
-            "$DEPLOY_ROOT" "$GITHUB_SHA" http://127.0.0.1/__health
+            "$DEPLOY_ROOT" "$GITHUB_SHA" http://127.0.0.1/__health)
+          bash ops/verify-public.sh "$restored_sha"
+
+      - name: Restore initial migration baseline after failure
+        if: failure() && steps.activate.outcome == 'success' && inputs.migrate_domains
+        run: |
+          ssh -i "$RUNNER_TEMP/ssh/deploy_key" -p "$DEPLOY_PORT" \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
+            "$DEPLOY_USER@$DEPLOY_HOST" sudo -n /usr/local/sbin/siyuanxue-domain-migration restore
 
       - name: Finalize successful release
         run: |
@@ -175,6 +162,14 @@ jobs:
             "$DEPLOY_USER@$DEPLOY_HOST" \
             /usr/local/bin/siyuanxue-release finalize \
             "$DEPLOY_ROOT" "$GITHUB_SHA" 5
+
+      - name: Complete domain migration and remove temporary privilege
+        if: github.event_name == 'workflow_dispatch' && inputs.migrate_domains
+        run: |
+          ssh -i "$RUNNER_TEMP/ssh/deploy_key" -p "$DEPLOY_PORT" \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
+            "$DEPLOY_USER@$DEPLOY_HOST" sudo -n /usr/local/sbin/siyuanxue-domain-migration finish
 
       - name: Remove temporary SSH material
         if: always()
@@ -195,6 +190,7 @@ jobs:
       ROLLBACK_SHA: ${{ inputs.rollback_sha }}
 
     steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
       - name: Validate rollback request
         run: |
           [[ "$DEPLOY_HOST" =~ ^[A-Za-z0-9.-]+$ ]]
@@ -203,7 +199,7 @@ jobs:
           [[ "$DEPLOY_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
           [[ "$DEPLOY_ROOT" == /var/www/siyuanxue.com ]]
           case "$DEPLOY_ORIGIN" in
-            https://siyuanxue.com|http://82.156.77.131) ;;
+            https://siyuanxue.com) ;;
             *) exit 1 ;;
           esac
           [[ "$ROLLBACK_SHA" =~ ^[0-9a-f]{40}$ ]]
@@ -235,25 +231,13 @@ jobs:
             /usr/local/bin/siyuanxue-release rollback \
             "$DEPLOY_ROOT" "$ROLLBACK_SHA" http://127.0.0.1/__health
 
-      - name: Verify rollback from the public internet
-        run: |
-          response=''
-          for attempt in 1 2 3 4 5; do
-            if response=$(curl --fail --silent --show-error --max-time 10 \
-              "$DEPLOY_ORIGIN/__health") && [[ "$response" == "$ROLLBACK_SHA" ]]; then
-              curl --fail --silent --show-error --max-time 10 "$DEPLOY_ORIGIN/" >/dev/null
-              exit 0
-            fi
-            sleep 2
-          done
-          printf 'Public rollback check failed: expected %s, got %s\n' \
-            "$ROLLBACK_SHA" "${response:-<no response>}" >&2
-          exit 1
+      - name: Verify both public locales after rollback
+        run: bash ops/verify-public.sh "$ROLLBACK_SHA"
 
       - name: Undo rollback after failed public check
         if: failure() && steps.activate.outcome == 'success'
         run: |
-          ssh \
+          restored_sha=$(ssh \
             -i "$RUNNER_TEMP/ssh/deploy_key" \
             -p "$DEPLOY_PORT" \
             -o BatchMode=yes \
@@ -262,7 +246,8 @@ jobs:
             -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
             "$DEPLOY_USER@$DEPLOY_HOST" \
             /usr/local/bin/siyuanxue-release restore-previous \
-            "$DEPLOY_ROOT" "$ROLLBACK_SHA" http://127.0.0.1/__health
+            "$DEPLOY_ROOT" "$ROLLBACK_SHA" http://127.0.0.1/__health)
+          bash ops/verify-public.sh "$restored_sha"
 
       - name: Finalize rollback
         run: |

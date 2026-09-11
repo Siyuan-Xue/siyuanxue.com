@@ -65,7 +65,7 @@ validate_public_key() {
 install_packages() {
 	export DEBIAN_FRONTEND=noninteractive
 	apt-get update
-	apt-get install -y --no-install-recommends nginx fail2ban curl ca-certificates
+	apt-get install -y --no-install-recommends nginx fail2ban curl ca-certificates python3
 }
 
 configure_deploy_user() {
@@ -91,7 +91,7 @@ configure_deploy_user() {
 configure_site_tree() {
 	install -d -o "$DEPLOY_USER" -g "$DEPLOY_GROUP" -m 2750 "$SITE_ROOT"
 	install -d -o "$DEPLOY_USER" -g "$DEPLOY_GROUP" -m 2750 \
-		"$SITE_ROOT/incoming" "$SITE_ROOT/releases"
+		"$SITE_ROOT/incoming" "$SITE_ROOT/releases" "$SITE_ROOT/shared" "$SITE_ROOT/shared/_astro"
 	install -d -o "$DEPLOY_USER" -g "$DEPLOY_GROUP" -m 2755 \
 		"$SITE_ROOT/releases/bootstrap"
 
@@ -149,10 +149,15 @@ configure_services() {
 	systemctl restart fail2ban
 }
 
-verify_services() {
-	local attempt fail2ban_ready=false health
+verify_site_health() {
+	local health
 	health=$(curl --fail --silent --show-error --max-time 5 http://127.0.0.1/__health)
-	[[ "$health" == bootstrap ]] || die "bootstrap health check returned: $health"
+	[[ "$health" == "$(<"$SITE_ROOT/current/__health")" ]] || die "current release health check returned: $health"
+}
+
+verify_services() {
+	local attempt fail2ban_ready=false
+	verify_site_health
 	systemctl --no-pager --full status nginx | sed -n '1,12p'
 
 	# systemctl can report the service as started before fail2ban-server creates

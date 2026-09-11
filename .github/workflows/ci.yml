@@ -1,65 +1,51 @@
 name: CI
-
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
-
+  workflow_call:
+    outputs:
+      archive_name:
+        value: ${{ jobs.verify.outputs.archive_name }}
+      artifact_name:
+        value: ${{ jobs.verify.outputs.artifact_name }}
 permissions:
   contents: read
-
 jobs:
-  build:
-    name: Build and deployment-script tests
+  verify:
+    name: Validate both locales and deployment
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
-
+    outputs:
+      archive_name: ${{ steps.package.outputs.archive_name }}
+      artifact_name: ${{ steps.package.outputs.artifact_name }}
     steps:
-      - name: Check out repository
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
-
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
           bun-version: 1.3.14
-
-      - name: Install frozen dependencies
-        run: bun install --frozen-lockfile
-
-      - name: Install Nginx configuration validator
+      - name: Install dependencies and Nginx validator
         run: |
+          bun install --frozen-lockfile
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends nginx
-
-      - name: Validate operations scripts
+          sudo apt-get install -y --no-install-recommends nginx python3
+      - name: Run shared verification
+        run: bash ops/verify.sh
+      - name: Package the verified output
+        id: package
         run: |
-          bash -n ops/bootstrap-remote.sh
-          bash -n ops/bootstrap-server.sh
-          bash -n ops/enable-https.sh
-          bash -n ops/install-nginx-config.sh
-          bash -n ops/reload-nginx-after-renewal.sh
-          bash -n ops/release.sh
-          bash -n ops/test-enable-https.sh
-          bash -n ops/test-install-nginx-config.sh
-          bash -n ops/test-nginx-config.sh
-          bash -n ops/test-release.sh
-          bash ops/test-enable-https.sh
-          bash ops/test-install-nginx-config.sh
-          bash ops/test-nginx-config.sh
-          bash ops/test-release.sh
-
-      - name: Test Romantic Mode state
-        run: bun run test
-
-      - name: Build production site
-        run: bun run build
-
-      - name: Validate production output
-        run: |
-          bun run test:output
-          test -s dist/index.html
-          test -s dist/sitemap-index.xml
-          grep -Rqs 'https://siyuanxue.com' dist
+          archive_name="site-${GITHUB_SHA}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}.tar.gz"
+          bash ops/package-release.sh "$PWD/dist" "$GITHUB_SHA" "$RUNNER_TEMP/$archive_name"
+          printf 'archive_name=%s\n' "$archive_name" >> "$GITHUB_OUTPUT"
+          printf 'artifact_name=site-%s\n' "$GITHUB_SHA" >> "$GITHUB_OUTPUT"
+      - name: Preserve verified release
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: site-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/${{ steps.package.outputs.archive_name }}
+            ${{ runner.temp }}/${{ steps.package.outputs.archive_name }}.sha256
+          if-no-files-found: error
+          retention-days: 7

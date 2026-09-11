@@ -174,7 +174,6 @@ describe('Romantic Mode PhotoSwipe options', () => {
 			bgClickAction: 'close',
 			imageClickAction: 'zoom-or-close',
 			doubleTapAction: 'zoom',
-			preloader: false,
 			closeTitle: 'Close Romantic Mode portrait',
 		});
 		expect(typeof options.tapAction).toBe('function');

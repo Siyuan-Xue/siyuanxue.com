@@ -1,3 +1,5 @@
+> Historical document. Superseded by the September 2026 dual-domain implementation and ops/HTTPS.md; do not use its redirect or retired-domain activation instructions.
+
 # xuesiyuan.com HTTPS Activation Design
 
 ## Goal

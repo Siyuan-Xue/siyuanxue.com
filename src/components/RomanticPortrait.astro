@@ -1,6 +1,10 @@
 ---
 import LoadingBlocks from './LoadingBlocks.astro';
 import { site } from '../data/site';
+import { t } from '../i18n/locale';
+import { Picture } from 'astro:assets';
+import portraitImage from '../assets/portrait.jpg';
+import '../styles/romantic.css';
 
 const portrait = site.portrait;
 const secret = site.secretPortrait;
@@ -17,46 +21,31 @@ const captionId = 'romantic-mode-caption';
 	data-secret-src={secret.src}
 	data-secret-width={secret.width}
 	data-secret-height={secret.height}
-	data-primary-alt-en={portrait.alt.en}
-	data-primary-alt-zh={portrait.alt.zh}
-	data-secret-alt-en={secret.alt.en}
-	data-secret-alt-zh={secret.alt.zh}
-	data-dialog-label-en={secret.dialogLabel.en}
-	data-dialog-label-zh={secret.dialogLabel.zh}
-	data-close-label-en={secret.closeLabel.en}
-	data-close-label-zh={secret.closeLabel.zh}
-	data-caption-en={secret.caption.en}
-	data-caption-zh={secret.caption.zh}
-	data-proof-label="VII · PRIVATE PROOF"
-	data-turn-on-label-en={secret.turnOnLabel.en}
-	data-turn-on-label-zh={secret.turnOnLabel.zh}
-	data-turn-off-label-en={secret.turnOffLabel.en}
-	data-turn-off-label-zh={secret.turnOffLabel.zh}
-	data-mode-on-en={secret.modeOnMessage.en}
-	data-mode-on-zh={secret.modeOnMessage.zh}
-	data-mode-off-en={secret.modeOffMessage.en}
-	data-mode-off-zh={secret.modeOffMessage.zh}
-	data-status1-en={status1.message.en}
-	data-status1-zh={status1.message.zh}
-	data-status2-en={status2.message.en}
-	data-status2-zh={status2.message.zh}
-	data-status3-en={status3.message.en}
-	data-status3-zh={status3.message.zh}
-	data-status4-en={status4.message.en}
-	data-status4-zh={status4.message.zh}
-	data-status5-en={status5.message.en}
-	data-status5-zh={status5.message.zh}
-	data-status6-en={status6.message.en}
-	data-status6-zh={status6.message.zh}
-	data-status7-en={status7.message.en}
-	data-status7-zh={status7.message.zh}
+	data-primary-alt={t(portrait.alt)}
+	data-secret-alt={t(secret.alt)}
+	data-dialog-label={t(secret.dialogLabel)}
+	data-close-label={t(secret.closeLabel)}
+	data-caption={t(secret.caption)}
+	data-proof-label={t({ en: 'VII · PRIVATE PROOF', zh: 'VII · 私人样张' })}
+ data-load-error={t({ en: 'The image could not be loaded. Please try again.', zh: '图片加载失败，请重试。' })}
+	data-turn-on-label={t(secret.turnOnLabel)}
+	data-turn-off-label={t(secret.turnOffLabel)}
+	data-mode-on={t(secret.modeOnMessage)}
+	data-mode-off={t(secret.modeOffMessage)}
+	data-status1={t(status1.message)}
+	data-status2={t(status2.message)}
+	data-status3={t(status3.message)}
+	data-status4={t(status4.message)}
+	data-status5={t(status5.message)}
+	data-status6={t(status6.message)}
+	data-status7={t(status7.message)}
 >
 	{/*
 	  Portrait stage: md blocks, faint tone over soft veil — sits in the float column.
 	  The secret card keeps the same loader pattern at md.
 	*/}
 	<div
-		class="romantic-portrait_stage loading-slot is-loading"
+		class="romantic-portrait_stage loading-slot"
 		style={`--romantic-portrait-aspect: ${portrait.width} / ${portrait.height}`}
 		data-primary-loading-slot
 	>
@@ -70,12 +59,14 @@ const captionId = 'romantic-mode-caption';
 			aria-controls="romantic-secret-card"
 			aria-expanded="false"
 		>
-			<img
+			<Picture
 				class="bio-portrait_img romantic-portrait_image"
-				src={portrait.src}
-				alt={portrait.alt.en}
-				width={portrait.width}
-				height={portrait.height}
+				src={portraitImage}
+				alt={t(portrait.alt)}
+				width={960}
+				widths={[320, 640, 960]}
+				formats={['avif', 'webp']}
+				sizes="(max-width: 480px) min(46vw, calc(100vw - 12rem), 12rem), (max-width: 720px) 192px, (max-width: 896px) calc((100vw - 48px) * .3), 254.4px"
 				loading="eager"
 				fetchpriority="high"
 				decoding="async"
@@ -87,7 +78,7 @@ const captionId = 'romantic-mode-caption';
 			id="romantic-secret-card"
 			class="romantic-portrait_secret loading-slot"
 			href={secret.src}
-			aria-label={secret.dialogLabel.en}
+			aria-label={t(secret.dialogLabel)}
 			aria-describedby={captionId}
 			data-secret-card
 			data-romantic-lightbox-trigger
@@ -111,434 +102,11 @@ const captionId = 'romantic-mode-caption';
 	></p>
 
 	<p id={captionId} class="u-sr-only" data-romantic-lightbox-description>
-		<span class="i18n-en" lang="en">{secret.caption.en}</span>
-		<span class="i18n-zh" lang="zh-CN">{secret.caption.zh}</span>
+		{t(secret.caption)}
 	</p>
 </div>
 
 <script>
-	import PhotoSwipeLightbox from 'photoswipe/lightbox';
-	import 'photoswipe/style.css';
-	import {
-		advanceRomanticMode,
-		persistRomanticMode,
-		restoreRomanticMode,
-		type RomanticModeStorage,
-	} from '../utils/romanticMode';
-	import {
-		createRomanticLightboxOptions,
-		getRomanticLightboxLayout,
-		getRomanticLightboxMotionProfile,
-		shouldKeepRomanticLightboxPlaceholder,
-	} from '../utils/romanticLightbox';
-	import {
-		createRomanticLightboxMotion,
-		type RomanticLightboxMotionController,
-	} from '../utils/romanticLightboxMotion';
-
-	document.querySelectorAll<HTMLElement>('[data-romantic-mode]').forEach((root) => {
-		const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]');
-		const primaryImage = root.querySelector<HTMLImageElement>('[data-primary-image]');
-		const primaryLoadingSlot = root.querySelector<HTMLElement>('[data-primary-loading-slot]');
-		const secretCard = root.querySelector<HTMLAnchorElement>('[data-secret-card]');
-		const secretImageSlot = root.querySelector<HTMLElement>('[data-secret-image-slot]');
-		const status = root.querySelector<HTMLElement>('[data-romantic-status]');
-
-		if (
-			!trigger ||
-			!primaryImage ||
-			!secretCard ||
-			!secretImageSlot ||
-			!status
-		) {
-			return;
-		}
-
-		let storage: RomanticModeStorage | null = null;
-		try {
-			storage = window.sessionStorage;
-		} catch {
-			// The interaction still works when browser privacy settings block storage.
-		}
-
-		const storageKey = root.dataset.storageKey;
-		let state = restoreRomanticMode(storage, storageKey);
-		let activeStatusName: string | null = null;
-		let toastTimer: number | undefined;
-		let concealTimer: number | undefined;
-		let revealFrame: number | undefined;
-		let secretImage: HTMLImageElement | null = null;
-
-		const locale = () =>
-			document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
-
-		const localized = (name: string) => {
-			const suffix = locale() === 'zh' ? 'Zh' : 'En';
-			return root.dataset[`${name}${suffix}`] ?? '';
-		};
-
-		let lightboxFrame: HTMLElement | null = null;
-		let lightboxReveal: HTMLElement | null = null;
-		let lightboxRevealBand: HTMLElement | null = null;
-		let lightboxFooter: HTMLElement | null = null;
-		let lightboxCaptionText: HTMLElement | null = null;
-		let lightboxProof: HTMLElement | null = null;
-		let lightboxClose: HTMLElement | null = null;
-		let lightboxMotion: RomanticLightboxMotionController | null = null;
-
-		const lightbox = new PhotoSwipeLightbox({
-			gallery: root,
-			children: '[data-romantic-lightbox-trigger]',
-			pswpModule: () => import('photoswipe'),
-			...createRomanticLightboxOptions(localized('closeLabel')),
-		});
-
-		lightbox.addFilter('thumbEl', () => secretImage ?? secretCard);
-		lightbox.addFilter('isKeepingPlaceholder', (defaultKeep, content) =>
-			shouldKeepRomanticLightboxPlaceholder(defaultKeep, {
-				isOpening: lightbox.pswp?.opener.isOpening ?? false,
-				hasMountedImage: Boolean(content.element?.parentElement),
-			}),
-		);
-
-		const setLoading = (slot: HTMLElement | null | undefined, loading: boolean) => {
-			if (!slot) return;
-			slot.classList.toggle('is-loading', loading);
-		};
-
-		const bindImageLoading = (
-			image: HTMLImageElement,
-			slot: HTMLElement | null | undefined,
-		) => {
-			const finish = () => setLoading(slot, false);
-			if (image.complete && image.naturalWidth > 0) {
-				finish();
-				return;
-			}
-			setLoading(slot, true);
-			image.addEventListener('load', finish, { once: true });
-			image.addEventListener('error', finish, { once: true });
-		};
-
-		// Primary portrait — md/faint loader until first paint of the photo.
-		bindImageLoading(primaryImage, primaryLoadingSlot);
-
-		const makeSecretImage = (className: string) => {
-			const image = document.createElement('img');
-			image.className = className;
-			image.alt = localized('secretAlt');
-			image.width = Number(root.dataset.secretWidth) || 1200;
-			image.height = Number(root.dataset.secretHeight) || 1800;
-			image.decoding = 'async';
-			image.src = root.dataset.secretSrc ?? '';
-			return image;
-		};
-
-		const ensureSecretImage = () => {
-			if (secretImage) return;
-			setLoading(secretCard, true);
-			secretImage = makeSecretImage(
-				'bio-portrait_img romantic-portrait_image romantic-portrait_secret-image',
-			);
-			bindImageLoading(secretImage, secretCard);
-			secretImageSlot.append(secretImage);
-		};
-
-		const syncLanguage = () => {
-			primaryImage.alt = localized('primaryAlt');
-			secretCard.setAttribute('aria-label', localized('dialogLabel'));
-			if (state.unlocked) {
-				trigger.setAttribute(
-					'aria-label',
-					localized(state.active ? 'turnOffLabel' : 'turnOnLabel'),
-				);
-			} else {
-				trigger.removeAttribute('aria-label');
-			}
-			if (secretImage) secretImage.alt = localized('secretAlt');
-			if (activeStatusName) {
-				status.textContent = localized(activeStatusName);
-			}
-
-			const caption = localized('caption');
-			const closeLabel = localized('closeLabel');
-			lightbox.options.closeTitle = closeLabel;
-			if (lightbox.pswp) lightbox.pswp.options.closeTitle = closeLabel;
-			if (lightboxCaptionText) lightboxCaptionText.textContent = caption;
-			if (lightboxProof) lightboxProof.textContent = root.dataset.proofLabel ?? '';
-			if (lightboxClose) lightboxClose.setAttribute('aria-label', closeLabel);
-		};
-
-		lightbox.on('uiRegister', () => {
-			const pswp = lightbox.pswp;
-			if (!pswp) return;
-
-			pswp.ui.registerElement({
-				name: 'romantic-frame',
-				className: 'romantic-lightbox_frame',
-				appendTo: 'root',
-				onInit: (element) => {
-					lightboxFrame = element;
-				},
-			});
-
-			pswp.ui.registerElement({
-				name: 'romantic-reveal',
-				className: 'romantic-lightbox_reveal',
-				appendTo: 'root',
-				onInit: (element) => {
-					lightboxReveal = element;
-					lightboxRevealBand = document.createElement('span');
-					lightboxRevealBand.className = 'romantic-lightbox_reveal-band';
-					lightboxRevealBand.setAttribute('aria-hidden', 'true');
-					element.append(lightboxRevealBand);
-				},
-			});
-
-			pswp.ui.registerElement({
-				name: 'romantic-footer',
-				className: 'romantic-lightbox_footer',
-				appendTo: 'root',
-				onInit: (element) => {
-					lightboxFooter = element;
-					lightboxCaptionText = document.createElement('span');
-					lightboxCaptionText.className = 'romantic-lightbox_caption-text';
-					lightboxProof = document.createElement('small');
-					lightboxProof.className = 'romantic-lightbox_proof';
-					element.append(lightboxCaptionText, lightboxProof);
-					syncLanguage();
-				},
-			});
-
-			pswp.ui.registerElement({
-				name: 'romantic-close',
-				className: 'romantic-lightbox_close',
-				appendTo: 'root',
-				isButton: true,
-				ariaLabel: localized('closeLabel'),
-				html: '<span aria-hidden="true">×</span>',
-				onClick: 'close',
-				onInit: (element) => {
-					lightboxClose = element;
-					// Preserve the thumbnail as PhotoSwipe's pointer-open focus target.
-					element.addEventListener('mousedown', (event) => event.preventDefault());
-					syncLanguage();
-				},
-			});
-		});
-
-		const syncLightboxLayout = () => {
-			const pswp = lightbox.pswp;
-			if (!pswp?.element) return;
-
-			const layout = getRomanticLightboxLayout(pswp.viewportSize);
-			const properties = {
-				'--romantic-lightbox-media-width': layout.mediaWidth,
-				'--romantic-lightbox-media-height': layout.mediaHeight,
-				'--romantic-lightbox-media-top': layout.mediaTop,
-				'--romantic-lightbox-frame-width': layout.frameWidth,
-				'--romantic-lightbox-frame-half-width': layout.frameWidth / 2,
-				'--romantic-lightbox-frame-height': layout.frameHeight,
-				'--romantic-lightbox-frame-top': layout.frameTop,
-				'--romantic-lightbox-matte': layout.matte,
-				'--romantic-lightbox-footer-height': layout.footerHeight,
-			};
-
-			for (const [name, value] of Object.entries(properties)) {
-				pswp.element.style.setProperty(name, `${value}px`);
-			}
-		};
-
-		lightbox.on('afterInit', syncLightboxLayout);
-		lightbox.on('resize', syncLightboxLayout);
-
-		const getCurrentMotionProfile = () =>
-			getRomanticLightboxMotionProfile(
-				{ x: window.innerWidth, y: window.innerHeight },
-				window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-			);
-
-		lightbox.on('firstUpdate', () => {
-			const pswp = lightbox.pswp;
-			if (!pswp) return;
-			const profile = getCurrentMotionProfile();
-			pswp.options.showAnimationDuration = profile.showDurationMs;
-			pswp.options.hideAnimationDuration = profile.hideDurationMs;
-		});
-
-		lightbox.on('openingAnimationStart', () => {
-			const pswp = lightbox.pswp;
-			if (
-				!pswp?.currSlide?.container ||
-				!lightboxFrame ||
-				!lightboxReveal ||
-				!lightboxRevealBand ||
-				!lightboxFooter ||
-				!lightboxProof ||
-				!lightboxClose
-			) {
-				return;
-			}
-
-			const images = Array.from(
-				pswp.currSlide.container.querySelectorAll<HTMLElement>('.pswp__img'),
-			);
-			if (images.length === 0) return;
-
-			pswp.options.easing = 'cubic-bezier(0.16,1,0.3,1)';
-			lightboxMotion?.destroy();
-			lightboxMotion = createRomanticLightboxMotion(
-				{
-					frame: lightboxFrame,
-					image: images,
-					reveal: lightboxReveal,
-					footer: lightboxFooter,
-					proof: lightboxProof,
-					close: lightboxClose,
-					sweep: lightboxRevealBand,
-				},
-				getCurrentMotionProfile(),
-			);
-			lightboxMotion.playOpen();
-		});
-
-		lightbox.on('openingAnimationEnd', () => {
-			if (lightbox.pswp) {
-				lightbox.pswp.options.easing = 'cubic-bezier(.4,0,.22,1)';
-			}
-		});
-
-		lightbox.on('closingAnimationStart', () => {
-			if (lightbox.pswp) {
-				lightbox.pswp.options.easing = 'cubic-bezier(0.7,0,0.84,0)';
-			}
-			lightboxMotion?.playClose();
-		});
-
-		lightbox.on('destroy', () => {
-			lightboxMotion?.destroy();
-			lightboxMotion = null;
-			lightboxFrame = null;
-			lightboxReveal = null;
-			lightboxRevealBand = null;
-			lightboxFooter = null;
-			lightboxCaptionText = null;
-			lightboxProof = null;
-			lightboxClose = null;
-		});
-
-		const showStatus = (name: string, duration = 2800) => {
-			activeStatusName = name;
-			status.textContent = localized(name);
-			status.classList.add('is-visible');
-			if (toastTimer !== undefined) window.clearTimeout(toastTimer);
-			toastTimer = window.setTimeout(() => {
-				status.classList.remove('is-visible');
-				status.textContent = '';
-				activeStatusName = null;
-			}, duration);
-		};
-
-		const syncTriggerState = () => {
-			trigger.setAttribute('aria-expanded', String(state.active));
-			if (state.unlocked) {
-				trigger.setAttribute('aria-pressed', String(state.active));
-				trigger.setAttribute(
-					'aria-label',
-					localized(state.active ? 'turnOffLabel' : 'turnOnLabel'),
-				);
-			} else {
-				trigger.removeAttribute('aria-pressed');
-				trigger.removeAttribute('aria-label');
-			}
-		};
-
-		const reveal = (animate: boolean) => {
-			if (concealTimer !== undefined) {
-				window.clearTimeout(concealTimer);
-				concealTimer = undefined;
-			}
-			if (revealFrame !== undefined) {
-				window.cancelAnimationFrame(revealFrame);
-				revealFrame = undefined;
-			}
-			ensureSecretImage();
-			syncTriggerState();
-
-			if (!animate) {
-				secretCard.hidden = false;
-				root.classList.add('is-active');
-				return;
-			}
-
-			secretCard.hidden = false;
-			void secretCard.offsetWidth;
-			revealFrame = window.requestAnimationFrame(() => {
-				if (state.active) root.classList.add('is-active');
-				revealFrame = undefined;
-			});
-		};
-
-		const conceal = (animate: boolean) => {
-			if (concealTimer !== undefined) window.clearTimeout(concealTimer);
-			if (revealFrame !== undefined) {
-				window.cancelAnimationFrame(revealFrame);
-				revealFrame = undefined;
-			}
-			root.classList.remove('is-active');
-			syncTriggerState();
-
-			const reducedMotion = window.matchMedia(
-				'(prefers-reduced-motion: reduce)',
-			).matches;
-			if (!animate || reducedMotion) {
-				secretCard.hidden = true;
-				concealTimer = undefined;
-				return;
-			}
-
-			concealTimer = window.setTimeout(() => {
-				if (!state.active) secretCard.hidden = true;
-				concealTimer = undefined;
-			}, 600);
-		};
-
-		trigger.addEventListener('click', () => {
-			const step = advanceRomanticMode(state);
-			state = step.state;
-
-			if (step.toggledNow) {
-				persistRomanticMode(storage, state, storageKey);
-				if (state.active) {
-					reveal(true);
-					showStatus('modeOn');
-				} else {
-					conceal(true);
-					showStatus('modeOff');
-				}
-				return;
-			}
-
-			if (step.shouldAnnounce) {
-				showStatus(
-					`status${state.activationCount}`,
-					step.unlockedNow ? 3600 : 2800,
-				);
-			}
-			if (step.unlockedNow) {
-				persistRomanticMode(storage, state, storageKey);
-				reveal(true);
-			}
-		});
-
-		document.addEventListener('site:language-change', syncLanguage);
-
-		lightbox.init();
-		syncLanguage();
-		if (state.active) {
-			reveal(false);
-		} else if (state.unlocked) {
-			conceal(false);
-		}
-	});
+ import { initRomanticPortraitController } from '../utils/romanticPortraitController';
+ document.querySelectorAll<HTMLElement>('[data-romantic-mode]').forEach(initRomanticPortraitController);
 </script>

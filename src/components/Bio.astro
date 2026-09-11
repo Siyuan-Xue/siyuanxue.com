@@ -1,0 +1,7 @@
+---
+import RomanticPortrait from './RomanticPortrait.astro';
+import { site } from '../data/site';
+import { t } from '../i18n/locale';
+const paragraphs = [site.bio.lead, ...site.bio.more].map(t);
+---
+<section class="bio"><RomanticPortrait /><div class="bio-copy">{paragraphs.map((para, i) => <p class={i === 0 ? 'bio-lead' : 'bio-para'}>{para}</p>)}</div></section>

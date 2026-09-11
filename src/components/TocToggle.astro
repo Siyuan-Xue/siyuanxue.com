@@ -1,50 +1,7 @@
 ---
+import { t } from '../i18n/locale';
 import { site } from '../data/site';
 ---
-
-<button
-	type="button"
-	class="toc-toggle"
-	data-toc-toggle
-	data-label-open-en={site.ui.openContents.en}
-	data-label-open-zh={site.ui.openContents.zh}
-	data-label-close-en={site.ui.closeContents.en}
-	data-label-close-zh={site.ui.closeContents.zh}
-	hidden
-	aria-expanded="false"
-	aria-controls="site-toc"
-	aria-label={site.ui.openContents.en}
-	title={site.ui.openContents.en}
->
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="100%"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		stroke-width="2"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		class="toc-toggle_icon cc-close"
-		aria-hidden="true"
-	>
-		<line x1="18" y1="6" x2="6" y2="18"></line>
-		<line x1="6" y1="6" x2="18" y2="18"></line>
-	</svg>
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		width="100%"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		stroke-width="2"
-		stroke-linecap="round"
-		stroke-linejoin="round"
-		class="toc-toggle_icon cc-hamburger"
-		aria-hidden="true"
-	>
-		<line x1="3" y1="12" x2="21" y2="12"></line>
-		<line x1="3" y1="6" x2="21" y2="6"></line>
-		<line x1="3" y1="18" x2="21" y2="18"></line>
-	</svg>
+<button type="button" class="toc-toggle" data-toc-toggle hidden aria-expanded="false" aria-controls="site-toc" aria-label={t(site.ui.openContents)} title={t(site.ui.openContents)}>
+ <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
 </button>

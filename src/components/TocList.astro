@@ -1,0 +1,6 @@
+---
+import type { MarkdownHeading } from 'astro';
+interface Props { headings: MarkdownHeading[] }
+const { headings } = Astro.props;
+---
+<ul class="toc-list">{headings.map(h => <li class:list={['toc-list_item', h.depth === 3 && 'toc-list_item--h3']}><a href={`#${h.slug}`} class="toc-link" data-toc-link={h.slug}>{h.text}</a></li>)}</ul>

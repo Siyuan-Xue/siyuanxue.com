@@ -1,101 +1,43 @@
 ---
-import { Font } from 'astro:assets';
 import { site } from '../data/site';
-import type { Bi } from '../i18n/types';
+import { locale, localeOrigin, t } from '../i18n/locale';
 import '../styles/base.css';
-
-interface Props {
-	title?: Bi | string;
-	description?: Bi | string;
-}
-
-const { title, description } = Astro.props;
-
-function asBi(v: Bi | string | undefined, fallback: Bi): Bi {
-	if (!v) return fallback;
-	if (typeof v === 'string') return { en: v, zh: v };
-	return v;
-}
-
-const titleBi = asBi(title, site.title);
-const descBi = asBi(description, site.description);
-const canonical = new URL(Astro.url.pathname, Astro.site);
+import 'site-fonts';
+interface Props { title?: string; description?: string; articleDate?: Date; noindex?: boolean }
+const { title = t(site.title), description = t(site.description), articleDate, noindex = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, localeOrigin(locale)).href;
+const image = new URL(`/images/share-${locale}.png`, localeOrigin(locale)).href;
+const fullTitle = title === t(site.name) ? title : `${title} — ${t(site.name)}`;
+const schema = articleDate ? { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description, datePublished: articleDate.toISOString(), author: { '@type': 'Person', name: t(site.name), url: localeOrigin(locale) }, inLanguage: locale === 'zh' ? 'zh-CN' : 'en', mainEntityOfPage: canonical, url: canonical, image } : undefined;
 ---
-
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
-
-{/* Default meta is English; client can update document.title on lang switch */}
-<title data-title-en={`${titleBi.en === site.name.en ? site.name.en : `${titleBi.en} — ${site.name.en}`}`} data-title-zh={`${titleBi.zh === site.name.zh ? site.name.zh : `${titleBi.zh} — ${site.name.zh}`}`}>
-	{titleBi.en === site.name.en ? site.name.en : `${titleBi.en} — ${site.name.en}`}
-</title>
-<meta name="description" content={descBi.en} data-desc-en={descBi.en} data-desc-zh={descBi.zh} />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex, follow" />}
 <link rel="canonical" href={canonical} />
-
-<meta property="og:type" content="website" />
-<meta property="og:title" content={titleBi.en} />
-<meta property="og:description" content={descBi.en} />
+<link rel="alternate" hreflang="en" href={new URL(Astro.url.pathname, localeOrigin('en'))} />
+<link rel="alternate" hreflang="zh-CN" href={new URL(Astro.url.pathname, localeOrigin('zh'))} />
+<link rel="alternate" hreflang="x-default" href={new URL(Astro.url.pathname, localeOrigin('en'))} />
+<link rel="alternate" type="application/rss+xml" title={t(site.title)} href="/rss.xml" />
+<meta property="og:type" content={articleDate ? 'article' : 'website'} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
 <meta property="og:url" content={canonical} />
-<meta property="og:locale" content="en_US" />
-<meta property="og:locale:alternate" content="zh_CN" />
-
-<meta name="twitter:card" content="summary" />
-<meta name="twitter:title" content={titleBi.en} />
-<meta name="twitter:description" content={descBi.en} />
-
+<meta property="og:locale" content={locale === 'en' ? 'en_US' : 'zh_CN'} />
+<meta property="og:locale:alternate" content={locale === 'en' ? 'zh_CN' : 'en_US'} />
+<meta property="og:image" content={image} />
+<meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={t(site.name)} />
+{articleDate && <meta property="article:published_time" content={articleDate.toISOString()} />}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={image} />
 <meta name="generator" content={Astro.generator} />
-
-<Font cssVariable="--font-newsreader" preload />
-<Font cssVariable="--font-noto-serif-sc" preload />
-
-{/* FOUC prevention: lang default en, theme from storage */}
+{schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />}
 <script is:inline>
-	(function () {
-		try {
-			var root = document.documentElement;
-			var lang = localStorage.getItem('site-lang');
-			root.setAttribute('data-lang', lang === 'zh' ? 'zh' : 'en');
-			root.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
-
-			var theme = localStorage.getItem('color-mode');
-			var dark =
-				theme === 'dark' ||
-				(theme === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
-			if (dark) root.classList.add('u-mode-invert');
-
-			var t = document.querySelector('title[data-title-en]');
-			if (t && lang === 'zh') {
-				document.title = t.getAttribute('data-title-zh') || document.title;
-			}
-			var d = document.querySelector('meta[name="description"][data-desc-zh]');
-			if (d && lang === 'zh') {
-				d.setAttribute('content', d.getAttribute('data-desc-zh') || '');
-			}
-		} catch (_) {}
-	})();
-</script>
-
-<script is:inline>
-	(function () {
-		function syncMeta() {
-			var lang = document.documentElement.getAttribute('data-lang') === 'zh' ? 'zh' : 'en';
-			var t = document.querySelector('title[data-title-en]');
-			if (t) {
-				document.title =
-					lang === 'zh'
-						? t.getAttribute('data-title-zh') || ''
-						: t.getAttribute('data-title-en') || '';
-			}
-			var d = document.querySelector('meta[name="description"][data-desc-en]');
-			if (d) {
-				d.setAttribute(
-					'content',
-					lang === 'zh' ? d.getAttribute('data-desc-zh') || '' : d.getAttribute('data-desc-en') || '',
-				);
-			}
-		}
-		document.addEventListener('site:language-change', syncMeta);
-	})();
+ (() => { let theme; try { theme = localStorage.getItem('color-mode'); } catch {} const dark = theme === 'dark' || (theme == null && matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.classList.toggle('u-mode-invert', dark); })();
 </script>

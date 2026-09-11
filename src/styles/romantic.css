@@ -1,0 +1,408 @@
+/* Bio — raw portrait floated through the introductory copy at every width */
+.home-container {
+	display: flow-root;
+}
+
+.bio::after {
+	content: '';
+	display: block;
+	clear: both;
+}
+
+.bio-copy {
+	min-width: 0;
+}
+
+.bio-lead {
+	margin: 0;
+	color: var(--fg-body);
+}
+
+.bio-para {
+	margin: 1em 0 0;
+	color: var(--fg-body);
+}
+
+.bio-portrait {
+	float: right;
+	position: relative;
+	z-index: 1;
+	width: clamp(12rem, 30%, 16.5rem);
+	margin: 0 0 1.5rem 2rem;
+	line-height: 0;
+}
+
+.bio-portrait_img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.romantic-portrait_stage {
+	position: relative;
+	isolation: isolate;
+	width: 100%;
+	aspect-ratio: var(--romantic-portrait-aspect, 2 / 3);
+}
+
+.romantic-portrait_primary,
+.romantic-portrait_secret {
+	appearance: none;
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	font: inherit;
+	line-height: 0;
+}
+
+.romantic-portrait_primary {
+	z-index: 2;
+	cursor: default;
+	transform: translateX(0) rotate(0);
+	transform-origin: 50% 80%;
+	transition:
+		transform 520ms cubic-bezier(0.22, 1, 0.36, 1),
+		filter 520ms ease;
+}
+
+.romantic-portrait_secret {
+	z-index: 1;
+	cursor: pointer;
+	overflow: hidden;
+	background: var(--bg-soft);
+	box-shadow: 0 0.75rem 2rem rgb(31 30 29 / 0%);
+	transform: translateX(0) rotate(1deg);
+	transform-origin: 50% 80%;
+	transition:
+		transform 580ms cubic-bezier(0.22, 1, 0.36, 1),
+		box-shadow 580ms ease;
+}
+
+.romantic-portrait_secret[hidden] {
+	display: none;
+}
+
+.romantic-portrait_primary:focus-visible,
+.romantic-portrait_secret:focus-visible {
+	outline: 2px solid var(--focus);
+	outline-offset: 4px;
+}
+
+.romantic-portrait_image,
+.romantic-portrait_secret-media {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.romantic-portrait_image {
+	object-fit: cover;
+}
+
+.romantic-portrait.is-active .romantic-portrait_primary {
+	filter: drop-shadow(0 0.65rem 0.9rem rgb(31 30 29 / 18%));
+	transform: translateX(-9%) rotate(-1deg);
+}
+
+.romantic-portrait.is-active .romantic-portrait_secret {
+	box-shadow: 0 0.85rem 2rem rgb(31 30 29 / 24%);
+	transform: translateX(14%) rotate(2deg);
+}
+
+.romantic-mode_toast {
+	position: fixed;
+	z-index: 20;
+	left: 50%;
+	bottom: max(1.25rem, env(safe-area-inset-bottom));
+	width: max-content;
+	max-width: min(34rem, calc(100vw - 2rem));
+	margin: 0;
+	padding: 0.65rem 0.9rem;
+	border: 1px solid var(--border);
+	border-radius: 999px;
+	background: var(--bg-elevated);
+	box-shadow: 0 0.75rem 2.2rem rgb(31 30 29 / 20%);
+	color: var(--fg);
+	font-family: var(--font-serif);
+	font-size: 0.875rem;
+	line-height: 1.35;
+	text-align: center;
+	opacity: 0;
+	pointer-events: none;
+	transform: translate(-50%, 0.75rem);
+	visibility: hidden;
+	transition:
+		opacity 180ms ease,
+		transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+		visibility 0s linear 260ms,
+		color var(--ease-color),
+		background-color var(--ease-color),
+		border-color var(--ease-color);
+}
+
+.romantic-mode_toast.is-visible {
+	opacity: 1;
+	transform: translate(-50%, 0);
+	visibility: visible;
+	transition-delay: 0s;
+}
+
+.romantic-lightbox {
+	--romantic-lightbox-paper: #f5f0e7;
+	--romantic-lightbox-ink: #292622;
+	--romantic-lightbox-rule: rgb(41 38 34 / 18%);
+	--romantic-lightbox-media-width: 20rem;
+	--romantic-lightbox-media-height: 30rem;
+	--romantic-lightbox-media-top: 2rem;
+	--romantic-lightbox-frame-width: 22rem;
+	--romantic-lightbox-frame-half-width: 11rem;
+	--romantic-lightbox-frame-height: 35rem;
+	--romantic-lightbox-frame-top: 1rem;
+	--romantic-lightbox-matte: 1rem;
+	--romantic-lightbox-footer-height: 4.5rem;
+}
+
+.romantic-lightbox .pswp__bg {
+	background: #151311;
+	backdrop-filter: blur(8px);
+}
+
+.romantic-lightbox .pswp__scroll-wrap {
+	z-index: 1;
+}
+
+.romantic-lightbox.pswp .romantic-lightbox_frame,
+.romantic-lightbox.pswp .romantic-lightbox_reveal,
+.romantic-lightbox.pswp .romantic-lightbox_footer,
+.romantic-lightbox.pswp .romantic-lightbox_close {
+	transition: none;
+}
+
+.romantic-lightbox .pswp__img {
+	box-sizing: border-box;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.romantic-lightbox img.pswp__img--placeholder {
+	opacity: 1 !important;
+}
+
+.romantic-lightbox.pswp .romantic-lightbox_frame {
+	position: absolute;
+	z-index: 0;
+	top: var(--romantic-lightbox-frame-top);
+	left: calc(50% - var(--romantic-lightbox-frame-half-width));
+	width: var(--romantic-lightbox-frame-width);
+	height: var(--romantic-lightbox-frame-height);
+	margin: 0;
+	padding: 0;
+	border: 1px solid var(--romantic-lightbox-rule);
+	background: var(--romantic-lightbox-paper);
+	box-shadow: 0 1.8rem 4.5rem rgb(0 0 0 / 38%);
+	clip-path: inset(49% 0 49% 0 round 2px);
+	opacity: 0;
+	transform-origin: 50% 50%;
+	will-change: clip-path, opacity, transform;
+	pointer-events: none;
+}
+
+.romantic-lightbox.pswp .romantic-lightbox_reveal {
+	position: absolute;
+	z-index: 2;
+	top: var(--romantic-lightbox-media-top);
+	left: calc(50% - var(--romantic-lightbox-media-width) / 2);
+	width: var(--romantic-lightbox-media-width);
+	height: var(--romantic-lightbox-media-height);
+	overflow: hidden;
+	background: linear-gradient(
+		180deg,
+		rgb(245 240 231 / 34%),
+		rgb(41 38 34 / 48%)
+	);
+	backdrop-filter: blur(5px) saturate(0.72) contrast(0.94);
+	clip-path: inset(0% 0 0% 0);
+	opacity: 0;
+	will-change: clip-path, opacity;
+	pointer-events: none;
+}
+
+.romantic-lightbox_reveal-band {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 18%;
+	background: linear-gradient(
+		180deg,
+		transparent,
+		rgb(255 225 172 / 34%) 46%,
+		transparent
+	);
+	mix-blend-mode: screen;
+	opacity: 0;
+	will-change: opacity, transform;
+}
+
+.romantic-lightbox.pswp .romantic-lightbox_footer {
+	position: absolute;
+	z-index: 3;
+	top: calc(
+		var(--romantic-lightbox-media-top) +
+			var(--romantic-lightbox-media-height)
+	);
+	left: calc(50% - var(--romantic-lightbox-frame-half-width));
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: center;
+	column-gap: 1rem;
+	width: var(--romantic-lightbox-frame-width);
+	height: var(--romantic-lightbox-footer-height);
+	margin: 0;
+	padding: 0 calc(var(--romantic-lightbox-matte) + 1px);
+	border: 0;
+	background: transparent;
+	color: var(--romantic-lightbox-ink);
+	line-height: 1.35;
+	opacity: 0;
+	will-change: opacity, transform;
+	pointer-events: none;
+}
+
+.romantic-lightbox_caption-text {
+	font-family: var(--font-serif);
+	font-size: 13px;
+	font-style: italic;
+	text-align: left;
+}
+
+.romantic-lightbox_proof {
+	color: rgb(41 38 34 / 66%);
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 9px;
+	letter-spacing: 0.18em;
+	line-height: 1;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.romantic-lightbox.pswp .romantic-lightbox_close {
+	position: absolute;
+	z-index: 4;
+	top: calc(var(--romantic-lightbox-frame-top) + 3px);
+	left: calc(50% + var(--romantic-lightbox-frame-half-width) - 43px);
+	display: inline-grid;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	box-shadow: none;
+	color: var(--romantic-lightbox-ink);
+	cursor: pointer;
+	font-family: system-ui, sans-serif;
+	font-size: 19px;
+	font-weight: 300;
+	line-height: 1;
+	opacity: 0;
+	will-change: opacity, transform;
+}
+
+.romantic-lightbox.pswp .romantic-lightbox_close > span {
+	display: inline-grid;
+	place-items: center;
+	width: 30px;
+	height: 30px;
+	padding: 0 0 2px;
+	border: 1px solid var(--romantic-lightbox-rule);
+	border-radius: 50%;
+	background: var(--romantic-lightbox-paper);
+	transition: background-color 160ms ease;
+}
+
+.romantic-lightbox.pswp .romantic-lightbox_close:hover > span {
+	background: #ebe4d8;
+}
+
+.romantic-lightbox.pswp .romantic-lightbox_close:focus-visible {
+	outline: 2px solid #f5f0e7;
+	outline-offset: 1px;
+}
+
+.romantic-lightbox.pswp--zoomed-in .romantic-lightbox_frame,
+.romantic-lightbox.pswp--zoomed-in .romantic-lightbox_reveal,
+.romantic-lightbox.pswp--zoomed-in .romantic-lightbox_footer,
+.romantic-lightbox.pswp--zoomed-in .romantic-lightbox_close {
+	opacity: 0 !important;
+	pointer-events: none;
+}
+
+@media (max-width: 960px) {
+	.romantic-portrait.is-active .romantic-portrait_primary {
+		transform: translateX(-7%) rotate(-1deg);
+	}
+
+	.romantic-portrait.is-active .romantic-portrait_secret {
+		transform: translateX(10%) rotate(2deg);
+	}
+}
+
+@media (max-width: 720px) {
+	.bio-portrait {
+		width: min(46vw, calc(100% - 10rem));
+		min-width: min(8rem, calc(100% - 10rem));
+		max-width: 12rem;
+		margin: 0 0 1rem 1rem;
+	}
+
+}
+
+@media (max-width: 480px) {
+	.romantic-lightbox.pswp .romantic-lightbox_footer {
+		grid-template-columns: 1fr;
+		align-content: center;
+		justify-items: center;
+		row-gap: 0.3rem;
+		padding-inline: calc(var(--romantic-lightbox-matte) + 0.25rem);
+	}
+
+	.romantic-lightbox_caption-text {
+		font-size: 12.5px;
+		line-height: 1.25;
+		text-align: center;
+	}
+
+	.romantic-lightbox_proof {
+		font-size: 8.5px;
+		text-align: center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.romantic-portrait_primary,
+	.romantic-portrait_secret,
+	.romantic-mode_toast {
+		transition: none;
+	}
+
+	.romantic-lightbox_reveal {
+		display: none;
+	}
+
+	.romantic-lightbox.pswp .romantic-lightbox_close > span {
+		transition: none;
+	}
+}
+

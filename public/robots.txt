@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: /images/p-202.jpg
-
-Sitemap: https://siyuanxue.com/sitemap-index.xml

@@ -1,3 +1,5 @@
+> Historical document. Superseded by the September 2026 dual-domain implementation and ops/HTTPS.md; do not use its redirect or retired-domain activation instructions.
+
 # xuesiyuan.com HTTPS Activation Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

@@ -1,33 +1,9 @@
 ---
 import Prose from '../../layouts/Prose.astro';
-import { getPostPairs, renderPairBodies } from '../../utils/content';
-import { extractHeadings } from '../../utils/headings';
-
-export async function getStaticPaths() {
-	const pairs = await getPostPairs();
-	return pairs.map((pair) => ({
-		params: { slug: pair.slug },
-		props: { pair },
-	}));
-}
-
-const { pair } = Astro.props;
-const { ContentEn, ContentZh } = await renderPairBodies(pair.en, pair.zh);
-const headingsEn = extractHeadings(pair.en.body);
-const headingsZh = extractHeadings(pair.zh.body);
+import { render } from 'astro:content';
+import { getPosts } from '../../utils/content';
+export async function getStaticPaths() { return (await getPosts()).map(({ slug, entry }) => ({ params: { slug }, props: { entry } })); }
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
 ---
-
-<Prose
-	title={pair.title}
-	description={pair.description}
-	date={pair.date}
-	headingsEn={headingsEn}
-	headingsZh={headingsZh}
->
-	<div class="lang-body-en" lang="en">
-		<ContentEn />
-	</div>
-	<div class="lang-body-zh" lang="zh-CN">
-		<ContentZh />
-	</div>
-</Prose>
+<Prose {...entry.data} headings={headings}><Content /></Prose>

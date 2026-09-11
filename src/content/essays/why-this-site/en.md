@@ -15,7 +15,7 @@ This site is for two plain jobs:
 
 ## Where the form comes from
 
-The layout follows [darioamodei.com](https://darioamodei.com): a narrow column, serif type, an expandable bio, and lists by kind of writing. I like sites that are almost only words — no card grids, no loud motion. Content carries the weight.
+The layout follows [darioamodei.com](https://darioamodei.com): a narrow column, serif type, a short bio, and lists by kind of writing. I like sites that are almost only words — no card grids, no loud motion. Content carries the weight.
 
 ## v1 is intentionally sparse
 
@@ -25,6 +25,5 @@ There are few posts; project links may still be placeholders. The frame comes fi
 
 - Replace project links with real URLs  
 - More short posts: notes from reading, experiments, failures  
-- RSS or more languages later if needed  
 
 If you are reading this, feel free to reach out by email or GitHub once those links are filled in.

@@ -1,3 +1,4 @@
+import type PhotoSwipe from 'photoswipe';
 import type { Padding, PhotoSwipeOptions, Point } from 'photoswipe';
 
 export const ROMANTIC_LIGHTBOX_ASPECT = 2 / 3;
@@ -129,16 +130,21 @@ export function createRomanticLightboxOptions(closeTitle: string): PhotoSwipeOpt
 		returnFocus: true,
 		bgClickAction: 'close',
 		imageClickAction: 'zoom-or-close',
-		tapAction(_point, originalEvent) {
+		tapAction(this: PhotoSwipe, _point, originalEvent) {
 			const target = originalEvent.target;
 			if (target instanceof Element && isRomanticLightboxBackdropTarget(target.classList)) {
 				this.close();
 			}
 		},
 		doubleTapAction: 'zoom',
-		preloader: false,
 		preload: [0, 0],
 		closeTitle,
 		paddingFn: (viewport) => getRomanticLightboxLayout(viewport).padding,
 	};
+}
+
+/** PhotoSwipe traps focus and covers the page, so expose its opened surface as a named modal. */
+export function labelRomanticLightboxDialog(element: HTMLElement, label: string): void {
+ element.setAttribute('aria-label', label);
+ element.setAttribute('aria-modal', 'true');
 }

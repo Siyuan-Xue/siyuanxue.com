@@ -1,72 +1,16 @@
 ---
 import Base from './Base.astro';
-import I18n from '../components/I18n.astro';
 import Toc from '../components/Toc.astro';
 import { site } from '../data/site';
+import { t } from '../i18n/locale';
 import { formatDate } from '../utils/content';
-import type { Bi } from '../i18n/types';
-import type { Heading } from '../utils/headings';
-
-interface Props {
-	title: Bi;
-	subtitle?: Bi;
-	description: Bi;
-	date: Date;
-	headingsEn?: Heading[];
-	headingsZh?: Heading[];
-}
-
-const {
-	title,
-	subtitle,
-	description,
-	date,
-	headingsEn = [],
-	headingsZh = [],
-} = Astro.props;
-const dateEn = formatDate(date, 'en');
-const dateZh = formatDate(date, 'zh');
+import { tocHeadings } from '../utils/toc';
+import type { MarkdownHeading } from 'astro';
+interface Props { title: string; subtitle?: string; description: string; date: Date; headings: MarkdownHeading[] }
+const { title, subtitle, description, date, headings } = Astro.props;
+const items = tocHeadings(headings);
 ---
-
-<Base title={title} description={description} showTocToggle hasToc>
-	<Toc slot="toc" en={headingsEn} zh={headingsZh} fallback={title} />
-
-	<article>
-		<div class="container cc-narrow">
-			<header class="post-header">
-				<h1 class="post-title">
-					<I18n t={title} />
-				</h1>
-				{
-					subtitle && (subtitle.en || subtitle.zh) && (
-						<p class="post-subtitle">
-							<I18n t={subtitle} />
-						</p>
-					)
-				}
-				<p class="post-date">
-					<time datetime={date.toISOString()}>
-						<span class="i18n-en" lang="en">
-							{dateEn}
-						</span>
-						<span class="i18n-zh" lang="zh-CN">
-							{dateZh}
-						</span>
-					</time>
-				</p>
-			</header>
-			<div id="main-content" class="prose" data-toc-contents>
-				<slot />
-			</div>
-			<a href="#top" class="back-to-top">
-				<I18n t={site.ui.backToTop} />
-			</a>
-		</div>
-	</article>
+<Base title={title} description={description} articleDate={date} showTocToggle={items.length > 0} hasToc={items.length > 0}>
+ {items.length > 0 && <Toc slot="toc" headings={items} />}
+ <article><div class="container cc-narrow"><header class="post-header"><h1 class="post-title">{title}</h1>{subtitle && <p class="post-subtitle">{subtitle}</p>}<p class="post-date"><time datetime={date.toISOString()}>{formatDate(date)}</time></p></header><div id="main-content" class="prose" data-toc-contents><slot /></div><a href="#top" class="back-to-top">{t(site.ui.backToTop)}</a></div></article>
 </Base>
-
-<script>
-	if (!document.getElementById('top')) {
-		document.documentElement.id = 'top';
-	}
-</script>
