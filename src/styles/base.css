@@ -51,7 +51,7 @@ body  {
  * Chinese: Noto Serif SC (思源宋体) — same family for body + true bold.
  * Bold policy:
  *   Semantic strong — weight 700
- *   Mirror English hierarchy: header-name/h3 600, post-title 700, lang toggle 600
+ *   Mirror English hierarchy: header-name/h3 600, post-title 700
  *   em — no italic; color only
  */
 html[data-lang='zh'] body  {
@@ -102,11 +102,6 @@ html[data-lang='zh'] .h3 {
 html[data-lang='zh'] .toc-link,
 html[data-lang='zh'] .bullet-list_link {
 	font-weight: 400;
-}
-
-/* Match EN .lang-toggle  { font-weight: 600 } */
-html[data-lang='zh'] .lang-toggle {
-	font-weight: 600;
 }
 
 /* Semantic bold: same Noto Serif SC, master 700 */
@@ -275,22 +270,21 @@ a:focus-visible  {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
+	width: var(--header-control-size);
 	height: var(--header-control-size);
 	box-sizing: border-box;
 	margin: 0;
-	border: 1px solid var(--border);
+	padding: 0;
+	border: 0;
+	border-radius: 0;
 	background: transparent;
 	color: var(--fg-muted);
+	text-decoration: none;
 	cursor: pointer;
-	transition:
-		color var(--ease-color),
-		background-color var(--ease-color),
-		border-color var(--ease-color);
+	transition: color var(--ease-color);
 }
 
 .header-control-button:hover  {
-	background: var(--bg-elevated);
-	border-color: var(--border-soft);
 	color: var(--fg);
 }
 
@@ -299,48 +293,16 @@ a:focus-visible  {
 	outline-offset: 2px;
 }
 
-/* Language toggle — icon plus current language */
-.lang-toggle  {
-	gap: 0.35rem;
-	padding: 0 0.6rem;
-	border-radius: 999px;
-	font-size: 0.7rem;
-	font-weight: 600;
-	letter-spacing: 0.02em;
-	line-height: 1;
-	font-family: var(--font-serif);
-}
-
-.lang-toggle_icon  {
+/* Icon-only controls keep their full click targets. */
+.lang-toggle_icon,
+.theme-toggle_icon  {
 	display: block;
 	width: 1.125rem;
 	height: 1.125rem;
 	flex-shrink: 0;
 }
 
-.lang-toggle_state  {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 1.25rem;
-	padding: 0;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
-	line-height: 1;
-	text-align: center;
-}
-
 /* Theme toggle — current mode is represented by the visible icon */
-.theme-toggle  {
-	width: 2.25rem;
-	padding: 0;
-	border-radius: 50%;
-}
-
-.theme-toggle_icon  {
-	width: 1.125rem;
-	height: 1.125rem;
-}
-
 .theme-toggle_icon--moon  {
 	display: none;
 }
