@@ -4,7 +4,7 @@ import { t } from '../i18n/locale';
 import { Moon, Sun } from '@lucide/astro';
 ---
 <button type="button" class="header-control-button theme-toggle" data-theme-toggle data-label-dark={t(site.ui.switchToDark)} data-label-light={t(site.ui.switchToLight)} aria-label={t(site.ui.switchToDark)} aria-pressed="false" title={t(site.ui.switchToDark)}>
- <Sun class="theme-toggle_icon theme-toggle_icon--sun" size={18} stroke-width={1.8} /><Moon class="theme-toggle_icon theme-toggle_icon--moon" size={18} stroke-width={1.8} />
+ <Sun class="theme-toggle_icon theme-toggle_icon--sun" size={18} stroke-width={1.8} aria-hidden="true" /><Moon class="theme-toggle_icon theme-toggle_icon--moon" size={18} stroke-width={1.8} aria-hidden="true" />
 </button>
 <script>
  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
