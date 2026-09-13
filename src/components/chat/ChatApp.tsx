@@ -213,7 +213,7 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
             </Message>;
           })}
         </ConversationContent>
-        <ConversationScrollButton label={copy.returnToBottom} />
+        <ConversationScrollButton label={copy.returnToBottom} reduceMotion={reduceMotion} />
       </Conversation>
       <div className="xue-compose-area">
         {statusText && <div aria-atomic="true" aria-live="polite" className="xue-chat-status" role="status">{statusText}</div>}

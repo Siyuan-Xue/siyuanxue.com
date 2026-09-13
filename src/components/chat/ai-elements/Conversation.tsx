@@ -25,11 +25,11 @@ export function ConversationContent({ className = '', ...props }: ComponentProps
   return <StickToBottom.Content className={`xue-conversation-content ${className}`.trim()} {...props} />;
 }
 
-type ScrollButtonProps = ComponentProps<'button'> & { label: string };
+type ScrollButtonProps = ComponentProps<'button'> & { label: string; reduceMotion?: boolean };
 
-export function ConversationScrollButton({ className = '', label, ...props }: ScrollButtonProps) {
+export function ConversationScrollButton({ className = '', label, reduceMotion = false, ...props }: ScrollButtonProps) {
   const { isAtBottom, scrollToBottom } = useStickToBottomContext();
-  const handleClick = useCallback(() => scrollToBottom({ animation: 'smooth' }), [scrollToBottom]);
+  const handleClick = useCallback(() => scrollToBottom({ animation: reduceMotion ? 'instant' : 'smooth' }), [reduceMotion, scrollToBottom]);
   if (isAtBottom) return null;
   return (
     <button aria-label={label} className={`xue-scroll-latest ${className}`.trim()} onClick={handleClick} title={label} type="button" {...props}>

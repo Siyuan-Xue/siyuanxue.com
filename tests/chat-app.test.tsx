@@ -24,7 +24,9 @@ Object.assign(globalThis, {
 
 const { fireEvent, render, waitFor, cleanup } = await import('@testing-library/react');
 const { ChatApp } = await import('../src/components/chat/ChatApp');
+const { Conversation, ConversationScrollButton } = await import('../src/components/chat/ai-elements/Conversation');
 type ChatFetch = import('../src/utils/chat-client').ChatFetch;
+type StickToBottomInstance = import('use-stick-to-bottom').StickToBottomInstance;
 
 const copy = {
   title: 'Chat with xue', name: 'xue', welcome: 'Good to meet you. I’m xue.', intro: 'Friendly intro.',
@@ -48,6 +50,24 @@ const copy = {
   },
 };
 const prompts = [{ label: 'Say hello', text: 'Hello xue' }];
+
+test('return-to-latest passes instant animation to the scroll library for reduced motion', () => {
+  let options: unknown;
+  const ref = Object.assign((_node: HTMLElement | null) => {}, { current: null });
+  const instance = {
+    contentRef: ref,
+    scrollRef: ref,
+    scrollToBottom: (value: unknown) => { options = value; return true; },
+    stopScroll: () => {},
+    isAtBottom: false,
+    isNearBottom: false,
+    escapedFromLock: true,
+    state: {},
+  } as unknown as StickToBottomInstance;
+  const view = render(<Conversation instance={instance} reduceMotion><ConversationScrollButton label="Return to latest" reduceMotion /></Conversation>);
+  fireEvent.click(view.getByRole('button', { name: 'Return to latest' }));
+  expect(options).toEqual({ animation: 'instant' });
+});
 
 function uiStream(text: string): Response {
   const frames = [
