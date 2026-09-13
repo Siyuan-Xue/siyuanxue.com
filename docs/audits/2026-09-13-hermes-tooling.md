@@ -25,12 +25,14 @@ The installed version also omits the `profile` argument in `agent/inline_tool_ex
 - All 18 focused tests passed under the installed Python 3.11, including the actual Hermes redactor integration.
 - Both native public fixtures passed exact raw/final eight-schema, clock, fresh-memory, redaction and write-veto checks. Both missing-plugin fixtures failed closed to the two native web tools.
 - Both installed public-profile audits passed after rollout.
-- In one process, native profile scopes switched owner → guest → owner → website: owner writers stayed unblocked, both guest scopes retained eight readers and blocked writers, and both read the owner's saved Boss identity. The owner had 35 available definitions outside gateway mode; cron requires the native gateway/interactive flag and was checked separately.
+- In one process, native profile scopes switched owner → guest → owner → website: owner writers stayed unblocked, both guest scopes retained eight readers and blocked writers, and both read the owner's saved Boss identity. The owner had 35 available definitions outside gateway mode and 36 with the same `HERMES_EXEC_ASK=1` that native gateway startup supplies. Native cron listing succeeded with zero jobs; no task or outgoing message was created.
 - Actual GLM-5.3/high produced structured `terminal` and `web_search` calls, two tool results, correct xue/Boss identity, and `2026-09-13 16:08:46+08:00`. The host comparison ended at `16:08:56+08:00`.
 - Native Tavily search succeeded in 2.56 seconds; webpage extraction returned official Hermes documentation. Search ranking itself is not evidence that a result is authoritative; the model must still check sources/dates.
-- Native browser navigation to the overseas docs timed out waiting for load, but the following browser snapshot successfully returned the actual documentation DOM.
+- Native browser navigation to the overseas docs timed out waiting for load, but the following browser snapshot successfully returned the actual documentation DOM. Navigation to the user’s public Chinese homepage succeeded in 9.86 seconds.
 - The memory model test made a real `memory` call and the Boss identity was verified on disk. Stable public facts were then added through native `memory_tool`, with success receipts and no raw transcript copied into memory.
 - The new default gateway is active, with `wechat-public:weixin` connected and served profiles exactly default/wechat-public/xue-owner. The separate website gateway remains active. The old standalone Weixin service is disabled to avoid duplicate polling.
+
+The native Edge TTS default English voice failed on Chinese input. A Chinese voice test (`zh-CN-YunxiNeural`) produced 13,824 bytes; the owner now uses this voice, and the native Hermes TTS call returned `success: true` and a local audio file. No audio was sent to Weixin. Both public `/chat-api/health` endpoints returned `{"ok":true}`.
 
 ## Remaining acceptance limit
 
