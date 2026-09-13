@@ -27,7 +27,7 @@ import './chat.css';
 type ErrorCopy = Record<ChatErrorCode, { title: string; detail: string }>;
 export type ChatCopy = {
   title: string; name: string; welcome: string; intro: string; label: string; placeholder: string;
-  identity: string; send: string; stop: string; fresh: string; busy: string; you: string; ready: string;
+  identity: string; send: string; stop: string; fresh: string; busy: string; you: string;
   copy: string; codeCopy: string; copied: string; copyFailed: string; retry: string; returnToBottom: string;
   inputHint: string; mobileInputHint: string; stopped: string; interrupted: string; recovery: string; storage: string;
   errors: ErrorCopy;
@@ -182,6 +182,7 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
   const hasConversation = messages.length > 0;
   const currentError = errorCode ? copy.errors[errorCode] : undefined;
   const retryMessage = messages.at(-1);
+  const statusText = busy ? copy.busy : copyNotice || (notice === 'recovery' ? copy.recovery : notice === 'interrupted' ? copy.interrupted : notice === 'stopped' ? copy.stopped : '');
   return (
     <section aria-label={copy.title} className="xue-chat" data-chat-state={hasConversation ? 'conversation' : 'welcome'}>
       <div className="xue-chat-topbar">
@@ -206,7 +207,7 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
                 : <span className="xue-user-text">{text}</span>}</MessageContent>
               {message.role === 'assistant' && savedStatus !== 'streaming' && text && <MessageActions>
                 <MessageAction label={copy.copy} onClick={() => copyAnswer(message)}><Copy aria-hidden="true" size={16} strokeWidth={1.8} /></MessageAction>
-                {(savedStatus === 'stopped' || savedStatus === 'interrupted') && index === messages.length - 1 && <MessageAction label={copy.retry} onClick={() => retry(message.id)}><RefreshCcw aria-hidden="true" size={16} strokeWidth={1.8} /></MessageAction>}
+                {savedStatus !== 'error' && index === messages.length - 1 && <MessageAction label={copy.retry} onClick={() => retry(message.id)}><RefreshCcw aria-hidden="true" size={16} strokeWidth={1.8} /></MessageAction>}
               </MessageActions>}
               {message.role === 'assistant' && (savedStatus === 'stopped' || savedStatus === 'interrupted') && <p className="xue-message-note">{copy[savedStatus]}</p>}
             </Message>;
@@ -215,9 +216,7 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
         <ConversationScrollButton label={copy.returnToBottom} />
       </Conversation>
       <div className="xue-compose-area">
-        <div aria-atomic="true" aria-live="polite" className="xue-chat-status" role="status">
-          {busy ? copy.busy : copyNotice || (notice === 'recovery' ? copy.recovery : notice === 'interrupted' ? copy.interrupted : notice === 'stopped' ? copy.stopped : hasConversation && !currentError ? copy.ready : '')}
-        </div>
+        {statusText && <div aria-atomic="true" aria-live="polite" className="xue-chat-status" role="status">{statusText}</div>}
         {currentError && <div className="xue-error-card" role="alert"><div><strong>{currentError.title}</strong><p>{currentError.detail}</p></div>
           {retryable.has(errorCode!) && retryMessage && <button onClick={() => retry(retryMessage.id)} type="button"><RefreshCcw aria-hidden="true" size={16} />{copy.retry}</button>}
         </div>}

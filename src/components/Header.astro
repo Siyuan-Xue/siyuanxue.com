@@ -1,6 +1,6 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
-import { MessageCircleMore } from '@lucide/astro';
+import { House, MessageCircleMore } from '@lucide/astro';
 import LangToggle from './LangToggle.astro';
 import TocToggle from './TocToggle.astro';
 import { site } from '../data/site';
@@ -8,9 +8,11 @@ import { t } from '../i18n/locale';
 interface Props { showTocToggle?: boolean }
 const { showTocToggle = false } = Astro.props;
 const chatLabel = t({ en: 'Chat with xue', zh: '与小薛聊聊' });
+const homeLabel = t({ en: 'Home', zh: '首页' });
+const isChat = Astro.url.pathname === '/chat/' || Astro.url.pathname === '/chat';
 const Brand = Astro.url.pathname === '/' ? 'h1' : 'span';
 ---
 <header class="header"><div class="container cc-narrow header-inner">
  <a href="/" class="header-name-link" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}><Brand class="header-name">{t(site.name)}</Brand></a>
- <div class="header-spacer"></div><div class="header-controls"><a class="header-control-button" href="/chat/" aria-label={chatLabel} title={chatLabel} aria-current={Astro.url.pathname === '/chat/' ? 'page' : undefined}><MessageCircleMore size={18} stroke-width={1.8} aria-hidden="true" /></a>{showTocToggle && <TocToggle />}<LangToggle /><ThemeToggle /></div>
+ <div class="header-spacer"></div><div class="header-controls"><a class="header-control-button" href={isChat ? '/' : '/chat/'} aria-label={isChat ? homeLabel : chatLabel} title={isChat ? homeLabel : chatLabel}>{isChat ? <House size={18} stroke-width={1.8} aria-hidden="true" /> : <MessageCircleMore size={18} stroke-width={1.8} aria-hidden="true" />}</a>{showTocToggle && <TocToggle />}<LangToggle /><ThemeToggle /></div>
 </div></header>

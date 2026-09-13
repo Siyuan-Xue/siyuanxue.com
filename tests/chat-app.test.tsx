@@ -29,7 +29,7 @@ type ChatFetch = import('../src/utils/chat-client').ChatFetch;
 const copy = {
   title: 'Chat with xue', name: 'xue', welcome: 'Good to meet you. I’m xue.', intro: 'Friendly intro.',
   label: 'Your message', placeholder: 'What’s on your mind?', identity: 'xue · Here to chat', send: 'Send message',
-  stop: 'Stop reply', fresh: 'New conversation', busy: 'xue is replying…', you: 'You', ready: 'Reply complete.',
+  stop: 'Stop reply', fresh: 'New conversation', busy: 'xue is replying…', you: 'You',
   copy: 'Copy answer', codeCopy: 'Copy code', copied: 'Copied.', copyFailed: 'Copy failed.', retry: 'Try again', returnToBottom: 'Return to latest',
   inputHint: 'Enter to send · Shift + Enter for a new line', mobileInputHint: 'Use the send button · Enter makes a new line',
   stopped: 'Reply stopped. What arrived is saved.', interrupted: 'Reply interrupted. What arrived is saved.',
@@ -118,6 +118,28 @@ test('retry regenerates from the same user turn without duplicating it', async (
   expect(view.getAllByText('Original question')).toHaveLength(1);
 });
 
+test('the latest completed answer can regenerate without duplicating its user turn', async () => {
+  const bodies: unknown[] = [];
+  let attempts = 0;
+  const fetcher: ChatFetch = async (_input, init) => {
+    bodies.push(JSON.parse(String(init?.body)));
+    attempts += 1;
+    return uiStream(attempts === 1 ? 'First answer' : 'Regenerated answer');
+  };
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const input = view.getByLabelText('Your message');
+  fireEvent.input(input, { target: { value: 'Same question' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.getByText('First answer')).toBeTruthy());
+  fireEvent.click(view.getByRole('button', { name: 'Try again' }));
+  await waitFor(() => expect(view.getByText('Regenerated answer')).toBeTruthy());
+  expect(bodies).toEqual([
+    { messages: [{ role: 'user', content: 'Same question' }] },
+    { messages: [{ role: 'user', content: 'Same question' }] },
+  ]);
+  expect(view.getAllByText('Same question')).toHaveLength(1);
+});
+
 test('quota errors are localized, actionable, and do not offer a blind retry', async () => {
   const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => errorStream('quota_exhausted')} />);
   const input = view.getByLabelText('Your message');
@@ -133,7 +155,7 @@ test('quota errors are localized, actionable, and do not offer a blind retry', a
   const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
   await waitFor(() => expect(restored.getByRole('alert').textContent).toContain('out of replies'));
   expect((restored.getByLabelText('Your message') as HTMLTextAreaElement).value).toBe('Keep this draft');
-  expect(restored.queryByText('Reply complete.')).toBeNull();
+  expect(restored.queryByRole('status')).toBeNull();
 });
 
 test('a deliberate follow-up replaces an unanswered failed turn without duplicating a user message', async () => {

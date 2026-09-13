@@ -3,7 +3,10 @@ import { readFile, readdir, access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createContext, runInContext } from 'node:vm';
 import { parseHTML, DOMParser } from 'linkedom';
-const variants = [{ root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue' }, { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远' }];
+const variants = [
+ { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', chatLabel: 'Chat with xue', homeLabel: 'Home' },
+ { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', chatLabel: '与小薛聊聊', homeLabel: '首页' },
+];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
  test(`${v.lang}: shipped theme controls work when browser storage throws`, async () => {
@@ -62,6 +65,13 @@ for (const v of variants) {
   expect(document.querySelector('[data-secret-src]')?.getAttribute('data-secret-src')).toBe('/images/romantic-placeholder.svg');
   expect(document.querySelector('[data-secret-image-slot]')?.children.length).toBe(0);
   expect(await access(join(v.root, 'images/p-202.jpg')).then(() => true, () => false)).toBe(false);
+  const homeControl = document.querySelector<HTMLAnchorElement>('.header-controls > a:first-child')!;
+  expect(homeControl.getAttribute('href')).toBe('/chat/');
+  expect(homeControl.getAttribute('aria-label')).toBe(v.chatLabel);
+  const { document: chat } = parseHTML(await readFile(join(v.root, 'chat/index.html'), 'utf8'));
+  const chatControl = chat.querySelector<HTMLAnchorElement>('.header-controls > a:first-child')!;
+  expect(chatControl.getAttribute('href')).toBe('/');
+  expect(chatControl.getAttribute('aria-label')).toBe(v.homeLabel);
  });
  test(`${v.lang}: localized feeds, sitemap and noindex placeholders`, async () => {
   const rss = new DOMParser().parseFromString(await readFile(join(v.root,'rss.xml'), 'utf8'), 'text/xml');
