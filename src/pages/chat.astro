@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { ArrowUp, Copy, Plus, Sparkles, Square } from '@lucide/astro';
+import { ArrowUp, Copy, Plus, Baby, Square } from '@lucide/astro';
 import { t, locale } from '../i18n/locale';
 import { site } from '../data/site';
 const copy = {
@@ -40,7 +40,7 @@ const prompts = [
  <section class="chat container cc-narrow" data-chat data-state="welcome" data-copy={JSON.stringify(copy)} aria-label={copy.title}>
   <div class="chat-topbar"><button type="button" class="chat-new" data-new hidden><Plus size={15} stroke-width={1.8} aria-hidden="true" />{copy.fresh}</button></div>
   <div class="chat-welcome" data-welcome>
-   <Sparkles class="chat-sparkles" size={29} stroke-width={1.5} aria-hidden="true" />
+   <Baby class="chat-presence" size={29} stroke-width={1.5} aria-hidden="true" />
    <h1>{copy.welcome}</h1>
    <p>{copy.intro}</p>
   </div>
@@ -51,7 +51,7 @@ const prompts = [
     <label class="chat-sr-only" for="chat-message">{copy.label}</label>
     <textarea id="chat-message" rows="2" maxlength="4000" required placeholder={copy.placeholder} aria-describedby="chat-input-hint"></textarea>
     <div class="chat-toolbar">
-     <span class="chat-identity"><Sparkles size={14} stroke-width={1.7} aria-hidden="true" />{copy.identity}</span>
+     <span class="chat-identity"><Baby size={14} stroke-width={1.7} aria-hidden="true" />{copy.identity}</span>
      <button type="submit" class="chat-send" data-send aria-label={copy.send} title={copy.send} disabled><ArrowUp size={20} stroke-width={2} aria-hidden="true" /></button>
      <button type="button" class="chat-send chat-stop" data-stop aria-label={copy.stop} title={copy.stop} hidden disabled><Square size={15} stroke-width={2} aria-hidden="true" /></button>
     </div>
@@ -83,7 +83,7 @@ const prompts = [
  .chat-topbar{height:2rem;display:flex;justify-content:flex-end;flex:none}
  .chat-new{display:inline-flex;align-items:center;gap:.4rem;color:var(--fg-muted);font-size:.78rem;padding:.3rem .1rem}
  .chat-welcome{text-align:center;padding:clamp(2rem,8vh,6rem) 0 1.5rem}
- .chat-sparkles{color:var(--chat-accent);margin-bottom:1rem}
+ .chat-presence{color:var(--chat-accent);margin-bottom:1rem}
  .chat-welcome h1{font-family:var(--font-serif);font-size:clamp(1.75rem,3.5vw,2.75rem);line-height:1.4;font-weight:400;letter-spacing:-.025em;margin:0 0 1rem;color:var(--fg)}
  .chat-welcome p{font-family:var(--font-serif);font-size:.94rem;color:var(--fg-muted);line-height:1.85;margin:0 auto;max-width:40rem}
  .chat-messages{list-style:none;padding:0;margin:0;min-width:0;width:100%}
@@ -118,7 +118,7 @@ const prompts = [
  .chat-status{font: .76rem/1.6 system-ui,sans-serif;color:var(--fg-muted);margin:0 0 .6rem;min-height:1.2rem}
  .chat[data-state='welcome'] .chat-status:empty{display:none}
  .chat-composer{width:100%;box-sizing:border-box;background:var(--chat-composer);border:1px solid var(--border);border-radius:20px;box-shadow:0 3px 12px #00000006;overflow:hidden}
- .chat-composer:focus-within{border-color:var(--fg-faint);box-shadow:0 3px 12px #00000008;outline:2px solid var(--focus);outline-offset:3px}
+ .chat-composer:focus-within{border-color:var(--fg-faint);box-shadow:0 3px 12px #00000008}
  .chat textarea{display:block;width:100%;box-sizing:border-box;min-height:64px;max-height:220px;resize:none;overflow-y:auto;border:0;background:transparent;color:var(--fg);font:1rem/1.65 var(--font-serif);padding:1.05rem 1.2rem .6rem;outline:none}
  .chat textarea::placeholder{color:var(--fg-faint);opacity:1}
  .chat textarea:focus-visible{outline:none}
