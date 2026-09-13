@@ -1,141 +1,47 @@
 ---
 import Base from '../layouts/Base.astro';
-import { ArrowUp, Copy, Plus, Baby, Square } from '@lucide/astro';
+import { ChatApp, type ChatCopy } from '../components/chat/ChatApp';
 import { t, locale } from '../i18n/locale';
 import { site } from '../data/site';
-const copy = {
- title: t({ en: 'Chat with xue', zh: '与小薛聊聊' }),
- name: t({ en: 'xue', zh: '小薛' }),
- welcome: t({ en: 'Good to meet you. I’m xue.', zh: '见面愉快，我是小薛。' }),
- intro: t({ en: `I’m ${t(site.name)}’s AI assistant—he’s my Boss. Welcome! Ask about his projects and writing, or just stay for a chat. A little wit comes with the welcome.`, zh: `我是${t(site.name)}的 AI 助手，他是我的 Boss。聊项目、读文章，或者随便坐坐——正经介绍，偶尔贫嘴。` }),
- label: t({ en: 'Your message', zh: '你的消息' }),
- placeholder: t({ en: 'What’s on your mind?', zh: '今天想聊点什么？' }),
- identity: t({ en: 'xue · Here to chat', zh: '小薛 · 随时聊聊' }),
- send: t({ en: 'Send message', zh: '发送消息' }),
- stop: t({ en: 'Stop reply', zh: '停止回复' }),
- fresh: t({ en: 'New conversation', zh: '新对话' }),
- busy: t({ en: 'xue is replying…', zh: '小薛正在回复…' }),
- error: t({ en: 'The reply could not be completed. You can try again.', zh: '回复未能完成，可以再试一次。' }),
- limit: t({ en: 'Chat is busy. Please wait a minute and try again.', zh: '对话繁忙，请稍等一分钟再试。' }),
- long: t({ en: 'This conversation has reached its length limit. Shorten your message or start a new conversation.', zh: '本次对话已达长度上限，请缩短消息或开始新对话。' }),
- stopped: t({ en: 'Reply stopped. You can continue from here.', zh: '回复已停止，可以接着聊。' }),
- interrupted: t({ en: 'Reply interrupted. What arrived is saved; you can continue from here.', zh: '回复已中断，已收到的内容保留了，可以接着聊。' }),
- recovery: t({ en: 'Some saved content could not be restored. Any recoverable draft is shown below; please check it before sending.', zh: '部分记录未能恢复，能找回的草稿已放回输入框，请检查后再发送。' }),
- storage: t({ en: 'This tab cannot save changes right now. Keep it open to retain this conversation and draft.', zh: '当前标签页暂时无法保存更改，请保持页面打开，以保留对话和草稿。' }),
- you: t({ en: 'You', zh: '你' }),
- ready: t({ en: 'Reply complete.', zh: '回复完成。' }),
- copy: t({ en: 'Copy answer', zh: '复制回复' }),
- codeCopy: t({ en: 'Copy code', zh: '复制代码' }),
- copied: t({ en: 'Copied.', zh: '已复制。' }),
- copyFailed: t({ en: 'Could not copy. Please select and copy the text manually.', zh: '复制失败，请选中文字手动复制。' }),
+
+const copy: ChatCopy = {
+  title: t({ en: 'Chat with xue', zh: '与小薛聊聊' }),
+  name: t({ en: 'xue', zh: '小薛' }),
+  welcome: t({ en: 'Good to meet you. I’m xue.', zh: '见面愉快，我是小薛。' }),
+  intro: t({ en: `I’m ${t(site.name)}’s AI assistant—he’s my Boss. Welcome! Ask about his projects and writing, or just stay for a chat. A little wit comes with the welcome.`, zh: `我是${t(site.name)}的 AI 助手，他是我的 Boss。聊项目、读文章，或者随便坐坐——正经介绍，偶尔贫嘴。` }),
+  label: t({ en: 'Your message', zh: '你的消息' }), placeholder: t({ en: 'What’s on your mind?', zh: '今天想聊点什么？' }),
+  identity: t({ en: 'xue · Here to chat', zh: '小薛 · 随时聊聊' }), send: t({ en: 'Send message', zh: '发送消息' }),
+  stop: t({ en: 'Stop reply', zh: '停止回复' }), fresh: t({ en: 'New conversation', zh: '新对话' }),
+  busy: t({ en: 'xue is replying…', zh: '小薛正在回复…' }), you: t({ en: 'You', zh: '你' }), ready: t({ en: 'Reply complete.', zh: '回复完成。' }),
+  copy: t({ en: 'Copy answer', zh: '复制回复' }), codeCopy: t({ en: 'Copy code', zh: '复制代码' }), copied: t({ en: 'Copied.', zh: '已复制。' }),
+  copyFailed: t({ en: 'Could not copy. Select the text and copy it manually.', zh: '复制失败，请选中文字手动复制。' }),
+  retry: t({ en: 'Try again', zh: '再试一次' }), returnToBottom: t({ en: 'Return to latest message', zh: '回到最新消息' }),
+  inputHint: t({ en: 'Enter to send · Shift + Enter for a new line', zh: 'Enter 发送 · Shift + Enter 换行' }),
+  mobileInputHint: t({ en: 'Use the send button · Enter makes a new line', zh: '点击发送按钮 · Enter 换行' }),
+  stopped: t({ en: 'Reply stopped. What arrived is saved.', zh: '回复已停止，已收到的内容会保留。' }),
+  interrupted: t({ en: 'Reply interrupted. What arrived is saved; you can try again.', zh: '回复中断了，已收到的内容会保留，可以再试一次。' }),
+  recovery: t({ en: 'Some saved content could not be restored. Please check the recovered draft before sending.', zh: '部分记录未能恢复，请检查找回的草稿后再发送。' }),
+  storage: t({ en: 'This tab cannot save changes right now. Keep it open to retain this conversation.', zh: '当前标签页暂时无法保存更改，请保持页面打开以保留对话。' }),
+  errors: {
+    quota_exhausted: { title: t({ en: 'xue’s reply service is out of credits for now', zh: '小薛的回复服务额度暂时用完了' }), detail: t({ en: 'Your conversation is saved. Please come back after service is restored.', zh: '这次对话会保留，请在服务恢复后再来聊。' }) },
+    authentication_failed: { title: t({ en: 'The model service is temporarily unavailable', zh: '模型服务暂时无法连接' }), detail: t({ en: 'Siyuan Xue needs to check the model service connection.', zh: '薛思远需要检查模型服务连接。' }) },
+    rate_limited: { title: t({ en: 'Too many chats at once', zh: '现在聊天的人有点多' }), detail: t({ en: 'Wait a minute before sending another message.', zh: '请稍等一分钟再发送。' }) },
+    context_limit: { title: t({ en: 'This conversation is full', zh: '这次对话已经很长了' }), detail: t({ en: 'Start a new conversation, or shorten the message you are sending.', zh: '请开始新对话，或缩短准备发送的消息。' }) },
+    timeout: { title: t({ en: 'The reply took too long', zh: '这次回复等得有点久' }), detail: t({ en: 'What arrived is saved. You can try again when the connection is steadier.', zh: '已收到的内容会保留，网络稳定后可以再试一次。' }) },
+    upstream_unavailable: { title: t({ en: 'xue could not finish that reply', zh: '小薛没能完成这次回复' }), detail: t({ en: 'What arrived is saved. You can try again in a moment.', zh: '已收到的内容会保留，可以稍后再试。' }) },
+    interrupted: { title: t({ en: 'The reply was interrupted', zh: '回复中断了' }), detail: t({ en: 'What arrived is saved. You can try again.', zh: '已收到的内容会保留，可以再试一次。' }) },
+    invalid_request: { title: t({ en: 'That message could not be sent', zh: '这条消息没能发出' }), detail: t({ en: 'Check the message and try sending it again.', zh: '请检查消息内容后重新发送。' }) },
+    body_too_large: { title: t({ en: 'This conversation is too large', zh: '这次对话内容太多了' }), detail: t({ en: 'Start a new conversation to keep chatting.', zh: '请开始新对话后继续聊。' }) },
+    stream_error: { title: t({ en: 'The reply was interrupted', zh: '回复中断了' }), detail: t({ en: 'What arrived is saved. You can try again.', zh: '已收到的内容会保留，可以再试一次。' }) },
+  },
 };
 const prompts = [
- { label: t({ en: 'Meet Siyuan Xue', zh: '认识一下薛思远' }), text: t({ en: 'Tell me a little about Siyuan Xue.', zh: '给我介绍一下薛思远吧。' }) },
- { label: t({ en: 'Explore projects', zh: '看看做过什么' }), text: t({ en: 'What projects has Siyuan Xue been working on?', zh: '薛思远做过哪些有意思的项目？' }) },
- { label: t({ en: 'Find a good read', zh: '找篇文章读读' }), text: t({ en: 'Help me find something to read on this website.', zh: '帮我找找这个网站有什么值得读的文章。' }) },
- { label: t({ en: 'Just say hello', zh: '随便聊两句' }), text: t({ en: 'Hi, xue. Let’s chat about something fun.', zh: '嗨，小薛，我们随便聊点有趣的吧。' }) },
+  { label: t({ en: 'Meet Siyuan Xue', zh: '认识一下薛思远' }), text: t({ en: 'Tell me a little about Siyuan Xue.', zh: '给我介绍一下薛思远吧。' }) },
+  { label: t({ en: 'Explore projects', zh: '看看做过什么' }), text: t({ en: 'What projects has Siyuan Xue been working on?', zh: '薛思远做过哪些有意思的项目？' }) },
+  { label: t({ en: 'Find a good read', zh: '找篇文章读读' }), text: t({ en: 'Help me find something to read on this website.', zh: '帮我找找这个网站有什么值得读的文章。' }) },
+  { label: t({ en: 'Just say hello', zh: '随便聊两句' }), text: t({ en: 'Hi, xue. Let’s chat about something fun.', zh: '嗨，小薛，我们随便聊点有趣的吧。' }) },
 ];
 ---
-<Base title={copy.title} description={copy.intro}>
- <section class="chat container cc-narrow" data-chat data-state="welcome" data-copy={JSON.stringify(copy)} aria-label={copy.title}>
-  <div class="chat-topbar"><button type="button" class="chat-new" data-new hidden><Plus size={15} stroke-width={1.8} aria-hidden="true" />{copy.fresh}</button></div>
-  <div class="chat-welcome" data-welcome>
-   <Baby class="chat-presence" size={58} stroke-width={1.5} aria-hidden="true" />
-   <h1>{copy.welcome}</h1>
-   <p>{copy.intro}</p>
-  </div>
-  <ol class="chat-messages" data-messages aria-label={locale === 'zh' ? '对话记录' : 'Conversation'}></ol>
-  <div class="chat-compose-area">
-   <p class="chat-status" data-status role="status" aria-live="polite" aria-atomic="true"></p>
-   <form class="chat-composer">
-    <label class="chat-sr-only" for="chat-message">{copy.label}</label>
-    <textarea id="chat-message" rows="1" maxlength="4000" required placeholder={copy.placeholder} aria-describedby="chat-input-hint"></textarea>
-    <div class="chat-toolbar">
-     <span class="chat-identity"><Baby size={18} stroke-width={1.7} aria-hidden="true" />{copy.identity}</span>
-     <button type="submit" class="chat-send" data-send aria-label={copy.send} title={copy.send} disabled><ArrowUp size={20} stroke-width={2} aria-hidden="true" /></button>
-     <button type="button" class="chat-send chat-stop" data-stop aria-label={copy.stop} title={copy.stop} hidden disabled><Square size={15} stroke-width={2} aria-hidden="true" /></button>
-    </div>
-   </form>
-   <p id="chat-input-hint" class="chat-input-hint">{t({ en: 'Enter to send · Shift + Enter for a new line', zh: 'Enter 发送 · Shift + Enter 换行' })}</p>
-   <p class="chat-storage-status" data-storage-status role="status" aria-live="polite"></p>
-  </div>
-  <div class="chat-prompts" data-prompts aria-label={t({ en: 'Conversation starters', zh: '从这里开始聊' })}>
-   {prompts.map(prompt => <button type="button" data-prompt={prompt.text}>{prompt.label}</button>)}
-  </div>
-  <template data-copy-icon><Copy size={15} stroke-width={1.7} aria-hidden="true" /></template>
- </section>
+<Base title={copy.title} description={copy.intro} htmlClass="has-xue-chat">
+  <ChatApp client:load copy={copy} prompts={prompts} locale={locale} />
 </Base>
-<script>
- import { mountChat } from '../utils/chat-ui';
- const root = document.querySelector<HTMLElement>('[data-chat]');
- if (root) {
-  let storage: Storage | undefined;
-  let clipboard: Clipboard | undefined;
-  try { storage = window.sessionStorage; } catch {}
-  try { clipboard = navigator.clipboard; } catch {}
-  mountChat(root, { window, fetch: window.fetch.bind(window), storage, clipboard });
- }
-</script>
-<style>
- .chat{--chat-accent:#b76548;--chat-composer:color-mix(in srgb,var(--bg-elevated) 40%,white);padding-top:1rem;padding-bottom:0;min-height:calc(100dvh - 12rem);display:flex;flex-direction:column;}
- :global(html.u-mode-invert) .chat{--chat-accent:#ce8567;--chat-composer:var(--bg-elevated)}
- .chat :global([hidden]){display:none!important}
- .chat-topbar{height:2rem;display:flex;justify-content:flex-end;flex:none}
- .chat-new{display:inline-flex;align-items:center;gap:.4rem;color:var(--fg-muted);font-size:.78rem;padding:.3rem .1rem}
- .chat-welcome{text-align:center;padding:clamp(2rem,8vh,6rem) 0 1.5rem}
- .chat-presence{color:var(--chat-accent);margin-bottom:1rem}
- .chat-welcome h1{font-family:var(--font-serif);font-size:clamp(1.75rem,3.5vw,2.75rem);line-height:1.4;font-weight:400;letter-spacing:-.025em;margin:0 0 1rem;color:var(--fg)}
- .chat-welcome p{font-family:var(--font-serif);font-size:.94rem;color:var(--fg-muted);line-height:1.85;margin:0 auto;max-width:40rem}
- .chat-messages{list-style:none;padding:0;margin:0;min-width:0;width:100%}
- .chat[data-state='conversation'] .chat-messages{flex:1;padding-top:1.5rem;padding-bottom:1rem}
- .chat :global(.chat-message){position:relative;min-width:0;margin:0 0 2rem;line-height:1.8;overflow-wrap:anywhere}
- .chat :global(.chat-message--user){margin-right:auto;width:fit-content;max-width:90%;padding:.7rem 1.15rem;background:var(--bg-soft);border-radius:18px;font-size:1rem;white-space:pre-wrap}
- .chat :global(.chat-message--assistant){width:100%;font-family:var(--font-serif);font-size:1.08rem;padding:0}
- .chat :global(.chat-message-content){min-width:0}
- .chat :global(.chat-message-content > :first-child){margin-top:0}
- .chat :global(.chat-message-content > :last-child){margin-bottom:0}
- .chat :global(.chat-message-content p){margin:.7em 0}
- .chat :global(.chat-message-content h2),.chat :global(.chat-message-content h3),.chat :global(.chat-message-content h4),.chat :global(.chat-message-content h5),.chat :global(.chat-message-content h6){font-size:1.2em;line-height:1.5;margin:1.4em 0 .5em;font-weight:600}
- .chat :global(.chat-message-content ul),.chat :global(.chat-message-content ol){padding-left:1.5em;margin:.75em 0}
- .chat :global(.chat-message-content li){margin:.3em 0}
- .chat :global(.chat-message-content blockquote){border-left:2px solid var(--border);margin:1em 0;padding:.1em 1em;color:var(--fg-muted)}
- .chat :global(.chat-message-content code){font: .8em/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--bg-soft);padding:.15em .35em;border-radius:4px}
- .chat :global(.chat-code){position:relative;margin:1rem 0;background:var(--bg-elevated);border:1px solid var(--border);border-radius:10px;overflow:hidden}
- .chat :global(.chat-code pre){margin:0;padding:2.5rem 1rem 1rem;overflow:auto;max-width:100%;white-space:pre}
- .chat :global(.chat-code code){background:none;padding:0;font-size:.82rem}
- .chat :global([data-code-copy]){position:absolute;right:.65rem;top:.45rem;font-size:.72rem;padding:.2rem .35rem;color:var(--fg-muted)}
- .chat :global(.chat-table){overflow:auto;max-width:100%;margin:1rem 0}
- .chat :global(table){border-collapse:collapse;font-size:.9em;width:100%}
- .chat :global(th),.chat :global(td){padding:.5em .7em;border:1px solid var(--border);text-align:left}
- .chat :global(th){background:var(--bg-soft)}
- .chat :global(.chat-message-note){font: .75rem/1.5 system-ui,sans-serif;color:var(--fg-muted);margin:.65rem 0 0}
- .chat :global(.chat-message-note:empty){display:none}
- .chat :global(.chat-copy-answer){display:inline-flex;align-items:center;justify-content:center;color:var(--fg-muted);width:32px;height:32px;margin-top:.35rem;border-radius:6px}
- .chat :global(.chat-copy-answer:hover){background:var(--bg-soft)}
- .chat :global(.chat-waiting){color:var(--chat-accent);letter-spacing:.25em;font-size:1.8rem;line-height:1.5}
- .chat-compose-area{width:100%;min-width:0;padding:0;background:var(--bg)}
- .chat[data-state='conversation'] .chat-compose-area{position:sticky;bottom:0;padding-top:1.25rem;z-index:2;background:linear-gradient(to bottom,transparent,var(--bg) 1.25rem)}
- .chat-status{font: .76rem/1.6 system-ui,sans-serif;color:var(--fg-muted);margin:0 0 .6rem;min-height:1.2rem}
- .chat[data-state='welcome'] .chat-status:empty{display:none}
- .chat-composer{width:100%;box-sizing:border-box;background:var(--chat-composer);border:1px solid var(--border);border-radius:20px;box-shadow:0 3px 12px #00000006;overflow:hidden}
- .chat-composer:focus-within{border-color:var(--fg-faint);box-shadow:0 3px 12px #00000008}
- .chat textarea{display:block;width:100%;box-sizing:border-box;min-height:56px;max-height:220px;resize:none;overflow-y:auto;border:0;background:transparent;color:var(--fg);font:1rem/1.65 var(--font-serif);padding:1.05rem 1.2rem .6rem;outline:none}
- .chat textarea::placeholder{color:var(--fg-faint);opacity:1}
- .chat textarea:focus-visible{outline:none}
- .chat-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem .8rem .8rem 1.2rem}
- .chat-identity{display:inline-flex;align-items:center;gap:.45rem;font: .74rem/1.5 system-ui,sans-serif;color:var(--fg-muted)}
- .chat-identity :global(svg){color:var(--chat-accent)}
- .chat :global(button){font-family:system-ui,sans-serif;appearance:none;border:0;background:none;cursor:pointer}
- .chat :global(button:focus-visible){outline:2px solid var(--focus);outline-offset:3px}
- .chat .chat-send{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;padding:0;border-radius:10px;flex:none;background:var(--chat-accent);color:#fff;transition:opacity .15s}
- .chat .chat-send:disabled{opacity:.4;cursor:default}
- .chat .chat-stop{background:var(--fg);color:var(--bg)}
- .chat-input-hint{text-align:center;font: .65rem/1.5 system-ui,sans-serif;color:var(--fg-muted);margin:.65rem 0 .3rem}
- .chat-storage-status{font: .75rem/1.5 system-ui,sans-serif;color:var(--fg-muted);margin:.5rem 0}
- .chat-storage-status:empty{display:none}
- .chat-prompts{display:flex;justify-content:center;gap:.6rem;flex-wrap:wrap;margin:1.2rem 0 3rem}
- .chat-prompts button{border:1px solid var(--border);border-radius:10px;padding:.5rem .85rem;font-size:.76rem;color:var(--fg-muted);background:transparent;transition:background .15s,color .15s}
- .chat-prompts button:hover{background:var(--bg-elevated);color:var(--fg)}
- .chat .chat-sr-only,.chat :global(.chat-sr-only){position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
- @media(max-width:600px){.chat{padding-top:0}.chat-welcome{padding-top:2.25rem}.chat-welcome h1{font-size:1.7rem;letter-spacing:0}.chat-welcome p{font-size:.86rem}.chat-prompts{gap:.5rem;margin-top:1rem}.chat-prompts button{font-size:.72rem;padding:.5rem .7rem}.chat :global(.chat-message--assistant){font-size:1rem}.chat :global(.chat-message--user){font-size:.94rem}.chat-toolbar{padding-left:1rem}.chat textarea{padding-left:1rem;padding-right:1rem}.chat[data-state='conversation'] .chat-compose-area{padding-bottom:env(safe-area-inset-bottom)}}
-</style>
