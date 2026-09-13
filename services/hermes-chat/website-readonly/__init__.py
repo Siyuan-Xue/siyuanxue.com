@@ -345,7 +345,7 @@ def register_readers(ctx, readers):
                                        position='after_memory', max_chars=MAX_PROMPT_CHARS)
     def policy(tool_name, args=None, **kwargs):
         if tool_name not in {*SCHEMAS, 'web_search', 'web_extract'}:
-            return {'action':'block', 'message':'Website profile permits only reviewed read-only tools.'}
+            return {'action':'block', 'message':'Public profile permits only reviewed read-only tools.'}
         return None
     ctx.register_hook('pre_tool_call', policy)
 
