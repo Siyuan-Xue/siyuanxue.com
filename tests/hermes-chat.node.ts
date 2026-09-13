@@ -1,6 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createServer, type RequestListener, type Server } from 'node:http';
+import {
+  createServer,
+  ServerResponse,
+  type RequestListener,
+  type Server,
+} from 'node:http';
 import { createChatServer } from '../services/hermes-chat/server.mjs';
 
 const UI_PROTOCOL = { 'X-Chat-Protocol': 'ui-message-v1' };
@@ -337,10 +342,10 @@ test('direct error-event metadata is classified without exposing its payload', a
   } finally { f.close(); }
 });
 
-test('structured interruption uses the interrupted code and never emits finish', async () => {
+test('Hermes benign incomplete stop projection maps to interrupted without finish', async () => {
   const f = await fixture((_request, response) => {
     response.end(
-      'data: {"choices":[{"delta":{},"finish_reason":"interrupted"}]}\n\n' +
+      'data: {"choices":[{"delta":{},"finish_reason":"stop"}],"hermes":{"completed":false,"partial":false,"failed":false,"error":null,"error_code":"agent_error"}}\n\n' +
         'data: [DONE]\n\n',
     );
   });
@@ -350,6 +355,64 @@ test('structured interruption uses the interrupted code and never emits finish',
     assert.equal((frames[1] as Record<string, unknown>).errorText, 'interrupted');
     assert(!text.includes('finishReason'));
   } finally { f.close(); }
+});
+
+test('timeout during blocked downstream delta cannot emit buffered success completion', async () => {
+  const originalWrite = ServerResponse.prototype.write;
+  const originalFetch = globalThis.fetch;
+  let blocked = false;
+  ServerResponse.prototype.write = function (
+    this: ServerResponse,
+    chunk: unknown,
+    ...args: unknown[]
+  ) {
+    const result = Reflect.apply(originalWrite, this, [chunk, ...args]);
+    const text = Buffer.isBuffer(chunk) ? chunk.toString('utf8') : String(chunk);
+    if (
+      !blocked &&
+      this.req?.url === '/chat-api' &&
+      this.req?.headers['x-chat-protocol'] === 'ui-message-v1' &&
+      text.includes('"type":"text-delta"')
+    ) {
+      blocked = true;
+      setTimeout(() => this.emit('drain'), 160);
+      return false;
+    }
+    return result;
+  } as typeof ServerResponse.prototype.write;
+
+  const bufferedCompletion =
+    'data: {"choices":[{"delta":{"content":"already buffered"}}]}\n\n' +
+    'data: [DONE]\n\n';
+  globalThis.fetch = (async (input, init) => {
+    const headers = init?.headers as Record<string, string> | undefined;
+    if (headers?.Authorization === 'Bearer private-key') {
+      const bytes = new TextEncoder().encode(bufferedCompletion);
+      return new Response(new ReadableStream({
+        start(controller) {
+          controller.enqueue(bytes);
+          controller.close();
+        },
+      }), { status: 200, headers: { 'Content-Type': 'text/event-stream' } });
+    }
+    return originalFetch(input, init);
+  }) as typeof globalThis.fetch;
+
+  const f = await fixture(undefined, { timeoutMs: 80 });
+  try {
+    const text = await (await f.post(undefined, UI_PROTOCOL)).text();
+    const frames = uiData(text);
+    assert.equal(blocked, true);
+    assert.deepEqual(frames.map((frame) => frame === '[DONE]' ? frame : frame.type), [
+      'start', 'text-start', 'text-delta', 'text-end', 'error', '[DONE]',
+    ]);
+    assert.equal((frames[4] as Record<string, unknown>).errorText, 'timeout');
+    assert(!text.includes('finishReason'));
+  } finally {
+    globalThis.fetch = originalFetch;
+    ServerResponse.prototype.write = originalWrite;
+    f.close();
+  }
 });
 
 test('UI protocol reports truncated and malformed streams without a success finish', async () => {

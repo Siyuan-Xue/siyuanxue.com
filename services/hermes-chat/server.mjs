@@ -172,6 +172,18 @@ function streamErrorMetadata(event) {
   };
 }
 
+function isHermesInterruptedProjection(event) {
+  const hermes = event?.hermes;
+  return Boolean(
+    event?.choices?.[0]?.finish_reason === 'stop' &&
+    hermes?.completed === false &&
+    hermes?.partial === false &&
+    hermes?.failed === false &&
+    hermes?.error === null &&
+    hermes?.error_code === 'agent_error'
+  );
+}
+
 export function createChatServer({
   apiKey = process.env.HERMES_API_KEY,
   apiUrl = process.env.HERMES_API_URL ||
@@ -247,8 +259,13 @@ export function createChatServer({
     let textStarted = false;
     const messageId = `msg_${randomUUID()}`;
     const textId = `text_${randomUUID()}`;
-    const write = async (text) => {
-      if (res.destroyed || res.writableEnded) throw new Error('closed');
+    const write = async (text, { terminal = false } = {}) => {
+      const assertWritable = () => {
+        if (res.destroyed || res.writableEnded) throw new Error('closed');
+        if (!terminal && controller.signal.aborted)
+          throw new SafeUpstreamError(timedOut ? 'timeout' : 'interrupted');
+      };
+      assertWritable();
       if (!res.write(text))
         await new Promise((resolve, reject) => {
           const cleanup = () => {
@@ -260,25 +277,28 @@ export function createChatServer({
           res.once('drain', drain);
           res.once('close', close);
         });
+      assertWritable();
     };
-    const writeUi = (event) => write(`data: ${JSON.stringify(event)}\n\n`);
+    const writeUi = (event, options) =>
+      write(`data: ${JSON.stringify(event)}\n\n`, options);
     const openText = async () => {
       if (!textStarted) {
         textStarted = true;
         await writeUi({ type: 'text-start', id: textId });
       }
     };
-    const closeText = async () => {
+    const closeText = async (options) => {
       if (textStarted) {
-        await writeUi({ type: 'text-end', id: textId });
+        await writeUi({ type: 'text-end', id: textId }, options);
         textStarted = false;
       }
     };
     const endStreamError = async (code) => {
       if (uiProtocol) {
-        await closeText();
-        await writeUi({ type: 'error', errorText: code });
-        await write('data: [DONE]\n\n');
+        const terminal = { terminal: true };
+        await closeText(terminal);
+        await writeUi({ type: 'error', errorText: code }, terminal);
+        await write('data: [DONE]\n\n', terminal);
         res.end();
       } else {
         res.end(`event: error\ndata: ${JSON.stringify({ error: code })}\n\n`);
@@ -369,6 +389,9 @@ export function createChatServer({
           if (!data) continue;
           if (data === '[DONE]') {
             done = true;
+            // The provider completed authoritatively. Stop the upstream budget before
+            // emitting success terminal frames so it cannot turn finish + DONE into a race.
+            clearTimeout(timer);
             break;
           }
           let event;
@@ -378,14 +401,16 @@ export function createChatServer({
             throw new SafeUpstreamError('stream_error');
           }
           if (isStreamFailure(event, frame)) {
-            const code = normalizeUpstreamError(
-              Number(
-                event?.error?.status_code || event?.error?.status ||
-                event?.status_code || event?.status,
-              ) || undefined,
-              streamErrorMetadata(event),
-              'stream_error',
-            );
+            const code = isHermesInterruptedProjection(event)
+              ? 'interrupted'
+              : normalizeUpstreamError(
+                Number(
+                  event?.error?.status_code || event?.error?.status ||
+                  event?.status_code || event?.status,
+                ) || undefined,
+                streamErrorMetadata(event),
+                'stream_error',
+              );
             throw new SafeUpstreamError(code);
           }
           const content = event?.choices?.[0]?.delta?.content;
