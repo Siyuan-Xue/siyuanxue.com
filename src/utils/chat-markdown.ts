@@ -1,4 +1,5 @@
 import { marked, type Token, type Tokens } from 'marked';
+import { decodeHTMLStrict } from 'entities/decode';
 
 type CopyLabels = { codeCopy: string };
 
@@ -22,7 +23,7 @@ export function renderChatMarkdown(node: HTMLElement, text: string, copy: CopyLa
         case 'paragraph': element('p', token.tokens); break;
         case 'text':
           if (token.tokens) render(token.tokens, parent, depth + 1);
-          else parent.appendChild(doc.createTextNode(token.text));
+          else parent.appendChild(doc.createTextNode(decodeHTMLStrict(token.text)));
           break;
         case 'escape': parent.appendChild(doc.createTextNode(token.text)); break;
         case 'strong': element('strong', token.tokens); break;
@@ -62,15 +63,17 @@ export function renderChatMarkdown(node: HTMLElement, text: string, copy: CopyLa
         }
         case 'link': {
           // Only explicitly safe protocols or same-site root/hash links; reject protocol-relative URLs.
-          const href: string = token.href;
-          if (/^(https?:\/\/|mailto:)/i.test(href) || /^(\/(?![\/\\])|#)/.test(href)) {
+          // Markdown requires a semicolon on character references. Decode once before validation.
+          const href = decodeHTMLStrict(token.href);
+          if (!/[\u0000-\u001f\u007f]/.test(href) && (/^(https?:\/\/|mailto:)/i.test(href) || /^(\/(?![\/\\])|#)/.test(href))) {
             const link = element('a', token.tokens);
             link.setAttribute('href', href);
+            if (token.title) link.setAttribute('title', decodeHTMLStrict(token.title));
             if (/^https?:/i.test(href)) { link.setAttribute('target', '_blank'); link.setAttribute('rel', 'noopener noreferrer'); }
           } else render(token.tokens ?? [], parent, depth + 1);
           break;
         }
-        case 'image': parent.appendChild(doc.createTextNode(token.text)); break;
+        case 'image': parent.appendChild(doc.createTextNode(decodeHTMLStrict(token.text))); break;
         case 'html': parent.appendChild(doc.createTextNode(token.raw)); break;
         default: parent.appendChild(doc.createTextNode(token.raw));
       }
