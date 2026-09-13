@@ -1,0 +1,11 @@
+name: website-readonly
+version: 1.0.0
+description: Read-only curated cross-profile memory and approved skill/site text for xue.
+provides_tools:
+  - shared_memory_list
+  - shared_memory_read
+  - knowledge_list
+  - knowledge_read
+  - knowledge_search
+provides_hooks:
+  - pre_tool_call

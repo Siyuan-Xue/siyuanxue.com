@@ -20,13 +20,23 @@ agent:
 context:
   engine: compressor
 
+# Native website memory writes are off; plugin shared-memory reads stay on.
 memory:
   memory_enabled: false
   user_profile_enabled: false
 
+auxiliary:
+  background_review:
+    enabled: false
+
+plugins:
+  enabled:
+    - website-readonly
+
 platform_toolsets:
   api_server:
     - web
+    - website_readonly
     - no_mcp
   cli: []
   weixin: []

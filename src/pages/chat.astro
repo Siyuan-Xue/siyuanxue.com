@@ -49,7 +49,7 @@ const prompts = [
    <p class="chat-status" data-status role="status" aria-live="polite" aria-atomic="true"></p>
    <form class="chat-composer">
     <label class="chat-sr-only" for="chat-message">{copy.label}</label>
-    <textarea id="chat-message" rows="2" maxlength="4000" required placeholder={copy.placeholder} aria-describedby="chat-input-hint"></textarea>
+    <textarea id="chat-message" rows="1" maxlength="4000" required placeholder={copy.placeholder} aria-describedby="chat-input-hint"></textarea>
     <div class="chat-toolbar">
      <span class="chat-identity"><Baby size={18} stroke-width={1.7} aria-hidden="true" />{copy.identity}</span>
      <button type="submit" class="chat-send" data-send aria-label={copy.send} title={copy.send} disabled><ArrowUp size={20} stroke-width={2} aria-hidden="true" /></button>
@@ -119,7 +119,7 @@ const prompts = [
  .chat[data-state='welcome'] .chat-status:empty{display:none}
  .chat-composer{width:100%;box-sizing:border-box;background:var(--chat-composer);border:1px solid var(--border);border-radius:20px;box-shadow:0 3px 12px #00000006;overflow:hidden}
  .chat-composer:focus-within{border-color:var(--fg-faint);box-shadow:0 3px 12px #00000008}
- .chat textarea{display:block;width:100%;box-sizing:border-box;min-height:64px;max-height:220px;resize:none;overflow-y:auto;border:0;background:transparent;color:var(--fg);font:1rem/1.65 var(--font-serif);padding:1.05rem 1.2rem .6rem;outline:none}
+ .chat textarea{display:block;width:100%;box-sizing:border-box;min-height:56px;max-height:220px;resize:none;overflow-y:auto;border:0;background:transparent;color:var(--fg);font:1rem/1.65 var(--font-serif);padding:1.05rem 1.2rem .6rem;outline:none}
  .chat textarea::placeholder{color:var(--fg-faint);opacity:1}
  .chat textarea:focus-visible{outline:none}
  .chat-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.6rem .8rem .8rem 1.2rem}

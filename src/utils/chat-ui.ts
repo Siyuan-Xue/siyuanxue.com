@@ -32,7 +32,7 @@ export function mountChat(root: HTMLElement, env: Environment): void {
   let active: { turn: number; controller: AbortController } | null = null;
   let renderTimer: ReturnType<typeof setTimeout> | undefined;
   const persist = () => { storageStatus.textContent = saveSession(env.storage, session.state) ? '' : copy.storage!; };
-  const grow = () => { input.style.height = 'auto'; input.style.height = `${Math.min(220, Math.max(64, input.scrollHeight))}px`; };
+  const grow = () => { input.style.height = 'auto'; input.style.height = `${Math.min(220, Math.max(56, input.scrollHeight))}px`; };
   function controls() {
     send.disabled = active !== null || !input.value.trim();
     send.hidden = active !== null;
