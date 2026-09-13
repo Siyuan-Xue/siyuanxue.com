@@ -16,7 +16,6 @@ auxiliary:
     enabled: true
     provider: auto
     model: ""
-    timeout: 120
     max_input_tokens: 120000
     extra_tools: []
 display:

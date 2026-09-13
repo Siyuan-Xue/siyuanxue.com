@@ -13,7 +13,7 @@ Memory is loaded as a frozen snapshot at session start for prefix caching; write
 
 ## Learning cadence and cost
 
-The owner can save confirmed facts immediately through the memory tool. In addition, native memory review is nudged every five user turns, and skill review after ten tool iterations. The review is launched after delivery of a non-interrupted reply and uses the same GLM model and reasoning as its parent, preserving the warm prompt prefix. The explicit aggregate input budget is 120,000 tokens per review versus the native 600,000 default; the API timeout is 120 seconds. The budget is checked between requests and is not a precise billing cap. No new provider, external memory account or scheduled model job is introduced.
+The owner can save confirmed facts immediately through the memory tool. In addition, native memory review is nudged every five user turns, and skill review after ten tool iterations. The review is launched after delivery of a non-interrupted reply and uses the same GLM model and reasoning as its parent, preserving the warm prompt prefix. The explicit aggregate input budget is 120,000 tokens per review versus the native 600,000 default. It is checked between requests, so the request that crosses the threshold completes and aggregate usage can overshoot. This overlay adds no independent wall-clock or API timeout; the review retains the existing provider/model request timeout. No new provider, external memory account or scheduled model job is introduced.
 
 `display.memory_notifications: "on"` shows native successful update receipts on Weixin. The notification is not an assertion that every turn created a new memory. A failed provider call cannot establish real-model learning.
 
