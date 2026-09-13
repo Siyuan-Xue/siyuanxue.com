@@ -31,6 +31,13 @@ auxiliary:
   background_review:
     enabled: false
 
+skills:
+  creation_nudge_interval: 0
+  write_approval: true
+
+curator:
+  enabled: false
+
 plugins:
   enabled:
     - website-readonly

@@ -58,6 +58,9 @@ def main():
         assert config['memory']['memory_enabled'] is False
         assert config['memory']['user_profile_enabled'] is False
         assert config['auxiliary']['background_review']['enabled'] is False
+        assert config['skills']['creation_nudge_interval'] == 0
+        assert config['skills']['write_approval'] is True
+        assert config['curator']['enabled'] is False
         assert config['mcp_servers'] == {}
         assert config['timezone'] == 'Asia/Shanghai'
         assert config['plugins']['enabled'] == ['website-readonly']
