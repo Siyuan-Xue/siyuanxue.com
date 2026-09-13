@@ -1,14 +1,16 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
+import { MessageCircleMore } from '@lucide/astro';
 import LangToggle from './LangToggle.astro';
 import TocToggle from './TocToggle.astro';
 import { site } from '../data/site';
 import { t } from '../i18n/locale';
 interface Props { showTocToggle?: boolean }
 const { showTocToggle = false } = Astro.props;
+const chatLabel = t({ en: 'Chat with xue', zh: '与小薛聊聊' });
 const Brand = Astro.url.pathname === '/' ? 'h1' : 'span';
 ---
 <header class="header"><div class="container cc-narrow header-inner">
  <a href="/" class="header-name-link" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}><Brand class="header-name">{t(site.name)}</Brand></a>
- <div class="header-spacer"></div><a href="/chat/" aria-current={Astro.url.pathname === '/chat/' ? 'page' : undefined}>{t({en: 'Chat', zh: '对话'})}</a><div class="header-controls">{showTocToggle && <TocToggle />}<LangToggle /><ThemeToggle /></div>
+ <div class="header-spacer"></div><div class="header-controls"><a class="header-control-button" href="/chat/" aria-label={chatLabel} title={chatLabel} aria-current={Astro.url.pathname === '/chat/' ? 'page' : undefined}><MessageCircleMore size={18} stroke-width={1.8} aria-hidden="true" /></a>{showTocToggle && <TocToggle />}<LangToggle /><ThemeToggle /></div>
 </div></header>
