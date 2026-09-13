@@ -1,0 +1,35 @@
+# Merge only into the verified owner's xue-owner profile. Never apply to public profiles.
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  write_approval: false
+  memory_char_limit: 6000
+  user_char_limit: 4000
+  nudge_interval: 5
+skills:
+  creation_nudge_interval: 10
+  write_approval: false
+  ledger: true
+  inline_shell: false
+auxiliary:
+  background_review:
+    enabled: true
+    provider: auto
+    model: ""
+    timeout: 120
+    max_input_tokens: 120000
+    extra_tools: []
+display:
+  memory_notifications: "on"
+curator:
+  enabled: true
+  interval_hours: 168
+  min_idle_hours: 2
+  stale_after_days: 30
+  archive_after_days: 90
+  consolidate: false
+  prune_builtins: false
+  archive_ttl_days: 0
+  backup:
+    enabled: true
+    keep: 5
