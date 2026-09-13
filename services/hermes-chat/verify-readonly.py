@@ -57,13 +57,19 @@ def main():
         assert config['agent']['reasoning_effort'] == 'high'
         assert config['agent']['max_turns'] == 4
         assert config['agent']['run_budget_seconds'] == 120
+        assert config['tools']['tool_search']['enabled'] == 'off'
         discover_plugins()
         enabled = sorted(_get_platform_tools(config, 'api_server', include_default_mcp_servers=False))
         disabled = config['agent']['disabled_toolsets']
-        definitions = get_tool_definitions(enabled, disabled, quiet_mode=True, skip_tool_search_assembly=True)
+        raw_definitions = get_tool_definitions(enabled, disabled, quiet_mode=True, skip_tool_search_assembly=True)
+        # The model receives final assembly, not the raw registered catalog.
+        # Default auto defers plugin schemas behind blocked bridge tools.
+        definitions = get_tool_definitions(enabled, disabled, quiet_mode=True)
         names = {definition['function']['name'] for definition in definitions}
         expected = {'web_search','web_extract'} if args.without_plugin else EXPECTED
-        assert names == expected, f'Effective schema mismatch: {sorted(names)}'
+        assert names == expected, f'Final model-visible schema mismatch: {sorted(names)}'
+        raw_names = {definition['function']['name'] for definition in raw_definitions}
+        assert raw_names == expected, f'Raw registered schema mismatch: {sorted(raw_names)}'
         if args.without_plugin:
             print(json.dumps({'ok':True, 'plugin_missing_fails_closed':True, 'tools':sorted(names)}))
             return
@@ -82,6 +88,17 @@ def main():
         assert listing['ok'] and len(listing['items']) <= 4
         # Live mode does not print memory names or content.
         if args.fixture:
+            # Reproduce the original integration failure with the actual native
+            # assembler and registered plugin tools, without changing config:
+            # auto hides readers behind bridges that this profile must deny.
+            from tools.tool_search import assemble_tool_defs, ToolSearchConfig
+            legacy = assemble_tool_defs(raw_definitions, context_length=0,
+                                        config=ToolSearchConfig.from_raw({'enabled':'auto'}))
+            legacy_names = {definition['function']['name'] for definition in legacy.tool_defs}
+            assert {'tool_search','tool_describe','tool_call'} <= legacy_names
+            assert 'shared_memory_read' not in legacy_names
+            for bridge in ('tool_search', 'tool_describe', 'tool_call'):
+                assert get_pre_tool_call_directive(bridge, {})[0] == 'block'
             memory = root / 'memories/MEMORY.md'
             memory.parent.mkdir()
             memory.write_text('First fixture memory\nAPI_KEY=opaque-secret-test-value')
@@ -101,6 +118,8 @@ def main():
             assert memory.read_text() == 'Fresh fixture memory'
         print(json.dumps({'ok':True, 'mode':'fixture' if args.fixture else 'installed-profile',
                           'tools':sorted(names), 'prompt_section_registered':True,
+                          'final_model_schemas_checked':True,
+                          'auto_deferral_regression_checked':args.fixture,
                           'write_and_unknown_tool_veto':True}))
 
 

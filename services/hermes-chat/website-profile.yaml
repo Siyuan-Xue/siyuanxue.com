@@ -33,6 +33,12 @@ plugins:
   enabled:
     - website-readonly
 
+# Keep the seven reviewed readers directly visible to the model. Native auto
+# defers plugin schemas behind tool_search/tool_describe/tool_call bridges.
+tools:
+  tool_search:
+    enabled: "off"
+
 platform_toolsets:
   api_server:
     - web

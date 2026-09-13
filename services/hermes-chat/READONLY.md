@@ -4,7 +4,7 @@ This revision uses the official Hermes v0.21.1 plugin API at source commit `05d7
 
 ## Effective tools and native-operation audit
 
-The API-server runtime definitions must contain exactly these seven names:
+The API-server's final model-visible definitions, after native tool assembly, must contain exactly these seven names:
 
 ```text
 knowledge_list
@@ -59,6 +59,8 @@ All file text passes through the installed native redactor with forced prefix, a
 Copy only `website-readonly/__init__.py` and `plugin.yaml` into `/home/ubuntu/.hermes/profiles/website-chat/plugins/website-readonly/`, owned by the gateway's existing OS account. Do not install this plugin in the default or Weixin profiles; registration refuses other active profiles. Back up the website config/SOUL first, then merge the reviewed overlay with exact replacement of the listed lists/maps and copy the SOUL. Preserve provider/model/secrets and unrelated fields. Ensure any existing `plugins.disabled` does not deny `website-readonly`; the verifier treats a missing plugin as a failed installation.
 
 `plugins.enabled: [website-readonly]`, `platform_toolsets.api_server: [web, website_readonly, no_mcp]`, empty `cli`/`weixin`, `mcp_servers: {}`, and `agent.disabled_toolsets: [kanban, context_engine]` are deliberate. `web` is an explicit known group even if the plugin is absent, preventing a full-composite fallback. With a missing plugin only the two safe native web schemas remain; deployment must stop because the required seven-schema audit fails. The hook is an extra veto, not the primary boundary: the effective model schemas already contain only readers. No native file/skills group or built-in override is registered.
+
+Set `tools.tool_search.enabled: "off"` with the quoted string exactly as shown in the overlay. At this Hermes commit, the default `auto` defers plugin readers behind `tool_search`, `tool_describe`, and `tool_call`; those bridge tools are outside the website policy and remain denied. Disabling deferral exposes the seven reviewed schemas directly. Auditing only `get_tool_definitions(..., skip_tool_search_assembly=True)` misses this integration failure: the verifier checks both that raw catalog and the final `get_tool_definitions(...)` result. Its native fixture also reproduces the legacy `auto` assembly and confirms that the bridges remain vetoed, without changing the fixture configuration or expanding permissions.
 
 Run with the **installed Hermes environment's Python 3.11+**, replacing `/path/to/hermes` with that installation:
 
