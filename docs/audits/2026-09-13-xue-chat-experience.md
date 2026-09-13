@@ -1,0 +1,37 @@
+# xue conversation and native learning
+
+This audit distinguishes live configuration, native mechanism checks, mocked frontend tests and real model acceptance. No credential or raw private transcript is included.
+
+## Live owner learning rollout
+
+Official Hermes v0.21.1 commit `05d705dd695d1084388529124dc2ffe5ce919e89` remains unchanged. The learning bundle uses application snapshot `57a6ffa` plus the reviewed owner overlay correction `00a9b78`; seven downloaded files were checked against local SHA-256 values, and the corrected owner overlay was independently checked. Operations used the authenticated Tencent Cloud terminal through Chrome.
+
+The owner profile now has 4,000 characters for USER.md, 6,000 for MEMORY.md, a five-user-turn memory nudge and ten-tool-iteration skill nudge. Automatic post-turn review uses the existing model, with a 120,000 aggregate input-token guard checked between requests. This is not a strict billing or wall-time cap: the request crossing the budget completes first. The inert task-level timeout key was removed after native-source review; existing provider/model timeout behavior was preserved.
+
+Successful native memory updates produce Weixin notifications. Skills retain native mutation ledger/backups. Curator has reversible archives/backups, no built-in pruning, no automatic purge and no LLM consolidation. The installed multiplexer runs gateway curator housekeeping in its primary home, so owner-profile periodic housekeeping is not claimed; routed-owner post-turn memory/skill review is the automatic learning mechanism.
+
+Both public profiles explicitly disable automatic memory review, skill nudges and curator maintenance. The same eight reviewed readers remain available. Their shared-memory tool can read the owner's newly saved priority, while memory writes remain blocked. The owner retains 36 available native tool definitions in gateway mode; owner→guest→website→owner checks preserved writer isolation. All four SOUL symlinks share the revised universal xue identity, SHA-256 `068ab04bf91aabda0a4e00667bab3922bc05840691d8891869f924d73dffb3de`.
+
+Protected rollback directory: `/home/ubuntu/hermes-backups/learning-20260913T151413Z`. The script backed up configs, shared SOUL, public plugin files and the owner's memory before writes. Original history was not modified. A first attempt stopped before mutation because the reconnected terminal lacked its user service-bus environment; after deriving the runtime directory from the current UID, both services were confirmed active and the rollout completed. On configuration rollback, newly saved legitimate memory is retained and the prior copy remains in backup; no newer memory is deleted automatically.
+
+## Native evidence
+
+- Isolated native fixture: memory add, correction and reload into a fresh session snapshot; fifth-turn review trigger; input budget; skill create/patch; mutation ledger and backup blobs. No model call and no live personal-memory mutation in the fixture.
+- Both updated public-profile fixtures passed; both installed-profile audits passed after rollout, covering exact raw/final tool schemas, current clock, shared-reader registration and write vetoes.
+- The controller saved two verified facts with native `memory_tool` success receipts: the user's explicitly stated priority for long-term understanding and improvement, and the previously verified lesson that dates/execution/persistence require real tool evidence. A newly loaded native store contained both. These are operator-curated facts, not a claim of autonomous model extraction.
+- Same-process scope checks confirmed both public profiles read the new owner priority freshly and block `memory`, with 36 owner tool definitions before and after the public scopes.
+- The default gateway returned `running`, served exactly default/wechat-public/xue-owner, and `wechat-public:weixin` was `connected`. The independent website gateway restarted successfully.
+
+## Conversation frontend and bridge
+
+The bridge has 20 passing native Node integration tests covering legacy SSE, opt-in AI SDK UI-message framing, structured GLM1113 and code-stripped balance errors, safe classifications, timeout, truncation, malformed frames and redaction. Review found and fixed a timeout/backpressure path that could incorrectly finish successfully, and the installed Hermes interruption envelope is now classified explicitly. The scoped review approved commit `53c02f0`.
+
+The controller deployed this bridge through the authenticated Chrome terminal after matching SHA-256 `63eaa8daea6a2fc6f635134cf1ebac5702c0fd9d2badd9571533225d8b9c6bac` and checking native Node syntax. Atomic replacement and service restart succeeded. Protected rollback directory: `/var/backups/hermes-chat-ui-20260913T152736Z`. Loopback health returned HTTP 200; an empty-message UI-protocol request returned the expected HTTP 400 `invalid_request` without calling the model. Frontend task `5a1ae1d` uses AI SDK 6 / React 19 and directly adapted Vercel AI Elements conversation/message primitives from upstream commit `6a9d5b1822ffb10bba4bd97175f01edd7d8651cd`, with full Apache-2.0 license and attribution. It introduces no website database or additional login. The worker reported 20 focused tests, 78 repository tests, type checks, both locale builds and eight static-output checks passing. Follow-up `dd56973` removes the visible completion label and empty status spacer, provides regeneration for a completed answer, and uses a localized Home icon in the chat header. Its full repository tests passed 79/79; both locale output checks passed 8/8. Browser verification confirmed a quiet successful reply, regeneration without a duplicate user question, and Home navigation to the homepage, where the original chat icon remains.
+
+Chrome acceptance used a local test-only SSE server with no provider calls. Desktop 1440×900 retained the 848px site width; mobile 390×844 had no horizontal overflow and kept 44px controls. Normal Markdown and code copying, quota-specific guidance, partial timeout replies, retry without a duplicate user turn, mobile Enter/newline and send button, stopping output, refresh recovery and draft preservation were exercised. Initial blue focus and stale success-after-error issues were fixed and verified: the safe quota card and draft now survive refresh, and a new question after an unanswered failed turn does not create a storage warning. During a slower stream, manual scrolling remained at earlier paragraphs as the answer grew, with a working return-to-latest button. Ordered-list gutters and dark-mode readability were checked. A 390×390 reduced viewport retained the composer; this is browser viewport simulation, not a claim of testing a physical phone keyboard. The English locale displayed the lowercase xue identity and localized quota guidance.
+
+## Remaining real-model acceptance
+
+GLM previously returned `1113` (insufficient balance/resources). Recharge has not been confirmed; this work makes no paid model calls. Post-rollout autonomous memory/skill learning, model-level history recall and model use of the website clock remain unverified. Native/fake-stream checks do not substitute for these claims.
+
+Official references: [memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory/), [skills](https://hermes-agent.nousresearch.com/docs/user-guide/features/skills/), [AI Elements](https://github.com/vercel/ai-elements), [AI SDK error handling](https://ai-sdk.dev/docs/ai-sdk-ui/error-handling).
