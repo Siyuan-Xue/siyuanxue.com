@@ -151,13 +151,19 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
     event.preventDefault();
     const text = input.trim();
     if (!text || busy) return;
-    const unanswered = errorCode && messages.at(-1)?.role === 'user' ? messages.at(-1) : undefined;
+    const stoppedUnanswered = (notice === 'stopped' || notice === 'interrupted') && messages.at(-1)?.role === 'user';
+    const unanswered = (errorCode || stoppedUnanswered) && messages.at(-1)?.role === 'user' ? messages.at(-1) : undefined;
     const candidate = unanswered ? messages.slice(0, -1) : messages;
     try { normalizeBridgeMessages([...candidate, { id: 'pending-user', role: 'user', parts: [{ type: 'text', text }] }]); }
     catch (error) { setErrorCode(error instanceof ChatInputError ? error.code : 'invalid_request'); return; }
     setErrorCode(undefined); setNotice(''); clearError(); setInput('');
-    await sendMessage(unanswered ? { text, messageId: unanswered.id } : { text });
-  }, [busy, clearError, errorCode, input, messages, sendMessage]);
+    if (stoppedUnanswered) {
+      setMessages(candidate);
+      await sendMessage({ text });
+    } else {
+      await sendMessage(unanswered ? { text, messageId: unanswered.id } : { text });
+    }
+  }, [busy, clearError, errorCode, input, messages, notice, sendMessage, setMessages]);
 
   const retry = useCallback(async (messageId?: string) => {
     if (busy || !messages.length) return;

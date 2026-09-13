@@ -415,6 +415,86 @@ test('timeout during blocked downstream delta cannot emit buffered success compl
   }
 });
 
+test('never-draining ordinary and terminal writes release admission after bounded waits', async () => {
+  const originalWrite = ServerResponse.prototype.write;
+  let blockWrites = true;
+  let ordinaryBlocked = 0;
+  let terminalBlocked = 0;
+  ServerResponse.prototype.write = function (
+    this: ServerResponse,
+    chunk: unknown,
+    ...args: unknown[]
+  ) {
+    const result = Reflect.apply(originalWrite, this, [chunk, ...args]);
+    const text = Buffer.isBuffer(chunk) ? chunk.toString('utf8') : String(chunk);
+    const ip = String(this.req?.headers['x-real-ip'] || '');
+    if (blockWrites && this.req?.url === '/chat-api') {
+      if (ip.startsWith('ordinary-') && text.includes('"type":"text-delta"')) {
+        ordinaryBlocked += 1;
+        return false;
+      }
+      if (ip.startsWith('terminal-') && text.includes('"type":"error"')) {
+        terminalBlocked += 1;
+        return false;
+      }
+    }
+    return result;
+  } as typeof ServerResponse.prototype.write;
+
+  const f = await fixture(async (request, response) => {
+    let raw = '';
+    for await (const chunk of request) raw += chunk;
+    const prompt = JSON.parse(raw).messages.at(-1).content as string;
+    if (prompt.startsWith('terminal')) {
+      response.end('event: error\ndata: {"error":{"code":"ETIMEDOUT"}}\n\n');
+      return;
+    }
+    response.end(
+      'data: {"choices":[{"delta":{"content":"buffered"}}]}\n\n' +
+        'data: [DONE]\n\n',
+    );
+  }, { timeoutMs: 50, downstreamWriteTimeoutMs: 80 });
+
+  let watchdog: ReturnType<typeof setTimeout> | undefined;
+  try {
+    const stalled = [
+      ['ordinary-a', 'ordinary stall'],
+      ['ordinary-b', 'ordinary stall'],
+      ['terminal-a', 'terminal stall'],
+      ['terminal-b', 'terminal stall'],
+    ].map(async ([ip, content]) => {
+      const response = await f.post(
+        { messages: [{ role: 'user', content }] },
+        { ...UI_PROTOCOL, 'X-Real-IP': ip },
+      );
+      try { return { ip, text: await response.text() }; }
+      catch { return { ip, text: '' }; }
+    });
+    const results = await Promise.race([
+      Promise.all(stalled),
+      new Promise((_, reject) => {
+        watchdog = setTimeout(() => reject(new Error('stalled writes retained admission')), 500);
+      }),
+    ]) as Array<{ ip: string; text: string }>;
+    assert.equal(ordinaryBlocked, 2);
+    assert.equal(terminalBlocked, 2);
+    for (const result of results.filter(({ ip }) => ip.startsWith('ordinary-'))) {
+      assert(result.text.includes('"errorText":"timeout"'));
+      assert(!result.text.includes('"type":"finish"'));
+    }
+
+    blockWrites = false;
+    const admitted = await f.post(undefined, { ...UI_PROTOCOL, 'X-Real-IP': 'after-stalls' });
+    assert.equal(admitted.status, 200);
+    assert((await admitted.text()).includes('[DONE]'));
+  } finally {
+    if (watchdog) clearTimeout(watchdog);
+    blockWrites = false;
+    ServerResponse.prototype.write = originalWrite;
+    f.close();
+  }
+});
+
 test('UI protocol reports truncated and malformed streams without a success finish', async () => {
   for (const wire of [
     'data: {"choices":[{"delta":{"content":"partial"}}]}\n\n',

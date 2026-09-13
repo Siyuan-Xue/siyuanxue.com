@@ -203,6 +203,54 @@ test('a deliberate follow-up replaces an unanswered failed turn without duplicat
   expect(view.queryByText(copy.storage)).toBeNull();
 });
 
+test('a new submission replaces a stopped unanswered turn and survives reload', async () => {
+  const bodies: unknown[] = [];
+  let attempts = 0;
+  const fetcher: ChatFetch = async (_input, init) => {
+    bodies.push(JSON.parse(String(init?.body)));
+    attempts += 1;
+    if (attempts > 1) return uiStream('Answer after stopping');
+    return new Response(new ReadableStream({
+      start(controller) {
+        init?.signal?.addEventListener('abort', () => {
+          controller.error(new DOMException('Aborted', 'AbortError'));
+        });
+      },
+    }), { headers: { 'Content-Type': 'text/event-stream' } });
+  };
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const input = view.getByLabelText('Your message');
+  fireEvent.input(input, { target: { value: 'Question stopped before text' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.getByRole('button', { name: 'Stop reply' })).toBeTruthy());
+  fireEvent.click(view.getByRole('button', { name: 'Stop reply' }));
+  await waitFor(() => expect(view.getByText(copy.stopped)).toBeTruthy());
+
+  fireEvent.input(input, { target: { value: 'Replacement question' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.getByText('Answer after stopping')).toBeTruthy());
+  expect(bodies).toEqual([
+    { messages: [{ role: 'user', content: 'Question stopped before text' }] },
+    { messages: [{ role: 'user', content: 'Replacement question' }] },
+  ]);
+  expect(view.queryByText('Question stopped before text')).toBeNull();
+  expect(view.queryByText(copy.storage)).toBeNull();
+  await waitFor(() => {
+    const saved = JSON.parse(browser.sessionStorage.getItem('xue-chat:v2')!);
+    expect(saved.messages.map((message: { content: string }) => message.content)).toEqual([
+      'Replacement question',
+      'Answer after stopping',
+    ]);
+  });
+  view.unmount();
+
+  const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
+  await waitFor(() => expect(restored.getByText('Answer after stopping')).toBeTruthy());
+  expect(restored.getAllByText('Replacement question')).toHaveLength(1);
+  expect(restored.queryByText('Question stopped before text')).toBeNull();
+  expect(restored.queryByText(copy.storage)).toBeNull();
+});
+
 test('stop keeps streamed partial text and persists it as stopped', async () => {
   const encoder = new TextEncoder();
   const fetcher: ChatFetch = async (_input, init) => new Response(new ReadableStream({

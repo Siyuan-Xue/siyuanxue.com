@@ -192,6 +192,7 @@ export function createChatServer({
     process.env.ALLOWED_ORIGINS || 'https://siyuanxue.com,https://xuesiyuan.com'
   ).split(','),
   timeoutMs = 120000,
+  downstreamWriteTimeoutMs = 5000,
 } = {}) {
   if (!apiKey?.trim()) throw new Error('HERMES_API_KEY is required');
   const endpoint = new URL(apiUrl);
@@ -268,14 +269,35 @@ export function createChatServer({
       assertWritable();
       if (!res.write(text))
         await new Promise((resolve, reject) => {
+          let settled = false;
+          let stallTimer;
           const cleanup = () => {
             res.off('drain', drain);
             res.off('close', close);
+            controller.signal.removeEventListener('abort', abort);
+            clearTimeout(stallTimer);
           };
-          const drain = () => { cleanup(); resolve(); };
-          const close = () => { cleanup(); reject(new Error('closed')); };
+          const finish = (error) => {
+            if (settled) return;
+            settled = true;
+            cleanup();
+            if (error) reject(error);
+            else resolve();
+          };
+          const drain = () => finish();
+          const close = () => finish(new Error('closed'));
+          const abort = () => finish(
+            new SafeUpstreamError(timedOut ? 'timeout' : 'interrupted'),
+          );
+          const stalled = () => {
+            finish(new Error('downstream write timeout'));
+            res.destroy();
+          };
           res.once('drain', drain);
           res.once('close', close);
+          if (!terminal) controller.signal.addEventListener('abort', abort, { once: true });
+          stallTimer = setTimeout(stalled, downstreamWriteTimeoutMs);
+          if (!terminal && controller.signal.aborted) abort();
         });
       assertWritable();
     };
