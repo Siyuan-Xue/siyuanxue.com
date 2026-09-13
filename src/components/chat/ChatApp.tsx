@@ -151,17 +151,25 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
     event.preventDefault();
     const text = input.trim();
     if (!text || busy) return;
-    const stoppedUnanswered = (notice === 'stopped' || notice === 'interrupted') && messages.at(-1)?.role === 'user';
-    const unanswered = (errorCode || stoppedUnanswered) && messages.at(-1)?.role === 'user' ? messages.at(-1) : undefined;
-    const candidate = unanswered ? messages.slice(0, -1) : messages;
+    const stopped = notice === 'stopped' || notice === 'interrupted';
+    const last = messages.at(-1);
+    const stoppedTurnStart = stopped && last?.role === 'user'
+      ? messages.length - 1
+      : stopped && last?.role === 'assistant' && !getMessageText(last).trim() && messages.at(-2)?.role === 'user'
+        ? messages.length - 2
+        : -1;
+    const failedUnanswered = errorCode && last?.role === 'user' ? last : undefined;
+    const candidate = stoppedTurnStart >= 0
+      ? messages.slice(0, stoppedTurnStart)
+      : failedUnanswered ? messages.slice(0, -1) : messages;
     try { normalizeBridgeMessages([...candidate, { id: 'pending-user', role: 'user', parts: [{ type: 'text', text }] }]); }
     catch (error) { setErrorCode(error instanceof ChatInputError ? error.code : 'invalid_request'); return; }
     setErrorCode(undefined); setNotice(''); clearError(); setInput('');
-    if (stoppedUnanswered) {
+    if (stoppedTurnStart >= 0) {
       setMessages(candidate);
       await sendMessage({ text });
     } else {
-      await sendMessage(unanswered ? { text, messageId: unanswered.id } : { text });
+      await sendMessage(failedUnanswered ? { text, messageId: failedUnanswered.id } : { text });
     }
   }, [busy, clearError, errorCode, input, messages, notice, sendMessage, setMessages]);
 
