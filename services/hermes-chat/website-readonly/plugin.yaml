@@ -1,7 +1,8 @@
 name: website-readonly
-version: 1.0.0
-description: Read-only curated cross-profile memory and approved skill/site text for xue.
+version: 1.1.0
+description: Read-only current time, curated cross-profile memory, and approved skill/site text for xue.
 provides_tools:
+  - current_datetime
   - shared_memory_list
   - shared_memory_read
   - knowledge_list

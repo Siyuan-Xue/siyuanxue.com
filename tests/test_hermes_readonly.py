@@ -1,11 +1,14 @@
 """Real filesystem boundary tests; optional official redactor via HERMES_SOURCE."""
 import importlib.util
+from datetime import datetime, timedelta, timezone
 import json
 import os
 from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest import mock
+from zoneinfo import ZoneInfo
 
 PLUGIN = Path(__file__).resolve().parents[1] / 'services/hermes-chat/website-readonly/__init__.py'
 
@@ -20,7 +23,8 @@ def load_plugin():
 
 class FakeContext:
     """Only documented plugin API; handler shapes match Hermes registry."""
-    def __init__(self):
+    def __init__(self, profile_name='website-chat'):
+        self.profile_name = profile_name
         self.tools, self.sections, self.hooks = {}, {}, {}
     def register_tool(self, name, toolset, schema, handler, **kwargs):
         self.tools[name] = (schema, handler, toolset)
@@ -47,6 +51,53 @@ class ReadonlyTests(unittest.TestCase):
         return path
     def call(self, name, **args):
         return json.loads(self.readers.call(name, args))
+    def test_current_datetime_advances_across_midnight_and_is_consistent(self):
+        moments = iter((
+            datetime(2026, 9, 13, 23, 59, 59, tzinfo=ZoneInfo('Asia/Shanghai')),
+            datetime(2026, 9, 14, 0, 0, 1, tzinfo=ZoneInfo('Asia/Shanghai')),
+        ))
+        readers = self.plugin.Readers(
+            self.root, self.site, lambda s: s, lambda p: None, now=lambda: next(moments)
+        )
+        first = json.loads(readers.call('current_datetime', {}))
+        second = json.loads(readers.call('current_datetime', {}))
+        self.assertEqual(first, {
+            'ok': True,
+            'local_time': '2026-09-13T23:59:59+08:00',
+            'timezone': 'Asia/Shanghai',
+            'utc_time': '2026-09-13T15:59:59+00:00',
+            'epoch_seconds': 1789315199,
+            'weekday': 'Sunday',
+        })
+        self.assertEqual(second['local_time'], '2026-09-14T00:00:01+08:00')
+        self.assertEqual(second['utc_time'], '2026-09-13T16:00:01+00:00')
+        self.assertEqual(second['epoch_seconds'], 1789315201)
+        self.assertEqual(second['weekday'], 'Monday')
+
+    def test_current_datetime_uses_a_fresh_aware_real_clock(self):
+        before = datetime.now().astimezone() - timedelta(seconds=1)
+        result = self.call('current_datetime')
+        after = datetime.now().astimezone() + timedelta(seconds=1)
+        local = datetime.fromisoformat(result['local_time'])
+        utc = datetime.fromisoformat(result['utc_time'])
+        self.assertTrue(result['ok'])
+        self.assertIsNotNone(local.utcoffset())
+        self.assertLessEqual(before.timestamp(), result['epoch_seconds'])
+        self.assertLessEqual(result['epoch_seconds'], after.timestamp())
+        self.assertEqual(utc, local.astimezone(timezone.utc))
+        self.assertEqual(result['epoch_seconds'], int(local.timestamp()))
+        self.assertEqual(result['weekday'], ('Monday', 'Tuesday', 'Wednesday', 'Thursday',
+                                             'Friday', 'Saturday', 'Sunday')[local.weekday()])
+        self.assertTrue(result['timezone'])
+
+    def test_current_datetime_rejects_arguments_and_unaware_or_failed_clocks(self):
+        self.assertEqual(self.call('current_datetime', timezone='UTC')['error'], 'invalid_arguments')
+        for clock in (lambda: datetime(2026, 9, 13), lambda: (_ for _ in ()).throw(RuntimeError('boom'))):
+            readers = self.plugin.Readers(
+                self.root, self.site, lambda s: s, lambda p: None, now=clock
+            )
+            result = json.loads(readers.call('current_datetime', {}))
+            self.assertEqual(result, {'ok': False, 'error': 'clock_unavailable'})
     def test_memories_are_fresh_across_profiles_and_new_profiles(self):
         self.put(self.root / 'memories/MEMORY.md', 'first')
         self.put(self.root / 'profiles/wechat-public/memories/USER.md', 'Weixin knowledge')
@@ -65,7 +116,9 @@ class ReadonlyTests(unittest.TestCase):
         self.assertIn('shared_memory_read', self.readers.prompt({}))
     def test_writes_unknown_tools_and_schema_escape_are_denied(self):
         path = self.put(self.root / 'memories/MEMORY.md', 'unchanged')
-        for name in ('memory', 'write_file', 'patch', 'terminal', 'execute_code', 'skill_view', 'delegate_task', 'future_tool'):
+        for name in ('memory', 'session_search', 'write_file', 'patch', 'terminal', 'execute_code',
+                     'skill_view', 'delegate_task', 'tool_search', 'tool_describe', 'tool_call',
+                     'future_tool'):
             self.assertEqual(self.call(name, content='modified')['error'], 'tool_denied')
         self.assertEqual(self.call('shared_memory_read', profile='default', document='MEMORY.md', content='modified')['error'], 'invalid_arguments')
         self.assertEqual(path.read_text(), 'unchanged')
@@ -163,7 +216,7 @@ class ReadonlyTests(unittest.TestCase):
     def test_registration_exposes_readers_only_and_vetoes_other_tools(self):
         ctx = FakeContext()
         self.plugin.register_readers(ctx, self.readers)
-        self.assertEqual(set(ctx.tools), {'shared_memory_list','shared_memory_read','knowledge_list','knowledge_read','knowledge_search'})
+        self.assertEqual(set(ctx.tools), {'current_datetime','shared_memory_list','shared_memory_read','knowledge_list','knowledge_read','knowledge_search'})
         self.put(self.root / 'memories/MEMORY.md', 'live context')
         handler = ctx.tools['shared_memory_read'][1]
         self.assertEqual(json.loads(handler({'document':'MEMORY.md'}, task_id='native-session'))['content'], 'live context')
@@ -171,11 +224,38 @@ class ReadonlyTests(unittest.TestCase):
             self.assertFalse(schema['parameters']['additionalProperties'])
             self.assertEqual(group, 'website_readonly')
         hook = ctx.hooks['pre_tool_call']
-        self.assertEqual(hook(tool_name='write_file', args={})['action'], 'block')
-        self.assertEqual(hook(tool_name='arbitrary_mcp_reader', args={})['action'], 'block')
+        for name in ('memory', 'session_search', 'write_file', 'terminal', 'tool_search',
+                     'tool_describe', 'tool_call', 'arbitrary_mcp_reader'):
+            self.assertEqual(hook(tool_name=name, args={})['action'], 'block')
         self.assertIsNone(hook(tool_name='web_search', args={'query':'public'}))
+        self.assertIsNone(hook(tool_name='current_datetime', args={}))
         self.assertIsNone(hook(tool_name='shared_memory_read', args={'document':'MEMORY.md'}))
         self.assertIn('live context', next(iter(ctx.sections.values()))[0]({}))
+
+    def test_registration_is_limited_to_two_public_profiles(self):
+        root_module = type(sys)('hermes_constants')
+        root_module.get_default_hermes_root = lambda: self.root
+        root_module.get_hermes_home = lambda: self.root / 'profiles/unused'
+        safety_module = type(sys)('agent.file_safety')
+        safety_module.get_read_block_error = lambda path: None
+        redact_module = type(sys)('agent.redact')
+        redact_module.redact_sensitive_text = lambda text, **kwargs: text
+        time_module = type(sys)('hermes_time')
+        time_module.now = lambda: datetime(2026, 9, 13, tzinfo=timezone.utc)
+        modules = {
+            'hermes_constants': root_module,
+            'agent.file_safety': safety_module,
+            'agent.redact': redact_module,
+            'hermes_time': time_module,
+        }
+        with mock.patch.dict(sys.modules, modules):
+            for profile in ('website-chat', 'wechat-public'):
+                ctx = FakeContext(profile)
+                self.plugin.register(ctx)
+                self.assertIn('current_datetime', ctx.tools)
+            for profile in ('default', 'xue-owner', 'custom'):
+                with self.assertRaisesRegex(RuntimeError, 'public read-only profile'):
+                    self.plugin.register(FakeContext(profile))
 
 
 if __name__ == '__main__':

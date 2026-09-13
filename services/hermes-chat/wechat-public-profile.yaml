@@ -1,13 +1,13 @@
-# Documentation-only partial overlay for the website-chat Hermes profile.
+# Documentation-only partial overlay for the wechat-public Hermes profile.
 # Audited against official Hermes v0.21.1. Merge these keys into the backed-up
 # profile; do not replace the complete config.yaml with this file.
 # Every value shown is authoritative for that listed path: replace the listed
 # lists and maps, including mcp_servers, instead of recursively retaining items.
 #
-# Deliberately omitted: the existing model/provider structure, credentials,
-# disabled skills, session/log settings, and every unrelated profile field.
-# Preserve the existing zai / https://open.bigmodel.cn/api/paas/v4 / glm-5.3
-# model selection and all protected secrets while applying this overlay.
+# Deliberately omitted: model/provider configuration, credentials, platform
+# identity IDs, login/transport settings, disabled skills, session/log settings,
+# and every unrelated profile field. Preserve those values while applying this
+# overlay.
 
 timezone: Asia/Shanghai
 
@@ -22,7 +22,7 @@ agent:
 context:
   engine: compressor
 
-# Native website memory writes are off; plugin shared-memory reads stay on.
+# Native public-profile memory writes are off; plugin shared-memory reads stay on.
 memory:
   memory_enabled: false
   user_profile_enabled: false
@@ -42,12 +42,12 @@ tools:
     enabled: "off"
 
 platform_toolsets:
-  api_server:
+  api_server: []
+  cli: []
+  weixin:
     - web
     - website_readonly
     - no_mcp
-  cli: []
-  weixin: []
 
 mcp_servers: {}
 

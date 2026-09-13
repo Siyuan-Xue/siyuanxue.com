@@ -6,6 +6,7 @@ Only register() imports Hermes; the filesystem boundary is independently testabl
 from __future__ import annotations
 
 from contextlib import contextmanager
+from datetime import datetime, timezone
 import hashlib
 import json
 import os
@@ -51,6 +52,7 @@ def _schema(name, description, properties, required=()):
                                     'required': list(required), 'additionalProperties': False}}
 
 
+_schema('current_datetime', 'Return the current local and UTC date/time from the active Hermes clock, with timezone, epoch seconds, and weekday. Takes no arguments and does not cache results.', {})
 _schema('shared_memory_list', 'List current curated MEMORY.md/USER.md in the default and every native named profile. Returns availability and pagination, never raw chat sessions.',
         {'offset': OFFSET, 'limit': LIST_PAGE})
 _schema('shared_memory_read', 'Read fresh curated memory from a native profile, with secrets redacted before character pagination. This never writes memory. Follow next_offset; revision detects changes between pages.',
@@ -109,11 +111,12 @@ def _directory(path):
 
 
 class Readers:
-    def __init__(self, hermes_root, site_root, redact, read_guard):
+    def __init__(self, hermes_root, site_root, redact, read_guard, now=None):
         self.hermes_root = Path(hermes_root)
         self.site_root = Path(site_root) if site_root else None
         self.redact = redact
         self.read_guard = read_guard
+        self.now = now or (lambda: datetime.now().astimezone())
 
     def _profile(self, profile):
         if not isinstance(profile, str) or not PROFILE_RE.fullmatch(profile) or profile in ('.', '..'):
@@ -261,6 +264,25 @@ class Readers:
                 raise ReadDenied('invalid_arguments')
 
     def _dispatch(self, name, args):
+        if name == 'current_datetime':
+            try:
+                current = self.now()
+                if not isinstance(current, datetime) or current.tzinfo is None or current.utcoffset() is None:
+                    raise ValueError('clock must return an aware datetime')
+                timezone_name = getattr(current.tzinfo, 'key', None) or current.tzname() or str(current.tzinfo)
+                if not timezone_name:
+                    raise ValueError('clock timezone is unavailable')
+                return {
+                    'ok': True,
+                    'local_time': current.isoformat(),
+                    'timezone': timezone_name,
+                    'utc_time': current.astimezone(timezone.utc).isoformat(),
+                    'epoch_seconds': int(current.timestamp()),
+                    'weekday': ('Monday', 'Tuesday', 'Wednesday', 'Thursday',
+                                'Friday', 'Saturday', 'Sunday')[current.weekday()],
+                }
+            except Exception:
+                raise ReadDenied('clock_unavailable') from None
         if name == 'shared_memory_list':
             result = self._list_page(self._memories(), args)
             for item in result['items']:
@@ -331,12 +353,13 @@ def register_readers(ctx, readers):
 def register(ctx):
     from agent.file_safety import get_read_block_error
     from agent.redact import redact_sensitive_text
-    from hermes_constants import get_default_hermes_root, get_hermes_home
-    # This is intentionally usable ONLY by the dedicated website profile.
-    home = get_hermes_home().resolve()
+    from hermes_constants import get_default_hermes_root
+    from hermes_time import now as hermes_now
+    # This is intentionally usable ONLY by the two dedicated public profiles.
+    if ctx.profile_name not in {'website-chat', 'wechat-public'}:
+        raise RuntimeError('website-readonly must run in a public read-only profile')
     root = get_default_hermes_root().resolve()
-    if home != root / 'profiles' / 'website-chat':
-        raise RuntimeError('website-readonly must run in the website-chat profile')
     readers = Readers(root, Path('/var/www/siyuanxue.com/current'),
-                      make_redactor(redact_sensitive_text), get_read_block_error)
+                      make_redactor(redact_sensitive_text), get_read_block_error,
+                      now=hermes_now)
     register_readers(ctx, readers)
