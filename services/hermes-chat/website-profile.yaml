@@ -1,0 +1,42 @@
+# Documentation-only partial overlay for the website-chat Hermes profile.
+# Audited against official Hermes v0.21.1. Merge these keys into the backed-up
+# profile; do not replace the complete config.yaml with this file.
+# Every value shown is authoritative for that listed path: replace the listed
+# lists and maps, including mcp_servers, instead of recursively retaining items.
+#
+# Deliberately omitted: the existing model/provider structure, credentials,
+# disabled skills, session/log settings, and every unrelated profile field.
+# Preserve the existing zai / https://open.bigmodel.cn/api/paas/v4 / glm-5.3
+# model selection and all protected secrets while applying this overlay.
+
+agent:
+  reasoning_effort: high
+  max_turns: 4
+  run_budget_seconds: 120
+  disabled_toolsets:
+    - kanban
+    - context_engine
+
+context:
+  engine: compressor
+
+memory:
+  memory_enabled: false
+  user_profile_enabled: false
+
+platform_toolsets:
+  api_server:
+    - web
+    - no_mcp
+  cli: []
+  weixin: []
+
+mcp_servers: {}
+
+web:
+  search_backend: tavily
+  extract_backend: tavily
+  provider_tier:
+    tavily: free
+  keyless_fallback: true
+  keyless_rescue: true
