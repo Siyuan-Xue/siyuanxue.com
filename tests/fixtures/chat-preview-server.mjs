@@ -24,6 +24,12 @@ export function validatePreviewRequest(headers, body) {
 
 export function buildScenario(prompt) {
   const start = [frame({ type: 'start', messageId: 'fixture-assistant' }), frame({ type: 'text-start', id: 'fixture-text' })];
+  if (/thinking/i.test(prompt)) return {
+    delayMs: 1200,
+    chunks: [...start, ...Array.from({ length: 20 }, () => ': waiting\n\n'),
+      frame({ type: 'text-delta', id: 'fixture-text', delta: 'A thought has arrived. 想到啦。' }),
+      frame({ type: 'text-end', id: 'fixture-text' }), frame({ type: 'finish', finishReason: 'stop' }), frame('[DONE]')],
+  };
   if (/quota/i.test(prompt)) return { delayMs: 0, chunks: [frame({ type: 'error', errorText: 'quota_exhausted' }), frame('[DONE]')] };
   if (/timeout/i.test(prompt)) return { delayMs: 120, chunks: [...start, frame({ type: 'text-delta', id: 'fixture-text', delta: 'This partial reply arrived before the timeout.' }), frame({ type: 'error', errorText: 'timeout' }), frame('[DONE]')] };
   if (/truncation/i.test(prompt)) return { delayMs: 80, chunks: [...start, frame({ type: 'text-delta', id: 'fixture-text', delta: 'This partial reply is intentionally interrupted' }), frame({ type: 'error', errorText: 'stream_error' }), frame('[DONE]')] };

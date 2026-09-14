@@ -1,7 +1,7 @@
 import { afterEach, expect, test } from 'bun:test';
 import { Window } from 'happy-dom';
 
-const browser = new Window({ url: 'https://example.test/chat/' });
+const browser = new Window({ url: 'https://example.test/chat/', settings: { device: { prefersReducedMotion: 'reduce' } } });
 browser.document.write('<!doctype html><html><head></head><body></body></html>');
 browser.document.close();
 Object.assign(globalThis, {
@@ -18,7 +18,7 @@ Object.assign(globalThis, {
   MutationObserver: browser.MutationObserver,
   ResizeObserver: browser.ResizeObserver,
   getComputedStyle: browser.getComputedStyle.bind(browser),
-  requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(() => callback(performance.now()), 0),
+  requestAnimationFrame: (callback: FrameRequestCallback) => setTimeout(() => callback(performance.now()), 16),
   cancelAnimationFrame: clearTimeout,
 });
 
@@ -102,6 +102,31 @@ test('streams markdown through the React chat and sends the exact public bridge 
   expect(JSON.parse(String(requests[0]!.body))).toEqual({ messages: [{ role: 'user', content: 'Hi' }] });
   expect(new Headers(requests[0]!.headers).get('X-Chat-Protocol')).toBe('ui-message-v1');
   expect(view.getAllByText('Hi')).toHaveLength(1);
+});
+
+test('shows one loader from submission until first text, without a composer status banner', async () => {
+  let respond!: (response: Response) => void;
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={() => new Promise(resolve => { respond = resolve; })} />);
+  const input = view.getByLabelText('Your message');
+  fireEvent.input(input, { target: { value: 'Think about this' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.container.querySelectorAll('[data-xue-loader]')).toHaveLength(1));
+  expect(view.container.querySelector('.xue-compose-area [role="status"]')).toBeNull();
+  respond(uiStream('Here is the answer'));
+  await waitFor(() => expect(view.getByText('Here is the answer')).toBeTruthy());
+  expect(view.container.querySelector('[data-xue-loader]')).toBeNull();
+});
+
+test('copy success stays on its action icon and never creates a composer banner', async () => {
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('Copy this answer')} />);
+  const input = view.getByLabelText('Your message');
+  fireEvent.input(input, { target: { value: 'Hello' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.getByRole('button', { name: copy.copy })).toBeTruthy());
+  fireEvent.click(view.getByRole('button', { name: copy.copy }));
+  await waitFor(() => expect(view.getByRole('button', { name: copy.copied })).toBeTruthy());
+  expect(await browser.navigator.clipboard.readText()).toBe('Copy this answer');
+  expect(view.container.querySelector('.xue-compose-area [role="status"]')).toBeNull();
 });
 
 test('renders hostile model HTML as inert text and provides a code copy control', async () => {
@@ -225,6 +250,7 @@ test('a new submission replaces a stopped unanswered turn and survives reload', 
   await waitFor(() => expect(view.getByRole('button', { name: 'Stop reply' })).toBeTruthy());
   fireEvent.click(view.getByRole('button', { name: 'Stop reply' }));
   await waitFor(() => expect(view.getByText(copy.stopped)).toBeTruthy());
+  expect(view.container.querySelector('[data-xue-loader]')).toBeNull();
 
   fireEvent.input(input, { target: { value: 'Replacement question' } });
   fireEvent.submit(input.closest('form')!);
@@ -277,7 +303,8 @@ test('a new submission drops an empty stopped assistant shell and survives reloa
   fireEvent.submit(input.closest('form')!);
   await waitFor(() => expect(view.getByRole('button', { name: 'Stop reply' })).toBeTruthy());
   fireEvent.click(view.getByRole('button', { name: 'Stop reply' }));
-  await waitFor(() => expect(view.getAllByText(copy.stopped).length).toBeGreaterThan(0));
+  await waitFor(() => expect(view.getByText(copy.stopped)).toBeTruthy());
+  expect(view.container.querySelector('[data-xue-loader]')).toBeNull();
 
   fireEvent.input(input, { target: { value: 'Replacement after empty shell' } });
   fireEvent.submit(input.closest('form')!);
@@ -329,7 +356,7 @@ test('stop keeps streamed partial text in persistence and the next submission', 
   fireEvent.submit(input.closest('form')!);
   await waitFor(() => expect(view.getByText('Partial answer')).toBeTruthy());
   fireEvent.click(view.getByRole('button', { name: 'Stop reply' }));
-  await waitFor(() => expect(view.getAllByText(/Reply stopped/).length).toBeGreaterThan(0));
+  await waitFor(() => expect(view.getByText(copy.stopped)).toBeTruthy());
   const saved = JSON.parse(browser.sessionStorage.getItem('xue-chat:v2')!);
   expect(saved.messages.at(-1)).toEqual({ id: 'assistant-stop', role: 'assistant', content: 'Partial answer', status: 'stopped' });
   fireEvent.input(input, { target: { value: 'Follow-up question' } });

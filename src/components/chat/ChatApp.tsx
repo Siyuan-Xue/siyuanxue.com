@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/react';
 import type { ChatStatus, UIMessage } from 'ai';
-import { ArrowUp, Baby, Copy, RefreshCcw, Square } from 'lucide-react';
+import { ArrowUp, Baby, Check, Copy, RefreshCcw, Square, X } from 'lucide-react';
 import { type FormEvent, type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ChatInputError,
@@ -20,6 +20,7 @@ import {
 } from '../../utils/chat-persistence';
 import { Conversation, ConversationContent, ConversationScrollButton } from './ai-elements/Conversation';
 import { Message, MessageAction, MessageActions, MessageContent, MessageResponse } from './ai-elements/Message';
+import { ThinkingIndicator } from './ThinkingIndicator';
 import './chat.css';
 
 type ErrorCopy = Record<ChatErrorCode, { title: string; detail: string }>;
@@ -65,7 +66,7 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
   const [errorCode, setErrorCode] = useState<ChatErrorCode>();
   const [storageFailed, setStorageFailed] = useState(false);
   const [readyToPersist, setReadyToPersist] = useState(false);
-  const [copyNotice, setCopyNotice] = useState('');
+  const [copyResult, setCopyResult] = useState<{ id: string; ok: boolean }>();
   const stopReason = useRef<'stopped' | 'interrupted'>('stopped');
   const messagesRef = useRef<UIMessage[]>([]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -85,7 +86,14 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
     },
   });
   const busy = activeStatuses.has(status);
+  const waitingForText = busy && (messages.at(-1)?.role !== 'assistant' || !getMessageText(messages.at(-1)!).trim());
   messagesRef.current = messages;
+
+  useEffect(() => {
+    if (!copyResult) return;
+    const timer = setTimeout(() => setCopyResult(undefined), 1800);
+    return () => clearTimeout(timer);
+  }, [copyResult]);
 
   useEffect(() => {
     let storage: Storage | undefined;
@@ -179,14 +187,13 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
   const copyAnswer = useCallback(async (message: UIMessage) => {
     try {
       if (!navigator.clipboard?.writeText) throw new Error('unavailable');
-      await navigator.clipboard.writeText(getMessageText(message)); setCopyNotice(copy.copied);
-    } catch { setCopyNotice(copy.copyFailed); }
-  }, [copy.copied, copy.copyFailed]);
+      await navigator.clipboard.writeText(getMessageText(message)); setCopyResult({ id: message.id, ok: true });
+    } catch { setCopyResult({ id: message.id, ok: false }); }
+  }, []);
 
   const hasConversation = messages.length > 0;
   const currentError = errorCode ? copy.errors[errorCode] : undefined;
   const retryMessage = messages.at(-1);
-  const statusText = busy ? copy.busy : copyNotice || (notice === 'recovery' ? copy.recovery : notice === 'interrupted' ? copy.interrupted : notice === 'stopped' ? copy.stopped : '');
   return (
     <section aria-label={copy.title} className="xue-chat" data-chat-state={hasConversation ? 'conversation' : 'welcome'}>
       <Conversation className="xue-chat-log" reduceMotion={reduceMotion}>
@@ -201,30 +208,32 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
           {messages.map((message, index) => {
             const savedStatus = messageStatus(message, index, messages, status, statuses);
             const text = getMessageText(message);
+            if (message.role === 'assistant' && !text.trim()) return null;
+            const result = copyResult?.id === message.id ? copyResult : undefined;
+            const CopyIcon = result ? result.ok ? Check : X : Copy;
             return <Message from={message.role} key={message.id}>
               <span className="xue-sr-only">{message.role === 'user' ? copy.you : copy.name}: </span>
               <MessageContent>{message.role === 'assistant'
-                ? text ? <MessageResponse isAnimating={savedStatus === 'streaming'} mode={savedStatus === 'streaming' ? 'streaming' : 'static'} translations={{ copyCode: copy.codeCopy, copied: copy.copied }}>{text}</MessageResponse> : <span aria-hidden="true" className="xue-thinking">···</span>
+                ? <MessageResponse isAnimating={savedStatus === 'streaming'} mode={savedStatus === 'streaming' ? 'streaming' : 'static'} translations={{ copyCode: copy.codeCopy, copied: copy.copied }}>{text}</MessageResponse>
                 : <span className="xue-user-text">{text}</span>}</MessageContent>
               {message.role === 'assistant' && savedStatus !== 'streaming' && text && <MessageActions>
-                <MessageAction label={copy.copy} onClick={() => copyAnswer(message)}><Copy aria-hidden="true" size={16} strokeWidth={1.8} /></MessageAction>
+                <MessageAction label={result ? result.ok ? copy.copied : copy.copyFailed : copy.copy} onClick={() => copyAnswer(message)}><CopyIcon aria-hidden="true" size={16} strokeWidth={1.8} /></MessageAction>
                 {savedStatus !== 'error' && index === messages.length - 1 && <MessageAction label={copy.retry} onClick={() => retry(message.id)}><RefreshCcw aria-hidden="true" size={16} strokeWidth={1.8} /></MessageAction>}
               </MessageActions>}
-              {message.role === 'assistant' && (savedStatus === 'stopped' || savedStatus === 'interrupted') && <p className="xue-message-note">{copy[savedStatus]}</p>}
             </Message>;
           })}
+          {waitingForText && <ThinkingIndicator label={copy.busy} reduceMotion={reduceMotion} />}
         </ConversationContent>
         <ConversationScrollButton label={copy.returnToBottom} reduceMotion={reduceMotion} />
       </Conversation>
       <div className="xue-compose-area">
-        {statusText && <div aria-atomic="true" aria-live="polite" className="xue-chat-status" role="status">{statusText}</div>}
         {currentError && <div className="xue-error-card" role="alert"><div><strong>{currentError.title}</strong><p>{currentError.detail}</p></div>
           {retryable.has(errorCode!) && retryMessage && <button onClick={() => retry(retryMessage.id)} type="button" aria-label={copy.retry} title={copy.retry}><RefreshCcw aria-hidden="true" size={18} /></button>}
         </div>}
         <form className="xue-composer" onSubmit={submit}>
           <label className="xue-sr-only" htmlFor="xue-chat-message">{copy.label}</label>
           <textarea aria-describedby="xue-chat-input-hint" autoComplete="off" id="xue-chat-message" maxLength={4000}
-            onChange={event => { setInput(event.currentTarget.value); setCopyNotice(''); }}
+            onChange={event => setInput(event.currentTarget.value)}
             onKeyDown={(event: KeyboardEvent<HTMLTextAreaElement>) => { if (shouldSubmitChat(event.nativeEvent, isMobile)) { event.preventDefault(); event.currentTarget.form?.requestSubmit(); } }}
             placeholder={copy.placeholder} ref={inputRef} rows={1} value={input} />
           <div className="xue-composer-toolbar"><span className="xue-identity"><Baby aria-hidden="true" size={18} strokeWidth={1.7} />{copy.identity}</span>
@@ -234,7 +243,9 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
         </form>
         <p className="xue-input-hint" id="xue-chat-input-hint">{isMobile ? copy.mobileInputHint : copy.inputHint}</p>
         {storageFailed && <p className="xue-storage-note" role="status">{copy.storage}</p>}
+        {notice === 'recovery' && <p className="xue-storage-note" role="alert">{copy.recovery}</p>}
       </div>
+      {(notice === 'stopped' || notice === 'interrupted') && <span className="xue-sr-only" role="status">{copy[notice]}</span>}
     </section>
   );
 }
