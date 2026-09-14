@@ -8,10 +8,16 @@
 }
 
 html  {
+	--header-control-size: 2.25rem;
+	--header-pad-top: 2rem;
+	--header-pad-bottom: 1.5rem;
+	--header-height: calc(var(--header-pad-top) + var(--header-control-size) + var(--header-pad-bottom));
 	-webkit-text-size-adjust: 100%;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	scroll-behavior: smooth;
+	scroll-padding-top: var(--header-height);
+	scrollbar-gutter: stable;
 	/* Match Dario: full canvas uses theme background (overscroll / invert) */
 	background-color: var(--bg);
 	color: var(--fg);
@@ -211,8 +217,13 @@ a:focus-visible  {
  * Header — name + language + theme share one bottom edge (no divider).
  */
 .header  {
-	--header-control-size: 2.25rem;
-	padding: 2rem 0 1.5rem;
+	position: sticky;
+	top: 0;
+	z-index: 20;
+	flex-shrink: 0;
+	padding: var(--header-pad-top) 0 var(--header-pad-bottom);
+	background-color: var(--bg);
+	transition: background-color var(--ease-color);
 }
 
 .header-inner  {
@@ -249,19 +260,23 @@ a:focus-visible  {
 	transition: color var(--ease-color);
 }
 
-.header-spacer  {
-	flex: 1 1 auto;
-	min-width: 0.5rem;
-	align-self: flex-end;
-	height: 0;
-	border: 0;
-}
-
 .header-controls  {
 	display: flex;
 	align-items: flex-end;
 	gap: 0.45rem;
 	flex-shrink: 0;
+	margin-left: auto;
+}
+
+/* Every page keeps three controls; article contents reuse the page-action slot. */
+.header-control-slot  {
+	width: var(--header-control-size);
+	height: var(--header-control-size);
+	flex-shrink: 0;
+}
+
+.header-control-slot:has(.toc-toggle:not([hidden])) .header-page-link  {
+	display: none;
 }
 
 /* Header controls */
@@ -407,10 +422,18 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 		--page-pad-x: 1rem;
 	}
 
-	.header {
-		padding-top: 1.5rem;
+	html {
+		--header-pad-top: 1.5rem;
 	}
 
+}
+
+@media (max-width: 600px) {
+	html { --header-control-size: 2.75rem; }
+}
+
+@media (max-width: 360px) {
+	html[data-lang='en'] { --font-size-header-name: 1.2em; }
 }
 
 
@@ -427,6 +450,7 @@ html.u-mode-invert .theme-toggle_icon--moon  {
   --border-soft: #bbb;
  }
  html, body  { background: white !important; color: black !important; }
+ .header { position: static; }
  .header-controls, .back-to-top, .romantic-mode_toast, .romantic-portrait_secret  { display: none !important; }
  .container  { max-width: none; padding: 0; }
  a  { color: inherit; }

@@ -14,5 +14,12 @@ const Brand = Astro.url.pathname === '/' ? 'h1' : 'span';
 ---
 <header class="header"><div class="container cc-narrow header-inner">
  <a href="/" class="header-name-link" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}><Brand class="header-name">{t(site.name)}</Brand></a>
- <div class="header-spacer"></div><div class="header-controls"><a class="header-control-button" href={isChat ? '/' : '/chat/'} aria-label={isChat ? homeLabel : chatLabel} title={isChat ? homeLabel : chatLabel}>{isChat ? <House size={18} stroke-width={1.8} aria-hidden="true" /> : <MessageCircleMore size={18} stroke-width={1.8} aria-hidden="true" />}</a>{showTocToggle && <TocToggle />}<LangToggle /><ThemeToggle /></div>
+ <div class="header-controls">
+  <div class="header-control-slot">
+   <a class="header-control-button header-page-link" href={isChat ? '/' : '/chat/'} aria-label={isChat ? homeLabel : chatLabel} title={isChat ? homeLabel : chatLabel}>{isChat ? <House size={18} stroke-width={1.8} aria-hidden="true" /> : <MessageCircleMore size={18} stroke-width={1.8} aria-hidden="true" />}</a>
+   {showTocToggle && <TocToggle />}
+  </div>
+  <LangToggle />
+  <ThemeToggle />
+ </div>
 </div></header>

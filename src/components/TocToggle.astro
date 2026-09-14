@@ -1,7 +1,8 @@
 ---
 import { t } from '../i18n/locale';
 import { site } from '../data/site';
+import { List } from '@lucide/astro';
 ---
-<button type="button" class="toc-toggle" data-toc-toggle hidden aria-expanded="false" aria-controls="site-toc" aria-label={t(site.ui.openContents)} title={t(site.ui.openContents)}>
- <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" /></svg>
+<button type="button" class="header-control-button toc-toggle" data-toc-toggle hidden aria-expanded="false" aria-controls="site-toc" aria-label={t(site.ui.openContents)} title={t(site.ui.openContents)}>
+ <List size={18} stroke-width={1.8} aria-hidden="true" />
 </button>

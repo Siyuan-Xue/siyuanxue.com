@@ -38,22 +38,6 @@
 	opacity: 1;
 }
 
-.toc-toggle {
-	background-color: transparent;
-	justify-content: center;
-	align-items: center;
-	width: 44px;
-	height: 44px;
-	padding: 0;
-	display: flex;
-	position: relative;
-	border: 0;
-	color: var(--fg);
-	cursor: pointer;
-	flex-shrink: 0;
-	z-index: 5;
-}
-
 body.has-toc .toc-toggle[hidden] {
 	display: none;
 }
@@ -74,5 +58,5 @@ body.has-toc .toc-toggle[hidden] { display: none; }
 }
 @media print { .toc-desktop, .toc-dialog, .toc-toggle { display: none !important; } }
 
-.prose h2[id], .prose h3[id] { scroll-margin-top: 2rem; }
+.prose h2[id], .prose h3[id] { scroll-margin-top: 1rem; }
 @media (max-width: 1479px) { .toc-link { opacity: 1; } }

@@ -65,11 +65,11 @@ for (const v of variants) {
   expect(document.querySelector('[data-secret-src]')?.getAttribute('data-secret-src')).toBe('/images/romantic-placeholder.svg');
   expect(document.querySelector('[data-secret-image-slot]')?.children.length).toBe(0);
   expect(await access(join(v.root, 'images/p-202.jpg')).then(() => true, () => false)).toBe(false);
-  const homeControl = document.querySelector<HTMLAnchorElement>('.header-controls > a:first-child')!;
+  const homeControl = document.querySelector<HTMLAnchorElement>('.header-page-link')!;
   expect(homeControl.getAttribute('href')).toBe('/chat/');
   expect(homeControl.getAttribute('aria-label')).toBe(v.chatLabel);
   const { document: chat } = parseHTML(await readFile(join(v.root, 'chat/index.html'), 'utf8'));
-  const chatControl = chat.querySelector<HTMLAnchorElement>('.header-controls > a:first-child')!;
+  const chatControl = chat.querySelector<HTMLAnchorElement>('.header-page-link')!;
   expect(chatControl.getAttribute('href')).toBe('/');
   expect(chatControl.getAttribute('aria-label')).toBe(v.homeLabel);
  });
