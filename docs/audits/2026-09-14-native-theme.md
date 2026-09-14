@@ -30,11 +30,15 @@ These are observations on this Safari version, not a promise that websites can f
 - Nginx configuration execution check remains pending: this local environment has no `nginx` executable. CI installs it before running the release checks.
 - `git diff --check` passed.
 
-## Release gate: pending
+## Desktop Chrome observations
 
-Desktop Chrome cannot yet be accepted. Newly opened tabs crashed for the site preview, the minimal standalone fixture, and `https://example.com/`. The running process path reports Chrome **152.0.7977.83** while the installed app reports **153.0.8010.37**, suggesting a pending browser restart after update. Restart confirmation has been requested because current user windows would close briefly.
+Before restart, new Chrome tabs crashed for the site preview, the standalone fixture and `https://example.com/`. The running process was 152.0.7977.83 while the installed app was 153.0.8010.37. After the user restarted Chrome, normal loading resumed.
 
-No production release has been made. Finish actual Chrome validation and release checks before publishing both domains. **Mobile is unverified**; no claim is made that the mobile issue is solved.
+Chrome **153.0.8010.37** passed homepage, article and chat theme switching, reload persistence, back/forward restoration of the most recent theme, and readable sticky navigation after scrolling. The 30-paragraph Chinese chat fixture scrolled independently while keeping the header and composer fixed. Chrome's desktop address/tab bars retain its browser theme; the site does not override that native behavior.
+
+## Release gate
+
+Desktop browser acceptance passed. Publish both domains only through the verified release workflow, which supplies the missing local Nginx validator. **Mobile is unverified**; no claim is made that the mobile issue is solved.
 
 ## References
 
