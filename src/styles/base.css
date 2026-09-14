@@ -9,8 +9,8 @@
 
 html  {
 	--header-control-size: 2.25rem;
-	--header-pad-top: 2rem;
-	--header-pad-bottom: 1.5rem;
+	--header-pad-top: 0.75rem;
+	--header-pad-bottom: 0.75rem;
 	--header-height: calc(var(--header-pad-top) + var(--header-control-size) + var(--header-pad-bottom));
 	-webkit-text-size-adjust: 100%;
 	-webkit-font-smoothing: antialiased;
@@ -422,14 +422,14 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 		--page-pad-x: 1rem;
 	}
 
-	html {
-		--header-pad-top: 1.5rem;
-	}
-
 }
 
 @media (max-width: 600px) {
-	html { --header-control-size: 2.75rem; }
+	html {
+		--header-control-size: 2.75rem;
+		--header-pad-top: 0.5rem;
+		--header-pad-bottom: 0.5rem;
+	}
 }
 
 @media (max-width: 360px) {
