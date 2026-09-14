@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/react';
 import type { ChatStatus, UIMessage } from 'ai';
-import { ArrowUp, Baby, Copy, Plus, RefreshCcw, Square } from 'lucide-react';
+import { ArrowUp, Baby, Copy, RefreshCcw, Square } from 'lucide-react';
 import { type FormEvent, type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ChatInputError,
@@ -13,8 +13,6 @@ import {
   shouldSubmitChat,
 } from '../../utils/chat-client';
 import {
-  CHAT_STORAGE_KEY,
-  LEGACY_CHAT_STORAGE_KEY,
   type MessageStatuses,
   type PersistedMessageStatus,
   loadChatSession,
@@ -27,7 +25,7 @@ import './chat.css';
 type ErrorCopy = Record<ChatErrorCode, { title: string; detail: string }>;
 export type ChatCopy = {
   title: string; name: string; welcome: string; intro: string; label: string; placeholder: string;
-  identity: string; send: string; stop: string; fresh: string; busy: string; you: string;
+  identity: string; send: string; stop: string; busy: string; you: string;
   copy: string; codeCopy: string; copied: string; copyFailed: string; retry: string; returnToBottom: string;
   inputHint: string; mobileInputHint: string; stopped: string; interrupted: string; recovery: string; storage: string;
   errors: ErrorCopy;
@@ -139,14 +137,6 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
     textarea.style.height = `${Math.min(220, Math.max(56, textarea.scrollHeight))}px`;
   }, [input]);
 
-  const resetConversation = useCallback(async () => {
-    stopReason.current = 'stopped';
-    await stop();
-    setMessages([]); setStatuses({}); setInput(''); setNotice(''); setErrorCode(undefined); clearError();
-    try { window.sessionStorage.removeItem(CHAT_STORAGE_KEY); window.sessionStorage.removeItem(LEGACY_CHAT_STORAGE_KEY); } catch {}
-    inputRef.current?.focus({ preventScroll: true });
-  }, [clearError, setMessages, stop]);
-
   const submit = useCallback(async (event: FormEvent) => {
     event.preventDefault();
     const text = input.trim();
@@ -199,9 +189,6 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
   const statusText = busy ? copy.busy : copyNotice || (notice === 'recovery' ? copy.recovery : notice === 'interrupted' ? copy.interrupted : notice === 'stopped' ? copy.stopped : '');
   return (
     <section aria-label={copy.title} className="xue-chat" data-chat-state={hasConversation ? 'conversation' : 'welcome'}>
-      <div className="xue-chat-topbar">
-        {hasConversation && <button className="xue-new-chat" onClick={resetConversation} type="button"><Plus aria-hidden="true" size={17} strokeWidth={1.8} />{copy.fresh}</button>}
-      </div>
       <Conversation className="xue-chat-log" reduceMotion={reduceMotion}>
         <ConversationContent>
           {!hasConversation && <div className="xue-welcome">

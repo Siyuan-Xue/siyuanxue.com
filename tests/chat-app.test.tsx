@@ -31,7 +31,7 @@ type StickToBottomInstance = import('use-stick-to-bottom').StickToBottomInstance
 const copy = {
   title: 'Chat with xue', name: 'xue', welcome: 'Good to meet you. I’m xue.', intro: 'Friendly intro.',
   label: 'Your message', placeholder: 'What’s on your mind?', identity: 'xue · Here to chat', send: 'Send message',
-  stop: 'Stop reply', fresh: 'New conversation', busy: 'xue is replying…', you: 'You',
+  stop: 'Stop reply', busy: 'xue is replying…', you: 'You',
   copy: 'Copy answer', codeCopy: 'Copy code', copied: 'Copied.', copyFailed: 'Copy failed.', retry: 'Try again', returnToBottom: 'Return to latest',
   inputHint: 'Enter to send · Shift + Enter for a new line', mobileInputHint: 'Use the send button · Enter makes a new line',
   stopped: 'Reply stopped. What arrived is saved.', interrupted: 'Reply interrupted. What arrived is saved.',
@@ -167,7 +167,7 @@ test('quota errors are localized, actionable, and do not offer a blind retry', a
   fireEvent.submit(input.closest('form')!);
   await waitFor(() => expect(view.getByRole('alert').textContent).toContain('out of replies'));
   expect(view.queryByRole('button', { name: 'Try again' })).toBeNull();
-  expect(view.getByRole('button', { name: 'New conversation' })).toBeTruthy();
+  expect(view.queryByRole('button', { name: 'New conversation' })).toBeNull();
   fireEvent.input(input, { target: { value: 'Keep this draft' } });
   await waitFor(() => expect(JSON.parse(browser.sessionStorage.getItem('xue-chat:v2')!).error).toBe('quota_exhausted'));
   view.unmount();
