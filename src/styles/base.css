@@ -18,12 +18,9 @@ html  {
 	scroll-behavior: smooth;
 	scroll-padding-top: var(--header-height);
 	scrollbar-gutter: stable;
-	/* Match Dario: full canvas uses theme background (overscroll / invert) */
+	/* Canvas and sticky header switch in the same paint, including overscroll. */
 	background-color: var(--bg);
 	color: var(--fg);
-	transition:
-		color var(--ease-color),
-		background-color var(--ease-color);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -48,9 +45,6 @@ body  {
 	font-size: var(--font-size-body);
 	font-weight: 400;
 	line-height: var(--line-height-body);
-	transition:
-		color var(--ease-color),
-		background-color var(--ease-color);
 }
 
 /*
@@ -222,7 +216,6 @@ a:hover  {
 	flex-shrink: 0;
 	padding: var(--header-pad-top) 0 var(--header-pad-bottom);
 	background-color: var(--bg);
-	transition: background-color var(--ease-color);
 }
 
 .header-inner  {

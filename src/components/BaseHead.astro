@@ -12,6 +12,8 @@ const schema = articleDate ? { '@context': 'https://schema.org', '@type': 'BlogP
 ---
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#f0eee6" data-light="#f0eee6" data-dark="#1f1e1d" />
+<meta name="color-scheme" content="light" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
 <title>{fullTitle}</title>
@@ -39,5 +41,14 @@ const schema = articleDate ? { '@context': 'https://schema.org', '@type': 'BlogP
 <meta name="generator" content={Astro.generator} />
 {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />}
 <script is:inline>
- (() => { let theme; try { theme = localStorage.getItem('color-mode'); } catch {} const dark = theme === 'dark' || (theme == null && matchMedia('(prefers-color-scheme: dark)').matches); document.documentElement.classList.toggle('u-mode-invert', dark); })();
+ (() => {
+  let theme;
+  try { theme = localStorage.getItem('color-mode'); } catch {}
+  const dark = theme === 'dark' || (theme == null && matchMedia('(prefers-color-scheme: dark)').matches);
+  const mode = dark ? 'dark' : 'light';
+  document.documentElement.classList.toggle('u-mode-invert', dark);
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  themeColor.setAttribute('content', themeColor.dataset[mode]);
+  document.querySelector('meta[name="color-scheme"]').setAttribute('content', mode);
+ })();
 </script>

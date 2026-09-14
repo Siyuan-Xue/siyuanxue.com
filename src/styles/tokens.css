@@ -8,6 +8,7 @@
  */
 
 :root {
+	color-scheme: light;
 	/* --colors--background: ivory-medium */
 	--bg: #f0eee6;
 	/* ivory-light — slightly lifted surfaces (code, chips) */
@@ -74,6 +75,7 @@
 
 /* Dario .u-mode-invert: bg = slate-dark, text = ivory-medium */
 html.u-mode-invert {
+	color-scheme: dark;
 	--bg: #1f1e1d;
 	/* slate-medium — elevated / code surfaces */
 	--bg-elevated: #3d3d3a;

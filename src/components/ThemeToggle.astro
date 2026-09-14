@@ -10,7 +10,18 @@ import { Moon, Sun } from '@lucide/astro';
  const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
  if (button) {
   const root = document.documentElement;
-  const sync = () => { const dark = root.classList.contains('u-mode-invert'); const label = (dark ? button.dataset.labelLight : button.dataset.labelDark) ?? ''; button.setAttribute('aria-pressed', String(dark)); button.setAttribute('aria-label', label); button.title = label; };
+  const sync = () => {
+   const dark = root.classList.contains('u-mode-invert');
+   const mode = dark ? 'dark' : 'light';
+   const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+   const color = themeColor?.dataset[mode];
+   if (themeColor && color) themeColor.content = color;
+   document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', mode);
+   const label = (dark ? button.dataset.labelLight : button.dataset.labelDark) ?? '';
+   button.setAttribute('aria-pressed', String(dark));
+   button.setAttribute('aria-label', label);
+   button.title = label;
+  };
   sync();
   button.addEventListener('click', () => { root.classList.toggle('u-mode-invert'); sync(); try { localStorage.setItem('color-mode', root.classList.contains('u-mode-invert') ? 'dark' : 'light'); } catch {} });
  }

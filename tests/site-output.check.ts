@@ -17,20 +17,44 @@ for (const v of variants) {
    if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
   }
   const button = document.querySelector<HTMLElement>('[data-theme-toggle]')!;
+  const themeColor = document.querySelector('meta[name="theme-color"]');
+  const colorScheme = document.querySelector('meta[name="color-scheme"]');
+  expect(themeColor?.getAttribute('content')).toBe('#f0eee6');
+  expect(colorScheme?.getAttribute('content')).toBe('light');
   expect(button.getAttribute('aria-pressed')).toBe('false');
   button.click();
   expect(button.getAttribute('aria-pressed')).toBe('true');
   expect(document.documentElement.classList.contains('u-mode-invert')).toBe(true);
+  expect(themeColor?.getAttribute('content')).toBe('#1f1e1d');
+  expect(colorScheme?.getAttribute('content')).toBe('dark');
   button.click();
   expect(button.getAttribute('aria-pressed')).toBe('false');
   expect(document.documentElement.classList.contains('u-mode-invert')).toBe(false);
+  expect(themeColor?.getAttribute('content')).toBe('#f0eee6');
+  expect(colorScheme?.getAttribute('content')).toBe('light');
  });
+ for (const [saved, systemDark, expectedDark] of [
+  ['dark', false, true], ['light', true, false], [null, true, true], [null, false, false],
+ ] as const) {
+  test(`${v.lang}: theme at first paint respects saved=${saved}, systemDark=${systemDark}`, async () => {
+   const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+   const context = createContext({ document, localStorage: { getItem: () => saved }, matchMedia: () => ({ matches: systemDark }) });
+   for (const script of document.head.querySelectorAll('script:not([src])')) {
+    if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
+   }
+   expect(document.documentElement.classList.contains('u-mode-invert')).toBe(expectedDark);
+   expect(document.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe(expectedDark ? '#1f1e1d' : '#f0eee6');
+   expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe(expectedDark ? 'dark' : 'light');
+  });
+ }
  test(`${v.lang}: single locale HTML, canonical metadata, reciprocal language links and complete local assets`, async () => {
   const files = await htmlFiles(v.root); expect(files.length).toBeGreaterThanOrEqual(6);
   for (const path of files) {
    const { document } = parseHTML(await readFile(path, 'utf8'));
    const pathname = path.slice(v.root.length).replace(/index\.html$/, '').replace(/404\.html$/, '404/');
    expect(document.documentElement.lang).toBe(v.lang);
+   expect(document.querySelectorAll('meta[name="theme-color"]').length).toBe(1);
+   expect(document.querySelectorAll('meta[name="color-scheme"]').length).toBe(1);
    expect(document.querySelectorAll('h1').length).toBe(1);
    expect(document.querySelectorAll('.i18n-en,.i18n-zh,.lang-body-en,.lang-body-zh,[data-page-boot]').length).toBe(0);
    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(v.origin + pathname);
