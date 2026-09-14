@@ -1,0 +1,15 @@
+# Partial overlay: merge into default, xue-owner and wechat-public only.
+# Preserve all model credentials, gateway routing and tool permissions.
+# Also enable the voice-context plugin without replacing existing plugin lists.
+stt:
+  enabled: true
+  provider: local
+  language: ""
+  prompt: "薛思远，小薛，北京邮电大学，北邮，BUPT。中文请使用简体字。"
+  local:
+    # Provision the cached base snapshot here before applying this overlay.
+    # A local directory avoids Hugging Face network checks on a cold start.
+    model: /home/ubuntu/.hermes/models/faster-whisper-base
+    language: ""
+    vad: true
+    unload_after_idle_seconds: 0

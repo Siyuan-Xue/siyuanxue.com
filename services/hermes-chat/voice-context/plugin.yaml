@@ -1,0 +1,5 @@
+name: voice-context
+version: 1.0.0
+description: Preserve Weixin voice provenance without changing tools or routing.
+provides_hooks:
+  - pre_gateway_dispatch

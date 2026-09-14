@@ -63,7 +63,11 @@ def main():
         assert config['curator']['enabled'] is False
         assert config['mcp_servers'] == {}
         assert config['timezone'] == 'Asia/Shanghai'
-        assert config['plugins']['enabled'] == ['website-readonly']
+        allowed_plugins = {'website-readonly'}
+        if args.profile == 'wechat-public' and not args.fixture:
+            allowed_plugins.add('voice-context')
+        assert 'website-readonly' in config['plugins']['enabled']
+        assert set(config['plugins']['enabled']) <= allowed_plugins
         assert config['platform_toolsets'][platform] == ['web', 'website_readonly', 'no_mcp']
         for other in {'api_server', 'cli', 'weixin'} - {platform}:
             assert config['platform_toolsets'][other] == []
