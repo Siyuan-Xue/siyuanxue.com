@@ -12,7 +12,7 @@ for (const v of variants) {
  test(`${v.lang}: shipped theme controls work when browser storage throws`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
   const storage = { getItem() { throw new Error('SecurityError'); }, setItem() { throw new Error('SecurityError'); } };
-  const context = createContext({ document, localStorage: storage, matchMedia: () => ({ matches: false }) });
+  const context = createContext({ document, window: document.defaultView, localStorage: storage, matchMedia: () => ({ matches: false }) });
   for (const script of document.querySelectorAll('script:not([src])')) {
    if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
   }
@@ -38,7 +38,7 @@ for (const v of variants) {
  ] as const) {
   test(`${v.lang}: theme at first paint respects saved=${saved}, systemDark=${systemDark}`, async () => {
    const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
-   const context = createContext({ document, localStorage: { getItem: () => saved }, matchMedia: () => ({ matches: systemDark }) });
+   const context = createContext({ document, window: document.defaultView, localStorage: { getItem: () => saved }, matchMedia: () => ({ matches: systemDark }) });
    for (const script of document.head.querySelectorAll('script:not([src])')) {
     if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
    }
@@ -47,6 +47,24 @@ for (const v of variants) {
    expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe(expectedDark ? 'dark' : 'light');
   });
  }
+ test(`${v.lang}: returning through browser history restores the latest chosen theme`, async () => {
+  const { document, window } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+  let saved = 'light';
+  const context = createContext({ document, window, localStorage: { getItem: () => saved, setItem: (_key: string, value: string) => { saved = value; } }, matchMedia: () => ({ matches: false }) });
+  for (const script of document.querySelectorAll('script:not([src])')) {
+   if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
+  }
+  const button = document.querySelector<HTMLElement>('[data-theme-toggle]')!;
+  button.click();
+  expect(saved).toBe('dark');
+  saved = 'light'; // A different page changed the saved preference.
+  const event = new window.Event('pageshow');
+  Object.defineProperty(event, 'persisted', { value: true });
+  window.dispatchEvent(event);
+  expect(document.documentElement.classList.contains('u-mode-invert')).toBe(false);
+  expect(button.getAttribute('aria-pressed')).toBe('false');
+  expect(document.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe('#f0eee6');
+ });
  test(`${v.lang}: single locale HTML, canonical metadata, reciprocal language links and complete local assets`, async () => {
   const files = await htmlFiles(v.root); expect(files.length).toBeGreaterThanOrEqual(6);
   for (const path of files) {

@@ -6,23 +6,3 @@ import { Moon, Sun } from '@lucide/astro';
 <button type="button" class="header-control-button theme-toggle" data-theme-toggle data-label-dark={t(site.ui.switchToDark)} data-label-light={t(site.ui.switchToLight)} aria-label={t(site.ui.switchToDark)} aria-pressed="false" title={t(site.ui.switchToDark)}>
  <Sun class="theme-toggle_icon theme-toggle_icon--sun" size={18} stroke-width={1.8} aria-hidden="true" /><Moon class="theme-toggle_icon theme-toggle_icon--moon" size={18} stroke-width={1.8} aria-hidden="true" />
 </button>
-<script>
- const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
- if (button) {
-  const root = document.documentElement;
-  const sync = () => {
-   const dark = root.classList.contains('u-mode-invert');
-   const mode = dark ? 'dark' : 'light';
-   const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-   const color = themeColor?.dataset[mode];
-   if (themeColor && color) themeColor.content = color;
-   document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', mode);
-   const label = (dark ? button.dataset.labelLight : button.dataset.labelDark) ?? '';
-   button.setAttribute('aria-pressed', String(dark));
-   button.setAttribute('aria-label', label);
-   button.title = label;
-  };
-  sync();
-  button.addEventListener('click', () => { root.classList.toggle('u-mode-invert'); sync(); try { localStorage.setItem('color-mode', root.classList.contains('u-mode-invert') ? 'dark' : 'light'); } catch {} });
- }
-</script>

@@ -225,6 +225,16 @@ a:hover  {
 	gap: 0.75rem;
 }
 
+/* An opaque sticky surface can leave Safari's native toolbar tint stale.
+ * Let its native backdrop follow the canvas without changing header layout. */
+@supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) and (background: color-mix(in srgb, white 82%, transparent)) {
+	.header {
+		background-color: color-mix(in srgb, var(--bg) 82%, transparent);
+		-webkit-backdrop-filter: blur(12px);
+		backdrop-filter: blur(12px);
+	}
+}
+
 .header-name-link  {
 	display: inline-flex;
 	align-items: flex-end;
