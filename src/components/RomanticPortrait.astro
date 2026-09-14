@@ -4,6 +4,7 @@ import { site } from '../data/site';
 import { t } from '../i18n/locale';
 import { Picture } from 'astro:assets';
 import portraitImage from '../assets/portrait.jpg';
+import { X } from '@lucide/astro';
 import '../styles/romantic.css';
 
 const portrait = site.portrait;
@@ -40,6 +41,7 @@ const captionId = 'romantic-mode-caption';
 	data-status6={t(status6.message)}
 	data-status7={t(status7.message)}
 >
+	<template data-lightbox-close-icon><span aria-hidden="true"><X size={18} stroke-width={1.8} /></span></template>
 	{/*
 	  Portrait stage: md blocks, faint tone over soft veil — sits in the float column.
 	  The secret card keeps the same loader pattern at md.
@@ -66,7 +68,7 @@ const captionId = 'romantic-mode-caption';
 				width={960}
 				widths={[320, 640, 960]}
 				formats={['avif', 'webp']}
-				sizes="(max-width: 480px) min(46vw, calc(100vw - 12rem), 12rem), (max-width: 720px) 192px, (max-width: 896px) calc((100vw - 48px) * .3), 254.4px"
+				sizes="(max-width: 480px) min(46vw, calc(100vw - 12rem), 12rem), 192px"
 				loading="eager"
 				fetchpriority="high"
 				decoding="async"

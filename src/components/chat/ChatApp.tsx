@@ -219,7 +219,7 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
       <div className="xue-compose-area">
         {statusText && <div aria-atomic="true" aria-live="polite" className="xue-chat-status" role="status">{statusText}</div>}
         {currentError && <div className="xue-error-card" role="alert"><div><strong>{currentError.title}</strong><p>{currentError.detail}</p></div>
-          {retryable.has(errorCode!) && retryMessage && <button onClick={() => retry(retryMessage.id)} type="button"><RefreshCcw aria-hidden="true" size={16} />{copy.retry}</button>}
+          {retryable.has(errorCode!) && retryMessage && <button onClick={() => retry(retryMessage.id)} type="button" aria-label={copy.retry} title={copy.retry}><RefreshCcw aria-hidden="true" size={18} /></button>}
         </div>}
         <form className="xue-composer" onSubmit={submit}>
           <label className="xue-sr-only" htmlFor="xue-chat-message">{copy.label}</label>

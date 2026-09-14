@@ -6,5 +6,4 @@ export function resolveLocale(value: string | undefined): Locale {
 }
 export const locale = resolveLocale(import.meta.env?.SITE_LOCALE ?? process.env.SITE_LOCALE);
 export function localeOrigin(value: Locale): string { return value === 'en' ? 'https://siyuanxue.com' : 'https://xuesiyuan.com'; }
-export function counterpartUrl(value: Locale, path: string): string { return new URL(new URL(path, localeOrigin(value)).pathname, localeOrigin(value === 'en' ? 'zh' : 'en')).href; }
 export function t(value: Bi): string { return value[locale]; }

@@ -89,11 +89,6 @@
 	display: none;
 }
 
-.romantic-portrait_primary:focus-visible,
-.romantic-portrait_secret:focus-visible {
-	outline: 2px solid var(--focus);
-	outline-offset: 4px;
-}
 
 .romantic-portrait_image,
 .romantic-portrait_secret-media {
@@ -325,7 +320,7 @@
 	place-items: center;
 	width: 30px;
 	height: 30px;
-	padding: 0 0 2px;
+	padding: 0;
 	border: 1px solid var(--romantic-lightbox-rule);
 	border-radius: 50%;
 	background: var(--romantic-lightbox-paper);
@@ -334,11 +329,6 @@
 
 .romantic-lightbox.pswp .romantic-lightbox_close:hover > span {
 	background: #ebe4d8;
-}
-
-.romantic-lightbox.pswp .romantic-lightbox_close:focus-visible {
-	outline: 2px solid #f5f0e7;
-	outline-offset: 1px;
 }
 
 .romantic-lightbox.pswp--zoomed-in .romantic-lightbox_frame,
@@ -405,4 +395,3 @@
 		transition: none;
 	}
 }
-

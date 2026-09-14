@@ -207,7 +207,7 @@ import PhotoSwipe from 'photoswipe';
 				appendTo: 'root',
 				isButton: true,
 				ariaLabel: localized('closeLabel'),
-				html: '<span aria-hidden="true">×</span>',
+				html: root.querySelector<HTMLTemplateElement>('[data-lightbox-close-icon]')?.innerHTML ?? '',
 				onClick: 'close',
 				onInit: (element) => {
 					lightboxClose = element;

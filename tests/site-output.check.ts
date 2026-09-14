@@ -34,7 +34,8 @@ for (const v of variants) {
    expect(document.querySelectorAll('h1').length).toBe(1);
    expect(document.querySelectorAll('.i18n-en,.i18n-zh,.lang-body-en,.lang-body-zh,[data-page-boot]').length).toBe(0);
    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(v.origin + pathname);
-   expect(document.querySelector('a.lang-toggle')?.getAttribute('href')).toBe(v.other + pathname);
+   expect(document.querySelector('a.lang-toggle')).toBeNull();
+   if (pathname !== '/') expect(document.querySelector('.header-home-link')?.getAttribute('href')).toBe('/');
    expect(document.querySelector('link[hreflang="en"]')?.getAttribute('href')).toBe('https://siyuanxue.com' + pathname);
    expect(document.querySelector('link[hreflang="zh-CN"]')?.getAttribute('href')).toBe('https://xuesiyuan.com' + pathname);
    expect(document.querySelector('link[hreflang="x-default"]')?.getAttribute('href')).toBe('https://siyuanxue.com' + pathname);
@@ -65,11 +66,11 @@ for (const v of variants) {
   expect(document.querySelector('[data-secret-src]')?.getAttribute('data-secret-src')).toBe('/images/romantic-placeholder.svg');
   expect(document.querySelector('[data-secret-image-slot]')?.children.length).toBe(0);
   expect(await access(join(v.root, 'images/p-202.jpg')).then(() => true, () => false)).toBe(false);
-  const homeControl = document.querySelector<HTMLAnchorElement>('.header-page-link')!;
+  const homeControl = document.querySelector<HTMLAnchorElement>('.header-chat-link')!;
   expect(homeControl.getAttribute('href')).toBe('/chat/');
   expect(homeControl.getAttribute('aria-label')).toBe(v.chatLabel);
   const { document: chat } = parseHTML(await readFile(join(v.root, 'chat/index.html'), 'utf8'));
-  const chatControl = chat.querySelector<HTMLAnchorElement>('.header-page-link')!;
+  const chatControl = chat.querySelector<HTMLAnchorElement>('.header-home-link')!;
   expect(chatControl.getAttribute('href')).toBe('/');
   expect(chatControl.getAttribute('aria-label')).toBe(v.homeLabel);
  });

@@ -180,9 +180,8 @@ a:hover  {
 	color: var(--fg-muted);
 }
 
-a:focus-visible  {
-	outline: 2px solid var(--focus);
-	outline-offset: 2px;
+:focus:not(input):not(textarea):not(select) {
+	outline: none !important;
 }
 
 .h3  {
@@ -268,17 +267,6 @@ a:focus-visible  {
 	margin-left: auto;
 }
 
-/* Every page keeps three controls; article contents reuse the page-action slot. */
-.header-control-slot  {
-	width: var(--header-control-size);
-	height: var(--header-control-size);
-	flex-shrink: 0;
-}
-
-.header-control-slot:has(.toc-toggle:not([hidden])) .header-page-link  {
-	display: none;
-}
-
 /* Header controls */
 .header-control-button  {
 	appearance: none;
@@ -303,13 +291,7 @@ a:focus-visible  {
 	color: var(--fg);
 }
 
-.header-control-button:focus-visible  {
-	outline: 2px solid var(--focus);
-	outline-offset: 2px;
-}
-
 /* Icon-only controls keep their full click targets. */
-.lang-toggle_icon,
 .theme-toggle_icon  {
 	display: block;
 	width: 1.125rem;
@@ -400,9 +382,12 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 }
 
 .back-to-top  {
-	display: inline-block;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
 	margin-top: 2.5rem;
-	font-size: var(--font-size-meta);
 	color: var(--fg-muted);
 	text-decoration: none;
 }
@@ -433,7 +418,9 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 }
 
 @media (max-width: 360px) {
-	html[data-lang='en'] { --font-size-header-name: 1.2em; }
+	html[data-lang='en'] { --font-size-header-name: 1em; }
+	.header-inner { gap: 0.5rem; }
+	.header-controls { gap: 0.125rem; }
 }
 
 

@@ -29,8 +29,8 @@
 	/* cloud-medium */
 	--border-soft: #b0aea5;
 
-	/* Dario is 38.75rem; further widened per preference */
-	--narrow: 56rem; /* 896px main column */
+	/* A slightly wider reading column than Dario's 38.75rem container. */
+	--narrow: 42rem; /* 672px container; 624px content on desktop */
 	--page-pad-x: 1.5rem;
 	--section-gap: 2.5rem;
 	--list-gap: 0.8em;
@@ -62,7 +62,6 @@
 	--letter-spacing-zh-body: 0.02em;
 
 	--ease-color: 0.2s linear;
-	--focus: #0066cc;
 
 	/*
 	 * Loading placeholder (blocks-shuffle) — theme palette tones via currentColor.
