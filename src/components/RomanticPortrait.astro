@@ -28,8 +28,6 @@ const captionId = 'romantic-mode-caption';
  data-load-error={t({ en: 'The image could not be loaded. Please try again.', zh: '图片加载失败，请重试。' })}
 	data-turn-on-label={t(secret.turnOnLabel)}
 	data-turn-off-label={t(secret.turnOffLabel)}
-	data-mode-on={t(secret.modeOnMessage)}
-	data-mode-off={t(secret.modeOffMessage)}
 >
 	<template data-lightbox-close-icon><span aria-hidden="true"><X size={18} stroke-width={1.8} /></span></template>
 	{/*
@@ -87,11 +85,12 @@ const captionId = 'romantic-mode-caption';
 	</div>
 
 	<p
-		class="romantic-mode_toast"
+		class="romantic-portrait_error"
 		role="status"
 		aria-live="polite"
 		aria-atomic="true"
-		data-romantic-status
+		data-romantic-error
+		hidden
 	></p>
 
 	<p id={captionId} class="u-sr-only" lang="en" data-romantic-lightbox-description>

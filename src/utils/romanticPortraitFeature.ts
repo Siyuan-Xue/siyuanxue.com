@@ -25,25 +25,24 @@ import PhotoSwipe from 'photoswipe';
 		const primaryLoadingSlot = root.querySelector<HTMLElement>('[data-primary-loading-slot]');
 		const secretCard = root.querySelector<HTMLAnchorElement>('[data-secret-card]');
 		const secretImageSlot = root.querySelector<HTMLElement>('[data-secret-image-slot]');
-		const status = root.querySelector<HTMLElement>('[data-romantic-status]');
+		const errorMessage = root.querySelector<HTMLElement>('[data-romantic-error]');
 
 		if (
 			!trigger ||
 			!primaryImage ||
 			!secretCard ||
 			!secretImageSlot ||
-			!status
+			!errorMessage
 		) {
 			return;
 		}
 
 		let state = initialState ?? createRomanticModeState();
-		let activeStatusName: string | null = null;
-		let toastTimer: number | undefined;
 		let concealTimer: number | undefined;
 		let revealFrame: number | undefined;
 		let secretImage: HTMLImageElement | null = null;
 		let secretImageFailed = false;
+		const failedImages = new Set<HTMLImageElement>();
 
 		const localized = (name: string) => root.dataset[name] ?? '';
 
@@ -77,17 +76,26 @@ import PhotoSwipe from 'photoswipe';
 			slot.classList.toggle('is-loading', loading);
 		};
 
+		const syncImageError = () => {
+			errorMessage.textContent = failedImages.size ? localized('loadError') : '';
+			errorMessage.hidden = failedImages.size === 0;
+		};
+
 		const bindImageLoading = (
 			image: HTMLImageElement,
 			slot: HTMLElement | null | undefined,
 			onFailure: () => void = () => {},
 		) => {
-			const finish = () => setLoading(slot, false);
+			const finish = () => {
+				setLoading(slot, false);
+				failedImages.delete(image);
+				syncImageError();
+			};
 			const fail = () => {
-				finish();
+				setLoading(slot, false);
+				failedImages.add(image);
 				onFailure();
-				status.textContent = localized('loadError');
-				status.classList.add('is-visible');
+				syncImageError();
 			};
 			if (image.complete) {
 				if (image.naturalWidth > 0) finish();
@@ -115,6 +123,8 @@ import PhotoSwipe from 'photoswipe';
 
 		const ensureSecretImage = () => {
 			if (secretImage && !secretImageFailed) return;
+			if (secretImage) failedImages.delete(secretImage);
+			syncImageError();
 			secretImage?.remove();
 			secretImageFailed = false;
 			setLoading(secretCard, true);
@@ -134,9 +144,6 @@ import PhotoSwipe from 'photoswipe';
 				);
 
 			if (secretImage) secretImage.alt = localized('secretAlt');
-			if (activeStatusName) {
-				status.textContent = localized(activeStatusName);
-			}
 
 			const caption = localized('caption');
 			const closeLabel = localized('closeLabel');
@@ -310,18 +317,6 @@ import PhotoSwipe from 'photoswipe';
 			lightboxClose = null;
 		});
 
-		const showStatus = (name: string, duration = 2800) => {
-			activeStatusName = name;
-			status.textContent = localized(name);
-			status.classList.add('is-visible');
-			if (toastTimer !== undefined) window.clearTimeout(toastTimer);
-			toastTimer = window.setTimeout(() => {
-				status.classList.remove('is-visible');
-				status.textContent = '';
-				activeStatusName = null;
-			}, duration);
-		};
-
 		const syncTriggerState = () => {
 			trigger.setAttribute('aria-expanded', String(state.active));
 				trigger.setAttribute('aria-pressed', String(state.active));
@@ -386,10 +381,8 @@ import PhotoSwipe from 'photoswipe';
 			state = advanceRomanticMode(state).state;
 			if (state.active) {
 				reveal(true);
-				showStatus('modeOn');
 			} else {
 				conceal(true);
-				showStatus('modeOff');
 			}
 		});
 

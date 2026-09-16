@@ -6,7 +6,7 @@ import { createRomanticModeState } from '../src/utils/romanticMode';
 import { labelRomanticLightboxDialog } from '../src/utils/romanticLightbox';
 
 async function withPortrait(run: (root: HTMLElement, window: ReturnType<typeof parseHTML>['window']) => void | Promise<void>) {
- const { window, document } = parseHTML('<html><body><div data-romantic-mode data-secret-src="/images/romantic-placeholder.webp" data-turn-on-label="Turn on" data-turn-off-label="Turn off" data-load-error="The image could not be loaded. Please try again."><button data-romantic-trigger><img data-primary-image></button><div data-primary-loading-slot></div><a data-secret-card data-romantic-lightbox-trigger hidden><span data-secret-image-slot></span></a><p data-romantic-status></p></div></body></html>');
+ const { window, document } = parseHTML('<html><body><div data-romantic-mode data-secret-src="/images/romantic-placeholder-companion.webp" data-turn-on-label="Turn on" data-turn-off-label="Turn off" data-load-error="The image could not be loaded. Please try again."><button data-romantic-trigger><img data-primary-image></button><div data-primary-loading-slot></div><a data-secret-card data-romantic-lightbox-trigger hidden><span data-secret-image-slot></span></a><p data-romantic-error hidden></p></div></body></html>');
  const original = Object.getOwnPropertyDescriptors(globalThis);
  Object.defineProperty(window, 'sessionStorage', { configurable: true, get() { throw new Error('Storage blocked'); } });
  Object.defineProperty(window, 'matchMedia', { configurable: true, value: () => ({ matches: true }) });
@@ -26,7 +26,7 @@ test('lazy feature reveals on its initial activation even when session storage i
  initRomanticPortrait(root, createRomanticModeState(true));
  expect(root.classList.contains('is-active')).toBe(true);
  expect(root.querySelector('[data-secret-card]')?.hasAttribute('hidden')).toBe(false);
- expect(root.querySelector('[data-secret-image-slot] img')?.getAttribute('src')).toBe('/images/romantic-placeholder.webp');
+ expect(root.querySelector('[data-secret-image-slot] img')?.getAttribute('src')).toBe('/images/romantic-placeholder-companion.webp');
  root.querySelector<HTMLButtonElement>('[data-romantic-trigger]')!.click();
  expect(root.classList.contains('is-active')).toBe(false);
  expect(root.querySelector('[data-romantic-trigger]')?.getAttribute('aria-pressed')).toBe('false');
@@ -37,7 +37,7 @@ test('a primary image that failed before lazy initialization leaves no permanent
  Object.defineProperties(primary, { complete: { value: true }, naturalWidth: { value: 0 } });
  initRomanticPortrait(root, createRomanticModeState(true));
  expect(root.querySelector('[data-primary-loading-slot]')?.classList.contains('is-loading')).toBe(false);
- expect(root.querySelector('[data-romantic-status]')?.textContent).toContain('Please try again');
+ expect(root.querySelector('[data-romantic-error]')?.textContent).toContain('Please try again');
  expect(root.classList.contains('is-active')).toBe(true);
 }));
 
@@ -46,16 +46,17 @@ test('toggling a revealed card off and on retries its failed thumbnail', () => w
  const failed = root.querySelector<HTMLImageElement>('[data-secret-image-slot] img')!;
  failed.dispatchEvent(new window.Event('error'));
  expect(root.querySelector('[data-secret-card]')?.classList.contains('is-loading')).toBe(false);
- expect(root.querySelector('[data-romantic-status]')?.textContent).toContain('Please try again');
+ expect(root.querySelector('[data-romantic-error]')?.textContent).toContain('Please try again');
  const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]')!;
  trigger.click(); trigger.click();
  const retried = root.querySelector<HTMLImageElement>('[data-secret-image-slot] img')!;
  expect(retried === failed).toBe(false);
- expect(retried.getAttribute('src')).toBe('/images/romantic-placeholder.webp');
+ expect(retried.getAttribute('src')).toBe('/images/romantic-placeholder-companion.webp');
  expect(root.querySelector('[data-secret-card]')?.classList.contains('is-loading')).toBe(true);
  retried.dispatchEvent(new window.Event('load'));
  expect(root.querySelector('[data-secret-card]')?.classList.contains('is-loading')).toBe(false);
  expect(root.querySelectorAll('[data-secret-image-slot] img').length).toBe(1);
+ expect(root.querySelector<HTMLElement>('[data-romantic-error]')!.hidden).toBe(true);
  expect(trigger.getAttribute('aria-pressed')).toBe('true');
 }));
 
@@ -82,4 +83,18 @@ test('eager controller loads once on the first click and ignores old unlock data
  expect(root.querySelectorAll('[data-secret-image-slot] img').length).toBe(1);
  trigger.click();
  expect(root.classList.contains('is-active')).toBe(false);
+}));
+
+test('loading the primary photo does not clear a failed secondary photo', () => withPortrait((root, window) => {
+ initRomanticPortrait(root, createRomanticModeState(true));
+ root.querySelector('[data-secret-image-slot] img')!.dispatchEvent(new window.Event('error'));
+ const error = root.querySelector<HTMLElement>('[data-romantic-error]')!;
+ expect(error.hidden).toBe(false);
+ root.querySelector('[data-primary-image]')!.dispatchEvent(new window.Event('load'));
+ expect(error.hidden).toBe(false);
+ expect(error.textContent).toContain('Please try again');
+ const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]')!;
+ trigger.click(); trigger.click();
+ root.querySelector('[data-secret-image-slot] img')!.dispatchEvent(new window.Event('load'));
+ expect(error.hidden).toBe(true);
 }));

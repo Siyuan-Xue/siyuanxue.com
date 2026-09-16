@@ -441,7 +441,7 @@ html.u-mode-invert .theme-toggle_icon--moon  {
  }
  html, body  { background: white !important; color: black !important; }
  .header { position: static; }
- .header-controls, .back-to-top, .romantic-mode_toast, .romantic-portrait_secret  { display: none !important; }
+ .header-controls, .back-to-top, .romantic-portrait_error, .romantic-portrait_secret  { display: none !important; }
  .container  { max-width: none; padding: 0; }
  a  { color: inherit; }
  .post-header  { break-after: avoid; }

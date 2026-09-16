@@ -21,8 +21,6 @@ export type SecretPortrait = {
 	closeLabel: Bi;
 	turnOnLabel: Bi;
 	turnOffLabel: Bi;
-	modeOnMessage: Bi;
-	modeOffMessage: Bi;
 };
 
 export const site = {
@@ -79,10 +77,10 @@ export const site = {
 
 	/** A portrait revealed with a single click; collapsed on every fresh page. */
 	secretPortrait: {
-		src: '/images/romantic-placeholder.webp',
+		src: '/images/romantic-placeholder-companion.webp',
 		width: 1024,
 		height: 1536,
-		alt: bi('An abstract, softly blurred feminine silhouette, reserved for a future portrait', '抽象朦胧的女性轮廓，为未来的肖像照片预留位置'),
+		alt: bi('An abstract feminine silhouette against dark concrete architecture, reserved for a future portrait', '深色建筑背景中的抽象女性轮廓，为未来的肖像照片预留位置'),
 		caption: bi(
 			'Some stories are still in draft.',
 			'有些故事还停在草稿里。',
@@ -91,8 +89,6 @@ export const site = {
 		closeLabel: bi('Close Romantic Mode illustration', '关闭心动模式插画'),
 		turnOnLabel: bi('Turn on Romantic Mode', '开启心动模式'),
 		turnOffLabel: bi('Turn off Romantic Mode', '关闭心动模式'),
-		modeOnMessage: bi('Romantic Mode on.', '心动模式已开启。'),
-		modeOffMessage: bi('Romantic Mode off.', '心动模式已关闭。'),
 	} satisfies SecretPortrait,
 
 	projects: [

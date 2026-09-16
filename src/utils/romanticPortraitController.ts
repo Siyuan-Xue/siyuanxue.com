@@ -2,10 +2,10 @@ import { createRomanticModeState } from './romanticMode';
 
 export function initRomanticPortraitController(root: HTMLElement) {
  const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]');
- const status = root.querySelector<HTMLElement>('[data-romantic-status]');
+ const errorMessage = root.querySelector<HTMLElement>('[data-romantic-error]');
  const image = root.querySelector<HTMLImageElement>('[data-primary-image]');
  const slot = root.querySelector<HTMLElement>('[data-primary-loading-slot]');
- if (!trigger || !status || !image || root.dataset.initialized) return;
+ if (!trigger || !errorMessage || !image || root.dataset.initialized) return;
  root.dataset.initialized = 'true';
  const finish = () => slot?.classList.remove('is-loading');
  if (image.complete) finish();
@@ -19,13 +19,15 @@ export function initRomanticPortraitController(root: HTMLElement) {
   if (loading) return;
   loading = true;
   trigger.setAttribute('aria-busy', 'true');
+  errorMessage.textContent = '';
+  errorMessage.hidden = true;
   try {
    const { initRomanticPortrait } = await import('./romanticPortraitFeature');
    initRomanticPortrait(root, createRomanticModeState(true));
    trigger.removeEventListener('click', activate);
   } catch {
-   status.textContent = root.dataset.loadError ?? '';
-   status.classList.add('is-visible');
+   errorMessage.textContent = root.dataset.loadError ?? '';
+   errorMessage.hidden = false;
   } finally {
    loading = false;
    trigger.removeAttribute('aria-busy');
