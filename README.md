@@ -1,6 +1,6 @@
 # Siyuan Xue / 薛思远
 
-An Astro static personal blog inspired by [Dario Amodei](https://darioamodei.com/), with Markdown content, serif typography, light/dark themes and an optional seven-tap portrait Easter egg.
+An Astro static personal blog inspired by [Dario Amodei](https://darioamodei.com/), with Markdown content, serif typography, light/dark themes and a single-click portrait reveal.
 
 - **English:** https://siyuanxue.com
 - **中文：** https://xuesiyuan.com

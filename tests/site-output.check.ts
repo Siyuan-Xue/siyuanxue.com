@@ -105,7 +105,7 @@ for (const v of variants) {
   const picture = document.querySelector('picture')!; expect(picture).not.toBeNull();
   for (const type of ['image/avif','image/webp']) { const source = picture.querySelector(`source[type="${type}"]`); expect(source?.getAttribute('srcset')).toContain('320w'); expect(source?.getAttribute('srcset')).toContain('960w'); }
   expect(document.querySelectorAll('a[href="/wip/"]').length).toBe(0);
-  expect(document.querySelector('[data-secret-src]')?.getAttribute('data-secret-src')).toBe('/images/romantic-placeholder.svg');
+  expect(document.querySelector('[data-secret-src]')?.getAttribute('data-secret-src')).toBe('/images/romantic-placeholder.webp');
   expect(document.querySelector('[data-secret-image-slot]')?.children.length).toBe(0);
   expect(await access(join(v.root, 'images/p-202.jpg')).then(() => true, () => false)).toBe(false);
   const homeControl = document.querySelector<HTMLAnchorElement>('.header-chat-link')!;
