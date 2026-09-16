@@ -1,5 +1,7 @@
 # Deployment operations
 
+Start with the [maintenance inventory and update checklist](../docs/MAINTENANCE.md). Static GitHub releases do not install server helpers, bridge or Hermes changes. The Hermes section below describes the earlier eight-tool/plain-API baseline; later archived deployment records add four life-memory readers and use GLM Coding Plan. Reconcile those records with the live profiles before applying old overlays or exact-eight-tool checks; see section 4 of the inventory.
+
 Production is Ubuntu 24.04 / Nginx on Tencent Lighthouse. Connect to the verified public address:
 
 ```sh

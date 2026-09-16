@@ -1,5 +1,7 @@
 # Public read-only Hermes profiles
 
+**Baseline scope:** this document and its verifier audit the original eight-tool adapter. Later deployment records add four audited life-memory readers, giving twelve public tools. See the [maintenance inventory](../../docs/MAINTENANCE.md) for the archived source and configuration gap. Do not remove deployed readers merely to satisfy this older exact-eight-tool check; review the combined configuration before upgrading.
+
 This revision uses the official Hermes v0.21.1 plugin API at source commit `05d705dd695d1084388529124dc2ffe5ce919e89`. It adds an argument-free current clock and five restricted readers to the two native public-web tools. It does not patch Hermes, share writable `HERMES_HOME`, add a database, or run a synchronization job. The plugin registers only for the dedicated `website-chat` and `wechat-public` profiles, using the native `PluginContext.profile_name`; default, owner, custom, and other profiles fail closed.
 
 ## Effective tools and native-operation audit

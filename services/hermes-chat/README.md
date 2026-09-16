@@ -1,5 +1,7 @@
 # Hermes chat bridge
 
+See the [maintenance inventory](../../docs/MAINTENANCE.md) before deployment. The bridge description remains scoped to this source; the profile instructions below describe an earlier baseline. Later archived deployments added Hindsight/life-memory readers and GLM Coding Plan routing. Do not overwrite live profiles from these partial overlays without reconciling that newer configuration.
+
 Requires Node 22.12+; no npm dependencies. Run `HERMES_API_KEY=... node services/hermes-chat/server.mjs` with the secret supplied securely by the environment (never paste a real key into shell history). Production setup is in `ops/README.md`.
 
 The bridge trusts `X-Real-IP` only behind a loopback Nginx proxy which overwrites it. Do not expose port 8643. Only POST `/chat-api` and GET `/chat-api/health` exist. Accepted JSON is exactly `{messages:[{role:"user"|"assistant",content:string}]}`. No runtime overrides, tools, system messages, or caller sessions are accepted. Limits: 32 KiB body, 24 messages, 4000 UTF-16 code units/message, 16000 total; alternating from user, ending in user. Six requests per IP per rolling minute, two concurrent per IP, four total. Invalid body requests also consume admission quota. At most 10000 IP records are retained; idle records expire after a minute and a full table rejects new clients.

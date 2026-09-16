@@ -6,6 +6,8 @@ The personal website and blog of **Siyuan Xue (薛思远 / Miles)**, a student i
 
 Built with Astro and Markdown, with serif typography, light/dark themes and a single-click portrait reveal. Visual inspiration: [Dario Amodei](https://darioamodei.com/).
 
+Maintenance starts with the [resource inventory and update checklist](docs/MAINTENANCE.md) (中文). It covers both GitHub repositories, account metadata, domains, CI/CD, server services, Hermes/Weixin, memory and backups. See the [work summary](docs/WORK-SUMMARY-2026-09-16.md) for completed changes and remaining gaps, and [AGENTS.md](AGENTS.md) for contributor maintenance rules.
+
 - **English:** https://siyuanxue.com
 - **中文：** https://xuesiyuan.com
 - **GitHub profile:** https://github.com/Siyuan-Xue

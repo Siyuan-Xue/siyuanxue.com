@@ -1,5 +1,7 @@
 # Owner memory and learning
 
+**Baseline scope:** this describes the original native learning overlay. Later deployment records add owner diary archival, Hindsight and authorized public read-only access, while preserving owner/public write isolation. See the [maintenance inventory](../../docs/MAINTENANCE.md) before interpreting the earlier privacy/provider statements or applying this overlay to a live profile.
+
 The reviewed `owner-learning-profile.yaml` is a partial overlay for **xue-owner only**. Preserve model credentials, routing, transport and all existing data when merging it. Public profiles explicitly disable memory/skill background review and curator maintenance. Their reviewed shared-memory readers still read all curated native memory freshly; raw conversations remain private.
 
 ## What learns
