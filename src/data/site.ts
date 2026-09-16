@@ -77,10 +77,10 @@ export const site = {
 
 	/** A portrait revealed with a single click; collapsed on every fresh page. */
 	secretPortrait: {
-		src: '/images/romantic-placeholder-companion.webp',
+		src: '/images/romantic-placeholder-blue-study.webp',
 		width: 1024,
 		height: 1536,
-		alt: bi('An abstract feminine silhouette against dark concrete architecture, reserved for a future portrait', '深色建筑背景中的抽象女性轮廓，为未来的肖像照片预留位置'),
+		alt: bi('An abstract feminine silhouette with one arm raised against a misty blue background, reserved for a future portrait', '雾蓝色背景中抬手整理头发的抽象女性轮廓，为未来的肖像照片预留位置'),
 		caption: bi(
 			'Some stories are still in draft.',
 			'有些故事还停在草稿里。',
