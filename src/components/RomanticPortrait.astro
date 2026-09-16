@@ -9,8 +9,6 @@ import '../styles/romantic.css';
 
 const portrait = site.portrait;
 const secret = site.secretPortrait;
-const [status1, status2, status3, status4, status5, status6, status7] =
-	secret.statusMessages;
 const captionId = 'romantic-mode-caption';
 ---
 
@@ -18,7 +16,6 @@ const captionId = 'romantic-mode-caption';
 	class="bio-portrait romantic-portrait"
 	data-romantic-mode
 	data-romantic-lightbox
-	data-storage-key={secret.storageKey}
 	data-secret-src={secret.src}
 	data-secret-width={secret.width}
 	data-secret-height={secret.height}
@@ -27,19 +24,12 @@ const captionId = 'romantic-mode-caption';
 	data-dialog-label={t(secret.dialogLabel)}
 	data-close-label={t(secret.closeLabel)}
 	data-caption={t(secret.caption)}
-	data-proof-label={t({ en: 'VII · PRIVATE PROOF', zh: 'VII · 私人样张' })}
+	data-proof-label={t({ en: 'PORTRAIT STUDY', zh: '肖像占位' })}
  data-load-error={t({ en: 'The image could not be loaded. Please try again.', zh: '图片加载失败，请重试。' })}
 	data-turn-on-label={t(secret.turnOnLabel)}
 	data-turn-off-label={t(secret.turnOffLabel)}
 	data-mode-on={t(secret.modeOnMessage)}
 	data-mode-off={t(secret.modeOffMessage)}
-	data-status1={t(status1.message)}
-	data-status2={t(status2.message)}
-	data-status3={t(status3.message)}
-	data-status4={t(status4.message)}
-	data-status5={t(status5.message)}
-	data-status6={t(status6.message)}
-	data-status7={t(status7.message)}
 >
 	<template data-lightbox-close-icon><span aria-hidden="true"><X size={18} stroke-width={1.8} /></span></template>
 	{/*
@@ -60,6 +50,7 @@ const captionId = 'romantic-mode-caption';
 			data-romantic-trigger
 			aria-controls="romantic-secret-card"
 			aria-expanded="false"
+			aria-label={t(secret.turnOnLabel)}
 		>
 			<Picture
 				class="bio-portrait_img romantic-portrait_image"

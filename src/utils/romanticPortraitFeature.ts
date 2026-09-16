@@ -4,9 +4,7 @@ import PhotoSwipe from 'photoswipe';
 	import 'photoswipe/style.css';
 	import {
 		advanceRomanticMode,
-		persistRomanticMode,
-		restoreRomanticMode,
-		type RomanticModeStorage,
+		createRomanticModeState,
         type RomanticModeState,
 	} from './romanticMode';
 	import {
@@ -39,15 +37,7 @@ import PhotoSwipe from 'photoswipe';
 			return;
 		}
 
-		let storage: RomanticModeStorage | null = null;
-		try {
-			storage = window.sessionStorage;
-		} catch {
-			// The interaction still works when browser privacy settings block storage.
-		}
-
-		const storageKey = root.dataset.storageKey;
-		let state = initialState ?? restoreRomanticMode(storage, storageKey);
+		let state = initialState ?? createRomanticModeState();
 		let activeStatusName: string | null = null;
 		let toastTimer: number | undefined;
 		let concealTimer: number | undefined;
@@ -138,14 +128,11 @@ import PhotoSwipe from 'photoswipe';
 		const syncLanguage = () => {
 			primaryImage.alt = localized('primaryAlt');
 			secretCard.setAttribute('aria-label', localized('dialogLabel'));
-			if (state.unlocked) {
 				trigger.setAttribute(
 					'aria-label',
 					localized(state.active ? 'turnOffLabel' : 'turnOnLabel'),
 				);
-			} else {
-				trigger.removeAttribute('aria-label');
-			}
+
 			if (secretImage) secretImage.alt = localized('secretAlt');
 			if (activeStatusName) {
 				status.textContent = localized(activeStatusName);
@@ -336,16 +323,12 @@ import PhotoSwipe from 'photoswipe';
 
 		const syncTriggerState = () => {
 			trigger.setAttribute('aria-expanded', String(state.active));
-			if (state.unlocked) {
 				trigger.setAttribute('aria-pressed', String(state.active));
 				trigger.setAttribute(
 					'aria-label',
 					localized(state.active ? 'turnOffLabel' : 'turnOnLabel'),
 				);
-			} else {
-				trigger.removeAttribute('aria-pressed');
-				trigger.removeAttribute('aria-label');
-			}
+
 		};
 
 		const reveal = (animate: boolean) => {
@@ -399,30 +382,13 @@ import PhotoSwipe from 'photoswipe';
 		};
 
 		trigger.addEventListener('click', () => {
-			const step = advanceRomanticMode(state);
-			state = step.state;
-
-			if (step.toggledNow) {
-				persistRomanticMode(storage, state, storageKey);
-				if (state.active) {
-					reveal(true);
-					showStatus('modeOn');
-				} else {
-					conceal(true);
-					showStatus('modeOff');
-				}
-				return;
-			}
-
-			if (step.shouldAnnounce) {
-				showStatus(
-					`status${state.activationCount}`,
-					step.unlockedNow ? 3600 : 2800,
-				);
-			}
-			if (step.unlockedNow) {
-				persistRomanticMode(storage, state, storageKey);
+			state = advanceRomanticMode(state).state;
+			if (state.active) {
 				reveal(true);
+				showStatus('modeOn');
+			} else {
+				conceal(true);
+				showStatus('modeOff');
 			}
 		});
 
@@ -430,8 +396,8 @@ import PhotoSwipe from 'photoswipe';
 		lightbox.init();
 		syncLanguage();
 		if (state.active) {
-			reveal(false);
-		} else if (state.unlocked) {
+			reveal(true);
+		} else {
 			conceal(false);
 		}
 	}

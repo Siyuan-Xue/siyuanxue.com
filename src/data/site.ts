@@ -1,5 +1,4 @@
 import { bi, type Bi } from '../i18n/types';
-import { ROMANTIC_MODE_STORAGE_KEY } from '../utils/romanticMode';
 
 /** Shared placeholder for entries without a real public URL yet */
 export const WIP_HREF = '/wip/';
@@ -10,11 +9,6 @@ export type LinkItem = {
 	venue?: Bi;
 	year?: string | number;
 	external?: boolean;
-};
-
-export type SecretPortraitStatus = {
-	activationCount: 1 | 2 | 3 | 4 | 5 | 6 | 7;
-	message: Bi;
 };
 
 export type SecretPortrait = {
@@ -29,12 +23,6 @@ export type SecretPortrait = {
 	turnOffLabel: Bi;
 	modeOnMessage: Bi;
 	modeOffMessage: Bi;
-	storageKey: string;
-	/**
-	 * Per-tap toasts (1–7). Pre-unlock lines are game-like Easter-egg flavor —
-	 * no remaining-tap counts, and “Romantic Mode” only on the unlock line (7).
-	 */
-	statusMessages: readonly SecretPortraitStatus[];
 };
 
 export const site = {
@@ -89,12 +77,12 @@ export const site = {
 		),
 	},
 
-	/** Session-scoped, seven-activation portrait Easter egg. */
+	/** A portrait revealed with a single click; collapsed on every fresh page. */
 	secretPortrait: {
-		src: '/images/romantic-placeholder.svg',
-		width: 1200,
-		height: 1800,
-		alt: bi('A neutral geometric illustration in Romantic Mode', '心动模式中的中性几何插画'),
+		src: '/images/romantic-placeholder.webp',
+		width: 1024,
+		height: 1536,
+		alt: bi('An abstract, softly blurred feminine silhouette, reserved for a future portrait', '抽象朦胧的女性轮廓，为未来的肖像照片预留位置'),
 		caption: bi(
 			'Some stories are still in draft.',
 			'有些故事还停在草稿里。',
@@ -105,55 +93,6 @@ export const site = {
 		turnOffLabel: bi('Turn off Romantic Mode', '关闭心动模式'),
 		modeOnMessage: bi('Romantic Mode on.', '心动模式已开启。'),
 		modeOffMessage: bi('Romantic Mode off.', '心动模式已关闭。'),
-		storageKey: ROMANTIC_MODE_STORAGE_KEY,
-		statusMessages: [
-			{
-				activationCount: 1,
-				message: bi(
-					'You poke the portrait. No tutorial appears.',
-					'你戳了戳肖像。没有弹出教程。',
-				),
-			},
-			{
-				activationCount: 2,
-				message: bi(
-					'Side quest armed. Objective: classified.',
-					'支线任务已就绪。目标：保密。',
-				),
-			},
-			{
-				activationCount: 3,
-				message: bi(
-					'The frame blinks first.',
-					'画框先眨了眨眼。',
-				),
-			},
-			{
-				activationCount: 4,
-				message: bi(
-					'Inventory +1: unexplained curiosity.',
-					'物品栏 +1：说不清的好奇心。',
-				),
-			},
-			{
-				activationCount: 5,
-				message: bi(
-					'A door without a map marker.',
-					'一扇没有地图标记的门。',
-				),
-			},
-			{
-				activationCount: 6,
-				message: bi(
-					'The latch clicks. Still no boss music.',
-					'门闩轻响。还是没有 Boss 音乐。',
-				),
-			},
-			{
-				activationCount: 7,
-				message: bi('Romantic Mode unlocked.', '心动模式已解锁。'),
-			},
-		],
 	} satisfies SecretPortrait,
 
 	projects: [
