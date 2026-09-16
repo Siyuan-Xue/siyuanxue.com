@@ -179,6 +179,7 @@ import PhotoSwipe from 'photoswipe';
 				appendTo: 'root',
 				onInit: (element) => {
 					lightboxFooter = element;
+					element.lang = 'en';
 					lightboxCaptionText = document.createElement('span');
 					lightboxCaptionText.className = 'romantic-lightbox_caption-text';
 					lightboxProof = document.createElement('small');

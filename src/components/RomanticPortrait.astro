@@ -23,8 +23,8 @@ const captionId = 'romantic-mode-caption';
 	data-secret-alt={t(secret.alt)}
 	data-dialog-label={t(secret.dialogLabel)}
 	data-close-label={t(secret.closeLabel)}
-	data-caption={t(secret.caption)}
-	data-proof-label={t({ en: 'PORTRAIT STUDY', zh: '肖像占位' })}
+	data-caption={secret.caption.en}
+	data-proof-label="PORTRAIT STUDY"
  data-load-error={t({ en: 'The image could not be loaded. Please try again.', zh: '图片加载失败，请重试。' })}
 	data-turn-on-label={t(secret.turnOnLabel)}
 	data-turn-off-label={t(secret.turnOffLabel)}
@@ -94,8 +94,8 @@ const captionId = 'romantic-mode-caption';
 		data-romantic-status
 	></p>
 
-	<p id={captionId} class="u-sr-only" data-romantic-lightbox-description>
-		{t(secret.caption)}
+	<p id={captionId} class="u-sr-only" lang="en" data-romantic-lightbox-description>
+		{secret.caption.en}
 	</p>
 </div>
 
