@@ -27,9 +27,11 @@ export const site = {
 	name: bi('Siyuan Xue', '薛思远'),
 	/** Short brand for <title> fallback */
 	title: bi('Siyuan Xue', '薛思远'),
+	homeTitle: bi('Siyuan Xue（薛思远）｜Personal Website', '薛思远（Siyuan Xue）｜个人网站'),
+	github: 'https://github.com/Siyuan-Xue',
 	description: bi(
-		'Student in Intelligence Science and Technology at BUPT, working on AI systems and full-stack engineering.',
-		'北京邮电大学智能科学与技术学生，关注 AI 系统与全栈工程。',
+		'Siyuan Xue (薛思远), a student in Intelligence Science and Technology at BUPT. Projects and writing on AI systems, agents, and full-stack engineering.',
+		'薛思远（Siyuan Xue）的个人网站。北京邮电大学智能科学与技术学生，分享 AI 系统、智能体与全栈工程的项目和思考。',
 	),
 
 	ui: {

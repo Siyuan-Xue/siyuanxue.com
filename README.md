@@ -1,9 +1,14 @@
 # Siyuan Xue / 薛思远
 
-An Astro static personal blog inspired by [Dario Amodei](https://darioamodei.com/), with Markdown content, serif typography, light/dark themes and a single-click portrait reveal.
+The personal website and blog of **Siyuan Xue (薛思远 / Miles)**, a student in Intelligence Science and Technology at Beijing University of Posts and Telecommunications (BUPT). Projects and writing on AI systems, agents, and full-stack engineering.
+
+**薛思远的个人网站与博客**：分享 AI 系统、智能体与全栈工程的项目和思考。
+
+Built with Astro and Markdown, with serif typography, light/dark themes and a single-click portrait reveal. Visual inspiration: [Dario Amodei](https://darioamodei.com/).
 
 - **English:** https://siyuanxue.com
 - **中文：** https://xuesiyuan.com
+- **GitHub profile:** https://github.com/Siyuan-Xue
 - Each `www` hostname redirects to its own apex. Language links navigate to the same article on the other domain; browser language and stored preferences never override the domain.
 - `xuesiyuan.com.cn` is retired from this website.
 
@@ -35,7 +40,7 @@ Each language has its own RSS feed at `/rss.xml`, sitemap, canonical URLs and re
 
 ## Assets and interaction
 
-The normal portrait is optimized at build time with responsive AVIF/WebP/JPEG. The optional Romantic Mode uses a local neutral SVG; PhotoSwipe/GSAP load only after unlock or restoration of an unlocked session. The old secret photograph is removed, and its former URL is explicitly denied by Nginx even when reverting an older release.
+The normal portrait is optimized at build time with responsive AVIF/WebP/JPEG. Clicking it once reveals a local abstract portrait placeholder; PhotoSwipe/GSAP load on demand. Each fresh page starts collapsed. The old secret photograph is removed, and its former URL is explicitly denied by Nginx even when reverting an older release.
 
 Fonts are bundled locally using Fontsource. Chinese font files use Unicode ranges and are not referenced by English font CSS. Feature styles are separate from shared typography/layout. Transitive dependency overrides keep the affected packages above the security-fix versions; review them when updating Astro/Vite.
 

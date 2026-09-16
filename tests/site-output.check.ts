@@ -9,6 +9,24 @@ const variants = [
 ];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
+ test(`${v.lang}: homepage identifies the same bilingual author as articles`, async () => {
+  const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+  expect(document.title).toBe(v.lang === 'en' ? 'Siyuan Xue（薛思远）｜Personal Website' : '薛思远（Siyuan Xue）｜个人网站');
+  const markup = document.querySelector('script[type="application/ld+json"]');
+  expect(markup).not.toBeNull();
+  const graph = JSON.parse(markup!.textContent!)['@graph'];
+  const profile = graph.find((node: { '@type': string }) => node['@type'] === 'ProfilePage');
+  expect(profile.url).toBe(v.origin + '/');
+  expect(profile.mainEntity['@type']).toBe('Person');
+  expect(profile.mainEntity.name).toBe(v.title);
+  expect(profile.mainEntity['@id']).toBe('https://siyuanxue.com/#person');
+  expect(profile.mainEntity.sameAs).toContain('https://github.com/Siyuan-Xue');
+  expect(profile.mainEntity.sameAs).toContain('https://xuesiyuan.com/');
+  expect(graph.find((node: { '@type': string }) => node['@type'] === 'WebSite').url).toBe(v.origin + '/');
+  const { document: article } = parseHTML(await readFile(join(v.root, 'essay/why-this-site/index.html'), 'utf8'));
+  const articleSchema = JSON.parse(article.querySelector('script[type="application/ld+json"]')!.textContent!);
+  expect(articleSchema.author['@id']).toBe(profile.mainEntity['@id']);
+ });
  test(`${v.lang}: shipped theme controls work when browser storage throws`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
   const storage = { getItem() { throw new Error('SecurityError'); }, setItem() { throw new Error('SecurityError'); } };

@@ -8,8 +8,23 @@ interface Props { title?: string; description?: string; articleDate?: Date; noin
 const { title = t(site.title), description = t(site.description), articleDate, noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, localeOrigin(locale)).href;
 const image = new URL(`/images/share-${locale}.png`, localeOrigin(locale)).href;
-const fullTitle = title === t(site.name) ? title : `${title} — ${t(site.name)}`;
-const schema = articleDate ? { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description, datePublished: articleDate.toISOString(), author: { '@type': 'Person', name: t(site.name), url: localeOrigin(locale) }, inLanguage: locale === 'zh' ? 'zh-CN' : 'en', mainEntityOfPage: canonical, url: canonical, image } : undefined;
+const isHome = Astro.url.pathname === '/';
+const fullTitle = isHome ? t(site.homeTitle) : `${title} — ${t(site.name)}`;
+const language = locale === 'zh' ? 'zh-CN' : 'en';
+const person = {
+ '@type': 'Person', '@id': `${localeOrigin('en')}/#person`,
+ name: t(site.name), alternateName: [locale === 'zh' ? site.name.en : site.name.zh, 'Miles'],
+ url: `${localeOrigin('en')}/`, sameAs: [site.github, `${localeOrigin('zh')}/`],
+};
+const schema = articleDate
+ ? { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description, datePublished: articleDate.toISOString(), author: person, inLanguage: language, mainEntityOfPage: canonical, url: canonical, image }
+ : isHome ? {
+  '@context': 'https://schema.org',
+  '@graph': [
+   { '@type': 'ProfilePage', '@id': `${canonical}#profile`, url: canonical, name: fullTitle, description, inLanguage: language, mainEntity: person },
+   { '@type': 'WebSite', '@id': `${canonical}#website`, url: canonical, name: t(site.name), alternateName: locale === 'zh' ? site.name.en : site.name.zh, inLanguage: language, publisher: { '@id': person['@id'] } },
+  ],
+ } : undefined;
 ---
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
