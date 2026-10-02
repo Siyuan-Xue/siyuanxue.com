@@ -94,7 +94,7 @@ SSH 早期报错使用了错误 IP `87.156.77.131`；正确 IP 曾验证成功�
 
 | 层 / 资源 | 权威位置、作用与更新边界 |
 |---|---|
-| 网站聊天 UI | 当前主分支 React/AI SDK 实现；随网站 CI 发布，浏览器 `sessionStorage` 只保留本次访问的有限聊天与草稿。2026-10-01 本地完成 Claude 参考改版；2026-10-02 按用户要求移除侧栏，保留小娃娃图标，字体与明暗配色直接共用主页 tokens，仅布局参考 Claude。顶部保留新对话、明暗切换和首页。[最新调整及验收记录](audits/2026-10-02-chat-main-only.md)，尚未发布，不代表服务器 UI 已更新 |
+| 网站聊天 UI | 当前主分支 React/AI SDK 实现；随网站 CI 发布，浏览器 `sessionStorage` 只保留本次访问的有限聊天与草稿。2026-10-02 已发布无侧栏改版，保留小娃娃图标，字体与明暗配色直接共用主页 tokens，仅布局参考 Claude；顶部保留新对话、明暗切换和首页。[发布及验收记录](audits/2026-10-02-chat-main-only.md) 包含实际上线 SHA、Actions 与两域名真实回复证据 |
 | Node 桥接 | 源码 `services/hermes-chat/server.mjs`；安装到 `/opt/hermes-chat/server.mjs`；系统服务 `hermes-chat.service`，Node ≥22.12；**独立安装** |
 | 桥接配置 | `/etc/hermes-chat.env`，root:0600；含网站 profile API key 和上游/允许域名，不含 GLM key |
 | 网络边界 | 桥接 `127.0.0.1:8643` → 网站 Hermes `127.0.0.1:8642`；Nginx 对外仅 `/chat-api` 与 `/chat-api/health`；`/chat-api/sessions` 拒绝；不要暴露两个内网端口 |

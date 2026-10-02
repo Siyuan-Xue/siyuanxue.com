@@ -31,3 +31,14 @@
 发布沿用 GitHub Actions，并按维护总览验证完整 CI、两域名目标 SHA 和真实聊天。前轮记录的 Node 26 桥接并发测试差异未在本次 UI 调整中修改或放宽。
 
 恢复：先保存本地差异及新增文件，再只撤回对应聊天 UI 修改；前轮布局见 10 月 1 日记录。若后续已发布，使用现有 Actions rollback，不需回滚独立服务。
+
+## 生产发布结果
+
+2026-10-02 用户明确要求发布后，改版提交 `0eb5a406eafa23ce7d9525b271243a48460e9f1c` 已推送到 `main`，通过现有 [生产 Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/36956651700) 发布。共享 CI、产物校验、上传、激活、双域名检查和版本留存全部成功，没有执行回滚。
+
+- 独立运行 `ops/verify-public.sh` 成功：两个域名的 `/__health` 均为上述完整 SHA，首页语言分别为英文/中文，旧照片路径均返回 410。
+- Browser 打开 [中文聊天](https://xuesiyuan.com/chat/) 与 [英文聊天](https://siyuanxue.com/chat/)，实际显示无侧栏主区域、原 Baby 图标及主页字体/配色。中文浅色背景 `rgb(240, 238, 230)`；英文深色背景 `rgb(31, 30, 29)`、文字 `rgb(240, 238, 230)`；观察视口无横向溢出。
+- 两网站分别发送无敏感内容的简短验收提示，真实模型完成回复：中文「你好」，英文「Hello.」。完成后均出现复制/重试操作，未出现服务错误。本次不是固定 SSE 预览回复；只验证当前聊天链路，不代表长期记忆或其他独立服务全面验收。
+- 未修改或重新安装 bridge、Hermes、模型、Nginx 或服务器配置；此次上线仅为通过 CI 验证的静态网站包。
+
+本节与维护总览的后续提交仅记录已完成的发布证据，使用 GitHub 支持的文档提交跳过标记避免重复部署；[机制依据](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs)。上述代码提交已经完成完整 CI，生产 `/__health` 保持代码发布 SHA，后续文档提交 SHA 不作为新的代码 release。回滚目标为前一成功版本 `3507250ada6a67261c86235a221de7bea2f316af`，通过现有 Actions rollback 验证后恢复。
