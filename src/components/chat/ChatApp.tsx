@@ -22,6 +22,7 @@ import { Conversation, ConversationContent, ConversationScrollButton } from './a
 import { Message, MessageAction, MessageActions, MessageContent, MessageResponse } from './ai-elements/Message';
 import { ThinkingIndicator } from './ThinkingIndicator';
 import { chatChrome } from './chat-chrome';
+import { useChatViewport } from './useChatViewport';
 import { site } from '../../data/site';
 import './chat.css';
 
@@ -80,6 +81,7 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
   const composeRef = useRef<HTMLDivElement>(null);
   const welcomeComposeRect = useRef<DOMRect | null>(null);
   const isMobile = useMedia('(max-width: 600px), (pointer: coarse)');
+  const { keyboardOpen, compactViewport, inputMaxHeight } = useChatViewport(inputRef, isMobile);
   const reduceMotion = useMedia('(prefers-reduced-motion: reduce)');
   const chrome = chatChrome[locale];
   const streamTranslations = useMemo(() => ({ copyCode: copy.codeCopy, copied: copy.copied }), [copy.codeCopy, copy.copied]);
@@ -117,15 +119,6 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
     setErrorCode(restored.errorCode);
     setReadyToPersist(true);
   }, [setMessages]);
-
-  useEffect(() => {
-    const viewport = window.visualViewport;
-    const root = document.documentElement;
-    const update = () => root.style.setProperty('--xue-viewport-height', `${viewport?.height ?? window.innerHeight}px`);
-    update();
-    viewport?.addEventListener('resize', update);
-    return () => viewport?.removeEventListener('resize', update);
-  }, []);
 
   useEffect(() => {
     if (!readyToPersist) return;
@@ -167,7 +160,13 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
         textarea.style.width = '';
       }
       textarea.style.height = 'auto';
-      textarea.style.height = `${Math.min(220, Math.max(32, textarea.scrollHeight))}px`;
+      const area = composeRef.current;
+      const main = area?.parentElement;
+      const available = keyboardOpen && area && main
+        ? main.clientHeight - (area.scrollHeight - textarea.offsetHeight)
+        : inputMaxHeight;
+      const limit = Math.max(32, Math.min(inputMaxHeight, available));
+      textarea.style.height = `${Math.min(limit, Math.max(32, textarea.scrollHeight))}px`;
     };
     resize();
     let lastWidth = textarea.clientWidth;
@@ -178,13 +177,13 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
     });
     observer.observe(textarea);
     return () => observer.disconnect();
-  }, [input, hasConversation]);
+  }, [input, hasConversation, inputMaxHeight, keyboardOpen, compactViewport, errorCode, storageFailed, notice]);
 
   useLayoutEffect(() => {
     const area = composeRef.current;
     const previous = welcomeComposeRect.current;
     welcomeComposeRect.current = null;
-    if (!hasConversation || !area || !previous || reduceMotion || !area.animate) return;
+    if (!hasConversation || !area || !previous || reduceMotion || keyboardOpen || !area.animate) return;
     const current = area.getBoundingClientRect();
     // Move the same composer from the welcome position before the first token.
     const animation = area.animate([
@@ -192,7 +191,7 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
       { transform: 'translateY(0)', width: `${current.width}px` },
     ], { duration: 280, easing: 'cubic-bezier(.2, 0, 0, 1)' });
     return () => animation.cancel();
-  }, [hasConversation, reduceMotion]);
+  }, [hasConversation, reduceMotion, keyboardOpen]);
 
   const submit = useCallback(async (event: FormEvent) => {
     event.preventDefault();
@@ -245,13 +244,14 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
   const newChat = useCallback(async () => {
     if (busy) await stop();
     setMessages([]); setStatuses({}); setInput(''); setNotice(''); setErrorCode(undefined); setCopyResult(undefined); clearError();
-    requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
-  }, [busy, clearError, setMessages, stop]);
+    if (isMobile) inputRef.current?.blur();
+    else requestAnimationFrame(() => inputRef.current?.focus({ preventScroll: true }));
+  }, [busy, clearError, isMobile, setMessages, stop]);
 
   const currentError = errorCode ? copy.errors[errorCode] : undefined;
   const retryMessage = messages.at(-1);
   return (
-    <section aria-label={copy.title} className="xue-chat" data-chat-state={hasConversation ? 'conversation' : 'welcome'}>
+    <section aria-label={copy.title} className="xue-chat" data-chat-state={hasConversation ? 'conversation' : 'welcome'} data-keyboard-open={keyboardOpen} data-compact-viewport={compactViewport}>
       <a className="xue-skip-link" href="#xue-chat-message">{copy.label}</a>
       <div className="xue-chat-workspace">
       <header className="header xue-chat-header">

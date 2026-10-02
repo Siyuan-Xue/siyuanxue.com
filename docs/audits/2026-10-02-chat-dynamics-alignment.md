@@ -50,3 +50,9 @@ Browser 使用已有本地固定 SSE 预览验收等待、实际分块流、完�
 不适用：个人身份事实、域名、依赖/锁文件、协议、bridge/Hermes/模型、记忆/备份、Nginx、肖像与主页正文；本次仅更新静态聊天界面。完整服务器侧检查继续由现有GitHub共享CI执行。
 
 发布沿用用户此前授权的 GitHub Actions CI/CD，成功后另补实际 release SHA、Actions链接和两个域名的验收；在结果记录前不把本地预览称为生产上线。恢复目标为前一成功网站 release `0eb5a406eafa23ce7d9525b271243a48460e9f1c`，通过现有 Actions rollback 恢复，不回滚独立聊天服务。
+
+## 本轮实际发布
+
+代码 release `1df24e4b6679b08972fc74d37272c63cb26c33ad` 已通过[生产 Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/36958499002)：共享验证和生产部署均成功，两个 `/__health` 均返回目标 SHA，固定语言与旧照片410拒绝通过。Browser在英文生产页实发安全英文问题，观察等待/停止/焦点与页脚居中并收到完整回复；在中文生产页实发简单页面验收问题并收到回复。公开服务验收只证明本次实际请求可完成。
+
+随后用户指出手机软键盘上移问题；本轮窄屏验收不升级为真机软键盘验收。后续修正单独见[手机键盘定位审计](2026-10-02-chat-mobile-keyboard.md)。
