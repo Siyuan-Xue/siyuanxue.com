@@ -26,12 +26,12 @@ const copy: ChatCopy = {
     quota_exhausted: { title: t({ en: 'xue’s reply service is out of credits for now', zh: '小薛的回复服务额度暂时用完了' }), detail: t({ en: 'Your conversation is saved. Please come back after service is restored.', zh: '这次对话会保留，请在服务恢复后再来聊。' }) },
     authentication_failed: { title: t({ en: 'The model service is temporarily unavailable', zh: '模型服务暂时无法连接' }), detail: t({ en: 'Siyuan Xue needs to check the model service connection.', zh: '薛思远需要检查模型服务连接。' }) },
     rate_limited: { title: t({ en: 'Too many chats at once', zh: '现在聊天的人有点多' }), detail: t({ en: 'Wait a minute before sending another message.', zh: '请稍等一分钟再发送。' }) },
-    context_limit: { title: t({ en: 'This conversation is full', zh: '这次对话已经很长了' }), detail: t({ en: 'Try a shorter message. To start fresh, close this tab and open the chat page in a new tab.', zh: '可以先缩短准备发送的消息。如需重新开始，请关闭此标签页，再用新标签页进入聊天页面。' }) },
+    context_limit: { title: t({ en: 'This conversation is full', zh: '这次对话已经很长了' }), detail: t({ en: 'Try a shorter message, or choose New chat at the top to start fresh.', zh: '可以缩短消息，或点击顶部「新对话」重新开始。' }) },
     timeout: { title: t({ en: 'The reply took too long', zh: '这次回复等得有点久' }), detail: t({ en: 'What arrived is saved. You can try again when the connection is steadier.', zh: '已收到的内容会保留，网络稳定后可以再试一次。' }) },
     upstream_unavailable: { title: t({ en: 'xue could not finish that reply', zh: '小薛没能完成这次回复' }), detail: t({ en: 'What arrived is saved. You can try again in a moment.', zh: '已收到的内容会保留，可以稍后再试。' }) },
     interrupted: { title: t({ en: 'The reply was interrupted', zh: '回复中断了' }), detail: t({ en: 'What arrived is saved. You can try again.', zh: '已收到的内容会保留，可以再试一次。' }) },
     invalid_request: { title: t({ en: 'That message could not be sent', zh: '这条消息没能发出' }), detail: t({ en: 'Check the message and try sending it again.', zh: '请检查消息内容后重新发送。' }) },
-    body_too_large: { title: t({ en: 'This conversation is too large', zh: '这次对话内容太多了' }), detail: t({ en: 'To start fresh, close this tab and open the chat page in a new tab.', zh: '如需重新开始，请关闭此标签页，再用新标签页进入聊天页面。' }) },
+    body_too_large: { title: t({ en: 'This conversation is too large', zh: '这次对话内容太多了' }), detail: t({ en: 'Choose New chat at the top to start fresh.', zh: '请点击顶部「新对话」重新开始。' }) },
     stream_error: { title: t({ en: 'The reply was interrupted', zh: '回复中断了' }), detail: t({ en: 'What arrived is saved. You can try again.', zh: '已收到的内容会保留，可以再试一次。' }) },
   },
 };
@@ -42,6 +42,6 @@ const prompts = [
   { label: t({ en: 'Just say hello', zh: '随便聊两句' }), text: t({ en: 'Hi, xue. Let’s chat about something fun.', zh: '嗨，小薛，我们随便聊点有趣的吧。' }) },
 ];
 ---
-<Base title={copy.title} description={copy.intro} htmlClass="has-xue-chat">
+<Base title={copy.title} description={copy.intro} htmlClass="has-xue-chat" showHeader={false}>
   <ChatApp client:load copy={copy} prompts={prompts} locale={locale} />
 </Base>

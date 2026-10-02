@@ -2,15 +2,15 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import { locale } from '../i18n/locale';
-interface Props { title?: string; description?: string; htmlClass?: string; showTocToggle?: boolean; hasToc?: boolean; articleDate?: Date; noindex?: boolean }
-const { title, description, htmlClass = '', showTocToggle = false, hasToc = false, articleDate, noindex } = Astro.props;
+interface Props { title?: string; description?: string; htmlClass?: string; showTocToggle?: boolean; hasToc?: boolean; articleDate?: Date; noindex?: boolean; showHeader?: boolean }
+const { title, description, htmlClass = '', showTocToggle = false, hasToc = false, articleDate, noindex, showHeader = true } = Astro.props;
 ---
 <!doctype html>
 <html id="top" lang={locale === 'zh' ? 'zh-CN' : 'en'} data-lang={locale} class={htmlClass}>
  <head><BaseHead title={title} description={description} articleDate={articleDate} noindex={noindex} /></head>
  <body class:list={[hasToc && 'has-toc']}>
   <div class="page-wrapper">
-   <Header showTocToggle={showTocToggle} />
+   {showHeader && <Header showTocToggle={showTocToggle} />}
    <slot name="toc" />
    <main class="page-main"><slot /></main>
   </div>

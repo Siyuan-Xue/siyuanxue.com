@@ -22,7 +22,7 @@ Object.assign(globalThis, {
   cancelAnimationFrame: clearTimeout,
 });
 
-const { fireEvent, render, waitFor, cleanup } = await import('@testing-library/react');
+const { fireEvent, render, waitFor, cleanup, within } = await import('@testing-library/react');
 const { ChatApp } = await import('../src/components/chat/ChatApp');
 const { Conversation, ConversationScrollButton } = await import('../src/components/chat/ai-elements/Conversation');
 type ChatFetch = import('../src/utils/chat-client').ChatFetch;
@@ -91,6 +91,59 @@ afterEach(() => {
   browser.sessionStorage.clear();
 });
 
+test('chat exposes its controls in the header without a sidebar', () => {
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
+  expect(view.queryByRole('complementary') === null).toBe(true);
+  expect(view.queryByRole('navigation', { name: 'Chat navigation' })).toBeNull();
+  expect(view.queryByRole('button', { name: /sidebar/i })).toBeNull();
+  const header = within(view.container.querySelector('header')!);
+  expect(header.getByRole('button', { name: 'New chat' })).toBeTruthy();
+  expect(header.getByRole('button', { name: 'Switch to dark mode' })).toBeTruthy();
+  expect(header.getByRole('link', { name: 'Home' })).toBeTruthy();
+});
+
+test('starting a new chat stops the old stream and persists a fresh conversation', async () => {
+  const bodies: unknown[] = [];
+  let signal: AbortSignal | undefined;
+  const encoder = new TextEncoder();
+  const fetcher: ChatFetch = async (_input, init) => {
+    bodies.push(JSON.parse(String(init?.body)));
+    if (bodies.length > 1) return uiStream('Fresh answer');
+    signal = init?.signal as AbortSignal;
+    return new Response(new ReadableStream({
+      start(controller) {
+        controller.enqueue(encoder.encode([
+          { type: 'start', messageId: 'old-assistant' },
+          { type: 'text-start', id: 'old-text' },
+          { type: 'text-delta', id: 'old-text', delta: 'Old partial answer' },
+        ].map(frame => `data: ${JSON.stringify(frame)}\n\n`).join('')));
+        signal?.addEventListener('abort', () => controller.error(new DOMException('Aborted', 'AbortError')));
+      },
+    }), { headers: { 'Content-Type': 'text/event-stream' } });
+  };
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const input = view.getByLabelText('Your message');
+  fireEvent.input(input, { target: { value: 'Old question' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.getByText('Old partial answer')).toBeTruthy());
+  fireEvent.input(input, { target: { value: 'Old draft' } });
+  fireEvent.click(view.getByRole('button', { name: 'New chat' }));
+  await waitFor(() => expect(view.getByRole('heading', { name: copy.welcome })).toBeTruthy());
+  expect(signal?.aborted).toBe(true);
+  expect((input as HTMLTextAreaElement).value).toBe('');
+  await waitFor(() => expect(browser.document.activeElement?.id).toBe(input.id));
+  expect(view.queryByText('Old partial answer')).toBeNull();
+  await waitFor(() => {
+    const saved = JSON.parse(browser.sessionStorage.getItem('xue-chat:v2')!);
+    expect(saved.messages).toEqual([]);
+    expect(saved.draft).toBe('');
+  });
+  fireEvent.input(input, { target: { value: 'Fresh question' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.getByText('Fresh answer')).toBeTruthy());
+  expect(bodies[1]).toEqual({ messages: [{ role: 'user', content: 'Fresh question' }] });
+});
+
 test('streams markdown through the React chat and sends the exact public bridge contract', async () => {
   const requests: RequestInit[] = [];
   const fetcher: ChatFetch = async (_input, init) => { requests.push(init!); return uiStream('Hello **there**'); };
@@ -101,7 +154,7 @@ test('streams markdown through the React chat and sends the exact public bridge 
   await waitFor(() => expect(view.getByText('there', { selector: '[data-streamdown="strong"]' })).toBeTruthy());
   expect(JSON.parse(String(requests[0]!.body))).toEqual({ messages: [{ role: 'user', content: 'Hi' }] });
   expect(new Headers(requests[0]!.headers).get('X-Chat-Protocol')).toBe('ui-message-v1');
-  expect(view.getAllByText('Hi')).toHaveLength(1);
+  expect(within(view.getByRole('log')).getAllByText('Hi')).toHaveLength(1);
 });
 
 test('shows one loader from submission until first text, without a composer status banner', async () => {
@@ -160,7 +213,7 @@ test('retry regenerates from the same user turn without duplicating it', async (
     { messages: [{ role: 'user', content: 'Original question' }] },
     { messages: [{ role: 'user', content: 'Original question' }] },
   ]);
-  expect(view.getAllByText('Original question')).toHaveLength(1);
+  expect(within(view.getByRole('log')).getAllByText('Original question')).toHaveLength(1);
 });
 
 test('the latest completed answer can regenerate without duplicating its user turn', async () => {
@@ -182,7 +235,7 @@ test('the latest completed answer can regenerate without duplicating its user tu
     { messages: [{ role: 'user', content: 'Same question' }] },
     { messages: [{ role: 'user', content: 'Same question' }] },
   ]);
-  expect(view.getAllByText('Same question')).toHaveLength(1);
+  expect(within(view.getByRole('log')).getAllByText('Same question')).toHaveLength(1);
 });
 
 test('quota errors are localized, actionable, and do not offer a blind retry', async () => {
@@ -224,7 +277,7 @@ test('a deliberate follow-up replaces an unanswered failed turn without duplicat
     { messages: [{ role: 'user', content: 'New deliberate prompt' }] },
   ]);
   expect(view.queryByText('Old unanswered prompt')).toBeNull();
-  expect(view.getAllByText('New deliberate prompt')).toHaveLength(1);
+  expect(within(view.getByRole('log')).getAllByText('New deliberate prompt')).toHaveLength(1);
   expect(view.queryByText(copy.storage)).toBeNull();
 });
 
@@ -272,7 +325,7 @@ test('a new submission replaces a stopped unanswered turn and survives reload', 
 
   const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
   await waitFor(() => expect(restored.getByText('Answer after stopping')).toBeTruthy());
-  expect(restored.getAllByText('Replacement question')).toHaveLength(1);
+  expect(within(restored.getByRole('log')).getAllByText('Replacement question')).toHaveLength(1);
   expect(restored.queryByText('Question stopped before text')).toBeNull();
   expect(restored.queryByText(copy.storage)).toBeNull();
 });
@@ -326,7 +379,7 @@ test('a new submission drops an empty stopped assistant shell and survives reloa
 
   const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
   await waitFor(() => expect(restored.getByText('Answer after empty shell')).toBeTruthy());
-  expect(restored.getAllByText('Replacement after empty shell')).toHaveLength(1);
+  expect(within(restored.getByRole('log')).getAllByText('Replacement after empty shell')).toHaveLength(1);
   expect(restored.queryByText('Question with empty assistant shell')).toBeNull();
   expect(restored.queryByText(copy.storage)).toBeNull();
 });
