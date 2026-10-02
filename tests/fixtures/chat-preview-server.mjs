@@ -68,7 +68,7 @@ function streamScenario(response, scenario) {
   write();
 }
 
-async function serveFile(root, urlPath, response, keyboardFixture) {
+async function serveFile(root, urlPath, response) {
   const pathname = decodeURIComponent(urlPath.split('?')[0]);
   const relative = pathname.endsWith('/') ? `${pathname}index.html` : pathname;
   const target = resolve(root, `.${relative}`);
@@ -77,19 +77,12 @@ async function serveFile(root, urlPath, response, keyboardFixture) {
     const info = await stat(target);
     const file = info.isDirectory() ? resolve(target, 'index.html') : target;
     response.writeHead(200, { 'Cache-Control': 'no-store', 'Content-Type': contentTypes[extname(file)] ?? 'application/octet-stream' });
-    const contents = await readFile(file);
-    response.end(keyboardFixture && extname(file) === '.html'
-      ? contents.toString().replace('<head>', '<head><script src="/__keyboard-fixture.js"></script>') : contents);
+    response.end(await readFile(file));
   } catch { response.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }).end('Not found'); }
 }
 
-export function createPreviewServer(root, { keyboardFixture = false } = {}) {
+export function createPreviewServer(root) {
   return createServer(async (request, response) => {
-    if (keyboardFixture && request.url === '/__keyboard-fixture.js') {
-      response.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8' });
-      response.end(await readFile(new URL('./chat-keyboard-preview.js', import.meta.url)));
-      return;
-    }
     if (request.url === '/chat-api' && request.method === 'POST') {
       try {
         const body = await readJson(request);
@@ -102,7 +95,7 @@ export function createPreviewServer(root, { keyboardFixture = false } = {}) {
       }
       return;
     }
-    await serveFile(root, request.url ?? '/', response, keyboardFixture);
+    await serveFile(root, request.url ?? '/', response);
   });
 }
 
@@ -111,7 +104,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const portIndex = process.argv.indexOf('--port');
   const root = resolve(rootIndex >= 0 ? process.argv[rootIndex + 1] : '.build/zh');
   const port = Number(portIndex >= 0 ? process.argv[portIndex + 1] : 4322);
-  createPreviewServer(root, { keyboardFixture: process.argv.includes('--keyboard-fixture') }).listen(port, '127.0.0.1', () => {
+  createPreviewServer(root).listen(port, '127.0.0.1', () => {
     console.log(`xue chat preview: http://127.0.0.1:${port}/chat/`);
     console.log('Prompts: normal markdown | quota | timeout | truncation | longstream');
   });

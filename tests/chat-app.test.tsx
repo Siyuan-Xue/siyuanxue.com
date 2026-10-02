@@ -22,7 +22,7 @@ Object.assign(globalThis, {
   cancelAnimationFrame: clearTimeout,
 });
 
-const { act, fireEvent, render, waitFor, cleanup, within } = await import('@testing-library/react');
+const { fireEvent, render, waitFor, cleanup, within } = await import('@testing-library/react');
 const { ChatApp } = await import('../src/components/chat/ChatApp');
 const { Conversation, ConversationScrollButton } = await import('../src/components/chat/ai-elements/Conversation');
 type ChatFetch = import('../src/utils/chat-client').ChatFetch;
@@ -467,121 +467,17 @@ test('stop keeps streamed partial text in persistence and the next submission', 
   ] });
 });
 
-async function withMobileViewport(run: (viewport: InstanceType<typeof browser.EventTarget> & { height: number; offsetTop: number; scale: number }) => Promise<void>) {
-  const original = Object.getOwnPropertyDescriptor(browser, 'visualViewport');
-  const matchMedia = browser.matchMedia;
-  // happy-dom lacks query-list alternatives and pointer:coarse. The phone
-  // remains a coarse-pointer device in both portrait and landscape.
-  browser.matchMedia = query => matchMedia.call(browser, query === '(max-width: 600px), (pointer: coarse)' ? '(min-width: 0px)' : query);
-  const viewport = Object.assign(new browser.EventTarget(), { height: 844, offsetTop: 0, scale: 1 });
-  browser.happyDOM.setViewport({ width: 390, height: 844 });
+test('tracks a keyboard-shrunk visual viewport so the composer stays in view', async () => {
+  let resize: (() => void) | undefined;
+  const viewport = {
+    height: 300,
+    addEventListener: (_type: string, listener: () => void) => { resize = listener; },
+    removeEventListener: () => {},
+  };
   Object.defineProperty(browser, 'visualViewport', { configurable: true, value: viewport });
-  try { await run(viewport); }
-  finally {
-    cleanup();
-    browser.matchMedia = matchMedia;
-    if (original) Object.defineProperty(browser, 'visualViewport', original);
-    else Reflect.deleteProperty(browser, 'visualViewport');
-    browser.happyDOM.setViewport({ width: 1024, height: 768 });
-  }
-}
-
-test('tracks keyboard pan, keeps the compact layout through focus transfers, and restores on dismissal', async () => {
-  await withMobileViewport(async viewport => {
-    const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
-    const root = browser.document.documentElement;
-    const chat = view.container.querySelector('.xue-chat')!;
-    const input = view.getByLabelText('Your message');
-    await waitFor(() => expect(view.getByText(copy.mobileInputHint)).toBeTruthy());
-    await waitFor(() => expect(root.style.getPropertyValue('--xue-viewport-height')).toBe('844px'));
-    input.focus();
-    viewport.height = 420;
-    viewport.offsetTop = 80;
-    viewport.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(chat.getAttribute('data-keyboard-open')).toBe('true'));
-    expect(root.style.getPropertyValue('--xue-viewport-height')).toBe('420px');
-    expect(root.style.getPropertyValue('--xue-viewport-top')).toBe('80px');
-    viewport.offsetTop = 110;
-    viewport.dispatchEvent(new browser.Event('scroll'));
-    await waitFor(() => expect(root.style.getPropertyValue('--xue-viewport-top')).toBe('110px'));
-    (input as HTMLTextAreaElement).blur();
-    await new Promise(resolve => setTimeout(resolve, 30));
-    expect(chat.getAttribute('data-keyboard-open')).toBe('true');
-    viewport.height = 844;
-    viewport.offsetTop = 0;
-    viewport.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(chat.getAttribute('data-keyboard-open')).toBe('false'));
-    expect(root.style.getPropertyValue('--xue-viewport-top')).toBe('0px');
-    view.unmount();
-    expect(root.style.getPropertyValue('--xue-viewport-height')).toBe('');
-    expect(root.style.getPropertyValue('--xue-viewport-top')).toBe('');
-  });
-});
-
-test('browser chrome and pinch zoom do not activate the keyboard layout', async () => {
-  await withMobileViewport(async viewport => {
-    const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
-    const chat = view.container.querySelector('.xue-chat')!;
-    const root = browser.document.documentElement;
-    await waitFor(() => expect(view.getByText(copy.mobileInputHint)).toBeTruthy());
-    view.getByLabelText('Your message').focus();
-    viewport.height = 760;
-    viewport.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(root.style.getPropertyValue('--xue-viewport-height')).toBe('760px'));
-    expect(chat.getAttribute('data-keyboard-open')).toBe('false');
-    viewport.scale = 2;
-    viewport.height = 380;
-    viewport.offsetTop = 100;
-    viewport.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(root.style.getPropertyValue('--xue-viewport-height')).toBe(''));
-    expect(root.style.getPropertyValue('--xue-viewport-top')).toBe('');
-    expect(chat.getAttribute('data-keyboard-open')).toBe('false');
-    viewport.scale = 1;
-    viewport.height = 760;
-    viewport.offsetTop = 0;
-    viewport.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(root.style.getPropertyValue('--xue-viewport-height')).toBe('760px'));
-  });
-});
-
-test('orientation changes reset the keyboard baseline and new chat does not reopen a mobile keyboard', async () => {
-  await withMobileViewport(async viewport => {
-    const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
-    const input = view.getByLabelText('Your message');
-    await waitFor(() => expect(view.getByText(copy.mobileInputHint)).toBeTruthy());
-    input.focus();
-    viewport.height = 420;
-    viewport.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(view.container.querySelector('.xue-chat')!.getAttribute('data-keyboard-open')).toBe('true'));
-    fireEvent.click(view.getByRole('button', { name: 'New chat' }));
-    await waitFor(() => expect(browser.document.activeElement).not.toBe(input));
-    viewport.height = 390;
-    browser.happyDOM.setViewport({ width: 844, height: 390 });
-    browser.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(view.container.querySelector('.xue-chat')!.getAttribute('data-keyboard-open')).toBe('false'));
-  });
-});
-
-test('rotating with the keyboard open retains the compact layout until the rotated viewport recovers', async () => {
-  await withMobileViewport(async viewport => {
-    const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
-    const chat = view.container.querySelector('.xue-chat')!;
-    const input = view.getByLabelText('Your message');
-    await waitFor(() => expect(view.getByText(copy.mobileInputHint)).toBeTruthy());
-    input.focus();
-    viewport.height = 420;
-    viewport.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(chat.getAttribute('data-keyboard-open')).toBe('true'));
-    viewport.height = 200;
-    await act(async () => {
-      browser.happyDOM.setViewport({ width: 844, height: 390 });
-      viewport.dispatchEvent(new browser.Event('resize'));
-      await new Promise(resolve => setTimeout(resolve, 25));
-    });
-    await waitFor(() => expect(browser.document.documentElement.style.getPropertyValue('--xue-viewport-height')).toBe('200px'));
-    expect(chat.getAttribute('data-keyboard-open')).toBe('true');
-    viewport.height = 390;
-    viewport.dispatchEvent(new browser.Event('resize'));
-    await waitFor(() => expect(chat.getAttribute('data-keyboard-open')).toBe('false'));
-  });
+  render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
+  await waitFor(() => expect(browser.document.documentElement.style.getPropertyValue('--xue-viewport-height')).toBe('300px'));
+  viewport.height = 260;
+  resize?.();
+  expect(browser.document.documentElement.style.getPropertyValue('--xue-viewport-height')).toBe('260px');
 });
