@@ -7,6 +7,7 @@ import type { UIMessage } from 'ai';
 import type { ComponentProps, HTMLAttributes } from 'react';
 import { memo } from 'react';
 import { Streamdown } from 'streamdown';
+import 'streamdown/styles.css';
 
 export type MessageProps = HTMLAttributes<HTMLElement> & { from: UIMessage['role'] };
 export function Message({ className = '', from, ...props }: MessageProps) {
@@ -32,5 +33,5 @@ export type MessageResponseProps = ComponentProps<typeof Streamdown>;
 const plugins = { cjk };
 export const MessageResponse = memo(({ className = '', ...props }: MessageResponseProps) => (
   <Streamdown className={`xue-message-response ${className}`.trim()} controls={{ code: { copy: true, download: false }, table: false, mermaid: false }} dir="auto" parseIncompleteMarkdown plugins={plugins} {...props} />
-), (previous, next) => previous.children === next.children && previous.isAnimating === next.isAnimating);
+));
 MessageResponse.displayName = 'MessageResponse';

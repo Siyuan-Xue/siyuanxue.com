@@ -102,6 +102,21 @@ test('chat exposes its controls in the header without a sidebar', () => {
   expect(header.getByRole('link', { name: 'Home' })).toBeTruthy();
 });
 
+test('the homepage brand stays in the header after sending and starting a new chat', async () => {
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('An answer')} />);
+  const header = within(view.container.querySelector('header')!);
+  expect(header.getByRole('link', { name: 'Siyuan Xue' }).getAttribute('href')).toBe('/');
+  const input = view.getByLabelText('Your message');
+  fireEvent.input(input, { target: { value: 'This question must never become the site name' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.getByText('An answer')).toBeTruthy());
+  expect(header.getByRole('link', { name: 'Siyuan Xue' })).toBeTruthy();
+  expect(header.queryByText('This question must never become the site name')).toBeNull();
+  fireEvent.click(header.getByRole('button', { name: 'New chat' }));
+  await waitFor(() => expect(view.getByRole('heading', { name: copy.welcome })).toBeTruthy());
+  expect(header.getByRole('link', { name: 'Siyuan Xue' })).toBeTruthy();
+});
+
 test('starting a new chat stops the old stream and persists a fresh conversation', async () => {
   const bodies: unknown[] = [];
   let signal: AbortSignal | undefined;
@@ -168,6 +183,36 @@ test('shows one loader from submission until first text, without a composer stat
   respond(uiStream('Here is the answer'));
   await waitFor(() => expect(view.getByText('Here is the answer')).toBeTruthy());
   expect(view.container.querySelector('[data-xue-loader]')).toBeNull();
+});
+
+test('a draft remains editable while waiting and streaming, with one loader and a stop control until completion', async () => {
+  let respond!: (response: Response) => void;
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  const encoder = new TextEncoder();
+  const push = (frame: unknown) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(frame)}\n\n`));
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={() => new Promise(resolve => { respond = resolve; })} />);
+  const input = view.getByLabelText('Your message') as HTMLTextAreaElement;
+  fireEvent.input(input, { target: { value: 'A question' } });
+  fireEvent.submit(input.closest('form')!);
+  await waitFor(() => expect(view.getByRole('button', { name: copy.stop })).toBeTruthy());
+  expect(input.disabled).toBe(false);
+  fireEvent.input(input, { target: { value: 'My next draft' } });
+  respond(new Response(new ReadableStream({ start(value) { controller = value; } }), { headers: { 'Content-Type': 'text/event-stream' } }));
+  push({ type: 'start', messageId: 'live-assistant' });
+  push({ type: 'text-start', id: 'live-text' });
+  push({ type: 'text-delta', id: 'live-text', delta: 'The first words' });
+  await waitFor(() => expect(view.container.querySelector('.is-assistant')?.textContent).toContain('The first words'));
+  expect(input.value).toBe('My next draft');
+  expect(view.container.querySelectorAll('[data-xue-loader]')).toHaveLength(1);
+  expect(view.queryByRole('button', { name: copy.copy })).toBeNull();
+  expect(view.getByRole('button', { name: copy.stop })).toBeTruthy();
+  push({ type: 'text-end', id: 'live-text' });
+  push({ type: 'finish', finishReason: 'stop' });
+  controller.close();
+  await waitFor(() => expect(view.getByRole('button', { name: copy.copy })).toBeTruthy());
+  expect(view.queryByRole('button', { name: copy.stop })).toBeNull();
+  expect(view.container.querySelector('[data-xue-loader]')).toBeNull();
+  expect(input.value).toBe('My next draft');
 });
 
 test('copy success stays on its action icon and never creates a composer banner', async () => {
