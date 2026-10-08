@@ -11,6 +11,7 @@
     "build": "node scripts/build.mjs",
     "test": "bun test ./tests/*.test.ts ./tests/*.test.tsx",
     "test:output": "bun test ./tests/site-output.check.ts",
+    "test:gallery": "bun test ./tests/gallery-output.check.ts",
     "preview": "node scripts/preview.mjs",
     "astro": "astro",
     "dev:en": "SITE_LOCALE=en astro dev",

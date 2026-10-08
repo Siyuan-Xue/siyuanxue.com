@@ -2,12 +2,13 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import { locale } from '../i18n/locale';
-interface Props { title?: string; description?: string; htmlClass?: string; showTocToggle?: boolean; hasToc?: boolean; articleDate?: Date; noindex?: boolean; showHeader?: boolean }
-const { title, description, htmlClass = '', showTocToggle = false, hasToc = false, articleDate, noindex, showHeader = true } = Astro.props;
+import type { ShareImage, GalleryMetadataImage } from '../utils/pageMetadata';
+interface Props { title?: string; description?: string; htmlClass?: string; showTocToggle?: boolean; hasToc?: boolean; articleDate?: Date; noindex?: boolean; showHeader?: boolean; shareImage?: ShareImage; galleryImages?: GalleryMetadataImage[] }
+const { title, description, htmlClass = '', showTocToggle = false, hasToc = false, articleDate, noindex, showHeader = true, shareImage, galleryImages } = Astro.props;
 ---
 <!doctype html>
 <html id="top" lang={locale === 'zh' ? 'zh-CN' : 'en'} data-lang={locale} class={htmlClass}>
- <head><BaseHead title={title} description={description} articleDate={articleDate} noindex={noindex} /></head>
+ <head><BaseHead title={title} description={description} articleDate={articleDate} noindex={noindex} shareImage={shareImage} galleryImages={galleryImages} /></head>
  <body class:list={[hasToc && 'has-toc']}>
   <div class="page-wrapper">
    {showHeader && <Header showTocToggle={showTocToggle} />}

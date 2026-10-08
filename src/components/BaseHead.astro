@@ -4,10 +4,12 @@ import { locale, localeOrigin, t } from '../i18n/locale';
 import '../styles/base.css';
 import 'site-fonts';
 import themeScript from '../scripts/theme.js?raw';
-interface Props { title?: string; description?: string; articleDate?: Date; noindex?: boolean }
-const { title = t(site.title), description = t(site.description), articleDate, noindex = false } = Astro.props;
+import type { ShareImage, GalleryMetadataImage } from '../utils/pageMetadata';
+interface Props { title?: string; description?: string; articleDate?: Date; noindex?: boolean; shareImage?: ShareImage; galleryImages?: GalleryMetadataImage[] }
+const { title = t(site.title), description = t(site.description), articleDate, noindex = false, shareImage, galleryImages } = Astro.props;
 const canonical = new URL(Astro.url.pathname, localeOrigin(locale)).href;
-const image = new URL(`/images/share-${locale}.png`, localeOrigin(locale)).href;
+const cover = shareImage ?? { src: `/images/share-${locale}.png`, width: 1200, height: 630, alt: t(site.name) };
+const image = new URL(cover.src, localeOrigin(locale)).href;
 const isHome = Astro.url.pathname === '/';
 const fullTitle = isHome ? t(site.homeTitle) : `${title} — ${t(site.name)}`;
 const language = locale === 'zh' ? 'zh-CN' : 'en';
@@ -16,7 +18,17 @@ const person = {
  name: t(site.name), alternateName: [locale === 'zh' ? site.name.en : site.name.zh, 'Miles'],
  url: `${localeOrigin('en')}/`, sameAs: [site.github, `${localeOrigin('zh')}/`],
 };
-const schema = articleDate
+const schema = galleryImages?.length
+ ? {
+  '@context': 'https://schema.org', '@type': 'ImageGallery', name: title, description,
+  url: canonical, inLanguage: language, author: person, about: person,
+  primaryImageOfPage: { '@type': 'ImageObject', contentUrl: image, width: cover.width, height: cover.height, description: cover.alt },
+  image: galleryImages.map(photo => ({
+   '@type': 'ImageObject', contentUrl: new URL(photo.src, localeOrigin(locale)).href,
+   width: photo.width, height: photo.height, description: photo.alt, caption: photo.caption,
+  })),
+ }
+ : articleDate
  ? { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description, datePublished: articleDate.toISOString(), author: person, inLanguage: language, mainEntityOfPage: canonical, url: canonical, image }
  : isHome ? {
   '@context': 'https://schema.org',
@@ -47,13 +59,14 @@ const schema = articleDate
 <meta property="og:locale" content={locale === 'en' ? 'en_US' : 'zh_CN'} />
 <meta property="og:locale:alternate" content={locale === 'en' ? 'zh_CN' : 'en_US'} />
 <meta property="og:image" content={image} />
-<meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content={t(site.name)} />
+<meta property="og:image:width" content={String(cover.width)} /><meta property="og:image:height" content={String(cover.height)} />
+<meta property="og:image:alt" content={cover.alt} />
 {articleDate && <meta property="article:published_time" content={articleDate.toISOString()} />}
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={image} />
+<meta name="twitter:image:alt" content={cover.alt} />
 <meta name="generator" content={Astro.generator} />
 {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />}
 <script is:inline set:html={themeScript} />

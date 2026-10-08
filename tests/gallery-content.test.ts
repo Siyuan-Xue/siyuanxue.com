@@ -1,0 +1,40 @@
+import { expect, test } from 'bun:test';
+import { z } from 'astro/zod';
+import { createGallerySchema, pairGalleries, galleryHomeItems } from '../src/utils/gallery';
+import { mergeBlogEntries } from '../src/utils/blog';
+import { bi } from '../src/i18n/types';
+const data = { title: 'Title', description: 'Description', period: '2026', role: 'Author', category: 'projects' as const, order: 0, draft: false, images: [{ src: { src: '/image.webp', width: 10, height: 10, format: 'webp' as const }, alt: 'Image', caption: 'Caption' }], links: [] };
+const entry = (id: string, changes = {}) => ({ id, data: { ...data, ...changes } });
+test('gallery schema rejects empty images, whitespace text and unsafe links; defaults to draft', () => {
+ const schema = createGallerySchema(z.object({ src: z.string(), width: z.number(), height: z.number(), format: z.literal('webp') }));
+ expect(schema.safeParse({ ...data, images: [] }).success).toBe(false);
+ expect(schema.safeParse({ ...data, title: ' ' }).success).toBe(false);
+ expect(schema.safeParse({ ...data, links: [{ label: 'Source', href: 'javascript:alert(1)' }] }).success).toBe(false);
+ const { draft, order, ...rest } = data;
+ expect(schema.parse(rest)).toMatchObject({ draft: true, order: 0 });
+});
+test('only complete bilingual galleries publish; either draft isolates both', () => {
+ expect(pairGalleries([entry('one/en'), entry('one/zh', { draft: true })], 'en')).toEqual([]);
+ expect(() => pairGalleries([entry('one/en')], 'en')).toThrow('translation');
+ expect(pairGalleries([entry('one/en', { draft: true })], 'en')).toEqual([]);
+ expect(pairGalleries([entry('one/en'), entry('one/zh', { draft: true })], 'zh', true)[0].entry.id).toBe('one/zh');
+});
+test('gallery category/order and stable slug are validated across translations', () => {
+ expect(() => pairGalleries([entry('one/en'), entry('one/zh', { order: 1 })], 'en')).toThrow('order');
+ expect(() => pairGalleries([entry('one/en'), entry('one/zh', { category: 'research' })], 'en')).toThrow('category');
+ expect(() => pairGalleries([entry('Bad--slug/en')], 'en')).toThrow('id');
+});
+test('published galleries replace source links once; unpublished entries remain preparation', () => {
+ const source = [{ title: bi('Old', '旧'), href: 'https://example.com', gallerySlug: 'one', external: true }, { title: bi('Pending', '待补'), href: 'https://example.org', gallerySlug: 'two' }];
+ const items = galleryHomeItems(source, [{ slug: 'one', entry: entry('one/en') }, { slug: 'new', entry: entry('new/en') }], 'projects', 'en');
+ expect(items.map(item => item.href)).toEqual(['/gallery/one/', '/wip/', '/gallery/new/']);
+ expect(items[0].title).toBe('Title');
+ expect(items.every(item => !item.external)).toBe(true);
+ expect(source[0].href).toBe('https://example.com');
+});
+test('blog preserves kind and same-slug identities; date ties sort consistently', () => {
+ const article = (slug: string, date: string) => ({ slug, entry: { id: `${slug}/en`, data: { date: new Date(date) } } });
+ const result = mergeBlogEntries([article('same', '2026-01-01')], [article('same', '2026-01-01'), article('new', '2026-02-01')]);
+ expect(result.map(item => item.href)).toEqual(['/post/new/', '/essay/same/', '/post/same/']);
+ expect(result.map(item => item.kind)).toEqual(['post', 'essay', 'post']);
+});

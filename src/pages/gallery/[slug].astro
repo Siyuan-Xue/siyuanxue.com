@@ -1,0 +1,21 @@
+---
+import { getImage } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import GalleryContent from '../../components/GalleryContent.astro';
+import { getGalleries } from '../../utils/galleries';
+
+export async function getStaticPaths() {
+ return (await getGalleries(import.meta.env.DEV)).map(({ slug, entry }) => ({ params: { slug }, props: { entry } }));
+}
+interface Props { entry: CollectionEntry<'gallery'> }
+const { entry } = Astro.props;
+const { title, description, images, draft } = entry.data;
+const first = images[0];
+const cover = await getImage({ src: first.src, width: Math.min(1200, first.src.width), format: 'jpeg' });
+const shareImage = { src: cover.src, width: Number(cover.attributes.width), height: Number(cover.attributes.height), alt: first.alt };
+const galleryImages = images.map(photo => ({ src: photo.src.src, width: photo.src.width, height: photo.src.height, alt: photo.alt, caption: photo.caption }));
+---
+<Base title={title} description={description} noindex={import.meta.env.DEV || draft} shareImage={shareImage} galleryImages={galleryImages}>
+ <div class="container cc-narrow"><GalleryContent {...entry.data} /></div>
+</Base>

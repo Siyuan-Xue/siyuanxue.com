@@ -100,14 +100,43 @@ for (const v of variants) {
    expect(document.querySelector('link[hreflang="zh-CN"]')?.getAttribute('href')).toBe('https://xuesiyuan.com' + pathname);
    expect(document.querySelector('link[hreflang="x-default"]')?.getAttribute('href')).toBe('https://siyuanxue.com' + pathname);
    const shareUrl = document.querySelector('meta[property="og:image"]')!.getAttribute('content')!;
-   expect(shareUrl).toContain(v.origin + '/images/share-');
-   const share = await readFile(join(v.root, new URL(shareUrl).pathname)); expect(share.readUInt32BE(16)).toBe(1200); expect(share.readUInt32BE(20)).toBe(630);
+   expect(new URL(shareUrl).origin).toBe(v.origin);
+   if (document.querySelector('article[data-gallery-page]')) {
+    await access(join(v.root, new URL(shareUrl).pathname));
+    expect(Number(document.querySelector('meta[property="og:image:width"]')?.getAttribute('content'))).toBeGreaterThan(0);
+    expect(Number(document.querySelector('meta[property="og:image:height"]')?.getAttribute('content'))).toBeGreaterThan(0);
+    expect(document.querySelector('meta[property="og:image:alt"]')?.getAttribute('content')).toBeTruthy();
+    expect(document.querySelector('meta[name="twitter:image"]')?.getAttribute('content')).toBe(shareUrl);
+   } else {
+    expect(shareUrl).toContain(v.origin + '/images/share-');
+    const share = await readFile(join(v.root, new URL(shareUrl).pathname)); expect(share.readUInt32BE(16)).toBe(1200); expect(share.readUInt32BE(20)).toBe(630);
+   }
    expect(document.querySelectorAll('link[rel="preload"][as="font"]').length).toBe(0);
    const styles = (await Promise.all([...document.querySelectorAll('link[rel="stylesheet"]')].map(node => readFile(join(v.root, node.getAttribute('href')!), 'utf8')))).join('');
    expect(styles.includes('noto-serif-sc-')).toBe(v.lang === 'zh-CN');
    for (const source of document.querySelectorAll('[srcset]')) for (const candidate of source.getAttribute('srcset')!.split(',')) await access(join(v.root, candidate.trim().split(/\s+/)[0]));
    for (const node of document.querySelectorAll('script[src],link[rel="stylesheet"],img[src]')) { const url = node.getAttribute('src') ?? node.getAttribute('href'); if (url?.startsWith('/')) await access(join(v.root, url)); }
-   if (document.querySelector('article')) {
+   if (document.querySelector('article[data-gallery-page]')) {
+    const schema = JSON.parse(document.querySelector('script[type="application/ld+json"]')!.textContent!);
+    const nodes = schema['@graph'] ?? [schema];
+    const gallery = nodes.find((node: { '@type': string }) => node['@type'] === 'ImageGallery');
+    expect(gallery).toBeTruthy();
+    expect(gallery.url).toBe(v.origin + pathname);
+    expect(gallery.name).toBe(document.querySelector('h1')!.textContent);
+    expect(gallery.author['@id']).toBe('https://siyuanxue.com/#person');
+    expect(nodes.some((node: { '@type': string }) => node['@type'] === 'BlogPosting')).toBe(false);
+    expect(document.querySelector('meta[property="article:published_time"]')).toBeNull();
+    const figures = document.querySelectorAll('article[data-gallery-page] figure');
+    expect(figures.length).toBeGreaterThan(0);
+    for (const figure of figures) {
+     const image = figure.querySelector('img')!;
+     expect(image.getAttribute('alt')).toBeTruthy();
+     expect(Number(image.getAttribute('width'))).toBeGreaterThan(0);
+     expect(Number(image.getAttribute('height'))).toBeGreaterThan(0);
+     expect(figure.querySelector('figcaption')?.textContent?.trim()).toBeTruthy();
+     expect(figure.querySelector('a[href]')).not.toBeNull();
+    }
+   } else if (document.querySelector('article')) {
     const schema = JSON.parse(document.querySelector('script[type="application/ld+json"]')!.textContent!);
     expect(schema['@type']).toBe('BlogPosting'); expect(schema.headline).toBe(document.querySelector('h1')!.textContent); expect(schema.url).toBe(v.origin + pathname);
     for (const link of document.querySelectorAll('[data-toc-link]')) expect(document.getElementById(link.getAttribute('data-toc-link')!)).not.toBeNull();
@@ -116,6 +145,36 @@ for (const v of variants) {
     expect(Boolean(document.querySelector('dialog#site-toc'))).toBe(count > 0);
    }
   }
+ });
+ test(`${v.lang}: homepage orders galleries before a merged chronological blog`, async () => {
+  const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+  const sections = [...document.querySelectorAll('.home-container > section')];
+  expect(sections[0].classList.contains('bio')).toBe(true);
+  const headings = sections.slice(1).map(section => section.querySelector('h2')?.textContent);
+  expect(headings).toEqual(v.lang === 'en' ? ['Projects', 'Research', 'Interests', 'Blog'] : ['项目', '研究', '兴趣爱好', '博客']);
+  for (const section of sections.slice(1, 4)) {
+   expect(section.querySelectorAll('a[href^="http"],a[target="_blank"]')).toHaveLength(0);
+   expect(section.querySelectorAll('a[href="/wip/"]')).toHaveLength(0);
+   for (const item of section.querySelectorAll('.bullet-list_item')) {
+    const link = item.querySelector('a');
+    if (link) expect(link.getAttribute('href')).toMatch(/^\/gallery\/[a-z0-9]+(?:-[a-z0-9]+)*\/$/);
+    else expect(item.textContent).toContain(v.lang === 'en' ? 'In preparation' : '整理中');
+   }
+  }
+  const blogLinks = [...sections[4].querySelectorAll('.bullet-list_link')].map(link => link.getAttribute('href')!);
+  expect(new Set(blogLinks).size).toBe(blogLinks.length);
+  const rss = new DOMParser().parseFromString(await readFile(join(v.root, 'rss.xml'), 'utf8'), 'text/xml');
+  const feedLinks = [...rss.querySelectorAll('item > link')].map(link => new URL(link.textContent!).pathname);
+  expect([...blogLinks].sort()).toEqual([...feedLinks].sort());
+  const dates = await Promise.all(blogLinks.map(async href => {
+   const { document: article } = parseHTML(await readFile(join(v.root, href, 'index.html'), 'utf8'));
+   return Date.parse(article.querySelector('meta[property="article:published_time"]')!.getAttribute('content')!);
+  }));
+  expect(dates.every(Number.isFinite)).toBe(true);
+  expect(dates).toEqual([...dates].sort((a, b) => b - a));
+  expect(blogLinks).toContain('/essay/why-this-site/');
+  expect(blogLinks).toContain('/post/first-note/');
+  expect(blogLinks).toContain('/post/congrats-you-hit-the-limit/');
  });
  test(`${v.lang}: responsive portrait and unavailable homepage items`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
@@ -139,7 +198,9 @@ for (const v of variants) {
   expect(rss.querySelector('channel > title')?.textContent).toBe(v.title);
   expect(rss.querySelectorAll('item').length).toBe(3);
   for (const link of rss.querySelectorAll('item > link')) expect(link.textContent).toStartWith(v.origin);
-  const sitemap = await readFile(join(v.root,'sitemap-0.xml'), 'utf8'); expect(sitemap).toContain(v.origin); expect(sitemap).not.toContain('/wip'); expect(sitemap).not.toContain('/404');
+  const sitemap = await readFile(join(v.root,'sitemap-0.xml'), 'utf8'); expect(sitemap).toContain(v.origin); expect(sitemap).not.toContain('/wip'); expect(sitemap).not.toContain('/404'); expect(sitemap).not.toContain('/gallery/layout-preview/'); expect(sitemap).not.toContain('/dev/');
+  expect(await access(join(v.root, 'gallery/layout-preview/index.html')).then(() => true, () => false)).toBe(false);
+  expect(await access(join(v.root, 'dev/gallery/layout-preview/index.html')).then(() => true, () => false)).toBe(false);
   expect(await readFile(join(v.root,'robots.txt'),'utf8')).toContain(`Sitemap: ${v.origin}/sitemap-index.xml`);
   for (const page of ['wip/index.html','404.html']) { const { document } = parseHTML(await readFile(join(v.root,page),'utf8')); expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex'); }
  });

@@ -1,0 +1,37 @@
+{
+  "title": "图集版式预览",
+  "period": "布局样例",
+  "role": "界面演示，不记录个人经历",
+  "description": "这是一份仅供本地查看的图集版式样例。画面为抽象占位图，不代表真实项目、活动或个人成果。正式图集会在这里简短说明背景、本人实际参与的工作，以及可以核实的收获或结果。第一张图完整展开，接着以两张一组呈现细节；每张图的说明始终可见。真实照片、截图和事实确认后，再发布对应的中英文页面。",
+  "category": "projects",
+  "order": 100,
+  "draft": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "粘土色圆形与浅绿色曲线组成的横向版式样图",
+      "caption": "首图通栏：让一张主要照片交代整体场景。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "用于双列布局的横向抽象版式样图",
+      "caption": "横向细节图：图片保持自己的比例。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "用于双列布局的纵向抽象版式样图",
+      "caption": "纵向过程图：较高的照片完整显示，不裁切。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "用于结尾通栏布局的宽幅抽象版式样图",
+      "caption": "末张通栏：用一张画面结束这段记录。"
+    }
+  ],
+  "links": [
+    {
+      "label": "网站源码（示例资料链接）",
+      "href": "https://github.com/Siyuan-Xue/siyuanxue.com"
+    }
+  ]
+}

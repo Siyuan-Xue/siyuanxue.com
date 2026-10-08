@@ -2,14 +2,15 @@
 import Base from '../layouts/Base.astro';
 import Bio from '../components/Bio.astro';
 import BulletList from '../components/BulletList.astro';
-import { site, type LinkItem } from '../data/site';
-import { t } from '../i18n/locale';
-import { getEssays, getPosts } from '../utils/content';
-const localize = (items: LinkItem[]) => items.map(item => ({ ...item, title: t(item.title), venue: item.venue ? t(item.venue) : undefined }));
+import { site } from '../data/site';
+import { locale, t } from '../i18n/locale';
+import { getBlog } from '../utils/content';
+import { getGalleries } from '../utils/galleries';
+import { galleryHomeItems } from '../utils/gallery';
+const [galleries, blog] = await Promise.all([getGalleries(), getBlog()]);
 const sections = [
- { title: t(site.ui.essays), items: (await getEssays()).map(({ slug, entry }) => ({ title: entry.data.title, href: `/essay/${slug}/` })) },
- { title: t(site.ui.posts), items: (await getPosts()).map(({ slug, entry }) => ({ title: entry.data.title, href: `/post/${slug}/` })) },
- ...(['projects', 'research', 'externalWriting', 'appearances'] as const).map(key => ({ title: t(site.ui[key]), items: localize(site[key]) })),
+ ...(['projects', 'research', 'appearances'] as const).map(key => ({ title: t(site.ui[key]), items: galleryHomeItems(site[key], galleries, key, locale) })),
+ { title: t(site.ui.blog), items: blog.map(({ entry, href }) => ({ title: entry.data.title, href })) },
 ];
 ---
 <Base><div class="container cc-narrow home-container"><Bio />{sections.filter(section => section.items.length).map(section => <section class="u-mt-sm"><h2 class="h3">{section.title}</h2><BulletList items={section.items} /></section>)}</div></Base>

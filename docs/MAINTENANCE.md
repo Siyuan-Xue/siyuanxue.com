@@ -54,6 +54,8 @@
 
 同日后续用户明确最终顶栏顺序为「新对话、首页、主题」。已交换前两个按钮并通过[Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/37718314174)发布 `5aa16cffdd6eaa9b50264ba8701cdee679f669e5`，两域名SHA、语言、跳转、旧照片410及生产浏览器图标顺序均核对通过。验证与恢复见[按钮顺序修正审计](audits/2026-10-08-chat-header-order.md)；上段保留此前版本的验收事实，不代表最终顺序。
 
+同日图集与博客调整在 `codex/gallery-and-blog` 开发分支实现，尚未发布：首页顺序为简介、项目、研究、兴趣爱好、博客；博客合并长短文，保留 `/essay/`、`/post/` 及 RSS 身份。项目和活动素材未齐时显示「整理中」，原外链保留在 `src/data/site.ts`，首页不外跳。图集源文件为 `src/content/galleries/<slug>/{en,zh}.json`，图片由 Astro 本地资源处理；完整公开对生成 `/gallery/<slug>/`、独立封面及 `ImageGallery` 元信息，任一语言草稿均不公开。更新步骤、验证与草稿恢复见[图集作者指南](GALLERIES.md)，本次边界与验收见[图集与博客审计](audits/2026-10-08-gallery-blog.md)。`layout-preview` 是仅开发环境可见的版式样例，不是真实成果；待补真实图片与参与事实后再制作正式图集。
+
 ### GitHub Actions
 
 - [CI 工作流](../.github/workflows/ci.yml) 调用 `bash ops/verify.sh`，完成类型、行为、部署脚本、隔离 Nginx、双语构建及产物检查，再打包同一份产物；Actions artifact 保留 7 天，不能当长期备份。
@@ -168,6 +170,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 |---|---|
 | 姓名、身份、简介、项目、联系方式 | `src/data/site.ts` 中英资料、BaseHead Person/WebSite/ProfilePage/BlogPosting、站点 README、GitHub 账号 name/bio/blog、个人主页 README、两仓库 About；小薛人设/精选记忆仅在事实相关时更新 |
 | 文章 | 中英文配对、日期/ID/草稿、标题/描述、canonical/hreflang、RSS/sitemap、站内链接；不要把未完成占位页加入索引 |
+| 图集 / 首页内容目录 | `src/content/galleries` 双语 JSON、真实角色/介绍/图片/alt/图注、来源资料与 `site.ts` 的 gallerySlug、草稿隔离、首页站内入口、封面/canonical/hreflang/ImageGallery/sitemap；`bun run test:gallery` 在临时目录验证公开图集，生产产物测试验证样例不出页；不改变博客 RSS 身份 |
 | 域名 / 路径 | 注册与 DNS、www/HTTP 跳转、两个证书、Nginx 根目录、SEO/RSS/sitemap、语言链接、聊天 ALLOWED_ORIGINS、CI 变量与域名校验、GitHub 各处链接、搜索平台属性 |
 | 肖像 / 动效 | 正常肖像与占位肖像区分、人物比例/压缩/alt、单击展开、刷新折叠、灯箱可访问性、两站可见英文文案、reduced-motion、旧照片永久拒绝、图片缓存；不恢复状态标语块 |
 | 明暗 / 顶栏 / 导航 | 首页/文章/聊天、两种语言、明暗初次加载/切换/返回、70% 背景与图标可读性、Lucide 无圆框按钮、键盘/触屏/窄屏；桌面结果不能当实体手机验收 |

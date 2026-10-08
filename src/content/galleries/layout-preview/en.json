@@ -1,0 +1,37 @@
+{
+  "title": "Gallery layout preview",
+  "period": "Layout sample",
+  "role": "Interface demonstration, not a personal experience",
+  "description": "This local preview demonstrates the gallery layout. These abstract placeholders do not document a real project, event, or achievement. A published gallery will briefly explain the background, my actual contribution, and any verifiable outcomes. A full-width opening image leads into paired details, with captions always visible. Real photos, screenshots, and confirmed facts will replace this sample before a corresponding English and Chinese gallery is published.",
+  "category": "projects",
+  "order": 100,
+  "draft": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "A clay-colored circle and pale green curve in a landscape layout sample",
+      "caption": "A full-width opening image sets the scene."
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "A landscape abstract sample for the paired layout",
+      "caption": "A landscape detail keeps its original proportions."
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "A portrait abstract sample for the paired layout",
+      "caption": "A portrait image is shown in full, without cropping."
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "A wide abstract sample for the closing image",
+      "caption": "An unpaired closing image spans the full column."
+    }
+  ],
+  "links": [
+    {
+      "label": "Website source (sample reference)",
+      "href": "https://github.com/Siyuan-Xue/siyuanxue.com"
+    }
+  ]
+}

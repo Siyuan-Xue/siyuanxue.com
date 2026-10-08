@@ -6,6 +6,7 @@ export const WIP_HREF = '/wip/';
 export type LinkItem = {
 	title: Bi;
 	href: string;
+	gallerySlug?: string;
 	venue?: Bi;
 	year?: string | number;
 	external?: boolean;
@@ -36,6 +37,7 @@ export const site = {
 
 	ui: {
 		backToTop: bi('Back to top', '回到顶部'),
+		blog: bi('Blog', '博客'),
 		essays: bi('Essays', '长文'),
 		posts: bi('Short posts', '短记'),
 		projects: bi('Projects', '项目'),
@@ -95,24 +97,28 @@ export const site = {
 
 	projects: [
 		{
+			gallerySlug: 'probfun',
 			title: bi('ProbFun', '邮趣数学'),
 			href: 'https://umathhub.com',
 			year: 2025,
 			external: true,
 		},
 		{
+			gallerySlug: 'imathbook',
 			title: bi('iMathBook', 'iMathBook'),
 			href: 'https://imathbook.com',
 			year: 2025,
 			external: true,
 		},
 		{
+			gallerySlug: 'leda-agent',
 			title: bi('LeDA Agent', 'LeDA 智能体'),
 			href: 'https://win.bupt.edu.cn/program.do?id=9909',
 			year: 2026,
 			external: true,
 		},
 		{
+			gallerySlug: 'pixeldone',
 			title: bi('PixelDone', '像素清单'),
 			href: 'https://github.com/Siyuan-Xue/PixelDone',
 			year: 2026,
@@ -122,6 +128,7 @@ export const site = {
 
 	research: [
 		{
+			gallerySlug: 'yuheng',
 			title: bi('Yuheng · multimodal metaphor detection', '语衡 · 多模态隐喻检测'),
 			href: WIP_HREF,
 			venue: bi('NLPCC', 'NLPCC'),
@@ -134,6 +141,7 @@ export const site = {
 
 	appearances: [
 		{
+			gallerySlug: 'walking-with-light',
 			title: bi(
 				'Walking with Light · Beijing Collegiate Drama Festival',
 				'《与光同行》· 北京市大学生戏剧节',
@@ -143,6 +151,7 @@ export const site = {
 			external: true,
 		},
 		{
+			gallerySlug: 'volleyball',
 			title: bi(
 				'BUPT volleyball · school team & college team',
 				'校排球队 · 院排球队',
