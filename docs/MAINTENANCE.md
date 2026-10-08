@@ -48,9 +48,9 @@
 
 图片生成的最终结果应作为仓库资源保存，提示词与生成依据放在对应审计记录；临时预览图、浏览器缓存和工具会话不是备份。升级 PhotoSwipe、GSAP、Lucide、Fontsource 或适配的 AI Elements 代码时，一并检查版本、许可证和归属说明。
 
-2026-10-08 本地悬停反馈调整：共享 `src/styles/tokens.css` 中的 Claude 粘土色系；悬停统一使用 `transition: none` 即时响应（已按后续要求取消80ms），覆盖首页、文章目录/正文与聊天控件；明暗模式分别使用可读的交互色，键盘焦点同步反馈。更新、验收、发布边界与恢复见[悬停反馈审计](audits/2026-10-08-hover-feedback.md)。此项尚未发布；上线仍走下述 GitHub Actions。
+2026-10-08 悬停反馈调整：共享 `src/styles/tokens.css` 中的 Claude 粘土色系；悬停统一使用 `transition: none` 即时响应（已按后续要求取消80ms），覆盖首页、文章目录/正文与聊天控件；明暗模式分别使用可读的交互色，键盘焦点同步反馈。已通过[生产Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/37717307878)发布 `8d902f66a258e551fe414361160241bafc0af504`，两域名目标SHA、固定语言、HTTP/www跳转与旧照片410检查通过；更新、验收边界与恢复见[悬停反馈审计](audits/2026-10-08-hover-feedback.md)。
 
-同日本地聊天布局调整：消息区和输入区共用主页的 `--narrow` / `--page-pad-x`，欢迎与对话状态宽度一致；中文问候与用户确认的英文问候更新，顶栏顺序核对为「首页、新对话、主题」。验证及边界见[聊天宽度与问候审计](audits/2026-10-08-chat-width-greeting.md)，尚未发布。
+同日聊天布局调整已随上述版本发布：消息区和输入区共用主页的 `--narrow` / `--page-pad-x`，欢迎与对话状态宽度一致；中文问候与用户确认的英文问候更新，线上两站顶栏顺序核对为「首页、新对话、主题」。中文站完成一次真实回复，英文站完成只读UI检查；不将其当作模型和记忆服务的全面验收。验证及边界见[聊天宽度与问候审计](audits/2026-10-08-chat-width-greeting.md)。后续补审计的 `[skip ci]` 文档提交不改变该静态release SHA。
 
 ### GitHub Actions
 
