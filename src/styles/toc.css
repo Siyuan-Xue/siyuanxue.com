@@ -17,15 +17,14 @@
 .toc-list_item--h3 { padding-left: .85em; }
 .toc-link {
  display: inline-block;
- color: var(--fg);
- opacity: .5;
+ color: var(--fg-muted);
  font-size: 1em;
  line-height: 1.6;
  text-decoration: none;
- transition: opacity var(--ease-color);
+ transition: none;
 }
-.toc-link:hover { opacity: .85; color: var(--fg); }
-.toc-link.cc-active { opacity: 1; }
+.toc-link.cc-active { color: var(--fg); }
+.toc-link:is(:hover, :focus-visible) { color: var(--fg-interactive); text-decoration: underline; }
 .toc-toggle[hidden] { display: none; }
 .toc-desktop { display: none; }
 .toc-dialog {
@@ -47,7 +46,7 @@
 .toc-dialog::backdrop { background: rgb(0 0 0 / .28); }
 .toc-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .toc-dialog-close { width: 44px; height: 44px; flex-shrink: 0; }
-.toc-dialog .toc-link { opacity: 1; min-height: 44px; padding: .35rem 0; }
+.toc-dialog .toc-link { min-height: 44px; padding: .35rem 0; }
 @media (min-width: 1024px) {
  .toc-desktop {
   display: block;

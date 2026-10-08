@@ -78,9 +78,9 @@
 	border-bottom: 1px solid transparent;
 }
 
-.wip-back a:hover {
-	color: var(--fg);
-	border-bottom-color: var(--border);
+.wip-back a:is(:hover, :focus-visible) {
+	color: var(--fg-interactive);
+	border-bottom-color: currentColor;
 }
 
 @keyframes wip-gavel-swing {
@@ -173,4 +173,3 @@
 		opacity: 0;
 	}
 }
-

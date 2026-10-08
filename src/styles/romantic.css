@@ -293,11 +293,12 @@
 	border: 1px solid var(--romantic-lightbox-rule);
 	border-radius: 50%;
 	background: var(--romantic-lightbox-paper);
-	transition: background-color 160ms ease;
+	transition: none;
 }
 
-.romantic-lightbox.pswp .romantic-lightbox_close:hover > span {
-	background: #ebe4d8;
+.romantic-lightbox.pswp .romantic-lightbox_close:is(:hover, :focus-visible) > span {
+	background: var(--accent-clay);
+	color: var(--romantic-lightbox-ink);
 }
 
 .romantic-lightbox.pswp--zoomed-in .romantic-lightbox_frame,

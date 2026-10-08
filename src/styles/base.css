@@ -167,15 +167,20 @@ a  {
 	color: var(--fg);
 	text-decoration-thickness: 1px;
 	text-underline-offset: 0.15em;
-	transition: color var(--ease-color);
+	transition: none;
 }
 
-a:hover  {
-	color: var(--fg-muted);
+a:is(:hover, :focus-visible)  {
+	color: var(--fg-interactive);
 }
 
-:focus:not(input):not(textarea):not(select) {
-	outline: none !important;
+:focus:not(:focus-visible):not(input):not(textarea):not(select) {
+	outline: none;
+}
+
+:focus-visible {
+	outline: 2px solid var(--fg-interactive);
+	outline-offset: 3px;
 }
 
 .h3  {
@@ -246,8 +251,8 @@ a:hover  {
 	line-height: 0;
 }
 
-.header-name-link:hover  {
-	color: var(--fg-muted);
+.header-name-link:is(:hover, :focus-visible)  {
+	color: var(--fg-interactive);
 }
 
 .header-name  {
@@ -259,7 +264,6 @@ a:hover  {
 	height: auto;
 	display: block;
 	color: inherit;
-	transition: color var(--ease-color);
 }
 
 .header-controls  {
@@ -287,11 +291,11 @@ a:hover  {
 	color: var(--fg-muted);
 	text-decoration: none;
 	cursor: pointer;
-	transition: color var(--ease-color);
+	transition: none;
 }
 
-.header-control-button:hover  {
-	color: var(--fg);
+.header-control-button:is(:hover, :focus-visible)  {
+	color: var(--fg-interactive);
 }
 
 /* Icon-only controls keep their full click targets. */
@@ -345,9 +349,9 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 	border-bottom: 1px solid transparent;
 }
 
-.bullet-list_link:hover  {
-	color: var(--fg-muted);
-	border-bottom-color: var(--border);
+.bullet-list_link:is(:hover, :focus-visible)  {
+	color: var(--fg-interactive);
+	border-bottom-color: currentColor;
 }
 
 .bullet-list_meta  {
@@ -395,8 +399,8 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 	text-decoration: none;
 }
 
-.back-to-top:hover  {
-	color: var(--fg);
+.back-to-top:is(:hover, :focus-visible)  {
+	color: var(--fg-interactive);
 }
 
 
@@ -436,6 +440,9 @@ html.u-mode-invert .theme-toggle_icon--moon  {
   --fg-body: #000;
   --fg-muted: #333;
   --fg-faint: #555;
+  --accent-clay: #000;
+  --fg-interactive: #000;
+  --bg-interactive: #fff;
   --border: #999;
   --border-soft: #bbb;
  }

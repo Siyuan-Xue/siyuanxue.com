@@ -1,14 +1,14 @@
 /* Claude reference layout; typography and colors inherit the homepage tokens. */
 html.has-xue-chat {
   --xue-selected: var(--bg-soft);
-  --xue-accent: #b76548;
+  --xue-accent: var(--accent-clay);
   --xue-text-offset: 2px;
   height: var(--xue-viewport-height, 100dvh);
   overflow: hidden;
   scrollbar-gutter: auto;
 }
 html.has-xue-chat.u-mode-invert {
-  --xue-accent: #ce8567;
+  --xue-accent: var(--fg-interactive);
 }
 .has-xue-chat body { height: 100%; min-height: 0; overflow: hidden; }
 .has-xue-chat .page-wrapper { height: 100%; min-height: 0; }
@@ -18,31 +18,28 @@ html.has-xue-chat.u-mode-invert {
 .xue-chat button { appearance: none; background: none; border: 0; color: inherit; cursor: pointer; font: inherit; }
 .xue-chat a { color: inherit; text-decoration: none; }
 .xue-chat button:disabled { cursor: default; }
-.xue-chat :is(a, button, summary):focus-visible { outline: 2px solid var(--xue-accent) !important; outline-offset: 3px; }
+.xue-chat :is(a, button, summary) { transition: none; }
+.xue-chat :is(a, button, summary):focus-visible { outline: 2px solid var(--fg-interactive); outline-offset: 3px; }
 .xue-chat .xue-icon-button { align-items: center; border-radius: 6px; color: var(--fg-muted); display: inline-flex; flex: none; height: 32px; justify-content: center; padding: 0; width: 32px; }
-.xue-chat .xue-icon-button:hover { background: var(--xue-selected); color: var(--fg); }
 .xue-theme-moon, .u-mode-invert .xue-theme-sun { display: none; }
 .u-mode-invert .xue-theme-moon { display: block; }
 .xue-chat-workspace { display: flex; flex: 1; flex-direction: column; min-height: 0; min-width: 0; }
 .xue-chat-header { font: var(--font-size-body)/var(--line-height-body) var(--font-serif); }
 .xue-chat .header-name-link { color: var(--fg); }
 .xue-chat .header-control-button { color: var(--fg-muted); }
-.xue-chat .header-control-button:hover { color: var(--fg); }
-.xue-chat .header-name-link:hover { color: var(--fg-muted); }
 .xue-chat-main { display: flex; flex: 1; flex-direction: column; min-height: 0; position: relative; }
 .xue-conversation { flex: 1; min-height: 0; overflow: hidden; position: relative; }
 .xue-conversation > div { scrollbar-color: var(--border) transparent; scrollbar-width: thin; scrollbar-gutter: auto !important; }
-.xue-conversation-content { display: flex; flex-direction: column; gap: 26px; margin: 0 auto; max-width: 776px; min-height: 100%; padding: 18px 24px 38px; width: 100%; }
+.xue-conversation-content { display: flex; flex-direction: column; gap: 26px; margin: 0 auto; max-width: var(--narrow); min-height: 100%; padding: 18px var(--page-pad-x) 38px; width: 100%; }
 .xue-chat-main[data-chat-state='welcome'] { justify-content: center; padding-bottom: clamp(40px, 18vh, 160px); }
 .xue-chat-main[data-chat-state='welcome'] .xue-conversation { flex: 0 1 auto; }
-.xue-chat-main[data-chat-state='welcome'] .xue-conversation-content { min-height: 0; padding: 24px 16px 28px; }
+.xue-chat-main[data-chat-state='welcome'] .xue-conversation-content { min-height: 0; padding: 24px var(--page-pad-x) 28px; }
 .xue-welcome { text-align: center; }
 .xue-welcome-heading { align-items: center; display: flex; gap: 14px; justify-content: center; }
 .xue-welcome-icon { color: var(--xue-accent); flex: none; height: 34px; width: 34px; }
 .xue-welcome h1 { color: var(--fg); font: 400 clamp(27px, 2.8vw, 36px)/1.25 var(--font-serif); letter-spacing: normal; margin: 0; }
 .xue-prompts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
 .xue-chat .xue-prompts button { border: 1px solid var(--border-soft); border-radius: 9px; color: var(--fg-muted); font: 12px/1.5 var(--font-serif); min-height: 34px; padding: 7px 12px; }
-.xue-prompts button:hover { background: var(--xue-selected); color: var(--fg); }
 .xue-message { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; width: 100%; }
 .xue-message.is-user { align-items: flex-end; }
 .xue-message-content { min-width: 0; }
@@ -74,9 +71,8 @@ html.has-xue-chat.u-mode-invert {
 .xue-thinking svg { display: block; overflow: visible; }
 .xue-message-actions { align-items: center; display: flex; gap: 4px; margin-top: 10px; }
 .xue-chat .xue-message-action { align-items: center; border-radius: 6px; color: var(--fg-faint); display: inline-flex; height: 28px; justify-content: center; padding: 0; width: 28px; }
-.xue-message-action:hover { background: var(--xue-selected); color: var(--fg); }
 .xue-chat .xue-scroll-latest { align-items: center; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 50%; bottom: 16px; box-shadow: 0 3px 10px #0001; display: flex; height: 34px; justify-content: center; left: 50%; position: absolute; transform: translateX(-50%); width: 34px; z-index: 3; }
-.xue-compose-area { flex: none; margin: 0 auto; max-width: 770px; padding: 8px 0 10px; position: relative; width: calc(100% - 48px); z-index: 4; }
+.xue-compose-area { flex: none; margin: 0 auto; max-width: var(--narrow); padding: 8px var(--page-pad-x) 10px; position: relative; width: 100%; z-index: 4; }
 .xue-composer { align-items: center; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 16px; box-shadow: 0 4px 20px #00000006; display: grid; gap: 4px; grid-template-columns: 32px minmax(0, 1fr) 32px; min-height: 50px; padding: 6px 12px; position: relative; }
 .xue-composer:has(textarea:focus) { border-color: var(--fg-faint); }
 .xue-composer textarea { appearance: none; background: transparent; border: 0; color: var(--fg); display: block; font: var(--font-size-body)/1.5 var(--font-serif); grid-column: 2; grid-row: 1; max-height: 220px; min-height: 32px; min-width: 0; outline: 0; overflow-y: auto; padding: calc(2px + var(--xue-text-offset)) 8px calc(2px - var(--xue-text-offset)); resize: none; width: 100%; }
@@ -84,10 +80,8 @@ html.has-xue-chat.u-mode-invert {
 .xue-composer textarea::placeholder { color: var(--fg-faint); opacity: 1; }
 .xue-composer-toolbar { align-items: center; display: flex; grid-column: 3; grid-row: 1; height: 32px; }
 .xue-chat .xue-send { align-items: center; border-radius: 6px; color: var(--fg); display: inline-flex; height: 32px; justify-content: center; padding: 0; width: 32px; }
-.xue-send:hover:not(:disabled) { background: var(--xue-selected); }
 .xue-send:disabled { color: var(--fg-faint); opacity: .5; }
 .xue-chat .xue-stop { background: var(--fg); border-radius: 50%; color: var(--bg); }
-.xue-chat .xue-stop:hover { background: var(--fg-muted); }
 .xue-composer-footer { align-items: center; color: var(--fg-faint); display: flex; font-size: 12px; gap: 12px; justify-content: space-between; line-height: 18px; margin: 11px 16px 0; }
 .xue-composer-footer p { margin: 0; }
 .xue-identity { align-items: center; color: var(--fg-faint); display: inline-flex; flex: none; font-size: 12px; gap: 8px; line-height: 18px; white-space: nowrap; }
@@ -96,17 +90,23 @@ html.has-xue-chat.u-mode-invert {
 .xue-starters-menu { grid-column: 1; grid-row: 1; }
 .xue-starters-menu summary { align-items: center; border-radius: 6px; color: var(--fg); cursor: pointer; display: flex; height: 32px; justify-content: center; list-style: none; width: 32px; }
 .xue-starters-menu summary::-webkit-details-marker { display: none; }
-.xue-starters-menu summary:hover { background: var(--xue-selected); }
 .xue-starters-popover { background: var(--bg-elevated); border: 1px solid var(--border-soft); border-radius: 12px; bottom: calc(100% + 8px); box-shadow: 0 6px 30px #0001; left: 0; min-width: 220px; padding: 6px; position: absolute; }
 .xue-chat .xue-starters-popover button { border-radius: 6px; display: block; font-size: 13px; padding: 10px 12px; text-align: left; width: 100%; }
-.xue-starters-popover button:hover { background: var(--xue-selected); }
 .xue-error-card { align-items: center; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; display: flex; gap: 16px; justify-content: space-between; margin-bottom: 10px; padding: 12px 14px; }
 .xue-error-card strong { display: block; font-size: 13px; font-weight: 600; }
 .xue-error-card p { color: var(--fg-muted); font-size: 12px; margin: 3px 0 0; }
 .xue-chat .xue-error-card button { align-items: center; border-radius: 6px; display: inline-flex; flex: none; height: 36px; justify-content: center; width: 36px; }
-.xue-error-card button:hover { background: var(--xue-selected); }
+/* Keep hover and keyboard feedback visible even on the dark composer. */
+.xue-chat a:is(:hover, :focus-visible),
+.xue-chat .header-control-button:is(:hover, :focus-visible) { color: var(--fg-interactive); }
+.xue-message-response a:is(:hover, :focus-visible) { text-decoration-thickness: 2px; }
+.xue-chat :is(.xue-icon-button, .xue-prompts button, .xue-message-action, .xue-send, .xue-starters-menu summary, .xue-starters-popover button, .xue-error-card button, .xue-scroll-latest, [data-streamdown='code-block-copy-button']):not(:disabled):not(.xue-stop):is(:hover, :focus-visible) {
+  background: var(--bg-interactive);
+  color: var(--fg-interactive);
+}
+.xue-chat .xue-prompts button:is(:hover, :focus-visible) { border-color: var(--fg-interactive); }
+.xue-chat .xue-stop:is(:hover, :focus-visible) { background: var(--fg-interactive); color: var(--bg); }
 .xue-storage-note { color: var(--fg-muted); font-size: 12px; margin: 8px 0 0; text-align: center; }
-.xue-chat-main[data-chat-state='welcome'] .xue-compose-area { max-width: 640px; }
 .xue-chat-main[data-chat-state='welcome'] .xue-composer { min-height: 104px; padding: 12px 16px; row-gap: 12px; }
 .xue-chat-main[data-chat-state='welcome'] .xue-composer textarea { grid-column: 1 / -1; padding-left: 0; padding-right: 0; }
 .xue-chat-main[data-chat-state='welcome'] :is(.xue-starters-menu, .xue-composer-toolbar) { grid-row: 2; }
@@ -121,12 +121,12 @@ html[data-lang='zh'] .xue-welcome h1 { letter-spacing: var(--letter-spacing-zh-t
 html.has-xue-chat[data-lang='zh'] { --xue-text-offset: 1px; }
 @media (max-width: 600px) {
   .xue-chat .xue-icon-button { height: 36px; width: 36px; }
-  .xue-conversation-content { gap: 24px; padding: 14px 20px 24px; }
+  .xue-conversation-content { gap: 24px; padding: 14px var(--page-pad-x) 24px; }
   .xue-chat-main[data-chat-state='welcome'] { padding-bottom: clamp(24px, 10vh, 80px); }
   .xue-welcome-heading { flex-direction: column; gap: 18px; }
   .xue-welcome h1 { font-size: 28px; }
   .xue-message.is-user .xue-message-content { max-width: 94%; }
-  .xue-compose-area { padding-bottom: max(10px, env(safe-area-inset-bottom)); width: calc(100% - 24px); }
+  .xue-compose-area { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
   .xue-composer { border-radius: 16px; padding: 8px; }
   .xue-composer textarea { padding-left: 4px; padding-right: 4px; }
   .xue-composer-footer { font-size: 10px; justify-content: center; margin: 10px 2px 0; text-align: center; }

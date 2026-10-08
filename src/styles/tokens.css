@@ -24,6 +24,10 @@
 	--fg-muted: #5e5d59;
 	/* cloud-dark */
 	--fg-faint: #87867f;
+	/* Claude clay, with readable interaction shades for each theme. */
+	--accent-clay: #d97757;
+	--fg-interactive: #a14f35;
+	--bg-interactive: #f1e2d9;
 
 	/* --colors--border: cloud-light */
 	--border: #d1cfc5;
@@ -62,8 +66,6 @@
 	--letter-spacing-zh-heading: 0.06em;
 	--letter-spacing-zh-body: 0.02em;
 
-	--ease-color: 0.2s linear;
-
 	/*
 	 * Loading placeholder (blocks-shuffle) — theme palette tones via currentColor.
 	 * muted: secondary UI chrome; faint: soft over media; ink: full contrast.
@@ -87,6 +89,8 @@ html.u-mode-invert {
 	--fg-muted: #b0aea5;
 	/* cloud-dark */
 	--fg-faint: #87867f;
+	--fg-interactive: #e59b7d;
+	--bg-interactive: #4a332c;
 	/* --colors--border: slate-light */
 	--border: #5e5d59;
 	/* slate-medium / input-border */

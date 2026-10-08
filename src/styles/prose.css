@@ -150,8 +150,9 @@ html[data-lang='zh'] .prose code {
 	text-underline-offset: 0.15em;
 }
 
-.prose a:hover  {
-	color: var(--fg-muted);
+.prose a:is(:hover, :focus-visible)  {
+	color: var(--fg-interactive);
+	text-decoration-thickness: 2px;
 }
 
 .prose hr  {

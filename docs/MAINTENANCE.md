@@ -48,6 +48,10 @@
 
 图片生成的最终结果应作为仓库资源保存，提示词与生成依据放在对应审计记录；临时预览图、浏览器缓存和工具会话不是备份。升级 PhotoSwipe、GSAP、Lucide、Fontsource 或适配的 AI Elements 代码时，一并检查版本、许可证和归属说明。
 
+2026-10-08 本地悬停反馈调整：共享 `src/styles/tokens.css` 中的 Claude 粘土色系；悬停统一使用 `transition: none` 即时响应（已按后续要求取消80ms），覆盖首页、文章目录/正文与聊天控件；明暗模式分别使用可读的交互色，键盘焦点同步反馈。更新、验收、发布边界与恢复见[悬停反馈审计](audits/2026-10-08-hover-feedback.md)。此项尚未发布；上线仍走下述 GitHub Actions。
+
+同日本地聊天布局调整：消息区和输入区共用主页的 `--narrow` / `--page-pad-x`，欢迎与对话状态宽度一致；中文问候与用户确认的英文问候更新，顶栏顺序核对为「首页、新对话、主题」。验证及边界见[聊天宽度与问候审计](audits/2026-10-08-chat-width-greeting.md)，尚未发布。
+
 ### GitHub Actions
 
 - [CI 工作流](../.github/workflows/ci.yml) 调用 `bash ops/verify.sh`，完成类型、行为、部署脚本、隔离 Nginx、双语构建及产物检查，再打包同一份产物；Actions artifact 保留 7 天，不能当长期备份。
