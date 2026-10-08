@@ -258,8 +258,8 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
         <div className="container cc-narrow header-inner">
           <a className="header-name-link" href="/"><span className="header-name">{site.name[locale]}</span></a>
           <div className="header-controls">
-            <a aria-label={chrome.home} className="header-control-button header-home-link" href="/" title={chrome.home}><Home aria-hidden="true" size={18} strokeWidth={1.8} /></a>
             <button aria-label={chrome.newChat} className="header-control-button" onClick={newChat} title={chrome.newChat} type="button"><Plus aria-hidden="true" size={18} strokeWidth={1.8} /></button>
+            <a aria-label={chrome.home} className="header-control-button header-home-link" href="/" title={chrome.home}><Home aria-hidden="true" size={18} strokeWidth={1.8} /></a>
             <button aria-label={chrome.dark} aria-pressed="false" className="header-control-button xue-theme-toggle" data-theme-toggle="" data-label-dark={chrome.dark} data-label-light={chrome.light} title={chrome.dark} type="button"><Sun aria-hidden="true" className="xue-theme-sun" size={18} strokeWidth={1.8} /><Moon aria-hidden="true" className="xue-theme-moon" size={18} strokeWidth={1.8} /></button>
           </div>
         </div>
