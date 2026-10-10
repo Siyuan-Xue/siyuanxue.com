@@ -168,6 +168,8 @@ git show archive/local-notes-and-hermes-memory-2026-09-16:docs/audits/2026-09-15
 
 本地 Git 归档的恢复命令（只在对应分支丢失时使用）：
 
+**2026-10-11 当前仓库清点补记：**本轮发布后的工作区为干净的 main；当前 checkout 未找到 `archive/local-notes-and-hermes-memory-2026-09-16`、其记录的 `55b504d677b6cd748133222ad3bff87330ed08ed` 对象，也未找到 `.git/cleanup-backups/2026-09-16/` 和 `.git/seo-backups/2026-09-16/`。上表与第 4 节记录的是 9 月的历史保存位置，不能据此声称这些归档仍在当前 checkout；它们是否保存于其他仓库或备份位置待核对。本轮没有清理分支或备份，也未读取其他私有备份内容；先找回有效 bundle/备份，再按下面命令恢复，不能对不存在的文件直接执行恢复。
+
 ```sh
 git bundle verify .git/cleanup-backups/2026-09-16/archive.bundle
 git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
@@ -221,7 +223,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 
 | 优先级 | 事项 | 完成标准 |
 |---|---|---|
-| 高 | 长期记忆源码仅本地归档；旧 overlay 与运行记录不一致 | 选择正式、合适的源码备份/版本管理位置；评审并同步文档/验证器；新机器可按说明重建，不暴露私有配置 |
+| 高 | 历史长期记忆源码归档在当前 checkout 中未找到；旧 overlay 与运行记录不一致 | 先核对原本地仓库、bundle 与私有备份的实际保存位置，再选择正式备份/版本管理位置；评审并同步文档/验证器；新机器可按说明重建，不暴露私有配置 |
 | 高 | 备份连续性与容量 | 定期验证服务器备份；确定异地自动备份与留存策略；目前 Mac 只是一份快照 |
 | 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日（见第 2 节）；仍需补注册商/DNS、域名到期日、自动续费、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
