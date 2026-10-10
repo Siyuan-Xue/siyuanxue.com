@@ -28,3 +28,7 @@
 - **不适用：**项目经历/身份事实、首页排序、原图、路径/域名/SEO/RSS、依赖、GitHub 账号与 About、CI/secret/变量、Nginx/helper、聊天/Hermes/微信/模型/记忆/数据存储/备份和 PixelDone 云端服务均未修改。
 - **待处理：**保存在 `codex/pixeldone-gallery`，本轮不重复触发已知阻塞的生产上传；发布通道恢复后与待发布内容一起走现有 Actions，核对两域名 SHA 和实际排版。
 - **恢复：**两语言同时移除 `layout` 或改为 `photos` 即可恢复原照片布局；组件、样式和内容模型可按本轮基线还原，再重新构建验证。保留原图与历史审计。
+
+## 后续发布完成（2026-10-11，北京时间）
+
+按用户后续发布要求，已通过 [Actions 38065498153](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38065498153) 随双语项目内容一起发布 `a1edc9fcaa03e900fddd7b67e282feb91c4229e4`，两域名目标 SHA 和公开图集检查通过。生产浏览器中 PixelDone 中文浅色、英文深色均为三列、五张 180 × 404px 截图，灯箱方向键切图与 Escape 返回焦点通过；中文 PixelDone、BNDS.life 资料链接均显示「GitHub 仓库」。本次 viewport 覆盖仍未生效，已重置，不把桌面结果写成新的手机验收。此前分支与未上线边界保留为历史阶段，最终发布及恢复记录见 [图集发布审计](2026-10-10-gallery-release.md)。

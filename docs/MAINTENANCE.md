@@ -44,6 +44,8 @@
 
 2026-10-10 本轮图集发布复用完整双语产物，两域名必须在同一 release 上一起验收。此前 runner→服务器 SCP 上传持续缓慢；本轮在现有 Actions 内改用 `ops/upload-release.py`，由服务器通过短时 HTTPS 地址下载当前工作流的已验证产物，校验 ZIP 摘要、成员及归档 SHA-256 后交给原 helper 激活。单连接 HTTPS 也超时；OrcaTerm 只读诊断确认服务器资源充足、国内下载正常，GitHub 四路小额下载比单连接提高约三倍。因此大产物改用最多 16 路严格校验范围的下载；首次已收到约 99.4%，仅最后慢分段触及十分钟上限，随后根据实际进度调整为 900 秒下载、960 秒 SSH 和 17 分钟 step 上限，部署 job 仍为 20 分钟。部署 job 仅增加 `actions: read`，GitHub token 留在 runner，签名地址遮罩且仅经 SSH stdin 传递；没有新增 secret 或安装服务器组件。更新入口为工作流、传输脚本和共享验证；恢复可按 Git 历史还原 SCP 上传步骤，或用原 Actions rollback 恢复已保留的成功版本。实际传输及两站上线结果见 [图集发布审计](audits/2026-10-10-gallery-release.md)，未通过公网目标 SHA 检查前不能标记上线。
 
+**本轮最终发布状态（2026-10-11，北京时间）：**[Actions 38065498153](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38065498153) 成功发布 `a1edc9fcaa03e900fddd7b67e282feb91c4229e4`。两域名目标 SHA、固定语言、HTTP/www 跳转、旧照片 410、两项目的正文/五图/资料链接/索引元信息及 40 个原图与缩略图资源验收通过；PixelDone 线上两语言均为三列、180 × 404px，并完成灯箱键盘切换、关闭和焦点返回检查。此前 BNDS.life、PixelDone 和产品布局段落的「未上线」保留为对应阶段的历史事实；此次一起发布后已解除发布阻塞。发布始终由 GitHub Actions 完成，本机 OrcaTerm 仅只读诊断，没有本地 SSH 上传或切换；完整结果及边界见 [图集发布审计](audits/2026-10-10-gallery-release.md)。
+
 源码入口：[站点资料](../src/data/site.ts)、[页面元信息](../src/components/BaseHead.astro)、[构建脚本](../scripts/build.mjs)、[依赖和命令](../package.json)。文章按 `src/content/essays/<slug>/{en,zh}.md` 或 `src/content/posts/<slug>/{en,zh}.md` 配对。两语言必须一起发布。
 
 运行要求以 `package.json`、`bun.lock` 和工作流为准；本次基线为 Bun 1.3.14、Node ≥22.12。Astro 静态生成页面，聊天单独使用 React/AI SDK；PhotoSwipe/GSAP 按需加载，字体本地托管。无需为了维护另外引入 CMS。
@@ -221,7 +223,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 |---|---|---|
 | 高 | 长期记忆源码仅本地归档；旧 overlay 与运行记录不一致 | 选择正式、合适的源码备份/版本管理位置；评审并同步文档/验证器；新机器可按说明重建，不暴露私有配置 |
 | 高 | 备份连续性与容量 | 定期验证服务器备份；确定异地自动备份与留存策略；目前 Mac 只是一份快照 |
-| 中 | 域名和云资源到期信息缺失 | 补全注册商、DNS、实例 ID/地域、到期日、续费状态、告警入口和负责人 |
+| 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日（见第 2 节）；仍需补注册商/DNS、域名到期日、自动续费、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
 | 中 | 搜索平台接入 / 收录观察 | 用户愿意完成归属验证后，分别提交两域名 sitemap，观察查询词、展现/点击、收录与错误；SEO 本身不保证姓名搜索第一个词条 |
 | 按需 | SuperGrok 服务器网络与认证 | 网络恢复、官方授权及一次真实推理均验收后才标启用；保留既有 GLM，不自动加付费回退 |

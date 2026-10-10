@@ -33,3 +33,7 @@
 - **不适用：**身份资料、GitHub 账号与个人主页、About、依赖、CI 变量/secret、两站域名/Nginx/helper、聊天/Hermes/微信/模型/记忆/备份均未改。临时 CI 排障改动已还原，没有最终工作流变更。BNDS.life 本身只作为相关资料，没有修改其独立服务。
 - **待处理：**需要可用的服务器管理入口，核对文件传输路径、服务器资源和日志后恢复正常上传，再通过现有 Actions 发布并验证两域名目标 SHA、新页、五图资源及 sitemap。本机 `ubuntu` 与 `deploy` 的既有无交互公钥登录均不可用，未索取或读取私钥；已询问用户是否可用腾讯云 OrcaTerm。失败上传可能在 `incoming/` 留有未完成归档，须由管理员核对后处理，不能删除其他备份。项目内容没有待补的占位图或角色字段。
 - **恢复：**需要撤下时将双语图集设为草稿并重新发布；需要恢复本轮前网站，通过 Actions 回滚到 `afa2b2142ec96ceb4ce9ade59636fc87814f8fb5`，先确认版本仍保留，随后验证两域名。保留图片和历史审计，不影响 BNDS.life 独立服务。
+
+## 后续发布完成（2026-10-11，北京时间）
+
+用户确认 OrcaTerm 可用后，完成只读资源与跨境下载诊断，按实测结果在既有 Actions 中加入经完整校验的 HTTPS 分段下载。BNDS.life 和 PixelDone 双语内容最终通过 [Actions 38065498153](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38065498153) 一起发布，release 为 `a1edc9fcaa03e900fddd7b67e282feb91c4229e4`。两域名目标 SHA、BNDS.life 首页入口、真实介绍/角色/五图/资料链接、原图资源、canonical/hreflang/ImageGallery 与 sitemap 验收通过，生产浏览器两语言均正常加载五图。此前 SCP 排障失败与还原流程是当时的事实，最终工作流及传输修复另见 [图集发布审计](2026-10-10-gallery-release.md)；没有本机 SSH 上传或手动激活，也没有修改 BNDS.life 独立服务。
