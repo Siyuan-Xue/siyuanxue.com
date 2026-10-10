@@ -3,7 +3,9 @@
 开始修改前阅读 [维护总览](docs/MAINTENANCE.md)，按其中的联动表确定涉及哪些资源。历史工作见 [2026-09-16 总结](docs/WORK-SUMMARY-2026-09-16.md)。
 
 - 先查 Git 状态、分支和工作树。保留他人改动；有并行修改时协调或隔离工作树。未经核对不要删除 `archive/local-notes-and-hermes-memory-2026-09-16`、未推送提交和本地备份。
-- 网站通过现有 GitHub Actions CI/CD 发布。推送静态产物不会更新服务器 Nginx/helper、聊天 bridge、Hermes、微信、记忆服务或模型；涉及这些资源时单独说明安装与验收。
+- 网页代码与文字通过现有 GitHub Actions CI/CD 同步发布两语言。图片、视频原文件及缩略图通过 SSH/rsync 直传服务器 `shared/media/`，不进入 Git 或 CI 静态包；仓库只维护 `src/data/media.json` 中的资源 ID 与元数据。先上传校验，再发布页面引用。具体流程见 `ops/README.md`。
+- 推送静态产物不会更新服务器 Nginx/helper、聊天 bridge、Hermes、微信、记忆服务或模型；涉及这些资源时单独说明安装与验收。
+- 项目展示名两语言均为 `Pixel Done`，不使用中文译名；保留 `/gallery/pixeldone/` 与实际 GitHub 仓库 URL。
 - 当前代码、实际运行状态、带日期的历史记录分别核对；设计计划不等于已实现。旧 Hermes 文档/overlay 的 8 工具和普通 API 端点基线，与后续 12 工具/Coding Plan 记录有差异；不得直接覆盖已安装 profile。
 - 新增或修改域名、账号资料、GitHub 仓库、CI 变量、secret、服务、定时器、模型、数据存储或备份时，同步更新 `docs/MAINTENANCE.md` 的位置、更新方式、验证、恢复及待办。身份信息修改要检查网站、GitHub 账号、独立主页 README 和仓库 About。
 - 不提交密码、令牌、设备码、私有配置、微信身份 ID、日记或恢复密钥。文档只记名称、路径和非敏感状态；不要为整理清单而读取其内容。

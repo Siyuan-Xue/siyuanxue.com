@@ -24,5 +24,9 @@ export default defineConfig({
   return !/\/(wip|404)\/$/.test(pathname) && !unindexedGalleries.has(pathname);
  } })],
  markdown: { processor: unified() },
- vite: { resolve: { alias: { 'site-fonts': new URL(`./src/styles/fonts-${locale}.css`, import.meta.url).pathname } } },
+ vite: {
+  resolve: { alias: { 'site-fonts': new URL(`./src/styles/fonts-${locale}.css`, import.meta.url).pathname } },
+  server: { proxy: { '/media/': { target: localeOrigin(locale), changeOrigin: true } } },
+  preview: { proxy: { '/media/': { target: localeOrigin(locale), changeOrigin: true } } },
+ },
 });

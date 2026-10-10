@@ -9,33 +9,39 @@
   "preview": false,
   "images": [
     {
-      "src": "./images/home.png",
+      "src": "bnds-life/home",
       "alt": "BNDS.life homepage with administrator-selected videos in the For You section and a chronological video list below",
       "caption": "Homepage: recommended videos selected by the administrator appear at the top. Longer videos and short clips give friends two ways to revisit our memories."
     },
     {
-      "src": "./images/long-videos.png",
+      "src": "bnds-life/long-videos",
       "alt": "BNDS.life longer-video list with thumbnails, titles and recording dates",
       "caption": "Longer videos: grouped by month, bringing individual recordings together into a timeline of memories."
     },
     {
-      "src": "./images/long-video-story.png",
+      "src": "bnds-life/long-video-story",
       "alt": "BNDS.life longer-video watch page with a player and story on the left and other videos on the right",
       "caption": "Watch page: play a longer video and write down what happened in its Story section."
     },
     {
-      "src": "./images/short-videos.png",
+      "src": "bnds-life/short-videos",
       "alt": "BNDS.life short-video page with a vertical player, up and down navigation and a Story button",
       "caption": "Short clips: scroll up and down to keep watching, with an easy way to browse everyday moments."
     },
     {
-      "src": "./images/short-video-story.png",
+      "src": "bnds-life/short-video-story",
       "alt": "BNDS.life short video with its Story panel open, showing the story and comments",
       "caption": "Short-video stories: open Story beside the video to record the memories behind it, and add to them together through comments."
     }
   ],
   "links": [
-    { "label": "Visit BNDS.life", "href": "https://bnds.life" },
-    { "label": "Source on GitHub", "href": "https://github.com/Siyuan-Xue/bnds.life" }
+    {
+      "label": "Visit BNDS.life",
+      "href": "https://bnds.life"
+    },
+    {
+      "label": "Source on GitHub",
+      "href": "https://github.com/Siyuan-Xue/bnds.life"
+    }
   ]
 }

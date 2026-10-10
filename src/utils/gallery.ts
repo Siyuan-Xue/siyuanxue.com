@@ -1,8 +1,8 @@
-import type { ImageMetadata } from 'astro';
+import type { ImageMedia } from './media';
 import { z } from 'astro/zod';
 import type { Locale } from '../i18n/types';
 import type { LinkItem } from '../data/site';
-export type GalleryImage = { src: ImageMetadata; alt: string; caption: string };
+export type GalleryImage = { src: ImageMedia; alt: string; caption: string };
 export type GalleryHomeItem = { title: string; href: string; year?: string | number; venue?: string; external?: boolean };
 export type GalleryLink = { label: string; href: string };
 export type GalleryData = { title: string; description: string; period: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; links: GalleryLink[] };

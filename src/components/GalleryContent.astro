@@ -1,5 +1,5 @@
 ---
-import { Picture } from 'astro:assets';
+import MediaPicture from './MediaPicture.astro';
 import type { GalleryData } from '../utils/gallery';
 import { t } from '../i18n/locale';
 import '../styles/gallery.css';
@@ -22,10 +22,9 @@ const productLayout = layout === 'product';
    return <figure class:list={['gallery-figure', { 'gallery-figure-wide': fullWidth }]}>
     <a href={image.src.src} data-gallery-image data-width={image.src.width} data-height={image.src.height}
      data-alt={image.alt} data-caption={image.caption} aria-describedby={captionId}>
-     <Picture src={image.src} alt={image.alt} formats={['avif', 'webp']}
-      widths={(productLayout ? [180, 360, 540] : [320, 640, 960, 1280]).filter(width => width < image.src.width).concat(image.src.width)}
+     <MediaPicture asset={image.src} alt={image.alt}
       sizes={productLayout ? '(max-width: 480px) min(180px, calc((100vw - 3.25rem) / 2)), 180px' : fullWidth ? '(max-width: 480px) calc(100vw - 2rem), (max-width: 672px) calc(100vw - 3rem), 624px' : '(max-width: 480px) calc(100vw - 2rem), (max-width: 600px) calc(100vw - 3rem), (max-width: 672px) calc((100vw - 4.25rem) / 2), 302px'}
-      loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} decoding="async" />
+      loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} />
     </a>
     <figcaption id={captionId}>{image.caption}</figcaption>
    </figure>;

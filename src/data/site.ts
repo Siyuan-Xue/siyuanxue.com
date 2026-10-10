@@ -13,7 +13,7 @@ export type LinkItem = {
 };
 
 export type SecretPortrait = {
-	src: string;
+	mediaId: string;
 	width: number;
 	height: number;
 	alt: Bi;
@@ -81,7 +81,7 @@ export const site = {
 
 	/** A portrait revealed with a single click; collapsed on every fresh page. */
 	secretPortrait: {
-		src: '/images/romantic-placeholder-blue-study.webp',
+		mediaId: 'portrait-study',
 		width: 1024,
 		height: 1536,
 		alt: bi('An abstract feminine silhouette with one arm raised against a misty blue background, reserved for a future portrait', '雾蓝色背景中抬手整理头发的抽象女性轮廓，为未来的肖像照片预留位置'),
@@ -119,7 +119,7 @@ export const site = {
 		},
 		{
 			gallerySlug: 'pixeldone',
-			title: bi('PixelDone', '像素清单'),
+			title: bi('Pixel Done', 'Pixel Done'),
 			href: 'https://github.com/Siyuan-Xue/PixelDone',
 			year: 2026,
 			external: true,

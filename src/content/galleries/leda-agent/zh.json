@@ -9,22 +9,22 @@
   "preview": true,
   "images": [
     {
-      "src": "../../../assets/gallery-preview/hero.png",
+      "src": "gallery-preview/hero",
       "alt": "LeDA 智能体的第1张抽象占位图",
       "caption": "占位图：这里将展示智能体概览。"
     },
     {
-      "src": "../../../assets/gallery-preview/detail.png",
+      "src": "gallery-preview/detail",
       "alt": "LeDA 智能体的第2张抽象占位图",
       "caption": "占位图：这里将展示界面细节。"
     },
     {
-      "src": "../../../assets/gallery-preview/portrait.png",
+      "src": "gallery-preview/portrait",
       "alt": "LeDA 智能体的第3张抽象占位图",
       "caption": "占位图：这里将展示流程示例。"
     },
     {
-      "src": "../../../assets/gallery-preview/closing.png",
+      "src": "gallery-preview/closing",
       "alt": "LeDA 智能体的第4张抽象占位图",
       "caption": "占位图：这里将展示相关资料。"
     }

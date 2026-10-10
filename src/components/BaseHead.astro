@@ -5,10 +5,12 @@ import '../styles/base.css';
 import 'site-fonts';
 import themeScript from '../scripts/theme.js?raw';
 import type { ShareImage, GalleryMetadataImage } from '../utils/pageMetadata';
+import { imageMedia } from '../utils/media';
 interface Props { title?: string; description?: string; articleDate?: Date; noindex?: boolean; shareImage?: ShareImage; galleryImages?: GalleryMetadataImage[] }
 const { title = t(site.title), description = t(site.description), articleDate, noindex = false, shareImage, galleryImages } = Astro.props;
 const canonical = new URL(Astro.url.pathname, localeOrigin(locale)).href;
-const cover = shareImage ?? { src: `/images/share-${locale}.png`, width: 1200, height: 630, alt: t(site.name) };
+const defaultCover = imageMedia(`share-${locale}`);
+const cover = shareImage ?? { src: defaultCover.src, width: defaultCover.width, height: defaultCover.height, alt: t(site.name) };
 const image = new URL(cover.src, localeOrigin(locale)).href;
 const isHome = Astro.url.pathname === '/';
 const fullTitle = isHome ? t(site.homeTitle) : `${title} — ${t(site.name)}`;

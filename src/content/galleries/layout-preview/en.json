@@ -8,22 +8,22 @@
   "draft": true,
   "images": [
     {
-      "src": "../../../assets/gallery-preview/hero.png",
+      "src": "gallery-preview/hero",
       "alt": "A clay-colored circle and pale green curve in a landscape layout sample",
       "caption": "A full-width opening image sets the scene."
     },
     {
-      "src": "../../../assets/gallery-preview/detail.png",
+      "src": "gallery-preview/detail",
       "alt": "A landscape abstract sample for the paired layout",
       "caption": "A landscape detail keeps its original proportions."
     },
     {
-      "src": "../../../assets/gallery-preview/portrait.png",
+      "src": "gallery-preview/portrait",
       "alt": "A portrait abstract sample for the paired layout",
       "caption": "A portrait image is shown in full, without cropping."
     },
     {
-      "src": "../../../assets/gallery-preview/closing.png",
+      "src": "gallery-preview/closing",
       "alt": "A wide abstract sample for the closing image",
       "caption": "An unpaired closing image spans the full column."
     }

@@ -9,22 +9,22 @@
   "preview": true,
   "images": [
     {
-      "src": "../../../assets/gallery-preview/hero.png",
+      "src": "gallery-preview/hero",
       "alt": "iMathBook的第1张抽象占位图",
       "caption": "占位图：这里将展示数学书概览。"
     },
     {
-      "src": "../../../assets/gallery-preview/detail.png",
+      "src": "gallery-preview/detail",
       "alt": "iMathBook的第2张抽象占位图",
       "caption": "占位图：这里将展示页面细节。"
     },
     {
-      "src": "../../../assets/gallery-preview/portrait.png",
+      "src": "gallery-preview/portrait",
       "alt": "iMathBook的第3张抽象占位图",
       "caption": "占位图：这里将展示阅读场景。"
     },
     {
-      "src": "../../../assets/gallery-preview/closing.png",
+      "src": "gallery-preview/closing",
       "alt": "iMathBook的第4张抽象占位图",
       "caption": "占位图：这里将展示相关资料。"
     }

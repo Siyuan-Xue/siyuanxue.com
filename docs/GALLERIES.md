@@ -26,7 +26,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 ## 字段与真实素材
 
-以下仅说明结构，示例保持草稿；图片路径必须换成实际存在的文件才能使用。
+以下仅说明结构，示例保持草稿；媒体 ID 必须换成已准备并直传校验的清单条目才能使用。
 
 ```json
 {
@@ -40,7 +40,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
   "preview": false,
   "images": [
     {
-      "src": "./images/overview.jpg",
+      "src": "project-notes/overview",
       "alt": "描述图片中可见内容的替代文本。",
       "caption": "说明这张图片的背景、本人贡献或必要出处。"
     }
@@ -56,13 +56,13 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 `title`、`description`、`period`、`role` 及每张图片的 `alt`、`caption` 都必须是非空文本。`description` 同时用于页内短介绍与页面描述，无需另写 Markdown 正文。`period` 是可见时间文本，可表达区间或持续进行的工作；它不是文章发布日期，不应为了 SEO 编造日期。正式图集的 `role` 应写本人实际角色，不把参与写成领导，也不把设计示意写成实际成果。占位预览可明确写「待补充实际角色」或「时间待补充」，不能用推测填满必填字段。
 
-`images` 至少一张。`src` 通过 Astro 本地 image schema 解析，路径相对于所在的 JSON 文件，例如 `./images/overview.jpg` 对应同一 slug 目录下的 `images/overview.jpg`；两语言可以引用同一图片。使用有权展示的真实图片或实际项目截图，保留准确图注和出处。`alt` 描述图片本身，`caption` 补充上下文，两者都要提供各语言版本。不要虚构人物身份、照片、成果或活动事实。
+`images` 至少一张。`src` 是 [media.json](../src/data/media.json) 中的图片 ID，例如 `project-notes/overview`；未知 ID 或视频 ID 会阻止构建。两语言可以引用同一图片。原图和缩略图保存在服务器 `shared/media/`，不再保存在 Git；先按 [直传流程](../ops/README.md#direct-media-uploads) 准备、上传、校验，再修改双语 JSON。使用有权展示的真实图片或实际项目截图，保留准确图注和出处。`alt` 描述图片本身，`caption` 补充上下文，两者都要提供各语言版本。不要虚构人物身份、照片、成果或活动事实。
 
-`preview: true` 时可以复用抽象占位图，但介绍、替代文本和图注必须明确其为排版示意，不代表真实项目画面或经历。尚为预览的首页条目复用 [gallery-preview](../src/assets/gallery-preview) 中的四张 PNG；标题、已知年份和既有资料链接沿用原始内容，角色与贡献待核实。占位页可用于查看完整导航和灯箱，不作为个人成果证据。
+`preview: true` 时可以复用抽象占位图，但介绍、替代文本和图注必须明确其为排版示意，不代表真实项目画面或经历。尚为预览的首页条目复用清单中 `gallery-preview/hero`、`gallery-preview/detail`、`gallery-preview/portrait`、`gallery-preview/closing` 四张示意图；标题、已知年份和既有资料链接沿用原始内容，角色与贡献待核实。占位页可用于查看完整导航和灯箱，不作为个人成果证据。
 
 `layout` 默认为 `photos`，沿用照片图集：首图优先加载且通栏，后续两张并列，未配对的末张通栏；600px 及以下全部单列。
 
-产品界面截图可在两份 JSON 中设置 `"layout": "product"`。产品图集桌面三列、600px 及以下两列，所有图片采用相同的宽度限制，不单独放大首图或末图；图片宽度最多 11.25rem（默认字号下为 180px），窄屏会继续缩小。PixelDone 采用该布局，让竖屏截图作为紧凑的功能展示。两语言布局不一致会阻止构建。
+产品界面截图可在两份 JSON 中设置 `"layout": "product"`。产品图集桌面三列、600px 及以下两列，所有图片采用相同的宽度限制，不单独放大首图或末图；图片宽度最多 11.25rem（默认字号下为 180px），窄屏会继续缩小。Pixel Done 采用该布局，让竖屏截图作为紧凑的功能展示。两语言布局不一致会阻止构建。
 
 两种布局均保持原始比例，图注常驻页内。点击图片打开可前后切换、缩放及用 Escape 关闭的多图灯箱；可见控件使用英文。无 JavaScript 或灯箱加载失败时，普通链接仍可访问原图。
 
@@ -76,9 +76,9 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 原有七个条目分别关联 `probfun`、`imathbook`、`leda-agent`、`pixeldone`、`yuheng`、`walking-with-light`、`volleyball`，以独立的公开占位页打通站内入口。没有公开图集的其他条目仍显示「整理中 / In preparation」，不继续外跳。来源数据中的原始外链仍被保留；适用链接及准确双语标签放入图集的 `links`，作为相关资料展示。不要把原外链替换成尚不存在的图集地址。
 
-`bnds-life` 是有真实截图与已确认介绍的正式项目图集，使用 `draft: false`、`preview: false`，首页项目列表进入 `/gallery/bnds-life/`。五张用户提供的原始 PNG 保存在该图集的 `images/` 目录，两语言 JSON 共用图片并各自提供介绍、alt 和图注；页末保留项目网站和公开源码链接。其构建产物进入 sitemap，实际上线状态以维护总览及审计为准。
+`bnds-life` 是有真实截图与已确认介绍的正式项目图集，使用 `draft: false`、`preview: false`，首页项目列表进入 `/gallery/bnds-life/`。五张用户提供的原始截图已直传至服务器，由 `bnds-life/*` 媒体 ID 引用，两语言 JSON 共用图片并各自提供介绍、alt 和图注；页末保留项目网站和公开源码链接。其构建产物进入 sitemap，实际上线状态以维护总览及审计为准。
 
-`pixeldone` 也已补齐用户确认的开发经历与五张真实 App 截图，在原址 `/gallery/pixeldone/` 转为正式图集。双语 JSON 共用同目录 `images/` 下的原始 PNG，依次展示待办首页、任务编辑、清单编辑、Dock 自定义和云端设置；相关资料保留 GitHub 仓库链接。时间写明首版开发一天，后续根据同学反馈持续迭代，不把截图里的同步异常状态当作成功同步的验收。其构建产物进入 sitemap；余下六个原有条目仍为占位预览。PixelDone 与 BNDS.life 中文资料链接的可见名称均为「GitHub 仓库」。
+`pixeldone` 也已补齐用户确认的开发经历与五张真实 App 截图，在原址 `/gallery/pixeldone/` 转为正式图集。双语 JSON 共用 `pixeldone/*` 媒体 ID 对应的原始截图，依次展示待办首页、任务编辑、清单编辑、Dock 自定义和云端设置；相关资料保留 GitHub 仓库链接。时间写明首版开发一天，后续根据同学反馈持续迭代，不把截图里的同步异常状态当作成功同步的验收。其构建产物进入 sitemap；余下六个原有条目仍为占位预览。Pixel Done 与 BNDS.life 中文资料链接的可见名称均为「GitHub 仓库」。
 
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 
@@ -98,7 +98,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 - 两份 JSON、真实介绍、时间、角色、图片、替代文本和图注齐全，资料来源可核对。
 - 双语 `category`、`order` 相同，两个 `draft` 和两个 `preview` 均设为 `false`。
-- 本地图片路径正确，原始外链已按需要转入 `links`，不含敏感资料。
+- 媒体 ID 正确且两站原图和缩略图已校验，原始外链已按需要转入 `links`，不含敏感资料。
 - 两语言桌面及窄屏、明暗主题、无 JavaScript 原图链接、灯箱键盘操作和焦点回归可用。
 - 运行与改动匹配的类型检查、测试及双语构建，核对 canonical、hreflang、首页入口和 sitemap。
 
@@ -106,4 +106,4 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 网站通过现有 GitHub Actions CI/CD 发布。需要发布时按维护总览核对 Actions 和两域名目标 SHA；本地预览、构建通过或推送本身都不等于线上验收完成。静态图集更新不要求安装聊天、Hermes 或其他独立服务。
 
-恢复内容时，优先从 Git 还原该图集的两份 JSON 与所引用图片，再重新验证构建。尚未公开的内容继续保持 `draft: true`；正式图集或条目预览需临时撤下时，两语言一并恢复为草稿并重新发布，原地址会不再生成，首页回到整理中。仅将 `preview` 设为 `true` 会取消索引资格，不会撤下页面。`layout-preview` 的公开入口由固定例外控制，保持草稿不会撤下该预览；需要撤下时应移除相应例外并重新发布。整个网站版本回滚仍使用维护总览中的 Actions rollback 流程。
+恢复内容时，优先从 Git 还原该图集的两份 JSON 与媒体清单；已上传的旧媒体不会被 release 回滚或清理删除。媒体丢失时，从本机 `media-local/` 或服务器媒体快照恢复并核验摘要，再重新验证构建。尚未公开的内容继续保持 `draft: true`；正式图集或条目预览需临时撤下时，两语言一并恢复为草稿并重新发布，原地址会不再生成，首页回到整理中。仅将 `preview` 设为 `true` 会取消索引资格，不会撤下页面。`layout-preview` 的公开入口由固定例外控制，保持草稿不会撤下该预览；需要撤下时应移除相应例外并重新发布。整个网站版本回滚仍使用维护总览中的 Actions rollback 流程。

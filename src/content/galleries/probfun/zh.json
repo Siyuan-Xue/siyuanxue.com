@@ -9,22 +9,22 @@
   "preview": true,
   "images": [
     {
-      "src": "../../../assets/gallery-preview/hero.png",
+      "src": "gallery-preview/hero",
       "alt": "邮趣数学的第1张抽象占位图",
       "caption": "占位图：这里将展示平台概览。"
     },
     {
-      "src": "../../../assets/gallery-preview/detail.png",
+      "src": "gallery-preview/detail",
       "alt": "邮趣数学的第2张抽象占位图",
       "caption": "占位图：这里将展示界面细节。"
     },
     {
-      "src": "../../../assets/gallery-preview/portrait.png",
+      "src": "gallery-preview/portrait",
       "alt": "邮趣数学的第3张抽象占位图",
       "caption": "占位图：这里将展示学习场景。"
     },
     {
-      "src": "../../../assets/gallery-preview/closing.png",
+      "src": "gallery-preview/closing",
       "alt": "邮趣数学的第4张抽象占位图",
       "caption": "占位图：这里将展示相关资料。"
     }

@@ -3,6 +3,25 @@ import { readFile, readdir, access } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createContext, runInContext } from 'node:vm';
 import { parseHTML, DOMParser } from 'linkedom';
+import { imageMedia, media } from '../src/utils/media';
+const mediaPaths = new Set(Object.values(media).flatMap(asset => asset.kind === 'image' ? [asset.src, asset.cover.src, ...asset.variants.map(file => file.src)] : [asset.src]));
+async function checkAsset(root: string, path: string) {
+ if (path.startsWith('/media/')) expect(mediaPaths.has(path)).toBe(true);
+ else await access(join(root, path));
+}
+test('release contains no photo/video binaries or media directory; image payloads remain outside CI', async () => {
+ const paths = await readdir('dist', { recursive: true });
+ expect(paths.filter(path => /\.(png|jpe?g|webp|avif|gif|mp4|webm|mov|m4v|mkv)$/i.test(path))).toEqual([]);
+ expect(paths.some(path => /^media(?:\/|$)/.test(path))).toBe(false);
+});
+test('chat browser bundle does not eagerly carry the gallery media inventory', async () => {
+ const files = (await readdir('dist/_astro')).filter(name => /^ChatApp\..*\.js$/.test(name));
+ expect(files.length).toBeGreaterThan(0);
+ for (const file of files) {
+  const script = await readFile(join('dist/_astro', file), 'utf8');
+  for (const path of mediaPaths) expect(script.includes(path)).toBe(false);
+ }
+});
 const variants = [
  { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', chatLabel: 'Chat with xue', homeLabel: 'Home' },
  { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', chatLabel: '与小薛聊聊', homeLabel: '首页' },
@@ -103,20 +122,20 @@ for (const v of variants) {
    const shareUrl = document.querySelector('meta[property="og:image"]')!.getAttribute('content')!;
    expect(new URL(shareUrl).origin).toBe(v.origin);
    if (document.querySelector('article[data-gallery-page]')) {
-    await access(join(v.root, new URL(shareUrl).pathname));
+    await checkAsset(v.root, new URL(shareUrl).pathname);
     expect(Number(document.querySelector('meta[property="og:image:width"]')?.getAttribute('content'))).toBeGreaterThan(0);
     expect(Number(document.querySelector('meta[property="og:image:height"]')?.getAttribute('content'))).toBeGreaterThan(0);
     expect(document.querySelector('meta[property="og:image:alt"]')?.getAttribute('content')).toBeTruthy();
     expect(document.querySelector('meta[name="twitter:image"]')?.getAttribute('content')).toBe(shareUrl);
    } else {
-    expect(shareUrl).toContain(v.origin + '/images/share-');
-    const share = await readFile(join(v.root, new URL(shareUrl).pathname)); expect(share.readUInt32BE(16)).toBe(1200); expect(share.readUInt32BE(20)).toBe(630);
+    expect(shareUrl).toBe(v.origin + imageMedia(v.lang === 'en' ? 'share-en' : 'share-zh').src);
+    const share = imageMedia(v.lang === 'en' ? 'share-en' : 'share-zh'); expect(share.width).toBe(1200); expect(share.height).toBe(630);
    }
    expect(document.querySelectorAll('link[rel="preload"][as="font"]').length).toBe(0);
    const styles = (await Promise.all([...document.querySelectorAll('link[rel="stylesheet"]')].map(node => readFile(join(v.root, node.getAttribute('href')!), 'utf8')))).join('');
    expect(styles.includes('noto-serif-sc-')).toBe(v.lang === 'zh-CN');
-   for (const source of document.querySelectorAll('[srcset]')) for (const candidate of source.getAttribute('srcset')!.split(',')) await access(join(v.root, candidate.trim().split(/\s+/)[0]));
-   for (const node of document.querySelectorAll('script[src],link[rel="stylesheet"],img[src]')) { const url = node.getAttribute('src') ?? node.getAttribute('href'); if (url?.startsWith('/')) await access(join(v.root, url)); }
+   for (const source of document.querySelectorAll('[srcset]')) for (const candidate of source.getAttribute('srcset')!.split(',')) await checkAsset(v.root, candidate.trim().split(/\s+/)[0]);
+   for (const node of document.querySelectorAll('script[src],link[rel="stylesheet"],img[src]')) { const url = node.getAttribute('src') ?? node.getAttribute('href'); if (url?.startsWith('/')) await checkAsset(v.root, url); }
    if (document.querySelector('article[data-gallery-page]')) {
     const schema = JSON.parse(document.querySelector('script[type="application/ld+json"]')!.textContent!);
     const nodes = schema['@graph'] ?? [schema];
@@ -184,7 +203,7 @@ for (const v of variants) {
   const picture = document.querySelector('picture')!; expect(picture).not.toBeNull();
   for (const type of ['image/avif','image/webp']) { const source = picture.querySelector(`source[type="${type}"]`); expect(source?.getAttribute('srcset')).toContain('320w'); expect(source?.getAttribute('srcset')).toContain('960w'); }
   expect(document.querySelectorAll('a[href="/wip/"]').length).toBe(0);
-  expect(document.querySelector('[data-secret-src]')?.getAttribute('data-secret-src')).toBe('/images/romantic-placeholder-blue-study.webp');
+  expect(document.querySelector('[data-secret-src]')?.getAttribute('data-secret-src')).toBe(imageMedia('portrait-study').src);
   expect(document.querySelector('[data-secret-image-slot]')?.children.length).toBe(0);
   expect(await access(join(v.root, 'images/p-202.jpg')).then(() => true, () => false)).toBe(false);
   const homeControl = document.querySelector<HTMLAnchorElement>('.header-chat-link')!;
@@ -244,11 +263,16 @@ for (const v of variants) {
    for (const [index, figure] of figures.entries()) {
     expect(figure.querySelector('figcaption')?.textContent).toBe(source.images[index].caption);
     expect(figure.querySelector('img')?.getAttribute('alt')).toBe(source.images[index].alt);
-    await access(join(v.root, figure.querySelector('a[data-gallery-image]')!.getAttribute('href')!));
+    const asset = imageMedia(source.images[index].src);
+    const original = figure.querySelector('a[data-gallery-image]')!;
+    expect(original.getAttribute('href')).toBe(asset.src);
+    expect(Number(original.getAttribute('data-width'))).toBe(asset.width);
+    expect(Number(original.getAttribute('data-height'))).toBe(asset.height);
+    expect(mediaPaths.has(figure.querySelector('img')!.getAttribute('src')!)).toBe(true);
     for (const type of ['image/avif', 'image/webp']) {
      const resource = figure.querySelector(`source[type="${type}"]`)?.getAttribute('srcset');
      expect(resource).toBeTruthy();
-     for (const candidate of resource!.split(',')) await access(join(v.root, candidate.trim().split(/\s+/)[0]));
+     for (const candidate of resource!.split(',')) expect(mediaPaths.has(candidate.trim().split(/\s+/)[0])).toBe(true);
     }
    }
    const links = [...article.querySelectorAll('.gallery-links a')];

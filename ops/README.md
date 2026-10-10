@@ -16,6 +16,30 @@ The previously reported `87.156.77.131` was the wrong address. SSH connectivity 
 
 `shared/_astro` is append-only and served by both domains. Activation backfills current/retained release assets and refuses filename/content collisions. It does not copy raw photos into that directory. Retain five successful releases; shared hashed assets have no automatic pruning in this version.
 
+## Direct media uploads
+
+Since 2026-10-11, photo/video originals and image thumbnails are uploaded directly to `shared/media`, independently of website releases. Git stores only IDs and metadata in `src/data/media.json`; CI builds both languages without downloading or packaging these media files. Small source icons and installed fonts remain part of the website build. Existing Git history and retained releases are preserved.
+
+Prepare a real image locally with the installed Sharp dependency, upload its ID, then check production before publishing JSON references:
+
+```sh
+bun run media:prepare pixeldone/tasks /absolute/path/tasks.png --profile product
+bun run media:upload ubuntu@82.156.77.131 media-local src/data/media.json pixeldone/tasks
+python3 ops/verify-media.py
+```
+
+Use `photos` for normal galleries, `product` for small phone screenshots, `portrait` for the home portrait, or `plain` for an image without responsive thumbnails. MP4/WebM/MOV files are copied and hashed with bounded memory; video IDs cannot be used as gallery images. Adding a video player is a separate content change. ID updates create new immutable file URLs; they do not overwrite older files. Preserve truthful bilingual captions and the fixed `Pixel Done` display name.
+
+Omitting the last IDs uploads the full manifest and requires all referenced files in `media-local`. On a fresh checkout, upload the IDs just prepared; existing media stays on the server. `media-local/`, raster images and videos are Git-ignored. Local `media-local/originals/` holds this migration's original source copies; preserve the local directory independently when moving machines. Dev and static preview proxy `/media/` to the appropriate production domain, so CI needs metadata only.
+
+The upload command uses native SSH authentication and strict `known_hosts`; enter a password only in its terminal prompt or use an existing key. No password, SSH key or secret is stored by these scripts. The administrator needs `sudo -n` for installation. `MEDIA_SSH_CONTROL` may point to an already authenticated control socket; otherwise the command creates and closes its own temporary connection.
+
+Rsync transfers only the selected manifest's files into `~/.cache/siyuan-media/<manifest-SHA>/media`; partial transfers remain there and can resume on the same manifest. `ops/install-media.py` verifies paths, formats, regular files, SHA-256 and lengths before installation; checksum errors or retained-file collisions abort. Installation appends files and never prunes media. A manifest plus hard-link recovery snapshot is stored in `/var/backups/siyuanxue-media/<manifest-SHA>/`; this is on the same disk, not offsite disaster recovery. Check capacity and arrange an independent backup separately. Do not put private content into this public directory.
+
+Nginx media locations in `ops/nginx/{siyuanxue.com,xuesiyuan.com}.conf` require a separate, backed-up server installation; pushing the static website does not install them. Insert only these locations into the existing content vhosts, preserving certificates, chat routes, redirects and `/images/p-202.jpg` 410. Check `nginx -t`, reload, and test both domains, image MIME/cache, video Range and missing/hidden-file 404. The migration's actual vhost backups are recorded in the maintenance inventory. Do not replace whole live configs using an old template.
+
+`python3 ops/verify-media.py` checks every listed media file on both domains including its SHA-256. Actions uses `--headers-only` after activation to reject missing or malformed media before finalization. Website rollback keeps all media; if media is lost, restore the files from local storage or a verified snapshot, rerun hash/public checks, then use the usual Actions rollback. No existing `_astro` files are deleted during migration.
+
 ## Validation and GitHub
 
 `bash ops/verify.sh` runs type checks, frontend tests, shell tests, isolated Nginx route tests, both builds and semantic output checks. It requires Bun 1.3.14, supported Node, Python 3, Nginx, OpenSSL and curl. PR/manual CI and the deployment's reusable verification job call the same script. Only the resulting artifact is deployed.

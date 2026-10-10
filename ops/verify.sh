@@ -5,6 +5,8 @@ bun run check
 bun run test
 python3 -m unittest discover -s tests -p test_hermes_readonly.py
 python3 -m unittest discover -s tests -p test_release_transfer.py
+python3 -m unittest discover -s tests -p test_media_install.py
+python3 -m unittest discover -s tests -p test_media_public.py
 for script in ops/*.sh; do bash -n "$script"; done
 bash ops/test-enable-https.sh
 bash ops/test-install-nginx-config.sh

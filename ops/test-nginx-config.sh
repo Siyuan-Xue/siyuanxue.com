@@ -31,6 +31,11 @@ mkdir -p \
 	"$TEST_ROOT/var/log/nginx" \
 	"$TEST_ROOT/var/www/siyuanxue.com/current/zh" \
 	"$TEST_ROOT/var/www/siyuanxue.com/shared/_astro"
+mkdir -p "$TEST_ROOT/var/www/siyuanxue.com/shared/media"
+media_hash=$(printf '%064d' 1)
+printf 'media-image' > "$TEST_ROOT/var/www/siyuanxue.com/shared/media/$media_hash.webp"
+printf 'video-range-data' > "$TEST_ROOT/var/www/siyuanxue.com/shared/media/$media_hash.mp4"
+printf 'private' > "$TEST_ROOT/var/www/siyuanxue.com/shared/media/.private"
 printf '%s\n' '<!doctype html><html lang="en"><title>English</title></html>' \
 	> "$TEST_ROOT/var/www/siyuanxue.com/current/index.html"
 printf '%s\n' '<!doctype html><html lang="zh-CN"><title>中文</title></html>' > "$TEST_ROOT/var/www/siyuanxue.com/current/zh/index.html"
@@ -112,6 +117,13 @@ status() {
 for domain in siyuanxue.com xuesiyuan.com; do
 	[[ $(request "$domain" /__health) == test ]]
 	[[ $(request "$domain" /_astro/old.css) == retained-asset ]]
+	[[ $(request "$domain" "/media/$media_hash.webp") == media-image ]]
+	[[ $(status "$domain" /media/.private) == 404 ]]
+	[[ $(status "$domain" /media/missing.webp) == 404 ]]
+	headers=$(curl --noproxy '*' -ksSI --max-time 5 --resolve "$domain:18443:127.0.0.1" "https://$domain:18443/media/$media_hash.webp")
+	[[ $headers == *'image/webp'* && $headers == *'immutable'* ]]
+	range=$(curl --noproxy '*' -ksS --max-time 5 -H 'Range: bytes=0-4' --resolve "$domain:18443:127.0.0.1" -w '|%{http_code}' "https://$domain:18443/media/$media_hash.mp4")
+	[[ $range == 'video|206' ]]
 	[[ $(status "$domain" /images/p-202.jpg) == 410 ]]
 	[[ $(status "$domain" /missing) == 404 ]]
 	headers=$(curl --noproxy '*' -ksSI --max-time 5 --resolve "www.$domain:18443:127.0.0.1" "https://www.$domain:18443/post/example/?a=1")

@@ -23,3 +23,19 @@ Thumbs.db
 
 # isolated locale builds
 .build/
+
+# Media is prepared locally and uploaded directly; only metadata is versioned.
+media-local/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.avif
+*.gif
+*.mp4
+*.webm
+*.mov
+*.m4v
+*.mkv
+__pycache__/
+*.py[cod]

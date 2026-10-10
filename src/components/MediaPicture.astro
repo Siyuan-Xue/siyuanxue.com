@@ -1,0 +1,15 @@
+---
+import type { ImageMedia } from '../utils/media';
+interface Props { asset: ImageMedia; alt: string; sizes: string; loading?: 'eager' | 'lazy'; fetchpriority?: 'high' | 'auto'; class?: string; primary?: boolean; }
+const { asset, alt, sizes, loading = 'lazy', fetchpriority = 'auto', class: className, primary } = Astro.props;
+const webp = asset.variants.filter(file => file.format === 'webp');
+const fallback = webp.at(-1) ?? asset;
+---
+<picture>
+ {['avif', 'webp'].map(format => {
+  const files = asset.variants.filter(file => file.format === format);
+  return files.length > 0 && <source type={`image/${format}`} srcset={files.map(file => `${file.src} ${file.width}w`).join(', ')} sizes={sizes} />;
+ })}
+ <img class={className} src={fallback.src} width={fallback.width} height={fallback.height} alt={alt} sizes={sizes}
+  loading={loading} fetchpriority={fetchpriority} decoding="async" data-primary-image={primary ? '' : undefined} />
+</picture>

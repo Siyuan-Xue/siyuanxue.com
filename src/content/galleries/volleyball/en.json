@@ -9,22 +9,22 @@
   "preview": true,
   "images": [
     {
-      "src": "../../../assets/gallery-preview/hero.png",
+      "src": "gallery-preview/hero",
       "alt": "Abstract placeholder image 1 for BUPT volleyball · school team & college team",
       "caption": "Placeholder image: this space will show team scenes."
     },
     {
-      "src": "../../../assets/gallery-preview/detail.png",
+      "src": "gallery-preview/detail",
       "alt": "Abstract placeholder image 2 for BUPT volleyball · school team & college team",
       "caption": "Placeholder image: this space will show training details."
     },
     {
-      "src": "../../../assets/gallery-preview/portrait.png",
+      "src": "gallery-preview/portrait",
       "alt": "Abstract placeholder image 3 for BUPT volleyball · school team & college team",
       "caption": "Placeholder image: this space will show match photographs."
     },
     {
-      "src": "../../../assets/gallery-preview/closing.png",
+      "src": "gallery-preview/closing",
       "alt": "Abstract placeholder image 4 for BUPT volleyball · school team & college team",
       "caption": "Placeholder image: this space will show related material."
     }

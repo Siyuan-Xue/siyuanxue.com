@@ -2,10 +2,10 @@ import { expect, test } from 'bun:test';
 import { spawnSync } from 'node:child_process';
 import { access, cp, mkdir, mkdtemp, readFile, readdir, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DOMParser, parseHTML } from 'linkedom';
-import sharp from 'sharp';
+import { imageMedia } from '../src/utils/media';
 
 const project = fileURLToPath(new URL('../', import.meta.url));
 const pathname = '/gallery/published-fixture/';
@@ -79,18 +79,19 @@ test('published bilingual gallery survives a real Astro build with crawlable con
     expect(figure.querySelector('figcaption')?.textContent).toBe(expected.caption);
     expect(image.getAttribute('alt')).toBe(expected.alt);
     const original = anchor.getAttribute('href')!;
-    expect(original).toStartWith('/_astro/');
+    expect(original).toStartWith('/media/');
     originals.push(new URL(original, origin).href);
-    const source = await readFile(resolve(temporary, 'src/content/galleries/layout-preview', expected.src));
-    expect((await readFile(join(output, original))).equals(source)).toBe(true);
-    const dimensions = await sharp(source).metadata();
+    const dimensions = imageMedia(expected.src);
+    expect(original).toBe(dimensions.src);
+    expect(await access(join(output, original)).then(() => true, () => false)).toBe(false);
     expect(Number(anchor.getAttribute('data-width'))).toBe(dimensions.width!);
     expect(Number(anchor.getAttribute('data-height'))).toBe(dimensions.height!);
     expect(Number(image.getAttribute('width'))).toBeGreaterThan(0);
     expect(Number(image.getAttribute('height'))).toBeGreaterThan(0);
     for (const candidate of figure.querySelectorAll('img[src],source[srcset]')) {
      const sources = candidate.getAttribute('srcset')?.split(',').map(value => value.trim().split(/\s+/)[0]) ?? [candidate.getAttribute('src')!];
-     for (const asset of sources) expect((await readFile(join(output, asset))).length).toBeGreaterThan(0);
+     const registered = [dimensions.src, ...dimensions.variants.map(file => file.src)];
+     for (const asset of sources) expect(registered).toContain(asset);
     }
    }
    for (const link of fixture.links) {
@@ -99,8 +100,9 @@ test('published bilingual gallery survives a real Astro build with crawlable con
 
    const coverUrl = document.querySelector('meta[property="og:image"]')!.getAttribute('content')!;
    expect(new URL(coverUrl).origin).toBe(origin);
-   const cover = await sharp(await readFile(join(output, new URL(coverUrl).pathname))).metadata();
-   const sourceCover = await sharp(resolve(temporary, 'src/content/galleries/layout-preview', fixture.images[0].src)).metadata();
+   const sourceCover = imageMedia(fixture.images[0].src);
+   const cover = sourceCover.cover;
+   expect(new URL(coverUrl).pathname).toBe(cover.src);
    expect(cover.width).toBe(Math.min(1200, sourceCover.width!));
    expect(cover.height).toBe(Math.round(cover.width! * sourceCover.height! / sourceCover.width!));
    expect(Number(document.querySelector('meta[property="og:image:width"]')?.getAttribute('content'))).toBe(cover.width!);

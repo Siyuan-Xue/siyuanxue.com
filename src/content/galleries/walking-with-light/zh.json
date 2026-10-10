@@ -9,22 +9,22 @@
   "preview": true,
   "images": [
     {
-      "src": "../../../assets/gallery-preview/hero.png",
+      "src": "gallery-preview/hero",
       "alt": "《与光同行》· 北京市大学生戏剧节的第1张抽象占位图",
       "caption": "占位图：这里将展示舞台场景。"
     },
     {
-      "src": "../../../assets/gallery-preview/detail.png",
+      "src": "gallery-preview/detail",
       "alt": "《与光同行》· 北京市大学生戏剧节的第2张抽象占位图",
       "caption": "占位图：这里将展示排练细节。"
     },
     {
-      "src": "../../../assets/gallery-preview/portrait.png",
+      "src": "gallery-preview/portrait",
       "alt": "《与光同行》· 北京市大学生戏剧节的第3张抽象占位图",
       "caption": "占位图：这里将展示演出照片。"
     },
     {
-      "src": "../../../assets/gallery-preview/closing.png",
+      "src": "gallery-preview/closing",
       "alt": "《与光同行》· 北京市大学生戏剧节的第4张抽象占位图",
       "caption": "占位图：这里将展示相关资料。"
     }

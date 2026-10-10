@@ -9,33 +9,39 @@
   "preview": false,
   "images": [
     {
-      "src": "./images/home.png",
+      "src": "bnds-life/home",
       "alt": "BNDS.life 首页，顶部 For You 区域展示管理员精选的视频，下方按时间展示视频列表",
       "caption": "首页：置顶管理员挑选的推荐视频。网站将回忆分成长拍和短拍，方便朋友们从这里开始重温。"
     },
     {
-      "src": "./images/long-videos.png",
+      "src": "bnds-life/long-videos",
       "alt": "BNDS.life 长拍列表，视频缩略图下方显示标题与拍摄时间",
       "caption": "长拍列表：按月份分组排列，把零散的视频重新串成一条回忆的时间线。"
     },
     {
-      "src": "./images/long-video-story.png",
+      "src": "bnds-life/long-video-story",
       "alt": "BNDS.life 长拍播放页，左侧为视频播放器与故事，右侧为其他视频列表",
       "caption": "长拍播放页：观看视频，也能在「故事」里写下当时发生的事。"
     },
     {
-      "src": "./images/short-videos.png",
+      "src": "bnds-life/short-videos",
       "alt": "BNDS.life 短拍页，中间展示竖屏视频，旁边有上下切换与故事按钮",
       "caption": "短拍：上下滑动即可连续观看，用更轻松的方式翻看生活片段。"
     },
     {
-      "src": "./images/short-video-story.png",
+      "src": "bnds-life/short-video-story",
       "alt": "BNDS.life 短拍视频旁展开故事面板，显示故事与评论区域",
       "caption": "短拍故事：展开视频旁的「故事」，写下画面背后的回忆，也可以通过评论一起补充。"
     }
   ],
   "links": [
-    { "label": "访问 BNDS.life", "href": "https://bnds.life" },
-    { "label": "GitHub 仓库", "href": "https://github.com/Siyuan-Xue/bnds.life" }
+    {
+      "label": "访问 BNDS.life",
+      "href": "https://bnds.life"
+    },
+    {
+      "label": "GitHub 仓库",
+      "href": "https://github.com/Siyuan-Xue/bnds.life"
+    }
   ]
 }

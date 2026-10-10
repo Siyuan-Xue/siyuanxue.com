@@ -9,22 +9,22 @@
   "preview": true,
   "images": [
     {
-      "src": "../../../assets/gallery-preview/hero.png",
+      "src": "gallery-preview/hero",
       "alt": "Abstract placeholder image 1 for iMathBook",
       "caption": "Placeholder image: this space will show book overview."
     },
     {
-      "src": "../../../assets/gallery-preview/detail.png",
+      "src": "gallery-preview/detail",
       "alt": "Abstract placeholder image 2 for iMathBook",
       "caption": "Placeholder image: this space will show page details."
     },
     {
-      "src": "../../../assets/gallery-preview/portrait.png",
+      "src": "gallery-preview/portrait",
       "alt": "Abstract placeholder image 3 for iMathBook",
       "caption": "Placeholder image: this space will show reading scenarios."
     },
     {
-      "src": "../../../assets/gallery-preview/closing.png",
+      "src": "gallery-preview/closing",
       "alt": "Abstract placeholder image 4 for iMathBook",
       "caption": "Placeholder image: this space will show related material."
     }

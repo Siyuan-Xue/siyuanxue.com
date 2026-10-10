@@ -3,7 +3,8 @@ import { z } from 'astro/zod';
 import { createGallerySchema, pairGalleries, galleryHomeItems } from '../src/utils/gallery';
 import { mergeBlogEntries } from '../src/utils/blog';
 import { bi } from '../src/i18n/types';
-const data = { title: 'Title', description: 'Description', period: '2026', role: 'Author', category: 'projects' as const, order: 0, draft: false, preview: false, images: [{ src: { src: '/image.webp', width: 10, height: 10, format: 'webp' as const }, alt: 'Image', caption: 'Caption' }], links: [] };
+const file = { src: '/image.webp', width: 10, height: 10, format: 'webp' as const, sha256: 'a'.repeat(64), bytes: 100 };
+const data = { title: 'Title', description: 'Description', period: '2026', role: 'Author', category: 'projects' as const, order: 0, draft: false, preview: false, images: [{ src: { ...file, kind: 'image' as const, variants: [file], cover: file }, alt: 'Image', caption: 'Caption' }], links: [] };
 const entry = (id: string, changes = {}) => ({ id, data: { ...data, ...changes } });
 test('gallery schema rejects empty images, whitespace text and unsafe links; defaults to draft', () => {
  const schema = createGallerySchema(z.object({ src: z.string(), width: z.number(), height: z.number(), format: z.literal('webp') }));

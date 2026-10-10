@@ -122,7 +122,9 @@ jobs:
             "$DEPLOY_USER@$DEPLOY_HOST" sudo -n /usr/local/sbin/siyuanxue-domain-migration apply
 
       - name: Verify both public locales
-        run: bash ops/verify-public.sh "$GITHUB_SHA"
+        run: |
+          bash ops/verify-public.sh "$GITHUB_SHA"
+          python3 ops/verify-media.py --headers-only
 
       - name: Restore previous release after failed public check
         if: failure() && steps.activate.outcome == 'success' && !inputs.migrate_domains

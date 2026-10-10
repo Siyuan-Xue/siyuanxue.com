@@ -42,7 +42,9 @@ Each language has its own RSS feed at `/rss.xml`, sitemap, canonical URLs and re
 
 ## Assets and interaction
 
-The normal portrait is optimized at build time with responsive AVIF/WebP/JPEG. Clicking it once reveals a local abstract portrait placeholder; PhotoSwipe/GSAP load on demand. Each fresh page starts collapsed. The old secret photograph is removed, and its former URL is explicitly denied by Nginx even when reverting an older release.
+Photos and videos live in independent server media storage, with IDs and metadata in `src/data/media.json`. Prepare responsive images locally and upload them directly with SSH/rsync before publishing references; see [direct media uploads](ops/README.md#direct-media-uploads). Git and CI keep no raster/photo/video payloads. Both dev and preview proxy media to production.
+
+Clicking the normal portrait once reveals the abstract portrait placeholder; PhotoSwipe/GSAP load on demand. Each fresh page starts collapsed. The old secret photograph is removed, and its former URL is explicitly denied by Nginx even when reverting an older release.
 
 Fonts are bundled locally using Fontsource. Chinese font files use Unicode ranges and are not referenced by English font CSS. Feature styles are separate from shared typography/layout. Transitive dependency overrides keep the affected packages above the security-fix versions; review them when updating Astro/Vite.
 

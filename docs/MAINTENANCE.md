@@ -50,7 +50,7 @@
 
 运行要求以 `package.json`、`bun.lock` 和工作流为准；本次基线为 Bun 1.3.14、Node ≥22.12。Astro 静态生成页面，聊天单独使用 React/AI SDK；PhotoSwipe/GSAP 按需加载，字体本地托管。无需为了维护另外引入 CMS。
 
-图片生成的最终结果应作为仓库资源保存，提示词与生成依据放在对应审计记录；临时预览图、浏览器缓存和工具会话不是备份。升级 PhotoSwipe、GSAP、Lucide、Fontsource 或适配的 AI Elements 代码时，一并检查版本、许可证和归属说明。
+**2026-10-11 用户更新媒体维护约定：**图片、视频和派生缩略图通过原生 SSH/rsync 直传服务器，不再进入当前 Git 源码或 CI 静态包；Git 仅保存 `src/data/media.json` 的资源 ID、哈希地址、尺寸、格式、大小与摘要。所有现有栅格图已迁移，正文和代码继续使用原 Actions 双语发布。提示词与生成依据仍放在对应审计记录；本机忽略目录 `media-local/` 保存素材和派生文件，临时预览图、浏览器缓存和工具会话不是备份。升级 PhotoSwipe、GSAP、Lucide、Fontsource 或适配的 AI Elements 代码时，一并检查版本、许可证和归属说明。
 
 2026-10-08 悬停反馈调整：共享 `src/styles/tokens.css` 中的 Claude 粘土色系；悬停统一使用 `transition: none` 即时响应（已按后续要求取消80ms），覆盖首页、文章目录/正文与聊天控件；明暗模式分别使用可读的交互色，键盘焦点同步反馈。已通过[生产Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/37717307878)发布 `8d902f66a258e551fe414361160241bafc0af504`，两域名目标SHA、固定语言、HTTP/www跳转与旧照片410检查通过；更新、验收边界与恢复见[悬停反馈审计](audits/2026-10-08-hover-feedback.md)。
 
@@ -70,13 +70,16 @@
 
 2026-10-10 后续按用户反馈缩小 PixelDone 竖屏产品截图。图集新增可选 `layout: product`，位置为 `src/utils/gallery.ts`、`src/components/GalleryContent.astro` 与 `src/styles/gallery.css`，在 PixelDone 两份 JSON 中同时启用：桌面三列、600px 及以下两列，图片宽度上限 180px，首图采用相同尺寸。随后按要求将 PixelDone 和 BNDS.life 中文资料链接改名为「GitHub 仓库」。更新规则见[图集作者指南](GALLERIES.md)，本轮验证、待办及恢复见[产品图集尺寸审计](audits/2026-10-10-product-gallery-layout.md)。仍保留原图和灯箱；本轮为分支修改及本机预览，生产发布继续等待既有服务器上传阻塞解决。
 
+
+**2026-10-11 媒体直传与名称更新：**现有 18 张栅格图及缩略图/封面共 140 个文件（17,247,338 字节）已通过本机 SSH/rsync 直传，服务器逐文件 SHA-256/大小验证，公网两域名 280 次 GET 的摘要/长度/类型/缓存核验通过。实际启用的两个 Nginx 配置仅插入媒体读取路由，已备份、`nginx -t` 并 reload；与静态 CI 安装边界分开记录。源码取消跟踪上述二进制文件，`.gitignore` 防止重新提交；保留历史 Git 对象、旧 release 与 `shared/_astro`。准备/上传/公网验证命令见 [ops/README.md](../ops/README.md#direct-media-uploads)，恢复入口为上表本机素材及媒体快照。Pixel Done 两语言统一名称，地址和实际仓库 URL 保持不变。新静态版本尚待本轮 Actions 与目标 SHA 验收，最终结果见 [本轮审计](audits/2026-10-11-direct-media.md)。
+
 ### GitHub Actions
 
 - [CI 工作流](../.github/workflows/ci.yml) 调用 `bash ops/verify.sh`，完成类型、行为、部署脚本、隔离 Nginx、双语构建及产物检查，再打包同一份产物；Actions artifact 保留 7 天，不能当长期备份。
 - [生产工作流](../.github/workflows/deploy.yml) 在 push `main` 后运行；`production` 并发不主动取消前次发布。上传已验证包及校验和，激活版本，验证公网两域名，最后保留 5 个成功 release。
 - 手动运行支持 `operation=deploy` 或 `rollback`；回滚需要保留版本的完整 40 位 SHA。`migrate_domains=true` 仅用于已有管理员准备的首次迁移，日常不用。
 - **推送网站代码只自动发布静态产物。**不会自动安装新版 Nginx 配置、`siyuanxue-release`、Node 聊天桥接、Hermes profile/plugin、记忆服务、模型或数据库。
-- 用户指定网站通过现有 GitHub CI/CD 发布；不另行用 SSH 手动上传和切换网站版本。SSH 可用于必要的独立服务维护和诊断。
+- 网页代码和文字继续通过现有 GitHub CI/CD 同步发布两域名。2026-10-11 起图片、视频原文件与缩略图改为 SSH/rsync 直传，不通过 GitHub artifact；不手动切换网站 release。SSH 还用于必要的独立服务维护和诊断。
 
 2026-09-16 已重新读取 GitHub `production` 环境变量与 secret **名称**：
 
@@ -98,6 +101,10 @@
 | 同目录 `current` / `previous` | 当前与前一版本软链接；不要手工编辑已发布 HTML |
 | 同目录 `incoming/` | CI 包上传入口 |
 | 同目录 `shared/_astro/` | 跨版本共享指纹资源，追加保存，暂无自动清理；检查磁盘 |
+| 同目录 `shared/media/` | 图片/视频原文件及本机生成的缩略图，SHA-256 文件名、追加安装、两域名 `/media/` 共用；独立于 release 和回滚，不自动删除 |
+| 本机 `media-local/` | Git 忽略的素材与上传文件；本轮 18 张原始图另保存在 `media-local/originals/`；不是自动跨机器同步 |
+| `/var/backups/siyuanxue-media/<清单SHA>/` | 已上传清单与媒体硬链接恢复快照（同磁盘，不是异地灾备）；直传命令生成，不自动过期 |
+| `/var/backups/siyuanxue-media-nginx-20261010T164421Z/` | 本轮实际 Nginx 路由变更前两域名配置备份；恢复时先恢复引用媒体的网页版本，再还原配置并 `nginx -t` / reload |
 | `/usr/local/bin/siyuanxue-release` | 安装自 [ops/release.sh](../ops/release.sh)，服务器副本需单独升级 |
 | `/usr/local/lib/siyuanxue-https` | HTTPS helper 和模板；源码在 `ops/` |
 | `/etc/nginx/` | 已启用域名配置、聊天 snippet；源码模板在 [ops/nginx](../ops/nginx) |
@@ -186,6 +193,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 |---|---|
 | 姓名、身份、简介、项目、联系方式 | `src/data/site.ts` 中英资料、BaseHead Person/WebSite/ProfilePage/BlogPosting、站点 README、GitHub 账号 name/bio/blog、个人主页 README、两仓库 About；小薛人设/精选记忆仅在事实相关时更新 |
 | 文章 | 中英文配对、日期/ID/草稿、标题/描述、canonical/hreflang、RSS/sitemap、站内链接；不要把未完成占位页加入索引 |
+| 媒体上传 / 存储 | 本机 Sharp 准备、媒体清单、原生 SSH/rsync 与严格主机校验、服务器摘要/大小验证、两站媒体类型/缓存/Range、CI 无图片视频、独立媒体恢复与磁盘容量；先上传再发布，禁止密码入库 |
 | 图集 / 首页内容目录 | `src/content/galleries` 双语 JSON、真实角色/介绍/图片/alt/图注、来源资料与 `site.ts` 的 gallerySlug、双语 preview 一致、草稿隔离、首页站内入口、封面/canonical/hreflang/ImageGallery；sitemap 按内容 draft/preview 状态筛选；`bun run test:gallery` 在临时目录验证正式图集可索引，生产产物测试验证条目预览可由首页进入但 noindex/不进 sitemap、固定版式样例额外不进首页、普通草稿不出页；不改变博客 RSS 身份 |
 | 域名 / 路径 | 注册与 DNS、www/HTTP 跳转、两个证书、Nginx 根目录、SEO/RSS/sitemap、语言链接、聊天 ALLOWED_ORIGINS、CI 变量与域名校验、GitHub 各处链接、搜索平台属性 |
 | 肖像 / 动效 | 正常肖像与占位肖像区分、人物比例/压缩/alt、单击展开、刷新折叠、灯箱可访问性、两站可见英文文案、reduced-motion、旧照片永久拒绝、图片缓存；不恢复状态标语块 |

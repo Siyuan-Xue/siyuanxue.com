@@ -2,13 +2,15 @@
 import LoadingBlocks from './LoadingBlocks.astro';
 import { site } from '../data/site';
 import { t } from '../i18n/locale';
-import { Picture } from 'astro:assets';
-import portraitImage from '../assets/portrait.jpg';
+import MediaPicture from './MediaPicture.astro';
+import { imageMedia } from '../utils/media';
 import { X } from '@lucide/astro';
 import '../styles/romantic.css';
 
-const portrait = site.portrait;
-const secret = site.secretPortrait;
+const portraitImage = imageMedia('portrait');
+const portrait = { ...site.portrait, width: portraitImage.width, height: portraitImage.height };
+const secretImage = imageMedia(site.secretPortrait.mediaId);
+const secret = { ...site.secretPortrait, src: secretImage.src, width: secretImage.width, height: secretImage.height };
 const captionId = 'romantic-mode-caption';
 ---
 
@@ -50,18 +52,14 @@ const captionId = 'romantic-mode-caption';
 			aria-expanded="false"
 			aria-label={t(secret.turnOnLabel)}
 		>
-			<Picture
+			<MediaPicture
 				class="bio-portrait_img romantic-portrait_image"
-				src={portraitImage}
+				asset={portraitImage}
 				alt={t(portrait.alt)}
-				width={960}
-				widths={[320, 640, 960]}
-				formats={['avif', 'webp']}
 				sizes="(max-width: 480px) min(46vw, calc(100vw - 12rem), 12rem), 192px"
 				loading="eager"
 				fetchpriority="high"
-				decoding="async"
-				data-primary-image
+				primary
 			/>
 		</button>
 

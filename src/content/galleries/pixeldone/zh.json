@@ -1,6 +1,6 @@
 {
-  "title": "像素清单",
-  "description": "2026 年 6 月底的期末考试周，我在复习之余用一天完成了 PixelDone 的首版。当时正在学习软件工程，也对安卓开发很感兴趣，这便成了我一次大胆的 Vibe Coding 尝试。我借助 GPT-5.5，重点锻炼与 AI 协作开发的能力，并体验新的技术栈。从设计、开发到部署和维护，我走过了手机 App 的完整产品周期，还把它分发给身边使用安卓的同学，再根据他们的建议持续迭代。PixelDone 以待办记录为核心，支持任务与列表编辑、自定义 Dock 快捷操作，以及云端备份和多端同步。",
+  "title": "Pixel Done",
+  "description": "2026 年 6 月底的期末考试周，我在复习之余用一天完成了 Pixel Done 的首版。当时正在学习软件工程，也对安卓开发很感兴趣，这便成了我一次大胆的 Vibe Coding 尝试。我借助 GPT-5.5，重点锻炼与 AI 协作开发的能力，并体验新的技术栈。从设计、开发到部署和维护，我走过了手机 App 的完整产品周期，还把它分发给身边使用安卓的同学，再根据他们的建议持续迭代。Pixel Done 以待办记录为核心，支持任务与列表编辑、自定义 Dock 快捷操作，以及云端备份和多端同步。",
   "period": "2026 年 6 月底 · 首版开发一天",
   "role": "产品设计、Vibe Coding 开发、分发与持续维护",
   "category": "projects",
@@ -10,28 +10,28 @@
   "layout": "product",
   "images": [
     {
-      "src": "./images/tasks.png",
-      "alt": "PixelDone 待办首页，清单中显示任务、完成状态、优先级和时间，底部为快捷操作按钮",
+      "src": "pixeldone/tasks",
+      "alt": "Pixel Done 待办首页，清单中显示任务、完成状态、优先级和时间，底部为快捷操作按钮",
       "caption": "待办首页：记录需要完成的事，查看任务的完成状态、优先级与时间。"
     },
     {
-      "src": "./images/task-editor.png",
-      "alt": "PixelDone 待办编辑界面，包含名称、优先级、提醒日期与时间、重复规则和保存按钮",
+      "src": "pixeldone/task-editor",
+      "alt": "Pixel Done 待办编辑界面，包含名称、优先级、提醒日期与时间、重复规则和保存按钮",
       "caption": "新建或编辑待办：设置名称、优先级、提醒时间和重复规则，让每件事都有自己的安排。"
     },
     {
-      "src": "./images/list-editor.png",
-      "alt": "PixelDone 新建清单界面，上方展示已有清单，下方输入清单名称",
+      "src": "pixeldone/list-editor",
+      "alt": "Pixel Done 新建清单界面，上方展示已有清单，下方输入清单名称",
       "caption": "新建或编辑清单：为不同事项建立列表，让待办按场景分类。"
     },
     {
-      "src": "./images/dock-settings.png",
-      "alt": "PixelDone Dock 设置界面，可预览快捷栏、调整加号位置、选择功能并更改按钮顺序",
+      "src": "pixeldone/dock-settings",
+      "alt": "Pixel Done Dock 设置界面，可预览快捷栏、调整加号位置、选择功能并更改按钮顺序",
       "caption": "自定义 Dock：选择排序、截止时间倒计时、隐藏或清理已完成任务、快速删除和 Markdown 导出等快捷操作，并调整按钮的位置与顺序。"
     },
     {
-      "src": "./images/cloud-settings.png",
-      "alt": "PixelDone 云端设置页，显示账号、同步状态 Error，以及语言和主题选项",
+      "src": "pixeldone/cloud-settings",
+      "alt": "Pixel Done 云端设置页，显示账号、同步状态 Error，以及语言和主题选项",
       "caption": "云端备份与多端同步：在设置中管理账号和同步操作，方便在不同设备间保存与接续待办。"
     }
   ],
