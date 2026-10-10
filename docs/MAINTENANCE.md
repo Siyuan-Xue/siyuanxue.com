@@ -58,7 +58,7 @@
 
 2026-10-10 用户明确要求占位预览也上线以查看效果。本次将 `/gallery/layout-preview/` 设为固定公开预览：保留双语示意说明、`draft: true` 与 `noindex`，不进入首页项目列表或 sitemap；其他普通草稿仍不生成生产页面。已通过[生产 Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38013892959)发布 `5040c31a6a66f1e5d03e3507380d7f065eb6abeb`，两域名目标 SHA、预览 200、四张图片与图注、noindex、canonical/hreflang、资源与跳转均核对通过，中文线上灯箱可打开、切图和关闭。位置与更新步骤见[图集作者指南](GALLERIES.md)，本次验收、发布与恢复记录见[公开图集预览审计](audits/2026-10-10-gallery-preview.md)。
 
-同日后续要求将七个现有条目全部接入各自图集。当前工作在 `codex/all-gallery-previews`（源码基线 `3fdf802`）完成实现：`src/content/galleries/<slug>/{en,zh}.json` 使用 `draft: false`、`preview: true`，复用四张明确标注的抽象占位图，沿用真实标题、已知年份与既有资料链接，不补造角色或贡献。首页指向各自稳定地址，条目预览公开但 `noindex`，sitemap 依据内容 JSON 的草稿及预览状态排除，无需维护七个 slug 的硬编码名单。`layout-preview` 继续是草稿公开的固定例外，仍不进首页或 sitemap；普通草稿仍不生成。以后补齐真实素材与参与事实，将双语 `preview` 改为 `false` 并保持 `draft: false`，即可在原址转为正式图集并进入 sitemap。本轮类型检查、测试、双语构建及本机首页到灯箱流程已通过；Actions 与公网验收**待回填**。更新、验证和撤下步骤见[图集作者指南](GALLERIES.md)，新验收证据见[全部条目预览审计](audits/2026-10-10-all-gallery-previews.md)。
+同日后续要求将七个现有条目全部接入各自图集。该轮在 `codex/all-gallery-previews`（源码基线 `3fdf802`）完成实现：`src/content/galleries/<slug>/{en,zh}.json` 使用 `draft: false`、`preview: true`，复用四张明确标注的抽象占位图，沿用真实标题、已知年份与既有资料链接，不补造角色或贡献。首页指向各自稳定地址，条目预览公开但 `noindex`，sitemap 依据内容 JSON 的草稿及预览状态排除，无需维护七个 slug 的硬编码名单。`layout-preview` 继续是草稿公开的固定例外，仍不进首页或 sitemap；普通草稿仍不生成。以后补齐真实素材与参与事实，将双语 `preview` 改为 `false` 并保持 `draft: false`，即可在原址转为正式图集并进入 sitemap。本轮类型检查、测试、双语构建及本机首页到灯箱流程已通过；已通过[生产 Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38015691697)发布 `afa2b2142ec96ceb4ce9ade59636fc87814f8fb5`。两域名目标 SHA、每站七个入口及七个图集页、语言、图片/脚本/样式资源、元信息和跳转均核对通过，中文生产浏览器完成首页至活动图集再返回。更新、验证和撤下步骤见[图集作者指南](GALLERIES.md)，新验收证据见[全部条目预览审计](audits/2026-10-10-all-gallery-previews.md)。
 
 ### GitHub Actions
 
