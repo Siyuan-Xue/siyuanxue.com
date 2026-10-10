@@ -7,6 +7,7 @@ const variants = [
  { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', chatLabel: 'Chat with xue', homeLabel: 'Home' },
  { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', chatLabel: '与小薛聊聊', homeLabel: '首页' },
 ];
+const entryGallerySlugs = ['probfun', 'imathbook', 'leda-agent', 'pixeldone', 'yuheng', 'walking-with-light', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
  test(`${v.lang}: homepage identifies the same bilingual author as articles`, async () => {
@@ -161,6 +162,7 @@ for (const v of variants) {
     else expect(item.textContent).toContain(v.lang === 'en' ? 'In preparation' : '整理中');
    }
   }
+  expect(sections.slice(1, 4).flatMap(section => [...section.querySelectorAll('.bullet-list_link')].map(link => link.getAttribute('href')))).toEqual(entryGallerySlugs.map(slug => `/gallery/${slug}/`));
   const blogLinks = [...sections[4].querySelectorAll('.bullet-list_link')].map(link => link.getAttribute('href')!);
   expect(new Set(blogLinks).size).toBe(blogLinks.length);
   const rss = new DOMParser().parseFromString(await readFile(join(v.root, 'rss.xml'), 'utf8'), 'text/xml');
@@ -176,7 +178,7 @@ for (const v of variants) {
   expect(blogLinks).toContain('/post/first-note/');
   expect(blogLinks).toContain('/post/congrats-you-hit-the-limit/');
  });
- test(`${v.lang}: responsive portrait and unavailable homepage items`, async () => {
+ test(`${v.lang}: responsive portrait and homepage gallery entries`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
   expect(document.querySelector('h1')!.textContent).toBe(v.title);
   const picture = document.querySelector('picture')!; expect(picture).not.toBeNull();
@@ -207,5 +209,54 @@ for (const v of variants) {
   expect(await access(join(v.root, 'dev/gallery/layout-preview/index.html')).then(() => true, () => false)).toBe(false);
   expect(await readFile(join(v.root,'robots.txt'),'utf8')).toContain(`Sitemap: ${v.origin}/sitemap-index.xml`);
   for (const page of ['wip/index.html','404.html']) { const { document } = parseHTML(await readFile(join(v.root,page),'utf8')); expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex'); }
+ });
+}
+
+for (const v of variants) {
+ test(`${v.lang}: all seven entry galleries expose distinct pages with indexing appropriate to their preview status`, async () => {
+  const locale = v.lang === 'en' ? 'en' : 'zh';
+  const sitemap = new DOMParser().parseFromString(await readFile(join(v.root, 'sitemap-0.xml'), 'utf8'), 'text/xml');
+  const locations = [...sitemap.querySelectorAll('url > loc')].map(loc => loc.textContent);
+  const { document: home } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+  for (const slug of entryGallerySlugs) {
+   const href = `/gallery/${slug}/`;
+   const page = join(v.root, href, 'index.html');
+   expect(await access(page).then(() => true, () => false)).toBe(true);
+   const source = JSON.parse(await readFile(`src/content/galleries/${slug}/${locale}.json`, 'utf8'));
+   const { document } = parseHTML(await readFile(page, 'utf8'));
+   const article = document.querySelector('article[data-gallery-page]')!;
+   expect(article).not.toBeNull();
+   expect(article.querySelector('h1')?.textContent).toBe(source.title);
+   expect(home.querySelectorAll(`a[href="${href}"]`)).toHaveLength(1);
+   expect(home.querySelector(`a[href="${href}"]`)?.textContent).toBe(source.title);
+   const robots = document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '';
+   if (source.preview) {
+    expect(robots).toContain('noindex');
+    expect(locations).not.toContain(v.origin + href);
+   } else {
+    expect(robots).not.toContain('noindex');
+    expect(locations).toContain(v.origin + href);
+   }
+   expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(v.origin + href);
+   const figures = [...article.querySelectorAll('figure')];
+   expect(figures).toHaveLength(source.images.length);
+   expect(figures.length).toBeGreaterThan(0);
+   for (const [index, figure] of figures.entries()) {
+    expect(figure.querySelector('figcaption')?.textContent).toBe(source.images[index].caption);
+    expect(figure.querySelector('img')?.getAttribute('alt')).toBe(source.images[index].alt);
+    await access(join(v.root, figure.querySelector('a[data-gallery-image]')!.getAttribute('href')!));
+    for (const type of ['image/avif', 'image/webp']) {
+     const resource = figure.querySelector(`source[type="${type}"]`)?.getAttribute('srcset');
+     expect(resource).toBeTruthy();
+     for (const candidate of resource!.split(',')) await access(join(v.root, candidate.trim().split(/\s+/)[0]));
+    }
+   }
+   const links = [...article.querySelectorAll('.gallery-links a')];
+   expect(links.map(link => ({label: link.textContent, href: link.getAttribute('href')}))).toEqual(source.links);
+   for (const link of links) {
+    expect(link.getAttribute('href')).toMatch(/^https?:\/\//);
+    expect(link.getAttribute('rel')).toContain('noopener');
+   }
+  }
  });
 }

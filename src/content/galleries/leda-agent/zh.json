@@ -1,0 +1,38 @@
+{
+  "title": "LeDA 智能体",
+  "description": "这里将展示与LeDA 智能体相关的图片与资料。当前抽象图片均为占位图，用于查看图集效果；真实图片、本人实际角色和经核实的说明仍待补充。",
+  "period": "2026",
+  "role": "待补充实际角色",
+  "category": "projects",
+  "order": 2,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "LeDA 智能体的第1张抽象占位图",
+      "caption": "占位图：这里将展示智能体概览。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "LeDA 智能体的第2张抽象占位图",
+      "caption": "占位图：这里将展示界面细节。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "LeDA 智能体的第3张抽象占位图",
+      "caption": "占位图：这里将展示流程示例。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "LeDA 智能体的第4张抽象占位图",
+      "caption": "占位图：这里将展示相关资料。"
+    }
+  ],
+  "links": [
+    {
+      "label": "北邮项目资料",
+      "href": "https://win.bupt.edu.cn/program.do?id=9909"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "title": "BUPT volleyball · school team & college team",
+  "description": "This gallery will present images and material related to BUPT volleyball · school team & college team. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
+  "period": "Date to be confirmed",
+  "role": "Actual role to be added",
+  "category": "appearances",
+  "order": 1,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "Abstract placeholder image 1 for BUPT volleyball · school team & college team",
+      "caption": "Placeholder image: this space will show team scenes."
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "Abstract placeholder image 2 for BUPT volleyball · school team & college team",
+      "caption": "Placeholder image: this space will show training details."
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "Abstract placeholder image 3 for BUPT volleyball · school team & college team",
+      "caption": "Placeholder image: this space will show match photographs."
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "Abstract placeholder image 4 for BUPT volleyball · school team & college team",
+      "caption": "Placeholder image: this space will show related material."
+    }
+  ],
+  "links": []
+}

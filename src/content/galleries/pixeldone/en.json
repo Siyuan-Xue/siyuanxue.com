@@ -1,0 +1,38 @@
+{
+  "title": "PixelDone",
+  "description": "This gallery will present images and material related to PixelDone. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
+  "period": "2026",
+  "role": "Actual role to be added",
+  "category": "projects",
+  "order": 3,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "Abstract placeholder image 1 for PixelDone",
+      "caption": "Placeholder image: this space will show application overview."
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "Abstract placeholder image 2 for PixelDone",
+      "caption": "Placeholder image: this space will show interface details."
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "Abstract placeholder image 3 for PixelDone",
+      "caption": "Placeholder image: this space will show usage scenarios."
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "Abstract placeholder image 4 for PixelDone",
+      "caption": "Placeholder image: this space will show related material."
+    }
+  ],
+  "links": [
+    {
+      "label": "Source repository",
+      "href": "https://github.com/Siyuan-Xue/PixelDone"
+    }
+  ]
+}

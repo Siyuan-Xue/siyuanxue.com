@@ -1,0 +1,33 @@
+{
+  "title": "校排球队 · 院排球队",
+  "description": "这里将展示与校排球队 · 院排球队相关的图片与资料。当前抽象图片均为占位图，用于查看图集效果；真实图片、本人实际角色和经核实的说明仍待补充。",
+  "period": "时间待补充",
+  "role": "待补充实际角色",
+  "category": "appearances",
+  "order": 1,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "校排球队 · 院排球队的第1张抽象占位图",
+      "caption": "占位图：这里将展示球队场景。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "校排球队 · 院排球队的第2张抽象占位图",
+      "caption": "占位图：这里将展示训练细节。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "校排球队 · 院排球队的第3张抽象占位图",
+      "caption": "占位图：这里将展示比赛照片。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "校排球队 · 院排球队的第4张抽象占位图",
+      "caption": "占位图：这里将展示相关资料。"
+    }
+  ],
+  "links": []
+}

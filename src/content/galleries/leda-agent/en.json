@@ -1,0 +1,38 @@
+{
+  "title": "LeDA Agent",
+  "description": "This gallery will present images and material related to LeDA Agent. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
+  "period": "2026",
+  "role": "Actual role to be added",
+  "category": "projects",
+  "order": 2,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "Abstract placeholder image 1 for LeDA Agent",
+      "caption": "Placeholder image: this space will show agent overview."
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "Abstract placeholder image 2 for LeDA Agent",
+      "caption": "Placeholder image: this space will show interface details."
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "Abstract placeholder image 3 for LeDA Agent",
+      "caption": "Placeholder image: this space will show workflow examples."
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "Abstract placeholder image 4 for LeDA Agent",
+      "caption": "Placeholder image: this space will show related material."
+    }
+  ],
+  "links": [
+    {
+      "label": "BUPT project information",
+      "href": "https://win.bupt.edu.cn/program.do?id=9909"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "title": "像素清单",
+  "description": "这里将展示与像素清单相关的图片与资料。当前抽象图片均为占位图，用于查看图集效果；真实图片、本人实际角色和经核实的说明仍待补充。",
+  "period": "2026",
+  "role": "待补充实际角色",
+  "category": "projects",
+  "order": 3,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "像素清单的第1张抽象占位图",
+      "caption": "占位图：这里将展示应用概览。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "像素清单的第2张抽象占位图",
+      "caption": "占位图：这里将展示界面细节。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "像素清单的第3张抽象占位图",
+      "caption": "占位图：这里将展示使用场景。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "像素清单的第4张抽象占位图",
+      "caption": "占位图：这里将展示相关资料。"
+    }
+  ],
+  "links": [
+    {
+      "label": "源码仓库",
+      "href": "https://github.com/Siyuan-Xue/PixelDone"
+    }
+  ]
+}

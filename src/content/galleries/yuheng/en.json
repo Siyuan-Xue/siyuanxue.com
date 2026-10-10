@@ -1,0 +1,33 @@
+{
+  "title": "Yuheng · multimodal metaphor detection",
+  "description": "This gallery will present images and material related to Yuheng · multimodal metaphor detection. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
+  "period": "2026",
+  "role": "Actual role to be added",
+  "category": "research",
+  "order": 0,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "Abstract placeholder image 1 for Yuheng · multimodal metaphor detection",
+      "caption": "Placeholder image: this space will show research background."
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "Abstract placeholder image 2 for Yuheng · multimodal metaphor detection",
+      "caption": "Placeholder image: this space will show example material."
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "Abstract placeholder image 3 for Yuheng · multimodal metaphor detection",
+      "caption": "Placeholder image: this space will show method illustrations."
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "Abstract placeholder image 4 for Yuheng · multimodal metaphor detection",
+      "caption": "Placeholder image: this space will show related material."
+    }
+  ],
+  "links": []
+}

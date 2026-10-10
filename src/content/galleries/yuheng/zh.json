@@ -1,0 +1,33 @@
+{
+  "title": "语衡 · 多模态隐喻检测",
+  "description": "这里将展示与语衡 · 多模态隐喻检测相关的图片与资料。当前抽象图片均为占位图，用于查看图集效果；真实图片、本人实际角色和经核实的说明仍待补充。",
+  "period": "2026",
+  "role": "待补充实际角色",
+  "category": "research",
+  "order": 0,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "语衡 · 多模态隐喻检测的第1张抽象占位图",
+      "caption": "占位图：这里将展示研究背景。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "语衡 · 多模态隐喻检测的第2张抽象占位图",
+      "caption": "占位图：这里将展示示例材料。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "语衡 · 多模态隐喻检测的第3张抽象占位图",
+      "caption": "占位图：这里将展示方法示意。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "语衡 · 多模态隐喻检测的第4张抽象占位图",
+      "caption": "占位图：这里将展示相关资料。"
+    }
+  ],
+  "links": []
+}

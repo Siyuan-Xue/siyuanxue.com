@@ -1,0 +1,38 @@
+{
+  "title": "iMathBook",
+  "description": "This gallery will present images and material related to iMathBook. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
+  "period": "2025",
+  "role": "Actual role to be added",
+  "category": "projects",
+  "order": 1,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "Abstract placeholder image 1 for iMathBook",
+      "caption": "Placeholder image: this space will show book overview."
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "Abstract placeholder image 2 for iMathBook",
+      "caption": "Placeholder image: this space will show page details."
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "Abstract placeholder image 3 for iMathBook",
+      "caption": "Placeholder image: this space will show reading scenarios."
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "Abstract placeholder image 4 for iMathBook",
+      "caption": "Placeholder image: this space will show related material."
+    }
+  ],
+  "links": [
+    {
+      "label": "Project website",
+      "href": "https://imathbook.com"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "title": "《与光同行》· 北京市大学生戏剧节",
+  "description": "这里将展示与《与光同行》· 北京市大学生戏剧节相关的图片与资料。当前抽象图片均为占位图，用于查看图集效果；真实图片、本人实际角色和经核实的说明仍待补充。",
+  "period": "2025",
+  "role": "待补充实际角色",
+  "category": "appearances",
+  "order": 0,
+  "draft": false,
+  "preview": true,
+  "images": [
+    {
+      "src": "../../../assets/gallery-preview/hero.png",
+      "alt": "《与光同行》· 北京市大学生戏剧节的第1张抽象占位图",
+      "caption": "占位图：这里将展示舞台场景。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/detail.png",
+      "alt": "《与光同行》· 北京市大学生戏剧节的第2张抽象占位图",
+      "caption": "占位图：这里将展示排练细节。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/portrait.png",
+      "alt": "《与光同行》· 北京市大学生戏剧节的第3张抽象占位图",
+      "caption": "占位图：这里将展示演出照片。"
+    },
+    {
+      "src": "../../../assets/gallery-preview/closing.png",
+      "alt": "《与光同行》· 北京市大学生戏剧节的第4张抽象占位图",
+      "caption": "占位图：这里将展示相关资料。"
+    }
+  ],
+  "links": [
+    {
+      "label": "北邮活动报道",
+      "href": "https://www.bupt.edu.cn/info/1079/90114.htm"
+    }
+  ]
+}

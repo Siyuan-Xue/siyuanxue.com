@@ -15,7 +15,7 @@ const variants = [
  { locale: 'zh', language: 'zh-CN', origin: 'https://xuesiyuan.com' },
 ];
 type Fixture = {
- title: string; description: string; period: string; role: string; draft: boolean;
+ title: string; description: string; period: string; role: string; draft: boolean; preview: boolean;
  images: { src: string; alt: string; caption: string }[];
  links: { label: string; href: string }[];
 };
@@ -40,7 +40,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    expect(fixture.links.length).toBeGreaterThan(0);
    fixtures.set(locale, fixture);
    await writeFile(join(draftDirectory, `${locale}.json`), JSON.stringify(fixture));
-   await writeFile(join(publishedDirectory, `${locale}.json`), JSON.stringify({ ...fixture, draft: false }));
+   await writeFile(join(publishedDirectory, `${locale}.json`), JSON.stringify({ ...fixture, draft: false, preview: false }));
   }
 
   for (const { locale, language, origin } of variants) {
