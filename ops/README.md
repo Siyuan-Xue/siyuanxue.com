@@ -32,6 +32,8 @@ GitHub `production` environment variables:
 
 Existing environment secrets are `DEPLOY_SSH_KEY` and `DEPLOY_KNOWN_HOSTS`. The workflow uses strict host-key validation; do not replace it with `StrictHostKeyChecking=no`. The `ubuntu` maintenance login and CI `deploy` account have separate responsibilities.
 
+The production job uses read-only Actions permission to obtain the current run's verified artifact download URL. `ops/upload-release.py` sends a short-lived HTTPS URL over strict SSH; the server downloads the same artifact into its existing `incoming/` directory. The GitHub token stays on the runner, and the URL is masked and kept out of command arguments. ZIP digest, exact entries, archive size and SHA-256 are checked before replacing the incoming files; the installed release helper still performs its normal checksum and activation checks. Only temporary files created by this transfer are cleaned up. No server installation or new secret is required. The transfer step has a 12-minute limit and leaves the current release in place on failure.
+
 ## Bootstrap and upgrade
 
 `sudo bash ops/bootstrap-server.sh --check` inventories a new server. `--apply /path/to/deploy-key.pub` installs the deployment account and tools. An existing HTTPS configuration is preserved on rerun, and health is compared with the current release rather than the literal `bootstrap` marker. Do not run the full bootstrap merely to update a website.

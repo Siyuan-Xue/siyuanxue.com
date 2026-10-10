@@ -40,6 +40,9 @@ jobs:
     uses: ./.github/workflows/ci.yml
   deploy:
     name: Deploy verified release
+    permissions:
+      contents: read
+      actions: read
     needs: verify
     if: github.event_name == 'push' || inputs.operation == 'deploy'
     runs-on: ubuntu-24.04
@@ -89,17 +92,11 @@ jobs:
           chmod 0600 "$RUNNER_TEMP/ssh/deploy_key" "$RUNNER_TEMP/ssh/known_hosts"
           ssh-keygen -y -f "$RUNNER_TEMP/ssh/deploy_key" >/dev/null
 
-      - name: Upload release archive
-        run: |
-          scp \
-            -i "$RUNNER_TEMP/ssh/deploy_key" \
-            -P "$DEPLOY_PORT" \
-            -o BatchMode=yes \
-            -o IdentitiesOnly=yes \
-            -o StrictHostKeyChecking=yes \
-            -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
-            "$ARCHIVE_NAME" "$ARCHIVE_NAME.sha256" \
-            "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_ROOT/incoming/"
+      - name: Transfer verified release over HTTPS
+        timeout-minutes: 12
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 ops/upload-release.py
 
       - name: Activate release
         id: activate
