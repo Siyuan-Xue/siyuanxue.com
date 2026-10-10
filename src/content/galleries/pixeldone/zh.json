@@ -7,6 +7,7 @@
   "order": 3,
   "draft": false,
   "preview": false,
+  "layout": "product",
   "images": [
     {
       "src": "./images/tasks.png",
@@ -36,7 +37,7 @@
   ],
   "links": [
     {
-      "label": "GitHub 源码",
+      "label": "GitHub 仓库",
       "href": "https://github.com/Siyuan-Xue/PixelDone"
     }
   ]

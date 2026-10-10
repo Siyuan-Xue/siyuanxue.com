@@ -6,6 +6,8 @@
 .gallery-figure-wide { grid-column: 1 / -1; }
 .gallery-figure a, .gallery-figure picture { display: block; }
 .gallery-figure img { display: block; width: 100%; height: auto; }
+.gallery-grid-product { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.gallery-grid-product .gallery-figure a { width: 100%; max-width: 11.25rem; margin-inline: auto; }
 .gallery-figure a { transition: none; }
 .gallery-figure a:hover, .gallery-figure a:focus-visible { outline: 2px solid var(--fg-interactive); outline-offset: 4px; }
 .gallery-figure figcaption { color: var(--fg-muted); font-size: var(--font-size-meta); line-height: 1.5; margin-top: 0.65em; }
@@ -21,6 +23,7 @@
 .gallery-lightbox .pswp__gallery-caption { position: absolute; bottom: 1rem; left: 1.5rem; right: 1.5rem; max-height: 4.5rem; overflow-y: auto; color: #faf9f5; text-align: center; font: inherit; font-size: 1rem; line-height: 1.5; }
 @media (max-width: 600px) {
  .gallery-grid { grid-template-columns: minmax(0, 1fr); }
+ .gallery-grid-product { grid-template-columns: repeat(2, minmax(0, 1fr)); }
  .gallery-lightbox .pswp__top-bar { gap: 0.25rem; padding-inline: 0.75rem; }
  .gallery-lightbox button.pswp__button { font-size: 1rem; padding: 0.5rem 0.25rem; }
 }

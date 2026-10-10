@@ -53,6 +53,15 @@ test('bilingual placeholder status must agree before a gallery can publish', () 
  expect(pairGalleries(pair, 'zh')[0].entry.id).toBe('sample/zh');
  expect(pairGalleries([entry('sample/en', { preview: true, draft: true }), entry('sample/zh', { preview: true })], 'en')).toEqual([]);
 });
+test('product gallery layout survives content parsing while existing galleries keep their photo layout', () => {
+ const schema = createGallerySchema(z.object({ src: z.string(), width: z.number(), height: z.number(), format: z.literal('webp') }));
+ expect(schema.parse({ ...data, layout: 'product' }).layout).toBe('product');
+ expect(schema.parse(data).layout).toBe('photos');
+});
+test('gallery translations cannot publish with conflicting layouts', () => {
+ expect(() => pairGalleries([entry('sample/en', { layout: 'product' }), entry('sample/zh')], 'en')).toThrow('layout');
+ expect(pairGalleries([entry('sample/en', { layout: 'photos' }), entry('sample/zh')], 'en')).toHaveLength(1);
+});
 test('published placeholder galleries are reachable from their existing homepage entries', () => {
  const sources = [{ title: bi('Source', '来源'), href: 'https://example.com', gallerySlug: 'sample' }];
  const items = galleryHomeItems(sources, [{ slug: 'sample', entry: entry('sample/en', { preview: true }) }], 'projects', 'en');

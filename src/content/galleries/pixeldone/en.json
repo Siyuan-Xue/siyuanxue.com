@@ -7,6 +7,7 @@
   "order": 3,
   "draft": false,
   "preview": false,
+  "layout": "product",
   "images": [
     {
       "src": "./images/tasks.png",

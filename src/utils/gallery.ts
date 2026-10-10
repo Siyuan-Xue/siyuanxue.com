@@ -5,10 +5,10 @@ import type { LinkItem } from '../data/site';
 export type GalleryImage = { src: ImageMetadata; alt: string; caption: string };
 export type GalleryHomeItem = { title: string; href: string; year?: string | number; venue?: string; external?: boolean };
 export type GalleryLink = { label: string; href: string };
-export type GalleryData = { title: string; description: string; period: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; images: GalleryImage[]; links: GalleryLink[] };
+export type GalleryData = { title: string; description: string; period: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; links: GalleryLink[] };
 export function createGallerySchema<T extends z.ZodType>(image: T) {
  const text = z.string().trim().min(1);
- return z.object({ title: text, description: text, period: text, role: text, category: z.enum(['projects', 'research', 'appearances']), order: z.number().int().default(0), draft: z.boolean().default(true), preview: z.boolean().default(false), images: z.array(z.object({ src: image, alt: text, caption: text })).min(1), links: z.array(z.object({ label: text, href: text.pipe(z.url({ protocol: /^https?$/ })) })).default([]) });
+ return z.object({ title: text, description: text, period: text, role: text, category: z.enum(['projects', 'research', 'appearances']), order: z.number().int().default(0), draft: z.boolean().default(true), preview: z.boolean().default(false), layout: z.enum(['photos', 'product']).default('photos'), images: z.array(z.object({ src: image, alt: text, caption: text })).min(1), links: z.array(z.object({ label: text, href: text.pipe(z.url({ protocol: /^https?$/ })) })).default([]) });
 }
 export function pairGalleries<T extends { id: string; data: GalleryData }>(entries: T[], language: Locale, includeDrafts = false): { slug: string; entry: T }[] {
  const groups = new Map<string, Partial<Record<Locale, T>>>();
@@ -28,6 +28,7 @@ export function pairGalleries<T extends { id: string; data: GalleryData }>(entri
   if (en.data.category !== zh.data.category) throw new Error(`Mismatched gallery category for ${slug}`);
   if (en.data.order !== zh.data.order) throw new Error(`Mismatched gallery order for ${slug}`);
   if (Boolean(en.data.preview) !== Boolean(zh.data.preview)) throw new Error(`Mismatched gallery preview status for ${slug}`);
+  if ((en.data.layout ?? 'photos') !== (zh.data.layout ?? 'photos')) throw new Error(`Mismatched gallery layout for ${slug}`);
   result.push({ slug, entry: language === 'en' ? en : zh });
  }
  return result.sort((a, b) => a.entry.data.order - b.entry.data.order || a.slug.localeCompare(b.slug));

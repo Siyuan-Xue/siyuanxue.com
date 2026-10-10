@@ -64,6 +64,8 @@
 
 2026-10-10 同日补充 PixelDone 真实图集：`src/content/galleries/pixeldone/{en,zh}.json` 与同目录 `images/` 保存用户确认的期末考试周开发经历和五张原始 App 截图。沿用现有 `src/data/site.ts` 的关联、首页位置、双语标题和 `/gallery/pixeldone/` 地址，双语 `preview` 改为 `false`；页末保留 [PixelDone 公开源码](https://github.com/Siyuan-Xue/PixelDone)。更新、验证和恢复沿用[图集作者指南](GALLERIES.md)，本轮验收见 [PixelDone 图集审计](audits/2026-10-10-pixeldone-gallery.md)。本轮先完成内容与本机预览，上一轮已确认的服务器上传阻塞尚未解决，不重复触发生产上传或声称新图集已经上线。没有修改该 App、云同步服务、仓库设置或网站独立服务。
 
+2026-10-10 后续按用户反馈缩小 PixelDone 竖屏产品截图。图集新增可选 `layout: product`，位置为 `src/utils/gallery.ts`、`src/components/GalleryContent.astro` 与 `src/styles/gallery.css`，在 PixelDone 两份 JSON 中同时启用：桌面三列、600px 及以下两列，图片宽度上限 180px，首图采用相同尺寸。随后按要求将 PixelDone 和 BNDS.life 中文资料链接改名为「GitHub 仓库」。更新规则见[图集作者指南](GALLERIES.md)，本轮验证、待办及恢复见[产品图集尺寸审计](audits/2026-10-10-product-gallery-layout.md)。仍保留原图和灯箱；本轮为分支修改及本机预览，生产发布继续等待既有服务器上传阻塞解决。
+
 ### GitHub Actions
 
 - [CI 工作流](../.github/workflows/ci.yml) 调用 `bash ops/verify.sh`，完成类型、行为、部署脚本、隔离 Nginx、双语构建及产物检查，再打包同一份产物；Actions artifact 保留 7 天，不能当长期备份。
