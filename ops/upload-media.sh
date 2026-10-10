@@ -6,9 +6,10 @@ host=${1:-ubuntu@82.156.77.131}
 source=${2:-media-local}
 manifest=${3:-src/data/media.json}
 [[ $host =~ ^[a-z_][a-z0-9_-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*$ ]] || { printf 'Invalid SSH destination\n' >&2; exit 1; }
-session=$(mktemp -d "${TMPDIR:-/tmp}/siyuan-media-session.XXXXXX")
+# macOS TMPDIR can exceed OpenSSH's Unix socket limit, including its listener suffix.
+session=$(mktemp -d /tmp/siyuan-media.XXXXXX)
 chmod 700 "$session"
-control=${MEDIA_SSH_CONTROL:-$session/ssh-control}
+control=${MEDIA_SSH_CONTROL:-$session/s}
 own_control=false
 cleanup() {
  if [[ $own_control == true ]]; then ssh -S "$control" -O exit "$host" >/dev/null 2>&1 || true; fi
