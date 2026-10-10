@@ -99,6 +99,7 @@ jobs:
             "$DEPLOY_USER@$DEPLOY_HOST" /usr/bin/true
 
       - name: Upload release archive
+        timeout-minutes: 12
         run: |
           scp -O -v \
             -i "$RUNNER_TEMP/ssh/deploy_key" \
@@ -111,7 +112,23 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
             "$ARCHIVE_NAME" "$ARCHIVE_NAME.sha256" \
-            "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_ROOT/incoming/"
+            "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_ROOT/incoming/" &
+          upload_pid=$!
+          archive_bytes=$(stat -c %s "$ARCHIVE_NAME")
+          while kill -0 "$upload_pid" 2>/dev/null; do
+            sleep 30
+            if kill -0 "$upload_pid" 2>/dev/null; then
+              uploaded_bytes=$(ssh -i "$RUNNER_TEMP/ssh/deploy_key" -p "$DEPLOY_PORT" \
+                -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+                -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+                -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
+                "$DEPLOY_USER@$DEPLOY_HOST" \
+                /usr/bin/stat -c %s "$DEPLOY_ROOT/incoming/$ARCHIVE_NAME")
+              [[ "$uploaded_bytes" =~ ^[0-9]+$ ]]
+              echo "::notice title=Release upload progress::$uploaded_bytes / $archive_bytes bytes"
+            fi
+          done
+          wait "$upload_pid"
 
       - name: Activate release
         id: activate
