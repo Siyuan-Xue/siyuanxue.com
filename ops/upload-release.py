@@ -5,12 +5,14 @@
 def fetch_release(payload):
     # This function is sent over strict SSH and runs with the existing deploy user.
     import hashlib
+    import concurrent.futures
     import os
     import pathlib
     import re
     import shutil
     import stat
     import tempfile
+    import threading
     import time
     import urllib.parse
     import urllib.request
@@ -43,21 +45,52 @@ def fetch_release(payload):
     with tempfile.TemporaryDirectory(prefix=".artifact-", dir=incoming) as temporary:
         temporary = pathlib.Path(temporary)
         zipped = temporary / "artifact.zip"
-        digest, received = hashlib.sha256(), 0
-        print("Downloading verified Actions artifact over HTTPS", flush=True)
+        received = 0
+        workers = min(16, (zip_size + 1024 * 1024 - 1) // (1024 * 1024))
+        progress_lock, aborted = threading.Lock(), threading.Event()
+        with zipped.open("wb") as output:
+            output.truncate(zip_size)
+        print(f"Downloading verified Actions artifact over HTTPS ({workers} connections)", flush=True)
         # No GitHub bearer token is sent to the server or the artifact storage host.
-        with urllib.request.urlopen(payload["url"], timeout=30) as response, zipped.open("wb") as output:
-            if response.status != 200:
-                raise TransferError("artifact download was not successful")
-            while chunk := response.read(1024 * 1024):
-                received += len(chunk)
-                if received > zip_size or time.monotonic() - started > 600:
-                    raise TransferError("artifact download exceeded its bound")
-                output.write(chunk)
+
+        def download(part):
+            nonlocal received, reported
+            start, end = part
+            ranged = workers > 1
+            request = urllib.request.Request(payload["url"], headers={"Range": f"bytes={start}-{end}"}) if ranged else payload["url"]
+            try:
+                if aborted.is_set():
+                    raise TransferError("artifact download aborted")
+                with urllib.request.urlopen(request, timeout=30) as response, zipped.open("r+b") as output:
+                    if response.status != (206 if ranged else 200):
+                        raise TransferError("artifact download was not successful")
+                    if ranged and response.headers.get("Content-Range") != f"bytes {start}-{end}/{zip_size}":
+                        raise TransferError("artifact range mismatch")
+                    output.seek(start)
+                    written = 0
+                    while chunk := response.read(64 * 1024):
+                        written += len(chunk)
+                        if written > end - start + 1 or aborted.is_set() or time.monotonic() - started > 600:
+                            raise TransferError("artifact download exceeded its bound")
+                        output.write(chunk)
+                        with progress_lock:
+                            received += len(chunk)
+                            if time.monotonic() - reported >= 15:
+                                print(f"Artifact download: {received} / {zip_size} bytes", flush=True)
+                                reported = time.monotonic()
+                    if written != end - start + 1:
+                        raise TransferError("artifact range was truncated")
+            except Exception:
+                aborted.set()
+                raise
+
+        parts = [(zip_size * index // workers, zip_size * (index + 1) // workers - 1) for index in range(workers)]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+            list(pool.map(download, parts))
+        digest = hashlib.sha256()
+        with zipped.open("rb") as source:
+            while chunk := source.read(1024 * 1024):
                 digest.update(chunk)
-                if time.monotonic() - reported >= 15:
-                    print(f"Artifact download: {received} / {zip_size} bytes", flush=True)
-                    reported = time.monotonic()
         if received != zip_size or digest.hexdigest() != payload["zip_digest"]:
             raise TransferError("artifact ZIP checksum or size mismatch")
         with zipfile.ZipFile(zipped) as source:

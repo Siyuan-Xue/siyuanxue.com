@@ -31,7 +31,7 @@
 | 英文域名 | `siyuanxue.com`；`www.siyuanxue.com` 跳到其 apex | 固定英文；语言按钮指向对应译文。上述域名路由有部署记录 |
 | 旧域名 | `xuesiyuan.com.cn` 及 www 已退出本站配置 | 不作为当前入口；退役不等于注销域名或关闭续费 |
 | 域名注册与 DNS | 注册商/DNS 控制台才是续费、解析记录的权威来源 | **待补**：服务商、账号入口、到期日、自动续费、完整解析导出；不因服务器在腾讯云就推定域名也在腾讯云 |
-| 腾讯云 Lighthouse | Ubuntu 24.04 / Nginx；当前记录 IP `82.156.77.131` | 管理员 `ubuntu`，CI `deploy`，SSH 22；腾讯云控制台 OrcaTerm 为备用。实例 ID、地域、套餐、续费日与快照策略待补 |
+| 腾讯云 Lighthouse | Ubuntu 24.04 / Nginx；IP `82.156.77.131`；实例 `lhins-aftjtoo4`，北京七区 / `ap-beijing` | 管理员 `ubuntu`，CI `deploy`，SSH 22；腾讯云控制台 OrcaTerm 为备用。2026-10-10 控制台核对：锐驰型 2 核 / 8GB / 80GB、无限流量 / 200Mbps 峰值带宽，到期 2027-08-23 07:46:25；自动续费与快照策略待核对。套餐峰值不代表实际跨境吞吐量 |
 | TLS 证书 | 两 apex 分别管理含自身 www 的证书；`/etc/letsencrypt/` | Certbot 自动续期及 Nginx reload hook；见 [HTTPS 运维](../ops/HTTPS.md)。当前有效期和最近续期结果需定期查证 |
 | Google Search Console | [控制台](https://search.google.com/search-console) 管理归属验证、sitemap、收录/查询词 | 本轮未完成账号归属验证与提交；不能声称已经接入或排名第一 |
 | 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index) | 本轮未完成归属验证/提交；未配置推送令牌 |
@@ -42,7 +42,7 @@
 
 ## 3. 网站发布链路及维护边界
 
-2026-10-10 本轮图集发布复用完整双语产物，两域名必须在同一 release 上一起验收。此前 runner→服务器 SCP 上传持续缓慢；本轮在现有 Actions 内改用 `ops/upload-release.py`，由服务器通过短时 HTTPS 地址下载当前工作流的已验证产物，校验 ZIP 摘要、成员及归档 SHA-256 后交给原 helper 激活。部署 job 仅增加 `actions: read`，GitHub token 留在 runner，签名地址遮罩且仅经 SSH stdin 传递；没有新增 secret 或安装服务器组件。更新入口为工作流、传输脚本和共享验证；恢复可按 Git 历史还原 SCP 上传步骤，或用原 Actions rollback 恢复已保留的成功版本。实际传输及两站上线结果见 [图集发布审计](audits/2026-10-10-gallery-release.md)，未通过公网目标 SHA 检查前不能标记上线。
+2026-10-10 本轮图集发布复用完整双语产物，两域名必须在同一 release 上一起验收。此前 runner→服务器 SCP 上传持续缓慢；本轮在现有 Actions 内改用 `ops/upload-release.py`，由服务器通过短时 HTTPS 地址下载当前工作流的已验证产物，校验 ZIP 摘要、成员及归档 SHA-256 后交给原 helper 激活。单连接 HTTPS 也超时；OrcaTerm 只读诊断确认服务器资源充足、国内下载正常，GitHub 四路小额下载比单连接提高约三倍。因此大产物改用最多 16 路严格校验范围的下载，保留 600 秒下载上限与 12 分钟 step 上限。部署 job 仅增加 `actions: read`，GitHub token 留在 runner，签名地址遮罩且仅经 SSH stdin 传递；没有新增 secret 或安装服务器组件。更新入口为工作流、传输脚本和共享验证；恢复可按 Git 历史还原 SCP 上传步骤，或用原 Actions rollback 恢复已保留的成功版本。实际传输及两站上线结果见 [图集发布审计](audits/2026-10-10-gallery-release.md)，未通过公网目标 SHA 检查前不能标记上线。
 
 源码入口：[站点资料](../src/data/site.ts)、[页面元信息](../src/components/BaseHead.astro)、[构建脚本](../scripts/build.mjs)、[依赖和命令](../package.json)。文章按 `src/content/essays/<slug>/{en,zh}.md` 或 `src/content/posts/<slug>/{en,zh}.md` 配对。两语言必须一起发布。
 

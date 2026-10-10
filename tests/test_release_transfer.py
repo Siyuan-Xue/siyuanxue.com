@@ -8,6 +8,7 @@ import zipfile
 import json
 import os
 import urllib.error
+import threading
 from contextlib import redirect_stdout
 from unittest.mock import MagicMock, patch
 
@@ -19,6 +20,11 @@ spec.loader.exec_module(module)
 
 class Response(io.BytesIO):
     status = 200
+
+    def __init__(self, body, status=200, headers=None):
+        super().__init__(body)
+        self.status = status
+        self.headers = headers or {}
 
     def geturl(self):
         return "https://example.blob.core.windows.net/verified-artifact"
@@ -86,6 +92,73 @@ class ReleaseTransferTests(unittest.TestCase):
         body, payload = self.fixture()
         payload["zip_digest"] = "0" * 64
         with patch("urllib.request.urlopen", return_value=Response(body)):
+            with self.assertRaises(ValueError):
+                module.fetch_release(payload)
+        self.assertEqual(list(self.incoming.iterdir()), [])
+
+    def ranged_fixture(self):
+        self.data = bytes(range(256)) * 12288
+        self.checksum = hashlib.sha256(self.data).hexdigest()
+        self.checksum_text = f"{self.checksum}  {self.archive}\n".encode()
+        self.payload.update(checksum=self.checksum, archive_size=len(self.data), checksum_size=len(self.checksum_text))
+        return self.fixture()
+
+    def test_large_artifact_downloads_concurrent_ranges_and_reassembles_exact_bytes(self):
+        body, payload = self.ranged_fixture()
+        lock, concurrent = threading.Lock(), threading.Event()
+        active, maximum = 0, 0
+
+        def storage(request, timeout):
+            nonlocal active, maximum
+            if not isinstance(request, urllib.request.Request) or not request.get_header("Range"):
+                raise ValueError("storage requires bounded range requests")
+            start, end = map(int, request.get_header("Range")[6:].split("-"))
+            with lock:
+                active += 1
+                maximum = max(maximum, active)
+                if active >= 2:
+                    concurrent.set()
+            if not concurrent.wait(2):
+                raise ValueError("range requests were serialized")
+            with lock:
+                active -= 1
+            return Response(body[start:end + 1], 206, {"Content-Range": f"bytes {start}-{end}/{len(body)}"})
+
+        with patch("urllib.request.urlopen", side_effect=storage):
+            try:
+                module.fetch_release(payload)
+            except ValueError as error:
+                self.fail(f"valid concurrent range download was rejected: {error}")
+        self.assertGreaterEqual(maximum, 2)
+        self.assertEqual((self.incoming / self.archive).read_bytes(), self.data)
+        self.assertEqual((self.incoming / (self.archive + ".sha256")).read_bytes(), self.checksum_text)
+
+    def test_incorrect_content_range_does_not_replace_an_existing_archive(self):
+        body, payload = self.ranged_fixture()
+        target = self.incoming / self.archive
+        target.write_bytes(b"previous archive")
+
+        def storage(request, timeout):
+            if not isinstance(request, urllib.request.Request):
+                return Response(body)
+            return Response(body, 206, {"Content-Range": f"bytes 0-{len(body)-1}/{len(body)}"})
+
+        with patch("urllib.request.urlopen", side_effect=storage):
+            with self.assertRaises(ValueError):
+                module.fetch_release(payload)
+        self.assertEqual(target.read_bytes(), b"previous archive")
+        self.assertEqual(list(self.incoming.iterdir()), [target])
+
+    def test_truncated_range_is_rejected_and_only_its_staging_is_removed(self):
+        body, payload = self.ranged_fixture()
+
+        def storage(request, timeout):
+            if not isinstance(request, urllib.request.Request):
+                return Response(body)
+            start, end = map(int, request.get_header("Range")[6:].split("-"))
+            return Response(body[start:end], 206, {"Content-Range": f"bytes {start}-{end}/{len(body)}"})
+
+        with patch("urllib.request.urlopen", side_effect=storage):
             with self.assertRaises(ValueError):
                 module.fetch_release(payload)
         self.assertEqual(list(self.incoming.iterdir()), [])
