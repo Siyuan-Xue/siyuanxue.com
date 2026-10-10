@@ -56,7 +56,7 @@
 
 同日图集与博客调整已通过[生产 Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/37725358463)发布 `24b3a57c1e666d7a1b8f824cb5937deb0b51f3af`，两域名目标 SHA、首页顺序、旧文章链接和草稿隔离均核对通过：首页顺序为简介、项目、研究、兴趣爱好、博客；博客合并长短文，保留 `/essay/`、`/post/` 及 RSS 身份。项目和活动素材未齐时显示「整理中」，原外链保留在 `src/data/site.ts`，首页不外跳。图集源文件为 `src/content/galleries/<slug>/{en,zh}.json`，图片由 Astro 本地资源处理；完整公开对生成 `/gallery/<slug>/`、独立封面及 `ImageGallery` 元信息，任一语言草稿均不公开。更新步骤、验证与草稿恢复见[图集作者指南](GALLERIES.md)，本次边界与验收见[图集与博客审计](audits/2026-10-08-gallery-blog.md)。`layout-preview` 在该次发布中仍仅开发环境可见，不是真实成果；待补真实图片与参与事实后再制作正式图集。
 
-2026-10-10 用户明确要求占位预览也上线以查看效果。本次将 `/gallery/layout-preview/` 设为固定公开预览：保留双语示意说明、`draft: true` 与 `noindex`，不进入首页项目列表或 sitemap；其他普通草稿仍不生成生产页面。位置与更新步骤见[图集作者指南](GALLERIES.md)，本次验收、发布与恢复记录见[公开图集预览审计](audits/2026-10-10-gallery-preview.md)。
+2026-10-10 用户明确要求占位预览也上线以查看效果。本次将 `/gallery/layout-preview/` 设为固定公开预览：保留双语示意说明、`draft: true` 与 `noindex`，不进入首页项目列表或 sitemap；其他普通草稿仍不生成生产页面。已通过[生产 Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38013892959)发布 `5040c31a6a66f1e5d03e3507380d7f065eb6abeb`，两域名目标 SHA、预览 200、四张图片与图注、noindex、canonical/hreflang、资源与跳转均核对通过，中文线上灯箱可打开、切图和关闭。位置与更新步骤见[图集作者指南](GALLERIES.md)，本次验收、发布与恢复记录见[公开图集预览审计](audits/2026-10-10-gallery-preview.md)。
 
 ### GitHub Actions
 
