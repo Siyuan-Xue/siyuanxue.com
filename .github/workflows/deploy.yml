@@ -91,10 +91,13 @@ jobs:
 
       - name: Upload release archive
         run: |
-          scp \
+          scp -v \
             -i "$RUNNER_TEMP/ssh/deploy_key" \
             -P "$DEPLOY_PORT" \
             -o BatchMode=yes \
+            -o ConnectTimeout=15 \
+            -o ServerAliveInterval=15 \
+            -o ServerAliveCountMax=3 \
             -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
