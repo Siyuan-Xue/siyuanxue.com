@@ -93,7 +93,7 @@ jobs:
           ssh-keygen -y -f "$RUNNER_TEMP/ssh/deploy_key" >/dev/null
 
       - name: Transfer verified release over HTTPS
-        timeout-minutes: 12
+        timeout-minutes: 17
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 ops/upload-release.py

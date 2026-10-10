@@ -70,7 +70,7 @@ def fetch_release(payload):
                     written = 0
                     while chunk := response.read(64 * 1024):
                         written += len(chunk)
-                        if written > end - start + 1 or aborted.is_set() or time.monotonic() - started > 600:
+                        if written > end - start + 1 or aborted.is_set() or time.monotonic() - started > 900:
                             raise TransferError("artifact download exceeded its bound")
                         output.write(chunk)
                         with progress_lock:
@@ -180,7 +180,7 @@ def main():
                "-o", "UserKnownHostsFile=" + str(ssh_directory / "known_hosts"), "-o", "ConnectTimeout=15",
                "-o", "ServerAliveInterval=15", "-o", "ServerAliveCountMax=3",
                os.environ["DEPLOY_USER"] + "@" + os.environ["DEPLOY_HOST"], "python3", "-"]
-    subprocess.run(command, input=program, text=True, check=True, timeout=660)
+    subprocess.run(command, input=program, text=True, check=True, timeout=960)
 
 
 if __name__ == "__main__":

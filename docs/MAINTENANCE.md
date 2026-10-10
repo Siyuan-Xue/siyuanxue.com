@@ -42,7 +42,7 @@
 
 ## 3. 网站发布链路及维护边界
 
-2026-10-10 本轮图集发布复用完整双语产物，两域名必须在同一 release 上一起验收。此前 runner→服务器 SCP 上传持续缓慢；本轮在现有 Actions 内改用 `ops/upload-release.py`，由服务器通过短时 HTTPS 地址下载当前工作流的已验证产物，校验 ZIP 摘要、成员及归档 SHA-256 后交给原 helper 激活。单连接 HTTPS 也超时；OrcaTerm 只读诊断确认服务器资源充足、国内下载正常，GitHub 四路小额下载比单连接提高约三倍。因此大产物改用最多 16 路严格校验范围的下载，保留 600 秒下载上限与 12 分钟 step 上限。部署 job 仅增加 `actions: read`，GitHub token 留在 runner，签名地址遮罩且仅经 SSH stdin 传递；没有新增 secret 或安装服务器组件。更新入口为工作流、传输脚本和共享验证；恢复可按 Git 历史还原 SCP 上传步骤，或用原 Actions rollback 恢复已保留的成功版本。实际传输及两站上线结果见 [图集发布审计](audits/2026-10-10-gallery-release.md)，未通过公网目标 SHA 检查前不能标记上线。
+2026-10-10 本轮图集发布复用完整双语产物，两域名必须在同一 release 上一起验收。此前 runner→服务器 SCP 上传持续缓慢；本轮在现有 Actions 内改用 `ops/upload-release.py`，由服务器通过短时 HTTPS 地址下载当前工作流的已验证产物，校验 ZIP 摘要、成员及归档 SHA-256 后交给原 helper 激活。单连接 HTTPS 也超时；OrcaTerm 只读诊断确认服务器资源充足、国内下载正常，GitHub 四路小额下载比单连接提高约三倍。因此大产物改用最多 16 路严格校验范围的下载；首次已收到约 99.4%，仅最后慢分段触及十分钟上限，随后根据实际进度调整为 900 秒下载、960 秒 SSH 和 17 分钟 step 上限，部署 job 仍为 20 分钟。部署 job 仅增加 `actions: read`，GitHub token 留在 runner，签名地址遮罩且仅经 SSH stdin 传递；没有新增 secret 或安装服务器组件。更新入口为工作流、传输脚本和共享验证；恢复可按 Git 历史还原 SCP 上传步骤，或用原 Actions rollback 恢复已保留的成功版本。实际传输及两站上线结果见 [图集发布审计](audits/2026-10-10-gallery-release.md)，未通过公网目标 SHA 检查前不能标记上线。
 
 源码入口：[站点资料](../src/data/site.ts)、[页面元信息](../src/components/BaseHead.astro)、[构建脚本](../scripts/build.mjs)、[依赖和命令](../package.json)。文章按 `src/content/essays/<slug>/{en,zh}.md` 或 `src/content/posts/<slug>/{en,zh}.md` 配对。两语言必须一起发布。
 
