@@ -124,6 +124,13 @@ export const site = {
 			year: 2026,
 			external: true,
 		},
+		{
+			gallerySlug: 'bnds-life',
+			title: bi('BNDS.life', 'BNDS.life'),
+			href: 'https://bnds.life',
+			year: 2026,
+			external: true,
+		},
 	] satisfies LinkItem[],
 
 	research: [

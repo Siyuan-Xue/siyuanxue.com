@@ -7,7 +7,7 @@ const variants = [
  { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', chatLabel: 'Chat with xue', homeLabel: 'Home' },
  { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', chatLabel: '与小薛聊聊', homeLabel: '首页' },
 ];
-const entryGallerySlugs = ['probfun', 'imathbook', 'leda-agent', 'pixeldone', 'yuheng', 'walking-with-light', 'volleyball'];
+const entryGallerySlugs = ['probfun', 'imathbook', 'leda-agent', 'pixeldone', 'bnds-life', 'yuheng', 'walking-with-light', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
  test(`${v.lang}: homepage identifies the same bilingual author as articles`, async () => {
@@ -213,7 +213,7 @@ for (const v of variants) {
 }
 
 for (const v of variants) {
- test(`${v.lang}: all seven entry galleries expose distinct pages with indexing appropriate to their preview status`, async () => {
+ test(`${v.lang}: all homepage galleries expose distinct pages with indexing appropriate to their preview status`, async () => {
   const locale = v.lang === 'en' ? 'en' : 'zh';
   const sitemap = new DOMParser().parseFromString(await readFile(join(v.root, 'sitemap-0.xml'), 'utf8'), 'text/xml');
   const locations = [...sitemap.querySelectorAll('url > loc')].map(loc => loc.textContent);

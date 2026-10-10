@@ -70,7 +70,9 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 已有首页条目在 [site.ts](../src/data/site.ts) 中用 `gallerySlug` 关联图集。slug 和分类匹配且已公开时，该条目的标题、时间和链接改用图集内容，并指向站内 `/gallery/<slug>/`；同一图集不会重复列出。原有首页条目保留其既定位置，新公开且尚未关联的图集按上述顺序追加到对应分类，因此 `order` 不会任意重新排列现有首页条目。
 
-目前七个现有条目分别关联 `probfun`、`imathbook`、`leda-agent`、`pixeldone`、`yuheng`、`walking-with-light`、`volleyball`，以独立的公开占位页打通站内入口。没有公开图集的其他条目仍显示「整理中 / In preparation」，不继续外跳。来源数据中的原始外链仍被保留；适用链接及准确双语标签放入图集的 `links`，作为相关资料展示。不要把原外链替换成尚不存在的图集地址。
+原有七个条目分别关联 `probfun`、`imathbook`、`leda-agent`、`pixeldone`、`yuheng`、`walking-with-light`、`volleyball`，以独立的公开占位页打通站内入口。没有公开图集的其他条目仍显示「整理中 / In preparation」，不继续外跳。来源数据中的原始外链仍被保留；适用链接及准确双语标签放入图集的 `links`，作为相关资料展示。不要把原外链替换成尚不存在的图集地址。
+
+`bnds-life` 是有真实截图与已确认介绍的正式项目图集，使用 `draft: false`、`preview: false`，首页项目列表进入 `/gallery/bnds-life/`。五张用户提供的原始 PNG 保存在该图集的 `images/` 目录，两语言 JSON 共用图片并各自提供介绍、alt 和图注；页末保留项目网站和公开源码链接。它进入 sitemap，其余七项仍保持占位预览状态。
 
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 
