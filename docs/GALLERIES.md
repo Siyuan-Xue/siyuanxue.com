@@ -58,7 +58,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 `images` 至少一张。`src` 通过 Astro 本地 image schema 解析，路径相对于所在的 JSON 文件，例如 `./images/overview.jpg` 对应同一 slug 目录下的 `images/overview.jpg`；两语言可以引用同一图片。使用有权展示的真实图片或实际项目截图，保留准确图注和出处。`alt` 描述图片本身，`caption` 补充上下文，两者都要提供各语言版本。不要虚构人物身份、照片、成果或活动事实。
 
-`preview: true` 时可以复用抽象占位图，但介绍、替代文本和图注必须明确其为排版示意，不代表真实项目画面或经历。目前七个首页条目的预览复用 [gallery-preview](../src/assets/gallery-preview) 中的四张 PNG；标题、已知年份和既有资料链接沿用原始内容，角色与贡献待核实。占位页可用于查看完整导航和灯箱，不作为个人成果证据。
+`preview: true` 时可以复用抽象占位图，但介绍、替代文本和图注必须明确其为排版示意，不代表真实项目画面或经历。尚为预览的首页条目复用 [gallery-preview](../src/assets/gallery-preview) 中的四张 PNG；标题、已知年份和既有资料链接沿用原始内容，角色与贡献待核实。占位页可用于查看完整导航和灯箱，不作为个人成果证据。
 
 页面首图优先加载且通栏，后续两张并列，未配对的末张通栏；600px 及以下全部单列。图片按自然比例展示，图注常驻页内。点击图片打开可前后切换、缩放及用 Escape 关闭的多图灯箱；可见控件使用英文。无 JavaScript 或灯箱加载失败时，普通链接仍可访问原图。
 
@@ -72,7 +72,9 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 原有七个条目分别关联 `probfun`、`imathbook`、`leda-agent`、`pixeldone`、`yuheng`、`walking-with-light`、`volleyball`，以独立的公开占位页打通站内入口。没有公开图集的其他条目仍显示「整理中 / In preparation」，不继续外跳。来源数据中的原始外链仍被保留；适用链接及准确双语标签放入图集的 `links`，作为相关资料展示。不要把原外链替换成尚不存在的图集地址。
 
-`bnds-life` 是有真实截图与已确认介绍的正式项目图集，使用 `draft: false`、`preview: false`，首页项目列表进入 `/gallery/bnds-life/`。五张用户提供的原始 PNG 保存在该图集的 `images/` 目录，两语言 JSON 共用图片并各自提供介绍、alt 和图注；页末保留项目网站和公开源码链接。它进入 sitemap，其余七项仍保持占位预览状态。
+`bnds-life` 是有真实截图与已确认介绍的正式项目图集，使用 `draft: false`、`preview: false`，首页项目列表进入 `/gallery/bnds-life/`。五张用户提供的原始 PNG 保存在该图集的 `images/` 目录，两语言 JSON 共用图片并各自提供介绍、alt 和图注；页末保留项目网站和公开源码链接。其构建产物进入 sitemap，实际上线状态以维护总览及审计为准。
+
+`pixeldone` 也已补齐用户确认的开发经历与五张真实 App 截图，在原址 `/gallery/pixeldone/` 转为正式图集。双语 JSON 共用同目录 `images/` 下的原始 PNG，依次展示待办首页、任务编辑、清单编辑、Dock 自定义和云端设置；相关资料保留 GitHub 源码。时间写明首版开发一天，后续根据同学反馈持续迭代，不把截图里的同步异常状态当作成功同步的验收。其构建产物进入 sitemap；余下六个原有条目仍为占位预览。
 
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 
@@ -86,7 +88,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 产物测试将版式样例复制为 `published-fixture`，将双语 `draft` 和 `preview` 均设为 `false`，按正式公开图集条件验证页面生成、元信息、首页关联和 sitemap；额外普通草稿用于验证隔离。这些测试 fixture 不代表实际项目，也不应作为真实内容提交或发布。
 
-`bun run test:gallery` 在临时项目内准备上述 fixture，分别真实构建中英文以验证模板、图片和搜索元信息，结束后删除临时目录；不会修改源样例或正式 `dist/`。该测试已接入 `ops/verify.sh`。普通 `bun run build` 的验收应确认七个条目预览可由首页进入、带 `noindex` 且不进 sitemap；固定版式样例公开但不进首页或 sitemap；其他普通草稿仍不出页。应同时检查双语预览状态一致，以及正式 fixture 可以正常进入 sitemap。
+`bun run test:gallery` 在临时项目内准备上述 fixture，分别真实构建中英文以验证模板、图片和搜索元信息，结束后删除临时目录；不会修改源样例或正式 `dist/`。该测试已接入 `ops/verify.sh`。普通 `bun run build` 的验收应确认所有已公开条目可由首页进入，条目预览带 `noindex` 且不进 sitemap，正式图集可索引且进入 sitemap；固定版式样例公开但不进首页或 sitemap；其他普通草稿仍不出页。应同时检查双语预览状态一致，以及正式 fixture 可以正常进入 sitemap。
 
 正式发布前检查：
 

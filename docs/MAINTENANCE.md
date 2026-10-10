@@ -62,6 +62,8 @@
 
 2026-10-10 后续新增 BNDS.life 正式项目图集，来源为用户确认的 2026 年 9 月一周开发经历及五张真实网站截图。内容位置为 `src/content/galleries/bnds-life/{en,zh}.json` 与同目录 `images/`，首页关联在 `src/data/site.ts`；项目资料链接为 [BNDS.life](https://bnds.life) 和 [公开源码](https://github.com/Siyuan-Xue/bnds.life)。双语页面使用 `draft: false`、`preview: false`，构建产物进入 sitemap；更新与恢复沿用[图集作者指南](GALLERIES.md)。内容及完整 CI 验证通过，但本轮上传受低吞吐量阻塞，最后诊断约 12 分钟仅写入约 8 MB / 92 MB，未激活新版。两域名仍为 `afa2b2142ec96ceb4ce9ade59636fc87814f8fb5`，新页尚未上线；记录及 Actions 证据见 [BNDS.life 图集审计](audits/2026-10-10-bnds-life-gallery.md)。临时 CI 连接、协议及进度诊断已还原，原发布流程及严格主机校验保持不变；需要可用服务器管理入口排查传输和资源状态、核对未完成的 incoming 归档，再通过 Actions 发布和验收。该项目的域名和服务仅作为资料链接，此次没有修改其配置。
 
+2026-10-10 同日补充 PixelDone 真实图集：`src/content/galleries/pixeldone/{en,zh}.json` 与同目录 `images/` 保存用户确认的期末考试周开发经历和五张原始 App 截图。沿用现有 `src/data/site.ts` 的关联、首页位置、双语标题和 `/gallery/pixeldone/` 地址，双语 `preview` 改为 `false`；页末保留 [PixelDone 公开源码](https://github.com/Siyuan-Xue/PixelDone)。更新、验证和恢复沿用[图集作者指南](GALLERIES.md)，本轮验收见 [PixelDone 图集审计](audits/2026-10-10-pixeldone-gallery.md)。本轮先完成内容与本机预览，上一轮已确认的服务器上传阻塞尚未解决，不重复触发生产上传或声称新图集已经上线。没有修改该 App、云同步服务、仓库设置或网站独立服务。
+
 ### GitHub Actions
 
 - [CI 工作流](../.github/workflows/ci.yml) 调用 `bash ops/verify.sh`，完成类型、行为、部署脚本、隔离 Nginx、双语构建及产物检查，再打包同一份产物；Actions artifact 保留 7 天，不能当长期备份。

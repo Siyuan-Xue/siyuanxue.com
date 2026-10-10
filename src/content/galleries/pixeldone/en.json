@@ -1,37 +1,42 @@
 {
   "title": "PixelDone",
-  "description": "This gallery will present images and material related to PixelDone. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
-  "period": "2026",
-  "role": "Actual role to be added",
+  "description": "I built the first version of PixelDone in a single day in late June 2026, taking a break from revision during final exam week. I was studying software engineering and curious about Android development, so this became a bold experiment in Vibe Coding. With GPT-5.5, I focused on improving how I develop with AI and exploring a new technology stack. I experienced the full mobile app lifecycle, from design and development to deployment and maintenance. I shared the app with classmates who use Android, then kept improving it based on their suggestions. PixelDone centers on recording todos, with task and checklist editing, customizable Dock shortcuts, cloud backup and sync across devices.",
+  "period": "Late June 2026 · initial version built in one day",
+  "role": "Product design, Vibe Coding development, distribution and ongoing maintenance",
   "category": "projects",
   "order": 3,
   "draft": false,
-  "preview": true,
+  "preview": false,
   "images": [
     {
-      "src": "../../../assets/gallery-preview/hero.png",
-      "alt": "Abstract placeholder image 1 for PixelDone",
-      "caption": "Placeholder image: this space will show application overview."
+      "src": "./images/tasks.png",
+      "alt": "PixelDone todo overview showing tasks, completion states, priorities and times, with shortcut buttons at the bottom",
+      "caption": "Todo overview: record what needs doing and check each task’s completion state, priority and time."
     },
     {
-      "src": "../../../assets/gallery-preview/detail.png",
-      "alt": "Abstract placeholder image 2 for PixelDone",
-      "caption": "Placeholder image: this space will show interface details."
+      "src": "./images/task-editor.png",
+      "alt": "PixelDone task editor with a name field, priority control, reminder date and time, repeat options and a save button",
+      "caption": "Create or edit a task: set its name, priority, reminder time and repeat rule."
     },
     {
-      "src": "../../../assets/gallery-preview/portrait.png",
-      "alt": "Abstract placeholder image 3 for PixelDone",
-      "caption": "Placeholder image: this space will show usage scenarios."
+      "src": "./images/list-editor.png",
+      "alt": "PixelDone checklist creation view with existing checklists above and a list name field below",
+      "caption": "Create or edit a checklist: group todos into separate lists for different parts of life."
     },
     {
-      "src": "../../../assets/gallery-preview/closing.png",
-      "alt": "Abstract placeholder image 4 for PixelDone",
-      "caption": "Placeholder image: this space will show related material."
+      "src": "./images/dock-settings.png",
+      "alt": "PixelDone Dock settings showing a shortcut preview, plus button placement, available functions and ordering controls",
+      "caption": "Customize the Dock: choose shortcuts for sorting, deadline countdowns, hiding or clearing completed tasks, quick deletion and Markdown export, then arrange their positions and order."
+    },
+    {
+      "src": "./images/cloud-settings.png",
+      "alt": "PixelDone cloud settings showing an account, an Error sync status, and language and theme options",
+      "caption": "Cloud backup and sync across devices: manage your account and sync from settings to save and continue your todos on different devices."
     }
   ],
   "links": [
     {
-      "label": "Source repository",
+      "label": "GitHub source",
       "href": "https://github.com/Siyuan-Xue/PixelDone"
     }
   ]
