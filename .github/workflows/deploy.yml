@@ -89,9 +89,18 @@ jobs:
           chmod 0600 "$RUNNER_TEMP/ssh/deploy_key" "$RUNNER_TEMP/ssh/known_hosts"
           ssh-keygen -y -f "$RUNNER_TEMP/ssh/deploy_key" >/dev/null
 
+      - name: Check deployment SSH command channel
+        timeout-minutes: 1
+        run: |
+          ssh -i "$RUNNER_TEMP/ssh/deploy_key" -p "$DEPLOY_PORT" \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 \
+            -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
+            "$DEPLOY_USER@$DEPLOY_HOST" /usr/bin/true
+
       - name: Upload release archive
         run: |
-          scp -v \
+          scp -O -v \
             -i "$RUNNER_TEMP/ssh/deploy_key" \
             -P "$DEPLOY_PORT" \
             -o BatchMode=yes \
