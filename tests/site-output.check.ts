@@ -199,7 +199,11 @@ for (const v of variants) {
   expect(rss.querySelectorAll('item').length).toBe(3);
   for (const link of rss.querySelectorAll('item > link')) expect(link.textContent).toStartWith(v.origin);
   const sitemap = await readFile(join(v.root,'sitemap-0.xml'), 'utf8'); expect(sitemap).toContain(v.origin); expect(sitemap).not.toContain('/wip'); expect(sitemap).not.toContain('/404'); expect(sitemap).not.toContain('/gallery/layout-preview/'); expect(sitemap).not.toContain('/dev/');
-  expect(await access(join(v.root, 'gallery/layout-preview/index.html')).then(() => true, () => false)).toBe(false);
+  const { document: preview } = parseHTML(await readFile(join(v.root, 'gallery/layout-preview/index.html'), 'utf8'));
+  expect(preview.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
+  expect(preview.querySelectorAll('article[data-gallery-page] figure')).toHaveLength(4);
+  const { document: home } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+  expect(home.querySelector('a[href="/gallery/layout-preview/"]')).toBeNull();
   expect(await access(join(v.root, 'dev/gallery/layout-preview/index.html')).then(() => true, () => false)).toBe(false);
   expect(await readFile(join(v.root,'robots.txt'),'utf8')).toContain(`Sitemap: ${v.origin}/sitemap-index.xml`);
   for (const page of ['wip/index.html','404.html']) { const { document } = parseHTML(await readFile(join(v.root,page),'utf8')); expect(document.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex'); }

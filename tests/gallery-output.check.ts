@@ -8,7 +8,8 @@ import { DOMParser, parseHTML } from 'linkedom';
 import sharp from 'sharp';
 
 const project = fileURLToPath(new URL('../', import.meta.url));
-const pathname = '/gallery/layout-preview/';
+const pathname = '/gallery/published-fixture/';
+const previewPath = '/gallery/layout-preview/';
 const variants = [
  { locale: 'en', language: 'en', origin: 'https://siyuanxue.com' },
  { locale: 'zh', language: 'zh-CN', origin: 'https://xuesiyuan.com' },
@@ -29,6 +30,8 @@ test('published bilingual gallery survives a real Astro build with crawlable con
   const fixtures = new Map<string, Fixture>();
   const draftDirectory = join(temporary, 'src/content/galleries/unpublished-fixture');
   await mkdir(draftDirectory);
+  const publishedDirectory = join(temporary, 'src/content/galleries/published-fixture');
+  await mkdir(publishedDirectory);
   for (const { locale } of variants) {
    const file = join(temporary, 'src/content/galleries/layout-preview', `${locale}.json`);
    const fixture: Fixture = JSON.parse(await readFile(file, 'utf8'));
@@ -37,7 +40,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    expect(fixture.links.length).toBeGreaterThan(0);
    fixtures.set(locale, fixture);
    await writeFile(join(draftDirectory, `${locale}.json`), JSON.stringify(fixture));
-   await writeFile(file, JSON.stringify({ ...fixture, draft: false }));
+   await writeFile(join(publishedDirectory, `${locale}.json`), JSON.stringify({ ...fixture, draft: false }));
   }
 
   for (const { locale, language, origin } of variants) {
@@ -49,6 +52,11 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    if (build.error || build.status !== 0) throw new Error(`Astro ${locale} fixture build failed: ${build.error ?? build.signal ?? build.status}\n${build.stdout}\n${build.stderr}`);
    const output = join(temporary, '.build', locale);
    const fixture = fixtures.get(locale)!;
+   const { document: preview } = parseHTML(await readFile(join(output, previewPath, 'index.html'), 'utf8'));
+   expect(preview.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
+   expect(preview.querySelectorAll('article[data-gallery-page] figure')).toHaveLength(4);
+   expect(preview.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(origin + previewPath);
+   expect(JSON.parse(await readFile(join(temporary, 'src/content/galleries/layout-preview', `${locale}.json`), 'utf8')).draft).toBe(true);
    const { document } = parseHTML(await readFile(join(output, pathname, 'index.html'), 'utf8'));
    const gallery = document.querySelector('article[data-gallery-page]')!;
    expect(gallery).not.toBeNull();
@@ -115,11 +123,13 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    const homeLinks = home.querySelectorAll(`a[href="${pathname}"]`);
    expect(homeLinks).toHaveLength(1);
    expect(homeLinks[0].textContent).toBe(fixture.title);
+   expect(home.querySelector(`a[href="${previewPath}"]`)).toBeNull();
    expect(home.querySelector('a[href="/gallery/unpublished-fixture/"]')).toBeNull();
    expect(await access(join(output, 'gallery/unpublished-fixture/index.html')).then(() => true, () => false)).toBe(false);
    const sitemap = new DOMParser().parseFromString(await readFile(join(output, 'sitemap-0.xml'), 'utf8'), 'text/xml');
    const locations = [...sitemap.querySelectorAll('url > loc')].map(loc => loc.textContent);
    expect(locations).toContain(origin + pathname);
+   expect(locations).not.toContain(origin + previewPath);
    expect(locations).not.toContain(origin + '/gallery/unpublished-fixture/');
   }
  } finally {
