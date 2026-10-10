@@ -71,7 +71,7 @@
 2026-10-10 后续按用户反馈缩小 PixelDone 竖屏产品截图。图集新增可选 `layout: product`，位置为 `src/utils/gallery.ts`、`src/components/GalleryContent.astro` 与 `src/styles/gallery.css`，在 PixelDone 两份 JSON 中同时启用：桌面三列、600px 及以下两列，图片宽度上限 180px，首图采用相同尺寸。随后按要求将 PixelDone 和 BNDS.life 中文资料链接改名为「GitHub 仓库」。更新规则见[图集作者指南](GALLERIES.md)，本轮验证、待办及恢复见[产品图集尺寸审计](audits/2026-10-10-product-gallery-layout.md)。仍保留原图和灯箱；本轮为分支修改及本机预览，生产发布继续等待既有服务器上传阻塞解决。
 
 
-**2026-10-11 媒体直传与名称更新：**现有 18 张栅格图及缩略图/封面共 140 个文件（17,247,338 字节）已通过本机 SSH/rsync 直传，服务器逐文件 SHA-256/大小验证，公网两域名 280 次 GET 的摘要/长度/类型/缓存核验通过。实际启用的两个 Nginx 配置仅插入媒体读取路由，已备份、`nginx -t` 并 reload；与静态 CI 安装边界分开记录。源码取消跟踪上述二进制文件，`.gitignore` 防止重新提交；保留历史 Git 对象、旧 release 与 `shared/_astro`。准备/上传/公网验证命令见 [ops/README.md](../ops/README.md#direct-media-uploads)，恢复入口为上表本机素材及媒体快照。Pixel Done 两语言统一名称，地址和实际仓库 URL 保持不变。新静态版本尚待本轮 Actions 与目标 SHA 验收，最终结果见 [本轮审计](audits/2026-10-11-direct-media.md)。
+**2026-10-11 媒体直传与名称更新：**现有 18 张栅格图及缩略图/封面共 140 个文件（17,247,338 字节）已通过本机 SSH/rsync 直传，服务器逐文件 SHA-256/大小验证，公网两域名 280 次 GET 的摘要/长度/类型/缓存核验通过。实际启用的两个 Nginx 配置仅插入媒体读取路由，已备份、`nginx -t` 并 reload；与静态 CI 安装边界分开记录。源码取消跟踪上述二进制文件，`.gitignore` 防止重新提交；保留历史 Git 对象、旧 release 与 `shared/_astro`。准备/上传/公网验证命令见 [ops/README.md](../ops/README.md#direct-media-uploads)，恢复入口为上表本机素材及媒体快照。Pixel Done 两语言统一名称，地址和实际仓库 URL 保持不变。[Actions 38070306413](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38070306413) 已成功发布 `59ce068ca675c54e383eb29e628dc7d35b6a03ab`；两站目标 SHA、固定语言、跳转、旧照片拒绝、图集元信息、五图与灯箱均通过验收。发布后全量媒体 GET 再次通过；本机静态包由 96.27MB 减至 13.34MB。默认直传连接的 macOS socket 长路径问题也已修复并补测试。完整证据、维护边界和恢复见 [本轮审计](audits/2026-10-11-direct-media.md)，后续 `[skip ci]` 文档提交不改变此静态版本。
 
 ### GitHub Actions
 
