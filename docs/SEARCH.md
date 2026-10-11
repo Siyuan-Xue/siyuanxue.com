@@ -13,7 +13,7 @@
 
 百度平台当前归属、提交与收录情况须以百度实际界面或回执取证。Google 本次 28 URL 的 8 个已索引、19 个未知及 1 个历史 noindex，以及 IndexNow HTTP 202，均不能视为百度状态。当前操作证据与待办见[百度优先级审计](audits/2026-10-11-baidu-priority.md)。
 
-百度接入当前进展：用户报告旧 www 验证要求 200、实际收到 301，已在百度改为无 www 并提供新 HTML 标签要求重新提交。浏览器确认当前验证对象为 `https://xuesiyuan.com`，新标签与用户提供内容一致；`BAIDU_SITE_VERIFICATION_ZH` 已替换并通过 API 布尔核对与当前百度值一致，待本次文档新 commit SHA 触发现有 Actions 发布；随后继续完成验证和提交，已获得本次直接授权。此前 `c3821e4825176caa70850671a86dbf9856c46df0` 发布与 38 路由验收属于旧标签阶段，不代表百度已通过。canonical、www 重定向和 Google TXT 保持不变，旧 www 站点不主动删除；验证值、私人资料和验证码不入文档。
+百度接入当前进展：两站已发布 `57a0c8a9d744e9ed511594452737c75e09db65dc`，apex 新标签仅在中文首页生效，约 20:58 的 38 路由检查通过；[Actions 38141044881](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38141044881) 于约 21:01:40 确认整体成功。百度首次 HTML 验证提示“无法连接到您网站的服务器”，同页重试于约 21:00 通过，进入 apex 管理属性页。普通收录 API、sitemap、手动入口均可见；手动每次最多 20 条、不支持 sitemap 文件，已填 14 个候选 URL 并点击提交，当前等待用户完成验证码，尚无成功回执。未抄录或使用 API token；站点所有权、提交、抓取、收录和曝光分别记录。旧 www 验证及 `c3821e4` 发布保留为历史阶段，canonical、www 跳转和 Google TXT 不变。
 
 百度验证变量须在首次新提交发布前配置。部署按 SHA 复用产物，后续修改或移除变量都必须使用新 commit SHA 走正常 Actions；重跑或手动触发同一 SHA 不足以更新线上标签。验证实际中文首页 HTML、英文站排除、两域名 release SHA 及百度回执；停用前先核对所有权影响。
 
