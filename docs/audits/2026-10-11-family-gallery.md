@@ -18,14 +18,22 @@
 
 ## 本轮验证与发布
 
-`bun run check` 检查 90 文件，零 errors/warnings/hints。双语构建各 19 页，30 项产物检查全部通过（5838 assertions），正式图集 fixture 验证 1 pass（228 assertions）。本机媒体摘要/大小、旧清单保持和双语顺序检查通过。`ops/verify-media.py` 对两域名完成 180 次 GET，全部 90 文件的 SHA-256、大小、MIME 与 immutable 缓存通过。独立审查及生产发布结果待补；此前《寻找李白》等任务的验收不代替本轮检查。
+`bun run check` 检查 90 文件，零 errors/warnings/hints。双语构建各 19 页，30 项产物检查全部通过（5838 assertions），正式图集 fixture 验证 1 pass（228 assertions）。本机媒体摘要/大小、旧清单保持和双语顺序检查通过。`ops/verify-media.py` 对两域名完成 180 次 GET，全部 90 文件的 SHA-256、大小、MIME 与 immutable 缓存通过。此前《寻找李白》等任务的验收不代替本轮检查。
+
+独立只读审查范围为 `ab1b6f2…3df850b`。审查核对九张原图字节和输入顺序、旧清单保持、90 个派生资源、双语正文与生成元信息，最终结论为可合并，无未解决的 Critical、Important 或 Minor。审查发现第 5 张 alt 的左右方向表述不准确，已在两语言中改为「伸手说话 / with his arm extended」，并重新构建双语产物，19 页/语言及 30 项产物检查再次通过。
 
 中文本机预览完成 1280px 桌面及 390px 窄屏排版检查：九图均已载入，桌面首图宽 624px、其余 302px，唯一竖图以 302 × 453px 保持原比例；窄屏全部宽 358px，无横向溢出。临时视口已 reset，本轮预览标签和服务已关闭，没有终止其他预览服务。此检查不是实体手机验收。
+
+2026-10-11（北京时间），[Actions 38112284028](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38112284028) 已成功发布 `3df850bcf4effe2c62c8303924586d1ecc17953e`：共享验证、已验证产物传输、激活、两语言公网检查及媒体响应头检查均成功。另在本机运行 `ops/verify-public.sh`，两域名目标 SHA、固定语言、HTTP/www 跳转及旧照片拒绝通过；专门的生产 HTML 检查核对首页仅一个入口且顺序正确、正文/相对经历/角色、九图原图地址/alt/图注、canonical/hreflang/ImageGallery/分享封面和 sitemap，均符合本轮 JSON。两语言无 noindex，未增加不明资料链接。
+
+生产浏览器在两域名完成明暗主题与 390px 窄屏检查；九图均载入，窄屏图片宽 358px，页面宽 390px，无横向溢出。中文 1280px 桌面照片宽度为首图 624px、其余 302px，竖图保持 302 × 453px。两站灯箱均用 Enter 打开首图，英文 Close/Zoom/Previous/Next 可见，ArrowRight 切至 2/9，Zoom 状态确认，Escape 关闭并将焦点归还原图入口。已恢复浅色主题及默认视口，英文临时标签关闭，中文正式图集标签作为交付保留；本机截图 `/tmp/family-production-2026-10-11.png` 为临时验收证据，不进入 Git。实体手机与搜索实际收录未作为本轮通过项。
+
+后续仅补审计的 `[skip ci]` 文档提交不改变上述静态 release SHA；媒体直传与静态 Actions 发布分别完成，无服务器组件安装。
 
 ## 维护联动清单
 
 - 已更新：双语内容、首页入口、九图清单与 alt/图注、本机素材及服务器恢复快照、图集指南和维护总览。
 - 不适用：沿用 BaseHead 生成 canonical/hreflang/ImageGallery/分享封面；既有站点 README、GitHub 账号、独立主页 README 与仓库 About 的资料无需因单个兴趣条目改写，本轮已只读核对，未发现本剧旧名称或角色引用，无需修改。没有更改域名、账号权限、CI 变量/secret、Nginx/helper、聊天、Hermes、微信、记忆、模型或独立服务。
-- 待处理：本轮审查、Actions 及双域名生产验收；演出年月可后续补充。搜索收录、实体手机体验和媒体异地备份等原有待办保持原状态。
+- 待处理：演出年月可后续按用户提供的信息补充，不阻塞当前相对经历表达。搜索收录、实体手机体验和媒体异地备份等原有待办保持原状态；本轮内容、审查与发布无未完成项。
 
 开工时 `main` 与 `origin/main` 同为 `ab1b6f21a12fdd1c4c0f8fa516aba33be93cd5e6`，工作区干净，无其他工作树；本轮在 `codex/family-gallery` 分支准备内容。历史 archive、未推送提交及本地备份未清理。
