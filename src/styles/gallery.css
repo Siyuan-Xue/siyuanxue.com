@@ -15,6 +15,7 @@
 .gallery-links h2 { font-size: var(--font-size-h3); }
 .gallery-links ul { padding-left: 1.2em; }
 .gallery-videos { margin-bottom: var(--section-gap); }
+.gallery-videos-demos { margin-bottom: 2rem; }
 .gallery-videos h2, .gallery-results-heading { font-size: var(--font-size-h3); }
 .gallery-video-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; align-items: start; }
 .gallery-video-grid h2, .gallery-video-grid h3 { font-size: var(--font-size-body); margin: 0 0 0.5em; }
@@ -36,6 +37,7 @@
  .gallery-grid-product { grid-template-columns: repeat(2, minmax(0, 1fr)); }
  .gallery-video-grid { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
  .gallery-video-grid .gallery-figure { width: 100%; max-width: 14rem; margin-inline: auto; }
+ .gallery-video-demos { gap: 2rem; }
  .gallery-video-demos .gallery-figure { max-width: none; }
  .gallery-lightbox .pswp__top-bar { gap: 0.25rem; padding-inline: 0.75rem; }
  .gallery-lightbox button.pswp__button { font-size: 1rem; padding: 0.5rem 0.25rem; }

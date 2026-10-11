@@ -292,7 +292,7 @@ for (const v of variants) {
   expect(document.querySelectorAll('#gallery-videos-heading')).toHaveLength(0);
   expect(document.querySelector('.gallery-videos')?.getAttribute('aria-labelledby')).toBeNull();
   expect(document.querySelector('.gallery-videos')?.getAttribute('aria-label')).toBe(v.lang === 'en' ? 'Videos' : '视频');
-  expect([...document.querySelectorAll('.gallery-video-grid h2')].map(heading => heading.textContent)).toEqual(source.videos.map((clip: { label: string }) => clip.label));
+  expect(document.querySelectorAll('.gallery-video-grid h2, .gallery-video-grid h3')).toHaveLength(0);
   expect(document.querySelectorAll('.gallery-video-demos')).toHaveLength(1);
   const videos = [...document.querySelectorAll('video')];
   expect(videos).toHaveLength(2);
