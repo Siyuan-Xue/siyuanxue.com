@@ -38,6 +38,7 @@
  background: var(--bg);
  overflow-y: auto;
  overscroll-behavior: contain;
+ scroll-padding-top: calc(var(--header-height) + 1rem);
  scrollbar-width: thin;
 }
 .toc-container[hidden], .toc-toggle[hidden] { display: none; }

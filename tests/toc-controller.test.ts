@@ -70,6 +70,18 @@ test('pointer opening keeps focus on the toggle while keyboard opening enters th
  expect(f.document.activeElement).toBe(f.toggle);
 });
 
+test('keyboard opening allows the browser to reveal a current link outside the menu viewport', () => {
+ const f = fixture(false);
+ f.second.getBoundingClientRect = () => ({ top: -20 }) as DOMRect;
+ const link = f.nav.querySelectorAll<HTMLAnchorElement>('a')[1];
+ const focus = link.focus.bind(link);
+ // happy-dom has no layout: model native focus scrolling the fixed scroll container.
+ link.focus = options => { if (!options?.preventScroll) f.nav.scrollTop = 400; focus(options); };
+ bind(f.document); f.toggle.click();
+ expect(f.document.activeElement).toBe(link);
+ expect(f.nav.scrollTop).toBe(400);
+});
+
 test('resizing releases the article lock and keeps focus on a visible control', () => {
  const f = fixture(false); bind(f.document); f.toggle.click(); f.resize(true);
  expect(f.nav.hidden).toBe(false);

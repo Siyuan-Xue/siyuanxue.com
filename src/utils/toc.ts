@@ -51,7 +51,7 @@ export function bindToc(document: Document): () => void {
  const scheduleActive = () => { if (!frame) frame = window.requestAnimationFrame(updateActive); };
  const onToggle = (event: MouseEvent) => {
   setOpen(!open);
-  if (open && !wide.matches && event.detail === 0) (nav.querySelector<HTMLAnchorElement>('[aria-current="location"]') ?? links[0])?.focus({ preventScroll: true });
+  if (open && !wide.matches && event.detail === 0) (nav.querySelector<HTMLAnchorElement>('[aria-current="location"]') ?? links[0])?.focus();
  };
  const onKey = (event: KeyboardEvent) => {
   if (event.key === 'Escape' && open) { event.preventDefault(); setOpen(false, true); }
