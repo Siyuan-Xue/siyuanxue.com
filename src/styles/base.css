@@ -358,7 +358,7 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 	display: inline;
 	color: var(--fg-muted);
 	font-size: var(--font-size-meta);
-	white-space: nowrap;
+	white-space: normal;
 }
 
 /* Article */

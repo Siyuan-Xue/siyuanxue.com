@@ -20,9 +20,15 @@ test('ongoing galleries can omit period but cannot publish blank period text', (
  expect(schema.safeParse(ongoing).success).toBe(true);
  expect(schema.safeParse({ ...data, period: ' ' }).success).toBe(false);
 });
-test('translations agree on whether the homepage and gallery show a period', () => {
+test('translations agree on whether the gallery shows a period', () => {
  expect(() => pairGalleries([entry('ongoing/en', { period: undefined }), entry('ongoing/zh')], 'en')).toThrow('period');
  expect(pairGalleries([entry('ongoing/en', { period: undefined }), entry('ongoing/zh', { period: undefined })], 'en')).toHaveLength(1);
+});
+test('homepage context must be nonblank and supplied in both translations', () => {
+ const schema = createGallerySchema(z.object({ src: z.string(), width: z.number(), height: z.number(), format: z.literal('webp') }));
+ expect(schema.parse({ ...data, homeMeta: '2026 · Homepage context' })).toMatchObject({ homeMeta: '2026 · Homepage context' });
+ expect(schema.safeParse({ ...data, homeMeta: ' ' }).success).toBe(false);
+ expect(() => pairGalleries([entry('context/en', { homeMeta: 'Homepage context' }), entry('context/zh')], 'en')).toThrow('homepage context');
 });
 test('only complete bilingual galleries publish; either draft isolates both', () => {
  expect(pairGalleries([entry('one/en'), entry('one/zh', { draft: true })], 'en')).toEqual([]);

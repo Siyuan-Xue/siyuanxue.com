@@ -2,6 +2,7 @@
   "title": "Pixel Done",
   "description": "I built the first version of Pixel Done in a single day in late June 2026, taking a break from revision during final exam week. I was studying software engineering and curious about Android development, so this became a bold experiment in Vibe Coding. With GPT-5.5, I focused on improving how I develop with AI and exploring a new technology stack. I experienced the full mobile app lifecycle, from design and development to deployment and maintenance. I shared the app with classmates who use Android, then kept improving it based on their suggestions. Pixel Done centers on recording todos, with task and checklist editing, customizable Dock shortcuts, cloud backup and sync across devices.",
   "period": "Late June 2026 · initial version built in one day",
+  "homeMeta": "Late June 2026 · Android to-do app",
   "role": "Product design, Vibe Coding development, distribution and ongoing maintenance",
   "category": "projects",
   "order": 3,
