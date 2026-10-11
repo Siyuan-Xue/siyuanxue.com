@@ -58,7 +58,7 @@
 
 同日后续用户明确最终顶栏顺序为「新对话、首页、主题」。已交换前两个按钮并通过[Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/37718314174)发布 `5aa16cffdd6eaa9b50264ba8701cdee679f669e5`，两域名SHA、语言、跳转、旧照片410及生产浏览器图标顺序均核对通过。验证与恢复见[按钮顺序修正审计](audits/2026-10-08-chat-header-order.md)；上段保留此前版本的验收事实，不代表最终顺序。
 
-**2026-10-11 聊天欢迎句单行调整：**英文欢迎句保留原有措辞，将重复 o 减为三个：`Missed you sooo much, babe!`；仅英文窄屏欢迎标题的字号随宽度适配，字体家族、颜色、背景和 Baby 图标沿用当前主页样式。独立工作区已完成 320px 至桌面及矮屏单行检查、双语构建；与图集任务协调后按最新 main 顺序发布，生产结果待补记。修改位置、验证范围与恢复见[单行欢迎句审计](audits/2026-10-11-chat-greeting-single-line.md)。
+**2026-10-11 聊天欢迎句单行调整：**英文欢迎句保留原有措辞，将重复 o 减为三个：`Missed you sooo much, babe!`；仅英文窄屏欢迎标题的字号随宽度适配，字体家族、颜色、背景和 Baby 图标沿用当前主页样式。独立工作区已完成 320px 至桌面及矮屏单行检查、双语构建；与图集任务协调后接入其最终文档提交 `5354a89`，由 [Actions 38110862821](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38110862821) 成功发布 `0203f76e1db9e7e69ef1f863a2b7fd6bb2b515ad`。两域名目标 SHA、固定语言、跳转与旧照片拒绝，以及英文线上 320px / 390px / 桌面和矮屏单行检查均通过；中文 320px 仍为原句与 28px。后续 `[skip ci]` 文档提交不改变该静态 release。修改位置、验证范围与恢复见[单行欢迎句审计](audits/2026-10-11-chat-greeting-single-line.md)。
 
 同日图集与博客调整已通过[生产 Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/37725358463)发布 `24b3a57c1e666d7a1b8f824cb5937deb0b51f3af`，两域名目标 SHA、首页顺序、旧文章链接和草稿隔离均核对通过：首页顺序为简介、项目、研究、兴趣爱好、博客；博客合并长短文，保留 `/essay/`、`/post/` 及 RSS 身份。项目和活动素材未齐时显示「整理中」，原外链保留在 `src/data/site.ts`，首页不外跳。图集源文件为 `src/content/galleries/<slug>/{en,zh}.json`，图片由 Astro 本地资源处理；完整公开对生成 `/gallery/<slug>/`、独立封面及 `ImageGallery` 元信息，任一语言草稿均不公开。更新步骤、验证与草稿恢复见[图集作者指南](GALLERIES.md)，本次边界与验收见[图集与博客审计](audits/2026-10-08-gallery-blog.md)。`layout-preview` 在该次发布中仍仅开发环境可见，不是真实成果；待补真实图片与参与事实后再制作正式图集。
 
