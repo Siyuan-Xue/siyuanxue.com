@@ -40,7 +40,7 @@
 | 腾讯云 Lighthouse | Ubuntu 24.04 / Nginx；IP `82.156.77.131`；实例 `lhins-aftjtoo4`，北京七区 / `ap-beijing` | 管理员 `ubuntu`，CI `deploy`，SSH 22；腾讯云控制台 OrcaTerm 为备用。2026-10-10 控制台核对：锐驰型 2 核 / 8GB / 80GB、无限流量 / 200Mbps 峰值带宽，到期 2027-08-23 07:46:25；自动续费与快照策略待核对。套餐峰值不代表实际跨境吞吐量 |
 | TLS 证书 | 两 apex 分别管理含自身 www 的证书；`/etc/letsencrypt/` | Certbot 自动续期及 Nginx reload hook；见 [HTTPS 运维](../ops/HTTPS.md)。当前有效期和最近续期结果需定期查证 |
 | Google Search Console | [控制台](https://search.google.com/search-console)；属性 `sc-domain:xuesiyuan.com` / `sc-domain:siyuanxue.com` | 2026-10-11 两属性通过 Domain name provider 验证，用户已确认当前账号所有者权限。两站 sitemap 已提交；英文 index 最终复查 Success，中文报告仍读取失败，但 XML 实时抓取成功、无人工处置，原因待后续复查；两站总览均 processing data。28 URL 为 8 已索引、19 未知、1 历史 noindex；当前英文排球页实时测试已确认允许索引，已请求重新抓取；曝光另查，见[接入审计](audits/2026-10-11-search-console-onboarding.md)；账号邮箱与 TXT 值不入文档 |
-| 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index)；中文站优先搜索平台 | 2026-10-11 本轮浏览器已登录，站点管理列表无站点。点击“添加网站”先弹出强制“完善账户信息”表单，尚未进入网站地址或所有权验证页面；已请用户在平台自行填写所需信息、完成手机/邮箱验证并决定接受隐私声明，不向聊天或仓库发送私人信息与验证码。完成后按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，分别记录提交、抓取、收录及中文查询曝光；API、配额、快速收录与 sitemap 入口以实际账号界面为准。未配置百度推送令牌，见[本次审计](audits/2026-10-11-baidu-priority.md) |
+| 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index)；中文站优先搜索平台 | 2026-10-11 用户已自行填写并保存平台要求的账户资料；浏览器确认进入添加网站第 1 步，已选择 HTTPS、填写 `xuesiyuan.com`，点击下一步后出现百度安全验证码，已请求用户自行完成。目前尚未进入站点属性或所有权验证，未完成提交。20:07:47 模拟 Baiduspider 公开检查的 21 URL 全部 200；这不是百度真实抓取或收录证据。按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，分别记录回执、抓取、收录及中文查询曝光；未配置百度推送令牌，见[本次审计](audits/2026-10-11-baidu-priority.md) |
 | Bing Webmaster Tools | [控制台](https://www.bing.com/webmasters/) | 2026-10-11 可用浏览器停留未登录介绍页；平台归属与提交状态待核查。IndexNow 是独立通知渠道，不代表此控制台已接入 |
 | IndexNow | `ops/indexnow.mjs`、CI/Deploy 工作流；GitHub 仓库 secrets `INDEXNOW_KEY_EN` / `INDEXNOW_KEY_ZH` | 2026-10-11 已配置两域名验证键；CI 从环境生成公开验证文件，源码和文档不存值。正常发布成功后独立通知；具体上线结果见当次审计 |
 | SEO 公共入口 | 每个域名的 `/robots.txt`、`/sitemap-index.xml`、`/sitemap-0.xml`、`/sitemap-images.xml`、`/sitemap-videos.xml`、`/rss.xml`、`/indexnow-manifest.json`；HTML canonical / hreflang / JSON-LD | 统一清单由 `src/utils/discoveryContent.ts` / `discovery.ts` 生成，构建集成逐页校验；详细清单与缺项报告只留 `.build/discovery/`。可被发现不等于已收录或有固定排名，维护规则见[搜索指南](SEARCH.md) |
@@ -273,7 +273,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 高 | 备份连续性与容量 | 定期验证服务器备份；确定异地自动备份与留存策略；目前 Mac 只是一份快照 |
 | 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日；2026-10-11 NS 查询确认两域名使用 DNSPod。仍需补注册商、域名到期日、自动续费、解析记录导出、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
-| 高 | 中文站百度接入 / 收录观察 | 当前百度账号已登录且无站点，“添加网站”被强制完善账户信息拦住；待用户在平台自行填表、完成手机/邮箱验证及隐私声明步骤，再添加并验证中文站。按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，记录入口、配额、回执、抓取、索引及中文查询表现。未开放的提交方式保留明确待办；不以 Google 或 IndexNow 结果替代百度证据 |
+| 高 | 中文站百度接入 / 收录观察 | 用户已完成账户资料，添加网站第 1 步填写中文 HTTPS 域名后出现安全验证码；待用户在浏览器自行完成，再继续站点属性、所有权验证及提交。按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，记录入口、配额、回执、抓取、索引及中文查询表现。未开放的提交方式保留明确待办；模拟 Baiduspider 公网检查、Google 和 IndexNow 结果均不替代百度平台证据 |
 | 中 | 其他搜索平台 / AI 发现维护 | Google 两 Domain 属性已验证、两 sitemap 已提交；28 URL 检查已完成，复查中文 sitemap 读取状态、英文排球页后续收录，等待平台数据处理。Bing 登录后先复用已有属性，英文站继续维护 Google/Bing。各平台索引、曝光和 AI 引用分别记录，不承诺排名 |
 | 中 | 独立个人主页项目名称差异 | 2026-10-11 API 核对 README 仍为 `PixelDone / 像素清单`，独立仓库待按已确认展示名 `Pixel Done` 更新；本站与实际项目仓库 URL 保持不变 |
 | 按需 | SuperGrok 服务器网络与认证 | 网络恢复、官方授权及一次真实推理均验收后才标启用；保留既有 GLM，不自动加付费回退 |
