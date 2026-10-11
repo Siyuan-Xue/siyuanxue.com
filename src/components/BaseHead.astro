@@ -16,6 +16,7 @@ const defaultCover = imageMedia(`share-${locale}`);
 const cover = shareImage ?? { src: defaultCover.src, width: defaultCover.width, height: defaultCover.height, alt: t(site.name) };
 const image = new URL(cover.src, localeOrigin(locale)).href;
 const isHome = Astro.url.pathname === '/';
+const baiduSiteVerification = locale === 'zh' && isHome ? process.env.BAIDU_SITE_VERIFICATION_ZH?.trim() : undefined;
 const language = locale === 'zh' ? 'zh-CN' : 'en';
 const person = {
  '@type': 'Person', '@id': `${localeOrigin('en')}/#person`,
@@ -64,6 +65,7 @@ const schema = galleryImages?.length
 <link rel="icon" href="/favicon.ico" />
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
+{baiduSiteVerification && <meta name="baidu-site-verification" content={baiduSiteVerification} />}
 {noindex && <meta name="robots" content="noindex, follow" />}
 <link rel="canonical" href={canonical} />
 {Object.entries(page.alternates).map(([language, url]) => <link rel="alternate" hreflang={language} href={url} />)}

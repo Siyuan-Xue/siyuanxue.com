@@ -23,6 +23,7 @@ jobs:
     timeout-minutes: 20
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
+      BAIDU_SITE_VERIFICATION_ZH: ${{ vars.BAIDU_SITE_VERIFICATION_ZH }}
       INDEXNOW_KEY_EN: ${{ secrets.INDEXNOW_KEY_EN }}
       INDEXNOW_KEY_ZH: ${{ secrets.INDEXNOW_KEY_ZH }}
     outputs:

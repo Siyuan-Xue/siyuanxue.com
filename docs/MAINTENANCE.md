@@ -40,7 +40,8 @@
 | 腾讯云 Lighthouse | Ubuntu 24.04 / Nginx；IP `82.156.77.131`；实例 `lhins-aftjtoo4`，北京七区 / `ap-beijing` | 管理员 `ubuntu`，CI `deploy`，SSH 22；腾讯云控制台 OrcaTerm 为备用。2026-10-10 控制台核对：锐驰型 2 核 / 8GB / 80GB、无限流量 / 200Mbps 峰值带宽，到期 2027-08-23 07:46:25；自动续费与快照策略待核对。套餐峰值不代表实际跨境吞吐量 |
 | TLS 证书 | 两 apex 分别管理含自身 www 的证书；`/etc/letsencrypt/` | Certbot 自动续期及 Nginx reload hook；见 [HTTPS 运维](../ops/HTTPS.md)。当前有效期和最近续期结果需定期查证 |
 | Google Search Console | [控制台](https://search.google.com/search-console)；属性 `sc-domain:xuesiyuan.com` / `sc-domain:siyuanxue.com` | 2026-10-11 两属性通过 Domain name provider 验证，用户已确认当前账号所有者权限。两站 sitemap 已提交；英文 index 最终复查 Success，中文报告仍读取失败，但 XML 实时抓取成功、无人工处置，原因待后续复查；两站总览均 processing data。28 URL 为 8 已索引、19 未知、1 历史 noindex；当前英文排球页实时测试已确认允许索引，已请求重新抓取；曝光另查，见[接入审计](audits/2026-10-11-search-console-onboarding.md)；账号邮箱与 TXT 值不入文档 |
-| 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index)；中文站优先搜索平台 | 2026-10-11 用户已自行填写并保存平台要求的账户资料；浏览器确认进入添加网站第 1 步，已选择 HTTPS、填写 `xuesiyuan.com`，点击下一步后出现百度安全验证码，已请求用户自行完成。目前尚未进入站点属性或所有权验证，未完成提交。20:07:47 模拟 Baiduspider 公开检查的 21 URL 全部 200；这不是百度真实抓取或收录证据。按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，分别记录回执、抓取、收录及中文查询曝光；未配置百度推送令牌，见[本次审计](audits/2026-10-11-baidu-priority.md) |
+| 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index)；中文站优先搜索平台 | 2026-10-11 用户已完成账户资料与安全验证码；平台站点为 `https://www.xuesiyuan.com`，分类为“信息技术”“其它”。所有权页提供文件和 HTML 标签验证，未提供 DNS 选项；已选择 HTML 标签、配置构建变量，代码待发布，平台“完成验证”权限操作待确认，尚未验证或提交。平台 www 属性与现有 apex canonical 的适用范围待核查，网站 canonical 保持不变。未配置百度推送令牌，详见[本次审计](audits/2026-10-11-baidu-priority.md) |
+| 百度 HTML 验证配置（待发布） | GitHub Actions repository variable `BAIDU_SITE_VERIFICATION_ZH` → CI 环境 → 中文首页 `<head>` 的 `baidu-site-verification` | 变量已通过 CLI 设置，并通过 API 仅核对名称与已配置状态，值不输出或入库。类型检查、两种配置的构建及 Node 24.19.0 下完整测试通过，Node 26.5.0 既有聊天并发测试差异另列待办，发布以 CI 为准。仅有值时输出，验证后继续保留标签；后续变量修改/移除均须新 commit SHA，不能只重跑同 SHA。上线后核对中文首页原始 HTML、英文站排除、两域名 SHA 及百度回执；停用前核对所有权影响，不改 Google TXT 或现有 DNS |
 | Bing Webmaster Tools | [控制台](https://www.bing.com/webmasters/) | 2026-10-11 可用浏览器停留未登录介绍页；平台归属与提交状态待核查。IndexNow 是独立通知渠道，不代表此控制台已接入 |
 | IndexNow | `ops/indexnow.mjs`、CI/Deploy 工作流；GitHub 仓库 secrets `INDEXNOW_KEY_EN` / `INDEXNOW_KEY_ZH` | 2026-10-11 已配置两域名验证键；CI 从环境生成公开验证文件，源码和文档不存值。正常发布成功后独立通知；具体上线结果见当次审计 |
 | SEO 公共入口 | 每个域名的 `/robots.txt`、`/sitemap-index.xml`、`/sitemap-0.xml`、`/sitemap-images.xml`、`/sitemap-videos.xml`、`/rss.xml`、`/indexnow-manifest.json`；HTML canonical / hreflang / JSON-LD | 统一清单由 `src/utils/discoveryContent.ts` / `discovery.ts` 生成，构建集成逐页校验；详细清单与缺项报告只留 `.build/discovery/`。可被发现不等于已收录或有固定排名，维护规则见[搜索指南](SEARCH.md) |
@@ -48,6 +49,8 @@
 注册商、实例和搜索平台的缺项只需补非敏感信息；账号密码、证件、付款信息不要写入公开仓库。
 
 **IndexNow 更新、验证与恢复：**仓库 secrets 通过可复用 CI 的可选输入提供给构建；修改后走正常双语发布，检查两域名验证文件及通知 job summary。发布前清单 `indexnow-before-<run_id>`、通知状态 `indexnow-state-<run_id>-<attempt>` 在 GitHub Actions artifacts 保存 90 天，记录未确认地址与上次清单，失败后重跑工作流或在下次成功发布补交。通知 job 独立于已完成的静态发布，失败不触发网站回滚；超过保留期后没有历史状态则全量提交当前 URL，历史删除地址需要从此前清单补回。现有 rollback 不主动发送通知，后续正常发布会重新比较；必要时按历史 URL 清单人工复核删除状态。HTTP 200/202 仅证明收到/待验证，不代表收录。恢复代码用 Git/Actions，停用通知可移除对应 secret，地址队列仍保留；无需服务器安装额外服务。
+
+**百度构建变量生效与恢复：**`ops/release.sh` 按 `releases/<SHA>` 复用已存在产物，当前 SHA 已激活时直接返回。因此首次验证标签发布前须先配置变量；此后修改或移除 `BAIDU_SITE_VERIFICATION_ZH` 必须使用新 commit SHA 走正常 Actions。同 SHA 的重跑或 `workflow_dispatch` 即使成功，也不能证明新变量已反映到线上 HTML。每次以实际页面标签、两域名 SHA 和百度平台结果验收；停用标签前核对所有权影响。
 
 ## 3. 网站发布链路及维护边界
 
@@ -273,9 +276,10 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 高 | 备份连续性与容量 | 定期验证服务器备份；确定异地自动备份与留存策略；目前 Mac 只是一份快照 |
 | 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日；2026-10-11 NS 查询确认两域名使用 DNSPod。仍需补注册商、域名到期日、自动续费、解析记录导出、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
-| 高 | 中文站百度接入 / 收录观察 | 用户已完成账户资料，添加网站第 1 步填写中文 HTTPS 域名后出现安全验证码；待用户在浏览器自行完成，再继续站点属性、所有权验证及提交。按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，记录入口、配额、回执、抓取、索引及中文查询表现。未开放的提交方式保留明确待办；模拟 Baiduspider 公网检查、Google 和 IndexNow 结果均不替代百度平台证据 |
+| 高 | 中文站百度接入 / 收录观察 | 用户已完成资料和验证码，继续核查平台显示的 www 站点与 apex canonical 的适用范围，并完成所有权验证。按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，记录入口、配额、回执、抓取、索引及中文查询表现。未开放的提交方式保留明确待办；模拟 Baiduspider 公网检查、Google 和 IndexNow 结果均不替代百度平台证据 |
 | 中 | 其他搜索平台 / AI 发现维护 | Google 两 Domain 属性已验证、两 sitemap 已提交；28 URL 检查已完成，复查中文 sitemap 读取状态、英文排球页后续收录，等待平台数据处理。Bing 登录后先复用已有属性，英文站继续维护 Google/Bing。各平台索引、曝光和 AI 引用分别记录，不承诺排名 |
 | 中 | 独立个人主页项目名称差异 | 2026-10-11 API 核对 README 仍为 `PixelDone / 像素清单`，独立仓库待按已确认展示名 `Pixel Done` 更新；本站与实际项目仓库 URL 保持不变 |
+| 中 | Node 26 聊天并发测试兼容性 | 2026-10-11 未修改聊天源码；Node 26.5.0 隔离并发测试出现实际 200 / 预期 429，Node 24.19.0 的 21 个 Node 子测试及完整 Bun 测试通过。只读诊断确认保留流式 Response 引用后 Node 26 也正确限流，差异涉及测试响应生命周期与运行时清理行为；后续运行时升级前复核测试。当前不据此改聊天实现，CI 未单独固定 Node 版本，实际结果按各次运行核对 |
 | 按需 | SuperGrok 服务器网络与认证 | 网络恢复、官方授权及一次真实推理均验收后才标启用；保留既有 GLM，不自动加付费回退 |
 
 上一轮 `gh auth refresh` 的最终网页授权被自动审批拦截，原因是权限页包含私有仓库、全部用户资料和工作流等广泛范围；尚未得到这组具体范围的新确认。本次仅复核现有权限可读内容，不重试授权，也不把设备码或会话信息写进长期文档。
