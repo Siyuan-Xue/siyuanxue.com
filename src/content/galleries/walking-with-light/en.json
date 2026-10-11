@@ -1,38 +1,110 @@
 {
-  "title": "Walking with Light · Beijing Collegiate Drama Festival",
-  "description": "This gallery will present images and material related to Walking with Light · Beijing Collegiate Drama Festival. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
-  "period": "2025",
-  "role": "Actual role to be added",
+  "title": "Walking with Light · as Ye Peida",
+  "description": "Walking with Light was created for the 70th anniversary of Beijing University of Posts and Telecommunications (BUPT). I played the male lead, Ye Peida. After more than five months of rehearsals, the production took the stage at BUPT’s Shahe Grand Theatre in October 2025, then at the Central Academy of Drama in November. It received the Gold Award, Best Production and Best Actor awards at the 2025 Beijing Collegiate Drama Festival. From rehearsals to performances, the time we shared was full of passion and will always stay with me.",
+  "period": "October–November 2025 · over five months of rehearsals",
+  "role": "Male lead · Ye Peida",
   "category": "appearances",
   "order": 0,
   "draft": false,
-  "preview": true,
+  "preview": false,
   "images": [
     {
-      "src": "gallery-preview/hero",
-      "alt": "Abstract placeholder image 1 for Walking with Light · Beijing Collegiate Drama Festival",
-      "caption": "Placeholder image: this space will show stage scenes."
+      "src": "walking-with-light/photo-05",
+      "alt": "Ye Peida with gray hair and glasses standing beside another actor on stage in Walking with Light",
+      "caption": "Playing Ye Peida in Walking with Light."
     },
     {
-      "src": "gallery-preview/detail",
-      "alt": "Abstract placeholder image 2 for Walking with Light · Beijing Collegiate Drama Festival",
-      "caption": "Placeholder image: this space will show rehearsal details."
+      "src": "walking-with-light/photo-01",
+      "alt": "Four actors gathered on stage, with the central performer holding a pen and a red notebook",
+      "caption": "A moment of dialogue and collaboration on stage."
     },
     {
-      "src": "gallery-preview/portrait",
-      "alt": "Abstract placeholder image 3 for Walking with Light · Beijing Collegiate Drama Festival",
-      "caption": "Placeholder image: this space will show performance photographs."
+      "src": "walking-with-light/photo-07",
+      "alt": "A gray-haired actor wearing glasses and holding a cane, with another performer behind him",
+      "caption": "Ye Peida in his later years."
     },
     {
-      "src": "gallery-preview/closing",
-      "alt": "Abstract placeholder image 4 for Walking with Light · Beijing Collegiate Drama Festival",
-      "caption": "Placeholder image: this space will show related material."
+      "src": "walking-with-light/photo-02",
+      "alt": "Three actors seated around a table on a dark stage, one holding up a green bottle",
+      "caption": "A scene around the table."
+    },
+    {
+      "src": "walking-with-light/photo-09",
+      "alt": "An actor leaning back at a table under stage lighting, with a cane and an empty chair nearby",
+      "caption": "A solitary moment at the table, under the spotlight."
+    },
+    {
+      "src": "walking-with-light/photo-04",
+      "alt": "Two actors seated facing one another on square stools on stage",
+      "caption": "A conversation between two characters."
+    },
+    {
+      "src": "walking-with-light/photo-03",
+      "alt": "Seven actors standing or seated before a backdrop covered in writing",
+      "caption": "Bringing an ensemble scene to life together."
+    },
+    {
+      "src": "walking-with-light/photo-06",
+      "alt": "A gray-haired actor looking through an album on a patterned sofa, surrounded by other performers",
+      "caption": "An album and the memories it holds."
+    },
+    {
+      "src": "walking-with-light/photo-08",
+      "alt": "Seven performers standing in a row facing the audience in Walking with Light",
+      "caption": "Sharing the stage."
+    },
+    {
+      "src": "walking-with-light/photo-13",
+      "alt": "The gray-haired performer and the ensemble raising their arms on stage",
+      "caption": "Arms raised, a moment to remember."
+    },
+    {
+      "src": "walking-with-light/photo-14",
+      "alt": "Performers holding bouquets after the show, with one actor embracing someone who brought flowers",
+      "caption": "Flowers, hugs and curtain calls."
+    },
+    {
+      "src": "walking-with-light/photo-10",
+      "alt": "A backstage close-up during makeup, with hair clips, a compact and a makeup brush",
+      "caption": "Backstage makeup before going on stage."
+    },
+    {
+      "src": "walking-with-light/photo-12",
+      "alt": "A photo with friends after the performance, gathered around a poster reading Siyuan Xue as Ye Peida",
+      "caption": "Friends came to support me with a poster of their own."
+    },
+    {
+      "src": "walking-with-light/photo-11",
+      "alt": "A large group photograph of the Walking with Light company on stage, in front of a scientific-instrument set",
+      "caption": "A company photo after more than five months of rehearsals together."
+    },
+    {
+      "src": "walking-with-light/photo-15",
+      "alt": "The company posing with a BUPT flag in front of the National Experimental Teaching Demonstration Center",
+      "caption": "Together at the drama festival."
+    },
+    {
+      "src": "walking-with-light/photo-16",
+      "alt": "The company posing with a BUPT flag outside the Central Academy of Drama Theater Center",
+      "caption": "From BUPT to the Central Academy of Drama. Always passionate, forever unforgettable."
     }
   ],
   "links": [
     {
-      "label": "BUPT event report",
+      "label": "BUPT premiere report",
+      "href": "https://www.bupt.edu.cn/info/1079/89613.htm"
+    },
+    {
+      "label": "Central Academy of Drama festival report",
+      "href": "https://www.chntheatre.edu.cn/detail/24793.html"
+    },
+    {
+      "label": "BUPT awards report",
       "href": "https://www.bupt.edu.cn/info/1079/90114.htm"
+    },
+    {
+      "label": "People.cn report",
+      "href": "http://edu.people.com.cn/n1/2025/1016/c1006-40583496.html"
     }
   ]
 }

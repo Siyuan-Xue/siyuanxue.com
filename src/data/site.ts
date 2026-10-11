@@ -157,8 +157,8 @@ export const site = {
 		{
 			gallerySlug: 'walking-with-light',
 			title: bi(
-				'Walking with Light · Beijing Collegiate Drama Festival',
-				'《与光同行》· 北京市大学生戏剧节',
+				'Walking with Light · as Ye Peida',
+				'话剧《与光同行》· 饰 叶培大',
 			),
 			href: 'https://www.bupt.edu.cn/info/1079/90114.htm',
 			year: 2025,

@@ -1470,5 +1470,1333 @@
       "width": 1200,
       "height": 850
     }
+  },
+  "walking-with-light/photo-01": {
+    "src": "/media/e331b5c368c76fe0119dfda7d339a51b834dc586544029ace7b9fa6aa03a5d96.jpeg",
+    "sha256": "e331b5c368c76fe0119dfda7d339a51b834dc586544029ace7b9fa6aa03a5d96",
+    "bytes": 127477,
+    "format": "jpeg",
+    "width": 1080,
+    "height": 1620,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/15a5edd7c85edcf1562e27c43480f61eea9b9a500aa74532b6df8be44c7d29a2.avif",
+        "sha256": "15a5edd7c85edcf1562e27c43480f61eea9b9a500aa74532b6df8be44c7d29a2",
+        "bytes": 10612,
+        "format": "avif",
+        "width": 320,
+        "height": 480
+      },
+      {
+        "src": "/media/0aa513e336b6316c5f8be8e784380c8c74a665915aa9b36482f79e0383173cd0.avif",
+        "sha256": "0aa513e336b6316c5f8be8e784380c8c74a665915aa9b36482f79e0383173cd0",
+        "bytes": 27604,
+        "format": "avif",
+        "width": 640,
+        "height": 960
+      },
+      {
+        "src": "/media/fdec05b971f7874652d7554014ad6899cb3d25e8b6e4e26b46344c3acd159a0e.avif",
+        "sha256": "fdec05b971f7874652d7554014ad6899cb3d25e8b6e4e26b46344c3acd159a0e",
+        "bytes": 47218,
+        "format": "avif",
+        "width": 960,
+        "height": 1440
+      },
+      {
+        "src": "/media/c2ca9133a1c100394b2a62c4b8111fa2f77ed7cc52fcf1761302b99fd1db618d.avif",
+        "sha256": "c2ca9133a1c100394b2a62c4b8111fa2f77ed7cc52fcf1761302b99fd1db618d",
+        "bytes": 58153,
+        "format": "avif",
+        "width": 1080,
+        "height": 1620
+      },
+      {
+        "src": "/media/eab5e7d35e65897e194fae703bacde105db21dcfe6cb863d628d9bd103cf5c1e.webp",
+        "sha256": "eab5e7d35e65897e194fae703bacde105db21dcfe6cb863d628d9bd103cf5c1e",
+        "bytes": 16558,
+        "format": "webp",
+        "width": 320,
+        "height": 480
+      },
+      {
+        "src": "/media/feedeae8eff6feac9a9c265510a62adbd98dfbd317ffdedf39af00253bb652b4.webp",
+        "sha256": "feedeae8eff6feac9a9c265510a62adbd98dfbd317ffdedf39af00253bb652b4",
+        "bytes": 41736,
+        "format": "webp",
+        "width": 640,
+        "height": 960
+      },
+      {
+        "src": "/media/e6fa1e098ae1073b5cbb0ba86d8513463d7eb536991ae9de3346885722cb9c19.webp",
+        "sha256": "e6fa1e098ae1073b5cbb0ba86d8513463d7eb536991ae9de3346885722cb9c19",
+        "bytes": 70490,
+        "format": "webp",
+        "width": 960,
+        "height": 1440
+      },
+      {
+        "src": "/media/0c1fc442f9684b1bc657bde0d1e1897d09098e90c959ef62fd79c5e034ed3f05.webp",
+        "sha256": "0c1fc442f9684b1bc657bde0d1e1897d09098e90c959ef62fd79c5e034ed3f05",
+        "bytes": 83444,
+        "format": "webp",
+        "width": 1080,
+        "height": 1620
+      }
+    ],
+    "cover": {
+      "src": "/media/7718cef23085111d3794d7b898119d309d78bdfa3937ffb74693803eddf8d322.jpeg",
+      "sha256": "7718cef23085111d3794d7b898119d309d78bdfa3937ffb74693803eddf8d322",
+      "bytes": 130316,
+      "format": "jpeg",
+      "width": 1080,
+      "height": 1620
+    }
+  },
+  "walking-with-light/photo-02": {
+    "src": "/media/fb4880cb3859f86cd9c8d2603719c6d3da98a1148881222dcd919fce1e846dd1.jpeg",
+    "sha256": "fb4880cb3859f86cd9c8d2603719c6d3da98a1148881222dcd919fce1e846dd1",
+    "bytes": 51720,
+    "format": "jpeg",
+    "width": 1364,
+    "height": 1024,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/ef5c5c3b91d90d86b9928a1e32e46f25c86b5cab0db7633540a712fb9644003e.avif",
+        "sha256": "ef5c5c3b91d90d86b9928a1e32e46f25c86b5cab0db7633540a712fb9644003e",
+        "bytes": 3244,
+        "format": "avif",
+        "width": 320,
+        "height": 240
+      },
+      {
+        "src": "/media/4047e9de24c36f485901240b86cfcef1d86c19d73dfb1b084361679cc49b57f6.avif",
+        "sha256": "4047e9de24c36f485901240b86cfcef1d86c19d73dfb1b084361679cc49b57f6",
+        "bytes": 7691,
+        "format": "avif",
+        "width": 640,
+        "height": 480
+      },
+      {
+        "src": "/media/dff891b14727a73fc62bc16b55a01266541a795c8219fc4decb1f512abb78480.avif",
+        "sha256": "dff891b14727a73fc62bc16b55a01266541a795c8219fc4decb1f512abb78480",
+        "bytes": 12894,
+        "format": "avif",
+        "width": 960,
+        "height": 721
+      },
+      {
+        "src": "/media/9220cdca83a4faddb2f32edb0f09e058d29ad922ad93eb8611219a7b98f15f77.avif",
+        "sha256": "9220cdca83a4faddb2f32edb0f09e058d29ad922ad93eb8611219a7b98f15f77",
+        "bytes": 18460,
+        "format": "avif",
+        "width": 1280,
+        "height": 961
+      },
+      {
+        "src": "/media/3712ce7f123e4589ccd75437d03fef3a6054020b78fcf258987818c386bb07a4.webp",
+        "sha256": "3712ce7f123e4589ccd75437d03fef3a6054020b78fcf258987818c386bb07a4",
+        "bytes": 3912,
+        "format": "webp",
+        "width": 320,
+        "height": 240
+      },
+      {
+        "src": "/media/6c15961a8883beedd51c058c81650b4e3398d071479ff5f4060860614511e5cc.webp",
+        "sha256": "6c15961a8883beedd51c058c81650b4e3398d071479ff5f4060860614511e5cc",
+        "bytes": 10202,
+        "format": "webp",
+        "width": 640,
+        "height": 480
+      },
+      {
+        "src": "/media/16fd66af2e17b851779f7096a13e43c4a70e6e56a687e214318582b5ab54b771.webp",
+        "sha256": "16fd66af2e17b851779f7096a13e43c4a70e6e56a687e214318582b5ab54b771",
+        "bytes": 17190,
+        "format": "webp",
+        "width": 960,
+        "height": 721
+      },
+      {
+        "src": "/media/f4e6d4bf23f4fb6bfd1b1d2912e033fe9c5f152eef11a3dc497c9b0a9094400e.webp",
+        "sha256": "f4e6d4bf23f4fb6bfd1b1d2912e033fe9c5f152eef11a3dc497c9b0a9094400e",
+        "bytes": 24842,
+        "format": "webp",
+        "width": 1280,
+        "height": 961
+      }
+    ],
+    "cover": {
+      "src": "/media/4a3512210c29d13d6a1fad91235ad9d22ffcda30717892628913fdf15d0a9168.jpeg",
+      "sha256": "4a3512210c29d13d6a1fad91235ad9d22ffcda30717892628913fdf15d0a9168",
+      "bytes": 42457,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 901
+    }
+  },
+  "walking-with-light/photo-03": {
+    "src": "/media/38ee76bd6ea6278e10b955664e24d7953477e4b1c037a8ba632058b88a48b147.jpeg",
+    "sha256": "38ee76bd6ea6278e10b955664e24d7953477e4b1c037a8ba632058b88a48b147",
+    "bytes": 134989,
+    "format": "jpeg",
+    "width": 1620,
+    "height": 1080,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/518a1c9ec4d9f010b70db8f8bafd3958e8cc0bd2976993696f07314c1eee5d7d.avif",
+        "sha256": "518a1c9ec4d9f010b70db8f8bafd3958e8cc0bd2976993696f07314c1eee5d7d",
+        "bytes": 6534,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/bcd7da3d72de7a6c643bacc78b24f1bf28d2392d0eadce326c75946b0d3a5b72.avif",
+        "sha256": "bcd7da3d72de7a6c643bacc78b24f1bf28d2392d0eadce326c75946b0d3a5b72",
+        "bytes": 19833,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/f2d5e20a17becbd2b8244264f472becf4383765b5fb2de996dca1e2c169129ce.avif",
+        "sha256": "f2d5e20a17becbd2b8244264f472becf4383765b5fb2de996dca1e2c169129ce",
+        "bytes": 33966,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/b236243e7f774af26a778218b317b5e455e1898314a9000999e1acc18c518a67.avif",
+        "sha256": "b236243e7f774af26a778218b317b5e455e1898314a9000999e1acc18c518a67",
+        "bytes": 49563,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/f6dd2524ddd26f8c434752fc172442df2dac29254797157d989bf12da0d25f12.webp",
+        "sha256": "f6dd2524ddd26f8c434752fc172442df2dac29254797157d989bf12da0d25f12",
+        "bytes": 9230,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/073d8e21490da439a6c51000043eca663b889149f7fa451c3f35253129301197.webp",
+        "sha256": "073d8e21490da439a6c51000043eca663b889149f7fa451c3f35253129301197",
+        "bytes": 27042,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/3c8926fbaac98a14b9633fcf0748c9bfe99d23e6d5ca2a6cbfda60c3a8bab423.webp",
+        "sha256": "3c8926fbaac98a14b9633fcf0748c9bfe99d23e6d5ca2a6cbfda60c3a8bab423",
+        "bytes": 46520,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/480128c83e771e5bac6edab42816be75b1e2c01a77f841efa51dc530afd37bf8.webp",
+        "sha256": "480128c83e771e5bac6edab42816be75b1e2c01a77f841efa51dc530afd37bf8",
+        "bytes": 67066,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/d33517902a14d76810365f6060e33d3330d72bba57c7293db91c33a00023a9ed.jpeg",
+      "sha256": "d33517902a14d76810365f6060e33d3330d72bba57c7293db91c33a00023a9ed",
+      "bytes": 102626,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "walking-with-light/photo-04": {
+    "src": "/media/1753d0a924c9e0b5dc388610effca90c05125e3d9ce6fb8f18e0b22c68002942.jpeg",
+    "sha256": "1753d0a924c9e0b5dc388610effca90c05125e3d9ce6fb8f18e0b22c68002942",
+    "bytes": 105545,
+    "format": "jpeg",
+    "width": 1620,
+    "height": 1080,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/3ea5c744c902e215c5efce7de625cb80d6e40b7d9e7428d7fb57a1ebdb5a0265.avif",
+        "sha256": "3ea5c744c902e215c5efce7de625cb80d6e40b7d9e7428d7fb57a1ebdb5a0265",
+        "bytes": 4545,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/3502a9027e0e3976857cdee2c77ccbe63994adc8f5649b238bbfb4431790e49c.avif",
+        "sha256": "3502a9027e0e3976857cdee2c77ccbe63994adc8f5649b238bbfb4431790e49c",
+        "bytes": 12120,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/d309936f28833c12267890ba59beb62253dbacfe105d5dbea06d8e690f718439.avif",
+        "sha256": "d309936f28833c12267890ba59beb62253dbacfe105d5dbea06d8e690f718439",
+        "bytes": 20445,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/445655af06711c6965632f43e3b4a8a11bfd308eedd221c6d3ef022186728751.avif",
+        "sha256": "445655af06711c6965632f43e3b4a8a11bfd308eedd221c6d3ef022186728751",
+        "bytes": 30400,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/9b8e561944bad4b428213aeaa418e4b51462a854ff1d6eef8e8dc9a78d32a0a6.webp",
+        "sha256": "9b8e561944bad4b428213aeaa418e4b51462a854ff1d6eef8e8dc9a78d32a0a6",
+        "bytes": 6568,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/94b8232a06394cb15c9067f74cd3c1edea9a33e4ab2b577dda563f112209f30c.webp",
+        "sha256": "94b8232a06394cb15c9067f74cd3c1edea9a33e4ab2b577dda563f112209f30c",
+        "bytes": 17652,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/6c47566336d7fdc259d0dc881f580b044b2c201475b01e5d7b462a9d6e880ba0.webp",
+        "sha256": "6c47566336d7fdc259d0dc881f580b044b2c201475b01e5d7b462a9d6e880ba0",
+        "bytes": 30848,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/e74d5b4904c513e37bc07117f317c94a654497d82c3e8a29c5a01dc69921639a.webp",
+        "sha256": "e74d5b4904c513e37bc07117f317c94a654497d82c3e8a29c5a01dc69921639a",
+        "bytes": 46144,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/9c95eb9eafc2df5a26c3da0aabaa0aa0fd24729b9ae9603bdbbdeb85ee91f3f3.jpeg",
+      "sha256": "9c95eb9eafc2df5a26c3da0aabaa0aa0fd24729b9ae9603bdbbdeb85ee91f3f3",
+      "bytes": 74087,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "walking-with-light/photo-05": {
+    "src": "/media/e61b00c5ada67ad67f8e7bf7fa34caf4defc30627edf9ddf79636857347d5b86.jpeg",
+    "sha256": "e61b00c5ada67ad67f8e7bf7fa34caf4defc30627edf9ddf79636857347d5b86",
+    "bytes": 112311,
+    "format": "jpeg",
+    "width": 1620,
+    "height": 1080,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/7a927a83c190ec66d0a70a32ad1f00f409c315c13022a3fedc9139347a101cda.avif",
+        "sha256": "7a927a83c190ec66d0a70a32ad1f00f409c315c13022a3fedc9139347a101cda",
+        "bytes": 5046,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/8084bffbb0dabeedd420055d7d9144c7abed22a7cbb3f8b3bd343b1958a6d5c9.avif",
+        "sha256": "8084bffbb0dabeedd420055d7d9144c7abed22a7cbb3f8b3bd343b1958a6d5c9",
+        "bytes": 12969,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/c3a0b32d3ca9996ef236169370bae61760bced2c320a97cbd0fe7729d57b3956.avif",
+        "sha256": "c3a0b32d3ca9996ef236169370bae61760bced2c320a97cbd0fe7729d57b3956",
+        "bytes": 22917,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/c136159c2b22e3c12058665f00f2c73a0b3f870675e5320de5b590e6cf057f94.avif",
+        "sha256": "c136159c2b22e3c12058665f00f2c73a0b3f870675e5320de5b590e6cf057f94",
+        "bytes": 33282,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/d201a5d95dc480179154c248264eeb125b99b3781f2c344118d7efb32652c997.webp",
+        "sha256": "d201a5d95dc480179154c248264eeb125b99b3781f2c344118d7efb32652c997",
+        "bytes": 6990,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/914f31eb37b061f9089c03e9043a48e033658eef1301eef79f2871c303f2a909.webp",
+        "sha256": "914f31eb37b061f9089c03e9043a48e033658eef1301eef79f2871c303f2a909",
+        "bytes": 19074,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/a5374a4f2241852de519fe3ec20418b5f71421b0cdda3dde94c0799419596023.webp",
+        "sha256": "a5374a4f2241852de519fe3ec20418b5f71421b0cdda3dde94c0799419596023",
+        "bytes": 33316,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/c9b3d077a60d46763ecef28923bf77d59fc2c7981e3aa0c3e203e4827267c2f6.webp",
+        "sha256": "c9b3d077a60d46763ecef28923bf77d59fc2c7981e3aa0c3e203e4827267c2f6",
+        "bytes": 49838,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/ac9e2c5059f64c1eeaf1ea156e8db1cecaf27fbf5d2490a97ede5ae53b04d9f3.jpeg",
+      "sha256": "ac9e2c5059f64c1eeaf1ea156e8db1cecaf27fbf5d2490a97ede5ae53b04d9f3",
+      "bytes": 83102,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "walking-with-light/photo-06": {
+    "src": "/media/27478a7a43c6aeb6028b294d2f84947de16cb504c5df9c4542c1691e4a3165fc.jpeg",
+    "sha256": "27478a7a43c6aeb6028b294d2f84947de16cb504c5df9c4542c1691e4a3165fc",
+    "bytes": 147195,
+    "format": "jpeg",
+    "width": 1620,
+    "height": 1080,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/22f080b2b3bdeb8eaf3d4d2988e5672436f1bf42d7b449694e9d80d4586b9a8f.avif",
+        "sha256": "22f080b2b3bdeb8eaf3d4d2988e5672436f1bf42d7b449694e9d80d4586b9a8f",
+        "bytes": 6988,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/38c4193e64194e21497cf69e33feceb7535db6caa0f9dbf382252fc955e76be6.avif",
+        "sha256": "38c4193e64194e21497cf69e33feceb7535db6caa0f9dbf382252fc955e76be6",
+        "bytes": 19177,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/b6e71db9417b33fa6169ea7fe9aa257084533a45fe84c39fac2e7cbe118d91f3.avif",
+        "sha256": "b6e71db9417b33fa6169ea7fe9aa257084533a45fe84c39fac2e7cbe118d91f3",
+        "bytes": 33925,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/d43770b7559a2ad4fac4b9adf10737bc414da0293af9b810a4ee2222f5981e12.avif",
+        "sha256": "d43770b7559a2ad4fac4b9adf10737bc414da0293af9b810a4ee2222f5981e12",
+        "bytes": 51239,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/b9554e2dfd7e60118f93186b5289366cef0465c75125923c4cb4cc52204525ee.webp",
+        "sha256": "b9554e2dfd7e60118f93186b5289366cef0465c75125923c4cb4cc52204525ee",
+        "bytes": 10016,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/4bf46602412fa352690591152d0573325d6d780e84bfc96e67733577b60f89b3.webp",
+        "sha256": "4bf46602412fa352690591152d0573325d6d780e84bfc96e67733577b60f89b3",
+        "bytes": 28710,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/30a3c5b0448a33e12a8ba25d6fb424553fe2253f10e27ddcc805d9b17fbb1e43.webp",
+        "sha256": "30a3c5b0448a33e12a8ba25d6fb424553fe2253f10e27ddcc805d9b17fbb1e43",
+        "bytes": 49698,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/f1e761c39a72ea0fcd1efef1803aa1946e7fcdfd35603c5dc705695591ca31c1.webp",
+        "sha256": "f1e761c39a72ea0fcd1efef1803aa1946e7fcdfd35603c5dc705695591ca31c1",
+        "bytes": 74694,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/bbd95443801c3a583f1ca043f2c237044a1bfbb6d661abf549b5fdc85a7d6904.jpeg",
+      "sha256": "bbd95443801c3a583f1ca043f2c237044a1bfbb6d661abf549b5fdc85a7d6904",
+      "bytes": 108510,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "walking-with-light/photo-07": {
+    "src": "/media/4af9c69dbf8da980da373bfcf3cd36e2a2252f4ed83077f15200a8da7a7f37a6.jpeg",
+    "sha256": "4af9c69dbf8da980da373bfcf3cd36e2a2252f4ed83077f15200a8da7a7f37a6",
+    "bytes": 76352,
+    "format": "jpeg",
+    "width": 1080,
+    "height": 1620,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/4b7eba4baedf7b335d8722de04380743494a5f2c8a64d8dc4ed1c8c76d349ad4.avif",
+        "sha256": "4b7eba4baedf7b335d8722de04380743494a5f2c8a64d8dc4ed1c8c76d349ad4",
+        "bytes": 5732,
+        "format": "avif",
+        "width": 320,
+        "height": 480
+      },
+      {
+        "src": "/media/026d8b378638c53eb7d0b0598281c6c725973106d00c4d9d02566bcb6b429f79.avif",
+        "sha256": "026d8b378638c53eb7d0b0598281c6c725973106d00c4d9d02566bcb6b429f79",
+        "bytes": 13914,
+        "format": "avif",
+        "width": 640,
+        "height": 960
+      },
+      {
+        "src": "/media/a99003f59a7cb3998e407986b48ff73346ecada170a7dea909a12835e754fd18.avif",
+        "sha256": "a99003f59a7cb3998e407986b48ff73346ecada170a7dea909a12835e754fd18",
+        "bytes": 24056,
+        "format": "avif",
+        "width": 960,
+        "height": 1440
+      },
+      {
+        "src": "/media/a28fd85d223bb293aa8406ab5a486c6e524a9e99388043d044a1f6ccc7b3668c.avif",
+        "sha256": "a28fd85d223bb293aa8406ab5a486c6e524a9e99388043d044a1f6ccc7b3668c",
+        "bytes": 28767,
+        "format": "avif",
+        "width": 1080,
+        "height": 1620
+      },
+      {
+        "src": "/media/e5486351822e51ebab56e9bfbd8d17cf02c7d28e3179f7287d48fc52085cc008.webp",
+        "sha256": "e5486351822e51ebab56e9bfbd8d17cf02c7d28e3179f7287d48fc52085cc008",
+        "bytes": 7676,
+        "format": "webp",
+        "width": 320,
+        "height": 480
+      },
+      {
+        "src": "/media/6547e5503f2ec14fe70db0f7df4e8d9d42682310ae9633b1453dc1bb6a5941a0.webp",
+        "sha256": "6547e5503f2ec14fe70db0f7df4e8d9d42682310ae9633b1453dc1bb6a5941a0",
+        "bytes": 19260,
+        "format": "webp",
+        "width": 640,
+        "height": 960
+      },
+      {
+        "src": "/media/d038beb9774a12ac5a2c2e3837ff407c5676e1b3c9a936d4c3c3aaceb91f17a5.webp",
+        "sha256": "d038beb9774a12ac5a2c2e3837ff407c5676e1b3c9a936d4c3c3aaceb91f17a5",
+        "bytes": 34600,
+        "format": "webp",
+        "width": 960,
+        "height": 1440
+      },
+      {
+        "src": "/media/da7c7abbbbd6ea0c5f174facff9c00caeedd1f09eb94c644536ee46cbedde137.webp",
+        "sha256": "da7c7abbbbd6ea0c5f174facff9c00caeedd1f09eb94c644536ee46cbedde137",
+        "bytes": 41752,
+        "format": "webp",
+        "width": 1080,
+        "height": 1620
+      }
+    ],
+    "cover": {
+      "src": "/media/c12c7a67f23f1d760685b6e53947aede605f1a0aa0e900199a0495ec93d3a0ab.jpeg",
+      "sha256": "c12c7a67f23f1d760685b6e53947aede605f1a0aa0e900199a0495ec93d3a0ab",
+      "bytes": 71400,
+      "format": "jpeg",
+      "width": 1080,
+      "height": 1620
+    }
+  },
+  "walking-with-light/photo-08": {
+    "src": "/media/1b9806c359f2dbaa76f6f456e1338e8991279711fa42e3d6b21ac7157f68ae8c.jpeg",
+    "sha256": "1b9806c359f2dbaa76f6f456e1338e8991279711fa42e3d6b21ac7157f68ae8c",
+    "bytes": 147156,
+    "format": "jpeg",
+    "width": 1206,
+    "height": 783,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/12c814bf8faa36b7b1f811ed8795568110f7e6bb1b2387193a9881d04f6d8433.avif",
+        "sha256": "12c814bf8faa36b7b1f811ed8795568110f7e6bb1b2387193a9881d04f6d8433",
+        "bytes": 7216,
+        "format": "avif",
+        "width": 320,
+        "height": 207
+      },
+      {
+        "src": "/media/5f503bcaea0d4f3e33f48c4f762ecd9b4d026bb9af2d68242c97064b9b19bab2.avif",
+        "sha256": "5f503bcaea0d4f3e33f48c4f762ecd9b4d026bb9af2d68242c97064b9b19bab2",
+        "bytes": 19270,
+        "format": "avif",
+        "width": 640,
+        "height": 416
+      },
+      {
+        "src": "/media/84a14abe6cec8631e54a61e004ad18d110684ec43c874acf7e941a6de6d32b6a.avif",
+        "sha256": "84a14abe6cec8631e54a61e004ad18d110684ec43c874acf7e941a6de6d32b6a",
+        "bytes": 34319,
+        "format": "avif",
+        "width": 960,
+        "height": 623
+      },
+      {
+        "src": "/media/3a7b24df1a325039e1f81e9df7642a335447b6d24f83d03502924b3cf7e1a3cd.avif",
+        "sha256": "3a7b24df1a325039e1f81e9df7642a335447b6d24f83d03502924b3cf7e1a3cd",
+        "bytes": 49539,
+        "format": "avif",
+        "width": 1206,
+        "height": 783
+      },
+      {
+        "src": "/media/5f405978905148f33bf175ca87b986f00bbb21f4f711171ccfa7ab1d99c2edae.webp",
+        "sha256": "5f405978905148f33bf175ca87b986f00bbb21f4f711171ccfa7ab1d99c2edae",
+        "bytes": 10004,
+        "format": "webp",
+        "width": 320,
+        "height": 207
+      },
+      {
+        "src": "/media/beafd3ff8fa2ee338b927558208b16a6bb5584afbd9a8c1ceee6f4ae4c8454e6.webp",
+        "sha256": "beafd3ff8fa2ee338b927558208b16a6bb5584afbd9a8c1ceee6f4ae4c8454e6",
+        "bytes": 26962,
+        "format": "webp",
+        "width": 640,
+        "height": 416
+      },
+      {
+        "src": "/media/f7f82253758695b3ecaf0ad9e1de964159ef936872a395ead466b3ca8284c101.webp",
+        "sha256": "f7f82253758695b3ecaf0ad9e1de964159ef936872a395ead466b3ca8284c101",
+        "bytes": 48672,
+        "format": "webp",
+        "width": 960,
+        "height": 623
+      },
+      {
+        "src": "/media/97342ade73521452b6129faf72e5155419d4cad5fece5880f94f52a25d6a4392.webp",
+        "sha256": "97342ade73521452b6129faf72e5155419d4cad5fece5880f94f52a25d6a4392",
+        "bytes": 68878,
+        "format": "webp",
+        "width": 1206,
+        "height": 783
+      }
+    ],
+    "cover": {
+      "src": "/media/e164d78d517cdfe06b70ba2e98b8eeb828c88520526fcd98c2330825f7a96643.jpeg",
+      "sha256": "e164d78d517cdfe06b70ba2e98b8eeb828c88520526fcd98c2330825f7a96643",
+      "bytes": 106387,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 779
+    }
+  },
+  "walking-with-light/photo-09": {
+    "src": "/media/75ec4120ad726d402d9cea0b0e03d009f6dd8635dd8d8dbbfe74f299489ee382.jpeg",
+    "sha256": "75ec4120ad726d402d9cea0b0e03d009f6dd8635dd8d8dbbfe74f299489ee382",
+    "bytes": 139213,
+    "format": "jpeg",
+    "width": 2275,
+    "height": 1279,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/e3a5208602b0a733b7d6d984d2117ce644d978b46df24dc199c2a90f5c058bf8.avif",
+        "sha256": "e3a5208602b0a733b7d6d984d2117ce644d978b46df24dc199c2a90f5c058bf8",
+        "bytes": 3343,
+        "format": "avif",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/74a3b634f206b6e052d2182ce5da5a2b4d6c68a8d617d88dad0c8387715ceaba.avif",
+        "sha256": "74a3b634f206b6e052d2182ce5da5a2b4d6c68a8d617d88dad0c8387715ceaba",
+        "bytes": 8831,
+        "format": "avif",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/5ecd768e37efa3e199233e86ec2c19dbacc6aa02f80ceb3387fc0538e22711de.avif",
+        "sha256": "5ecd768e37efa3e199233e86ec2c19dbacc6aa02f80ceb3387fc0538e22711de",
+        "bytes": 15680,
+        "format": "avif",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/a5345cc9810c57b4d5fbb7ff5fb914da6d2ac6e1c242c61b7cad6b759fb72b3e.avif",
+        "sha256": "a5345cc9810c57b4d5fbb7ff5fb914da6d2ac6e1c242c61b7cad6b759fb72b3e",
+        "bytes": 24629,
+        "format": "avif",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "src": "/media/c4f53c573ca07b57a0b612749f220b0e6c7e107f31f4e8cfd52fe9884b3ce442.webp",
+        "sha256": "c4f53c573ca07b57a0b612749f220b0e6c7e107f31f4e8cfd52fe9884b3ce442",
+        "bytes": 4802,
+        "format": "webp",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/2f3e1c5229db977bda2ae6a9953b046c2fcc79a0fe09567f9de0ec35582ce8e4.webp",
+        "sha256": "2f3e1c5229db977bda2ae6a9953b046c2fcc79a0fe09567f9de0ec35582ce8e4",
+        "bytes": 13182,
+        "format": "webp",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/efcf5bdf3a5458f2605cd0c5ac8aa2a9974f0798be07e99e8c8f1b23d6194d21.webp",
+        "sha256": "efcf5bdf3a5458f2605cd0c5ac8aa2a9974f0798be07e99e8c8f1b23d6194d21",
+        "bytes": 24494,
+        "format": "webp",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/6b0c7876ce5861b4215b5f49f96aa1d21f11b6442701160063f0748c24d30532.webp",
+        "sha256": "6b0c7876ce5861b4215b5f49f96aa1d21f11b6442701160063f0748c24d30532",
+        "bytes": 37930,
+        "format": "webp",
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "cover": {
+      "src": "/media/4bbfdb21856d7479c42a9d131a9bf0a192957bebe27eedde3b9e20b26510f71b.jpeg",
+      "sha256": "4bbfdb21856d7479c42a9d131a9bf0a192957bebe27eedde3b9e20b26510f71b",
+      "bytes": 55954,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 675
+    }
+  },
+  "walking-with-light/photo-10": {
+    "src": "/media/1a31609ba13e3c91186ea8d40d51621c9f5644872789296e180a14ffa55c3bc9.jpeg",
+    "sha256": "1a31609ba13e3c91186ea8d40d51621c9f5644872789296e180a14ffa55c3bc9",
+    "bytes": 142314,
+    "format": "jpeg",
+    "width": 1280,
+    "height": 1920,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/a33b07ba755c997010e69118c7a357687bcc92ac2802545b0f4b0eb0a874f7c3.avif",
+        "sha256": "a33b07ba755c997010e69118c7a357687bcc92ac2802545b0f4b0eb0a874f7c3",
+        "bytes": 11410,
+        "format": "avif",
+        "width": 320,
+        "height": 480
+      },
+      {
+        "src": "/media/53d7510c772990fb0b2cb7a9e2fe8a22a66db3c860e5fccba07f7ef4f49a1312.avif",
+        "sha256": "53d7510c772990fb0b2cb7a9e2fe8a22a66db3c860e5fccba07f7ef4f49a1312",
+        "bytes": 27417,
+        "format": "avif",
+        "width": 640,
+        "height": 960
+      },
+      {
+        "src": "/media/a1e609dce41801704e4b378715784d9c36e453672cc19d50d50951460e343129.avif",
+        "sha256": "a1e609dce41801704e4b378715784d9c36e453672cc19d50d50951460e343129",
+        "bytes": 44506,
+        "format": "avif",
+        "width": 960,
+        "height": 1440
+      },
+      {
+        "src": "/media/df0204be4234f19446d6dadca8273e0161639e2afb14b706282e2c0edfe526f5.avif",
+        "sha256": "df0204be4234f19446d6dadca8273e0161639e2afb14b706282e2c0edfe526f5",
+        "bytes": 62593,
+        "format": "avif",
+        "width": 1280,
+        "height": 1920
+      },
+      {
+        "src": "/media/b7ceafbeaabd53a90f8f677add68d167b9f631ea283a1d8f171b14a27896d190.webp",
+        "sha256": "b7ceafbeaabd53a90f8f677add68d167b9f631ea283a1d8f171b14a27896d190",
+        "bytes": 17634,
+        "format": "webp",
+        "width": 320,
+        "height": 480
+      },
+      {
+        "src": "/media/defdb412f8c9ca3c51bb6bb2f4ef936d43d97fd29616df7205fc31dce772dff9.webp",
+        "sha256": "defdb412f8c9ca3c51bb6bb2f4ef936d43d97fd29616df7205fc31dce772dff9",
+        "bytes": 41940,
+        "format": "webp",
+        "width": 640,
+        "height": 960
+      },
+      {
+        "src": "/media/4132d0b172ab61fe2a88210e044e744fd69da027f1578b013f36c0850a3e135c.webp",
+        "sha256": "4132d0b172ab61fe2a88210e044e744fd69da027f1578b013f36c0850a3e135c",
+        "bytes": 67798,
+        "format": "webp",
+        "width": 960,
+        "height": 1440
+      },
+      {
+        "src": "/media/2bbc3f8597f8e3bef1a3d48fd9664aa3150bc13f83d7f809545d3fdb649a1965.webp",
+        "sha256": "2bbc3f8597f8e3bef1a3d48fd9664aa3150bc13f83d7f809545d3fdb649a1965",
+        "bytes": 97116,
+        "format": "webp",
+        "width": 1280,
+        "height": 1920
+      }
+    ],
+    "cover": {
+      "src": "/media/b17753bf6e940bc79f677d4b1ae8d26cf55008342113ce3a0e686afdffca42f5.jpeg",
+      "sha256": "b17753bf6e940bc79f677d4b1ae8d26cf55008342113ce3a0e686afdffca42f5",
+      "bytes": 172269,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 1800
+    }
+  },
+  "walking-with-light/photo-11": {
+    "src": "/media/b1856ba0a195710e0fada07772b7559b1a41edd6837b8d39e54dc847e7257b91.jpeg",
+    "sha256": "b1856ba0a195710e0fada07772b7559b1a41edd6837b8d39e54dc847e7257b91",
+    "bytes": 262629,
+    "format": "jpeg",
+    "width": 1920,
+    "height": 1280,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/57dd36a6182be2ed7596e4af62b14ae5e596ab1d90c0cd8ce0755feb41174c99.avif",
+        "sha256": "57dd36a6182be2ed7596e4af62b14ae5e596ab1d90c0cd8ce0755feb41174c99",
+        "bytes": 10240,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/8349cb1b0b014c0052b304e05416c7f64c88ab9baaee57f48d572c0a920583da.avif",
+        "sha256": "8349cb1b0b014c0052b304e05416c7f64c88ab9baaee57f48d572c0a920583da",
+        "bytes": 30317,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/172c14c19fe39493f4285f9e41b8e30cb6612ba9b061beabecb59645f5c4cecc.avif",
+        "sha256": "172c14c19fe39493f4285f9e41b8e30cb6612ba9b061beabecb59645f5c4cecc",
+        "bytes": 57041,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/a7e98588a626f861f82ce2db8787cddb75cc1e5ff68177ac7e617614b9f0ab5e.avif",
+        "sha256": "a7e98588a626f861f82ce2db8787cddb75cc1e5ff68177ac7e617614b9f0ab5e",
+        "bytes": 88167,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/a5a24e34ae6df903c509ff8dfa4b4c49dc5808f5bf204a73dfe814c39999f0ad.webp",
+        "sha256": "a5a24e34ae6df903c509ff8dfa4b4c49dc5808f5bf204a73dfe814c39999f0ad",
+        "bytes": 15154,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/1079b7a0bf92ad691ebf4e198011c8e9091a1c6e22b4484d0c50415ad237a135.webp",
+        "sha256": "1079b7a0bf92ad691ebf4e198011c8e9091a1c6e22b4484d0c50415ad237a135",
+        "bytes": 45634,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/108d65e153e44c989e928034859e1e9f507c058a1e19910e5c82586e076cdecd.webp",
+        "sha256": "108d65e153e44c989e928034859e1e9f507c058a1e19910e5c82586e076cdecd",
+        "bytes": 87448,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/5a33324d7c9a1534f6e79d8247c6ff6f2fab771a01442a2b24b9dc4d63fac9c7.webp",
+        "sha256": "5a33324d7c9a1534f6e79d8247c6ff6f2fab771a01442a2b24b9dc4d63fac9c7",
+        "bytes": 136472,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/8b88aec93c0a07f6a10ddcf363fb37d6f9d2998a1d19d8e88de639f35108d0ca.jpeg",
+      "sha256": "8b88aec93c0a07f6a10ddcf363fb37d6f9d2998a1d19d8e88de639f35108d0ca",
+      "bytes": 168847,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "walking-with-light/photo-12": {
+    "src": "/media/cdff8c607752f6c1d5d8fd3b293088d962307e24ce00cdace1c9b967c9bb52b6.jpeg",
+    "sha256": "cdff8c607752f6c1d5d8fd3b293088d962307e24ce00cdace1c9b967c9bb52b6",
+    "bytes": 264050,
+    "format": "jpeg",
+    "width": 1707,
+    "height": 1280,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/4ede7acda28251f24bb4c8914af4d41567139d17cf795b9392dc090336efe8d8.avif",
+        "sha256": "4ede7acda28251f24bb4c8914af4d41567139d17cf795b9392dc090336efe8d8",
+        "bytes": 12158,
+        "format": "avif",
+        "width": 320,
+        "height": 240
+      },
+      {
+        "src": "/media/e0a3b6d5c66153a011649126427e44f8e5b70b3f9f72f22edad795eb747ad59e.avif",
+        "sha256": "e0a3b6d5c66153a011649126427e44f8e5b70b3f9f72f22edad795eb747ad59e",
+        "bytes": 38194,
+        "format": "avif",
+        "width": 640,
+        "height": 480
+      },
+      {
+        "src": "/media/e83fa0d46f9d1c82211bbead28d19a4983650408bb1a0d5dd8e7b3a36c60cba6.avif",
+        "sha256": "e83fa0d46f9d1c82211bbead28d19a4983650408bb1a0d5dd8e7b3a36c60cba6",
+        "bytes": 71146,
+        "format": "avif",
+        "width": 960,
+        "height": 720
+      },
+      {
+        "src": "/media/c65bb5f7fbc7801812ef9db9b5603aaf987fb0f092593f5b6a65affa5a0482b7.avif",
+        "sha256": "c65bb5f7fbc7801812ef9db9b5603aaf987fb0f092593f5b6a65affa5a0482b7",
+        "bytes": 111475,
+        "format": "avif",
+        "width": 1280,
+        "height": 960
+      },
+      {
+        "src": "/media/ce871520447f75bb4f47908f42eb262b07649b41c225c1f9ca063d8d53a954fc.webp",
+        "sha256": "ce871520447f75bb4f47908f42eb262b07649b41c225c1f9ca063d8d53a954fc",
+        "bytes": 19024,
+        "format": "webp",
+        "width": 320,
+        "height": 240
+      },
+      {
+        "src": "/media/4236c01a17edbc4c559680ff9a7c018658e28dcca52f6e102229fa5409ab9f96.webp",
+        "sha256": "4236c01a17edbc4c559680ff9a7c018658e28dcca52f6e102229fa5409ab9f96",
+        "bytes": 59318,
+        "format": "webp",
+        "width": 640,
+        "height": 480
+      },
+      {
+        "src": "/media/a64f6ad60638b60db9e4ef85f457b933b70f817868096dfe05f7ff8c788e3430.webp",
+        "sha256": "a64f6ad60638b60db9e4ef85f457b933b70f817868096dfe05f7ff8c788e3430",
+        "bytes": 110890,
+        "format": "webp",
+        "width": 960,
+        "height": 720
+      },
+      {
+        "src": "/media/dc32195e80e4ddaab4149eafe8bb7d484929e1c8379f28c331e757e04d88d7a2.webp",
+        "sha256": "dc32195e80e4ddaab4149eafe8bb7d484929e1c8379f28c331e757e04d88d7a2",
+        "bytes": 172920,
+        "format": "webp",
+        "width": 1280,
+        "height": 960
+      }
+    ],
+    "cover": {
+      "src": "/media/f062da58f0dbbddf8971cda024148e20a57b78386aec604450757a389a29e0b7.jpeg",
+      "sha256": "f062da58f0dbbddf8971cda024148e20a57b78386aec604450757a389a29e0b7",
+      "bytes": 206147,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 900
+    }
+  },
+  "walking-with-light/photo-13": {
+    "src": "/media/4733c5b80116cbf3133efc7c33668511cb5eb65c3c7a661efe22db7484e33179.jpeg",
+    "sha256": "4733c5b80116cbf3133efc7c33668511cb5eb65c3c7a661efe22db7484e33179",
+    "bytes": 134317,
+    "format": "jpeg",
+    "width": 1620,
+    "height": 1080,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/fdadba0e49b87434da9289ec56156fd708f8056791f4d90e130dc3c1c650b1b7.avif",
+        "sha256": "fdadba0e49b87434da9289ec56156fd708f8056791f4d90e130dc3c1c650b1b7",
+        "bytes": 6680,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/e3391a0bc6d13afea4c3c055519f59f9f529342af6ae7321f8573a9136df3af5.avif",
+        "sha256": "e3391a0bc6d13afea4c3c055519f59f9f529342af6ae7321f8573a9136df3af5",
+        "bytes": 18067,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/63b9154199360f1c1d4f7d2fbf633d87c5a13e946d578d6b64661240c03a15ef.avif",
+        "sha256": "63b9154199360f1c1d4f7d2fbf633d87c5a13e946d578d6b64661240c03a15ef",
+        "bytes": 30168,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/16a3cd592adbe23068bd336afa9fdd94b446dcaab192abcef2a59ce5c970acda.avif",
+        "sha256": "16a3cd592adbe23068bd336afa9fdd94b446dcaab192abcef2a59ce5c970acda",
+        "bytes": 44966,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/7f923f7f3860adf5921f6ce26afba1998eb6396c8be1c640ef8e046e086179fd.webp",
+        "sha256": "7f923f7f3860adf5921f6ce26afba1998eb6396c8be1c640ef8e046e086179fd",
+        "bytes": 10356,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/7f7f9aa91a187c8b5aa3ff543a56c30306aea0162257a9844370c8f79ca13b18.webp",
+        "sha256": "7f7f9aa91a187c8b5aa3ff543a56c30306aea0162257a9844370c8f79ca13b18",
+        "bytes": 27110,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/5ec4c4e6436aa83873ec1f43f6a2815d807ddcd83195035e1bf16cd78ef49475.webp",
+        "sha256": "5ec4c4e6436aa83873ec1f43f6a2815d807ddcd83195035e1bf16cd78ef49475",
+        "bytes": 45432,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/6d3d6a2a77b1daaa09ce9680df60fdf777c5033eeb7340fde2e83c6bd418ce22.webp",
+        "sha256": "6d3d6a2a77b1daaa09ce9680df60fdf777c5033eeb7340fde2e83c6bd418ce22",
+        "bytes": 66512,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/58baa98b4d1f747a923305367d6acb37ea6c9679727e607ad2bca927be7751fc.jpeg",
+      "sha256": "58baa98b4d1f747a923305367d6acb37ea6c9679727e607ad2bca927be7751fc",
+      "bytes": 101022,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "walking-with-light/photo-14": {
+    "src": "/media/21eae85bb7a6be4f2c873f32a69a774fbb4cf1301485833cfc9def17b8f78ef2.jpeg",
+    "sha256": "21eae85bb7a6be4f2c873f32a69a774fbb4cf1301485833cfc9def17b8f78ef2",
+    "bytes": 187800,
+    "format": "jpeg",
+    "width": 1620,
+    "height": 1080,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/e1a4e32e2824aaeb91f08050cdbbf8f02795f86b904ef9dfb99961bfec1db1e5.avif",
+        "sha256": "e1a4e32e2824aaeb91f08050cdbbf8f02795f86b904ef9dfb99961bfec1db1e5",
+        "bytes": 9548,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/6e25c719946a3eebbf12b3779f10278255658b0892b8f5b59ff0e98098a6bcb1.avif",
+        "sha256": "6e25c719946a3eebbf12b3779f10278255658b0892b8f5b59ff0e98098a6bcb1",
+        "bytes": 26884,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/e20648de7dd135daeed5ded2d0d665326355758cbe153389f324d5177cd1194b.avif",
+        "sha256": "e20648de7dd135daeed5ded2d0d665326355758cbe153389f324d5177cd1194b",
+        "bytes": 45843,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/09fe7923071694b2eb7b09e1366d1edab24c32d70fbce2262c2f2e57c297cc7a.avif",
+        "sha256": "09fe7923071694b2eb7b09e1366d1edab24c32d70fbce2262c2f2e57c297cc7a",
+        "bytes": 68607,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/2d89a3486a60f5f38e7014b5f24310a4ca58050296544015b57e052778aa9a05.webp",
+        "sha256": "2d89a3486a60f5f38e7014b5f24310a4ca58050296544015b57e052778aa9a05",
+        "bytes": 14670,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/a5a789d9413a478b5590032d6b78b601a07cc1c0814bdc09fc1f1db0855209e5.webp",
+        "sha256": "a5a789d9413a478b5590032d6b78b601a07cc1c0814bdc09fc1f1db0855209e5",
+        "bytes": 42048,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/4b1fca0810178043c3a6a7d8f7a3f5997b2f775a6c9e58d462420bd84aa7f421.webp",
+        "sha256": "4b1fca0810178043c3a6a7d8f7a3f5997b2f775a6c9e58d462420bd84aa7f421",
+        "bytes": 72176,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/5f8ce755a1fcb1903ae380d081b3d5223763da39958519ee4668ea3e64403b98.webp",
+        "sha256": "5f8ce755a1fcb1903ae380d081b3d5223763da39958519ee4668ea3e64403b98",
+        "bytes": 107694,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/1a38841102ab6c5f6564d408eb84f48f8161db2c4a443330b1f910042292a918.jpeg",
+      "sha256": "1a38841102ab6c5f6564d408eb84f48f8161db2c4a443330b1f910042292a918",
+      "bytes": 140432,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "walking-with-light/photo-15": {
+    "src": "/media/e935ba266500bd113cf864d5f1b44562f2e6b70f2663ca776ffdb29a02d3c614.jpeg",
+    "sha256": "e935ba266500bd113cf864d5f1b44562f2e6b70f2663ca776ffdb29a02d3c614",
+    "bytes": 323027,
+    "format": "jpeg",
+    "width": 1920,
+    "height": 1280,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/01990ee5a883a5172c82a7ad32ed56226dcc7f8527d45429052a9a89e9aad439.avif",
+        "sha256": "01990ee5a883a5172c82a7ad32ed56226dcc7f8527d45429052a9a89e9aad439",
+        "bytes": 11440,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/d4eb0249d502d3e324f4938230ab11eb7a4951a11c5906fca157ef5675d1f3e9.avif",
+        "sha256": "d4eb0249d502d3e324f4938230ab11eb7a4951a11c5906fca157ef5675d1f3e9",
+        "bytes": 33802,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/944f2f063b2c2c9814486c938dd950d86b7be0f095a47da4db0092de1bed5169.avif",
+        "sha256": "944f2f063b2c2c9814486c938dd950d86b7be0f095a47da4db0092de1bed5169",
+        "bytes": 65360,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/74aa2770ad33bfce4b3282334cfc57d9a50e0e870ba761a68b88717e8b59d3a7.avif",
+        "sha256": "74aa2770ad33bfce4b3282334cfc57d9a50e0e870ba761a68b88717e8b59d3a7",
+        "bytes": 102557,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/b9e16d3d83ee62a071f26f121948f6af10587f7dba818be54b0e15e81b0ec50c.webp",
+        "sha256": "b9e16d3d83ee62a071f26f121948f6af10587f7dba818be54b0e15e81b0ec50c",
+        "bytes": 18148,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/91c249de9083557445e32dc1b5bef56910ea1863dd722fa0ba091dbb1f90d8f0.webp",
+        "sha256": "91c249de9083557445e32dc1b5bef56910ea1863dd722fa0ba091dbb1f90d8f0",
+        "bytes": 54656,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/b2f6d9627b8c8c5bcfa7166d5136b8b2d936fe3be20935da8013116f76e5ad0b.webp",
+        "sha256": "b2f6d9627b8c8c5bcfa7166d5136b8b2d936fe3be20935da8013116f76e5ad0b",
+        "bytes": 105538,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/74ad4ebb8dc77941836ef8c3d0f1dc4133204e1de71a9d92241154e951fe6728.webp",
+        "sha256": "74ad4ebb8dc77941836ef8c3d0f1dc4133204e1de71a9d92241154e951fe6728",
+        "bytes": 161582,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/5895e196fc697646b3e0528ce7eef4c0d024765711e45f4a95447c31552adbef.jpeg",
+      "sha256": "5895e196fc697646b3e0528ce7eef4c0d024765711e45f4a95447c31552adbef",
+      "bytes": 198945,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
+  },
+  "walking-with-light/photo-16": {
+    "src": "/media/dadce1c4263863fb1fe169f0fa1067b5724ea1dbefa17a6d78b9f483c61cedc0.jpeg",
+    "sha256": "dadce1c4263863fb1fe169f0fa1067b5724ea1dbefa17a6d78b9f483c61cedc0",
+    "bytes": 315200,
+    "format": "jpeg",
+    "width": 1920,
+    "height": 1280,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/1054c8621c322004e780874d92e9a362a60c298e85edba652db39cdacc0a2755.avif",
+        "sha256": "1054c8621c322004e780874d92e9a362a60c298e85edba652db39cdacc0a2755",
+        "bytes": 10644,
+        "format": "avif",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/29da1db7d60ca83d1365e5ac8d85661304255893e12b0c5f74e53209d3ae14ab.avif",
+        "sha256": "29da1db7d60ca83d1365e5ac8d85661304255893e12b0c5f74e53209d3ae14ab",
+        "bytes": 32625,
+        "format": "avif",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/6dc0f9e3ea0e20e7e8d99cc7a421e70283d3e96f6db1e2505ea6289f4f318403.avif",
+        "sha256": "6dc0f9e3ea0e20e7e8d99cc7a421e70283d3e96f6db1e2505ea6289f4f318403",
+        "bytes": 62051,
+        "format": "avif",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/fed908f5feb3667486eaf832881c2a68c3a9a3f65b6a18b7edeb00aef5801b3b.avif",
+        "sha256": "fed908f5feb3667486eaf832881c2a68c3a9a3f65b6a18b7edeb00aef5801b3b",
+        "bytes": 95390,
+        "format": "avif",
+        "width": 1280,
+        "height": 853
+      },
+      {
+        "src": "/media/bb322a7791745b50b4385eb9efbbea0d6c8469eaedb756c1e3e3598b28e60862.webp",
+        "sha256": "bb322a7791745b50b4385eb9efbbea0d6c8469eaedb756c1e3e3598b28e60862",
+        "bytes": 17040,
+        "format": "webp",
+        "width": 320,
+        "height": 213
+      },
+      {
+        "src": "/media/8fc0d278580547299ea2946d0ef8182e805fc1c11877cd2e0efd56f8e4a9fbfb.webp",
+        "sha256": "8fc0d278580547299ea2946d0ef8182e805fc1c11877cd2e0efd56f8e4a9fbfb",
+        "bytes": 51378,
+        "format": "webp",
+        "width": 640,
+        "height": 427
+      },
+      {
+        "src": "/media/ffa8b4feee1347d455856b078a8913139a82656684731214f8229cead3563ddf.webp",
+        "sha256": "ffa8b4feee1347d455856b078a8913139a82656684731214f8229cead3563ddf",
+        "bytes": 97460,
+        "format": "webp",
+        "width": 960,
+        "height": 640
+      },
+      {
+        "src": "/media/b80066fede4d5ec255eafe6d67b52fb4a176fe5beab6bf08a0dbe92d102faa71.webp",
+        "sha256": "b80066fede4d5ec255eafe6d67b52fb4a176fe5beab6bf08a0dbe92d102faa71",
+        "bytes": 152468,
+        "format": "webp",
+        "width": 1280,
+        "height": 853
+      }
+    ],
+    "cover": {
+      "src": "/media/6fa04510aa832012a9b30216e60164a187a1d0525aa1baf025aa636ca35c6813.jpeg",
+      "sha256": "6fa04510aa832012a9b30216e60164a187a1d0525aa1baf025aa636ca35c6813",
+      "bytes": 194157,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 800
+    }
   }
 }

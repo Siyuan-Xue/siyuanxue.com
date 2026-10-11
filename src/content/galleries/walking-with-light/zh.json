@@ -1,38 +1,110 @@
 {
-  "title": "《与光同行》· 北京市大学生戏剧节",
-  "description": "这里将展示与《与光同行》· 北京市大学生戏剧节相关的图片与资料。当前抽象图片均为占位图，用于查看图集效果；真实图片、本人实际角色和经核实的说明仍待补充。",
-  "period": "2025",
-  "role": "待补充实际角色",
+  "title": "话剧《与光同行》· 饰 叶培大",
+  "description": "《与光同行》是北京邮电大学 70 周年校庆献礼大师剧，我在其中饰演男主角叶培大。经过五个多月的排练，剧目于 2025 年 10 月在北邮沙河大剧院登场，11 月登上中央戏剧学院的舞台，并在 2025 年北京大学生戏剧节获得金奖、最佳剧目奖、最佳男演员奖。从排练到演出，与伙伴们共同投入的这段时光，永远激情，永远难忘。",
+  "period": "2025 年 10–11 月 · 排练五个多月",
+  "role": "饰演男主角叶培大",
   "category": "appearances",
   "order": 0,
   "draft": false,
-  "preview": true,
+  "preview": false,
   "images": [
     {
-      "src": "gallery-preview/hero",
-      "alt": "《与光同行》· 北京市大学生戏剧节的第1张抽象占位图",
-      "caption": "占位图：这里将展示舞台场景。"
+      "src": "walking-with-light/photo-05",
+      "alt": "《与光同行》舞台上，灰发眼镜造型的叶培大与另一位演员并肩站立",
+      "caption": "在《与光同行》的舞台上，饰演叶培大。"
     },
     {
-      "src": "gallery-preview/detail",
-      "alt": "《与光同行》· 北京市大学生戏剧节的第2张抽象占位图",
-      "caption": "占位图：这里将展示排练细节。"
+      "src": "walking-with-light/photo-01",
+      "alt": "《与光同行》舞台上，四位演员围在一起，中央演员手持笔和红色本子",
+      "caption": "舞台上的对话与协作。"
     },
     {
-      "src": "gallery-preview/portrait",
-      "alt": "《与光同行》· 北京市大学生戏剧节的第3张抽象占位图",
-      "caption": "占位图：这里将展示演出照片。"
+      "src": "walking-with-light/photo-07",
+      "alt": "《与光同行》舞台上，灰发演员戴着眼镜、拄着手杖，后方还有一位演员",
+      "caption": "叶培大的老年造型。"
     },
     {
-      "src": "gallery-preview/closing",
-      "alt": "《与光同行》· 北京市大学生戏剧节的第4张抽象占位图",
-      "caption": "占位图：这里将展示相关资料。"
+      "src": "walking-with-light/photo-02",
+      "alt": "《与光同行》舞台上，三位演员围坐桌旁，其中一人举起绿色瓶子",
+      "caption": "桌边的一场戏。"
+    },
+    {
+      "src": "walking-with-light/photo-09",
+      "alt": "《与光同行》舞台上，一位演员仰头坐在桌边，旁边放着手杖和空椅子",
+      "caption": "聚光灯下，桌边的独处时刻。"
+    },
+    {
+      "src": "walking-with-light/photo-04",
+      "alt": "《与光同行》舞台上，两位演员面对面坐在方凳上交谈",
+      "caption": "两个人的对话。"
+    },
+    {
+      "src": "walking-with-light/photo-03",
+      "alt": "《与光同行》的群像场景，七位演员在写满文字的背景前站立或就座",
+      "caption": "与伙伴们一起完成舞台上的群像。"
+    },
+    {
+      "src": "walking-with-light/photo-06",
+      "alt": "《与光同行》舞台上，灰发演员坐在花纹沙发中央翻看相册，其他演员围在身旁",
+      "caption": "相册与回忆。"
+    },
+    {
+      "src": "walking-with-light/photo-08",
+      "alt": "《与光同行》舞台上，七位演员面向观众站成一排",
+      "caption": "一起站在舞台上。"
+    },
+    {
+      "src": "walking-with-light/photo-13",
+      "alt": "《与光同行》舞台上，灰发演员与其他演员一起举起手臂",
+      "caption": "举手致意，记住这一刻。"
+    },
+    {
+      "src": "walking-with-light/photo-14",
+      "alt": "《与光同行》演出结束后，演员们手持鲜花，一位演员与送花的人拥抱",
+      "caption": "鲜花、拥抱与谢幕。"
+    },
+    {
+      "src": "walking-with-light/photo-10",
+      "alt": "后台化妆时的近照，头发用发夹固定，化妆师拿着粉盒和化妆刷",
+      "caption": "登台之前，后台化妆。"
+    },
+    {
+      "src": "walking-with-light/photo-12",
+      "alt": "演出后与朋友们的合照，中间海报写着薛思远饰叶培大和收官快乐",
+      "caption": "朋友们带着专属海报来支持我。"
+    },
+    {
+      "src": "walking-with-light/photo-11",
+      "alt": "《与光同行》剧组在舞台上的大合影，背景是大型科学仪器布景",
+      "caption": "五个多月的排练，和剧组一起留下合影。"
+    },
+    {
+      "src": "walking-with-light/photo-15",
+      "alt": "剧组在国家级实验教学示范中心前合影，前排展开北京邮电大学校旗",
+      "caption": "参加戏剧节，与剧组一起合影。"
+    },
+    {
+      "src": "walking-with-light/photo-16",
+      "alt": "剧组在中央戏剧学院剧场中心前合影，前排展开北京邮电大学校旗",
+      "caption": "从北邮到中戏，永远激情，永远难忘。"
     }
   ],
   "links": [
     {
-      "label": "北邮活动报道",
+      "label": "北邮首演报道",
+      "href": "https://www.bupt.edu.cn/info/1079/89613.htm"
+    },
+    {
+      "label": "中戏展演报道",
+      "href": "https://www.chntheatre.edu.cn/detail/24793.html"
+    },
+    {
+      "label": "北邮获奖报道",
       "href": "https://www.bupt.edu.cn/info/1079/90114.htm"
+    },
+    {
+      "label": "人民网报道",
+      "href": "http://edu.people.com.cn/n1/2025/1016/c1006-40583496.html"
     }
   ]
 }

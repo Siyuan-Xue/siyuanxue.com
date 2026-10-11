@@ -84,9 +84,11 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 `bnds-life` 是有真实截图与已确认介绍的正式项目图集，使用 `draft: false`、`preview: false`，首页项目列表进入 `/gallery/bnds-life/`。五张用户提供的原始截图已直传至服务器，由 `bnds-life/*` 媒体 ID 引用，两语言 JSON 共用图片并各自提供介绍、alt 和图注；页末保留项目网站和公开源码链接。其构建产物进入 sitemap，实际上线状态以维护总览及审计为准。
 
-`pixeldone` 也已补齐用户确认的开发经历与五张真实 App 截图，在原址 `/gallery/pixeldone/` 转为正式图集。双语 JSON 共用 `pixeldone/*` 媒体 ID 对应的原始截图，依次展示待办首页、任务编辑、清单编辑、Dock 自定义和云端设置；相关资料保留 GitHub 仓库链接。时间写明首版开发一天，后续根据同学反馈持续迭代，不把截图里的同步异常状态当作成功同步的验收。其构建产物进入 sitemap；LeDA 同样补齐正式内容后，余下五个原有条目仍为占位预览。Pixel Done 与 BNDS.life 中文资料链接的可见名称均为「GitHub 仓库」。
+`pixeldone` 也已补齐用户确认的开发经历与五张真实 App 截图，在原址 `/gallery/pixeldone/` 转为正式图集。双语 JSON 共用 `pixeldone/*` 媒体 ID 对应的原始截图，依次展示待办首页、任务编辑、清单编辑、Dock 自定义和云端设置；相关资料保留 GitHub 仓库链接。时间写明首版开发一天，后续根据同学反馈持续迭代，不把截图里的同步异常状态当作成功同步的验收。其构建产物进入 sitemap；LeDA 与《与光同行》同样补齐正式内容后，余下四个原有条目仍为占位预览。Pixel Done 与 BNDS.life 中文资料链接的可见名称均为「GitHub 仓库」。
 
 `leda-agent` 在原址 `/gallery/leda-agent/` 补齐正式双语内容：2025 年 7–8 月与室友共同开发，LangGraph、Neo4j 知识图谱检索与长期个性化推荐；用户确认完整数据库包含 80,000 余个资源节点。两个原始演示视频按功能演示、图谱浏览的顺序展示，使用 `demos` 布局及真实录制帧作为封面，随后展示国家级大创项目结题证书。结题时间为 2026 年 7 月，个人角色为项目组成员，不写成负责人或获奖名次。两语言共用 `leda-agent/*` 媒体 ID，`preview: false`；首页保留既有入口，页末附北邮项目主页与 Awesome 仓库。来源、媒体与本轮发布结果见 [LeDA 审计](audits/2026-10-11-leda-gallery.md)。
+
+`walking-with-light` 在原址 `/gallery/walking-with-light/` 转为正式图集，中文标题为「话剧《与光同行》· 饰 叶培大」，英文为「Walking with Light · as Ye Peida」。用户确认饰演男主角叶培大、五个多月的排练及 2025 年 10–11 月演出经历；奖项在正文中作为剧目经历呈现，不另行推定个人获奖归属。16 张用户提供的真实照片共用 `walking-with-light/photo-01` 至 `photo-16` 媒体 ID；横向舞台照作为首图，后续包含舞台、幕后、谢幕和赴中戏合影，沿用 `photos` 自然比例与双语图注、灯箱。页末保留用户指定的四篇报道。原始编号对应素材输入顺序，页面可以按叙事顺序排列；恢复时以 JSON 的 ID 顺序为准。媒体直传、资料核对及本轮发布结果见 [话剧图集审计](audits/2026-10-11-walking-with-light-gallery.md)。
 
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 
