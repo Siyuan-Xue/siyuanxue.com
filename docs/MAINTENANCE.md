@@ -8,6 +8,8 @@
 
 **同日用户明确平台优先级：**中文站 `xuesiyuan.com` 重点在百度，下一阶段优先核查百度站点归属、提交能力、抓取、收录及中文查询曝光。Google、Bing 与 AI 跨平台发现继续维护，已完成的 Google 验证和稳定路由保留；英文站继续安排 Google/Bing 维护，该安排不是用户另行指定的英文平台排序。Google 的 28 URL 检查结果和 IndexNow 202 回执均不能用作百度状态。具体步骤与平台证据见[百度优先级审计](audits/2026-10-11-baidu-priority.md)。
 
+**同日约 21:31 起后续核查：**独立 GitHub 主页已将项目展示名统一为 `Pixel Done`，仅改一行链接文字，实际项目 URL 不变；远端 `main` 与提交差异复核通过。Google 中文 index 再次 Live test 成功，但 sitemap 报告仍读取失败；额外提交页面子 sitemap 取得提交成功回执，随后两条报告仍为 `Couldn't fetch`，原因未知。同期 40 次公网协议检查通过，不能替代 Google 的 sitemap 处理结果。Bing 已完成基本登录，GSC 只读授权与两站导入尚未完成；百度备案继续暂缓。证据、状态边界与恢复见[后续审计](audits/2026-10-11-search-followup.md)。
+
 这是网站及关联资源的维护入口。[本轮工作总结](WORK-SUMMARY-2026-09-16.md) 解释已做的工作；本文记录资源在哪里、怎样更新、怎样验收与恢复。以仓库和既有部署记录为依据，不包含密码、令牌、微信身份 ID、日记正文或恢复密钥。
 
 ## 1. 如何判断信息是否仍然有效
@@ -29,7 +31,7 @@
 | 资源 | 作用与权威位置 | 更新方式 / 当前状态 |
 |---|---|---|
 | 网站代码仓库 | [Siyuan-Xue/siyuanxue.com](https://github.com/Siyuan-Xue/siyuanxue.com)，默认 `main`；源码、构建、测试、运维脚本 | Git 提交并推送；Actions 发布静态网站。本次核对 |
-| GitHub 个人主页仓库 | [Siyuan-Xue/Siyuan-Xue](https://github.com/Siyuan-Xue/Siyuan-Xue) 的 `README.md` | **独立仓库**，网站提交不会更新它。可用 `gh` Contents API 或单独 clone 修改。本次核对 |
+| GitHub 个人主页仓库 | [Siyuan-Xue/Siyuan-Xue](https://github.com/Siyuan-Xue/Siyuan-Xue) 的 `README.md` | **独立仓库**，网站提交不会更新它。2026-10-11 经授权通过带原 blob SHA 的 Contents API 将旧标签改为 `Pixel Done`，[提交 7edf6cf](https://github.com/Siyuan-Xue/Siyuan-Xue/commit/7edf6cfb902f98a77dfa1129bfabf81037d500cc)；重新读取远端 `main` 确认仅一行变化、全部 URL 不变。恢复入口见[后续审计](audits/2026-10-11-search-followup.md) |
 | GitHub 账号资料 | [公开主页](https://github.com/Siyuan-Xue) / [Profile 设置](https://github.com/settings/profile) 的姓名、Bio、Website | 与主页 README 是两种资源；本次通过 API 核对已有更新。账号编辑 CLI 权限见第 7 节 |
 | 两仓库的 About | 仓库 description、homepage；网站仓库另有 topics | `gh repo edit` / 仓库设置；与两个 README 不自动同步。本次核对 |
 | 本机 GitHub CLI 登录 | `/opt/homebrew/bin/gh`；本轮使用 macOS Keychain 中的既有凭据 | `gh auth status` 检查账号/权限；不打印或复制 token。重新登录不会自动改变 README 或账号资料，权限缺口见第 7 节 |
@@ -39,12 +41,13 @@
 | 域名注册与 DNS | 注册商控制台管理注册/续费；[DNSPod 控制台](https://console.dnspod.cn/)管理当前解析 | 2026-10-11 NS 查询确认两域名均为 `lennon.dnspod.net` / `radius.dnspod.net`。19:01 经用户确认分别新增 `@` Google 验证 TXT，默认线路、TTL 600；公开 DNS 与所需值匹配。原有 `@` / `www` A 均为 `82.156.77.131`、TTL 600，保持不变；Google 持续验证需要保留 TXT。注册商、到期日、自动续费及完整解析导出仍待补 |
 | 腾讯云 Lighthouse | Ubuntu 24.04 / Nginx；IP `82.156.77.131`；实例 `lhins-aftjtoo4`，北京七区 / `ap-beijing` | 管理员 `ubuntu`，CI `deploy`，SSH 22；腾讯云控制台 OrcaTerm 为备用。2026-10-10 控制台核对：锐驰型 2 核 / 8GB / 80GB、无限流量 / 200Mbps 峰值带宽，到期 2027-08-23 07:46:25；自动续费与快照策略待核对。套餐峰值不代表实际跨境吞吐量 |
 | TLS 证书 | 两 apex 分别管理含自身 www 的证书；`/etc/letsencrypt/` | Certbot 自动续期及 Nginx reload hook；见 [HTTPS 运维](../ops/HTTPS.md)。当前有效期和最近续期结果需定期查证 |
-| Google Search Console | [控制台](https://search.google.com/search-console)；属性 `sc-domain:xuesiyuan.com` / `sc-domain:siyuanxue.com` | 2026-10-11 两属性通过 Domain name provider 验证，用户已确认当前账号所有者权限。两站 sitemap 已提交；英文 index 最终复查 Success，中文报告仍读取失败，但 XML 实时抓取成功、无人工处置，原因待后续复查；两站总览均 processing data。28 URL 为 8 已索引、19 未知、1 历史 noindex；当前英文排球页实时测试已确认允许索引，已请求重新抓取；曝光另查，见[接入审计](audits/2026-10-11-search-console-onboarding.md)；账号邮箱与 TXT 值不入文档 |
+| Google Search Console | [控制台](https://search.google.com/search-console)；属性 `sc-domain:xuesiyuan.com` / `sc-domain:siyuanxue.com` | 2026-10-11 两属性通过 Domain name provider 验证，用户已确认当前账号所有者权限。两站 index 已提交，英文此前复查 Success；中文 index 约 21:31 再次实时抓取成功，约 21:34 额外提交 `/sitemap-0.xml` 取得成功回执后，index 与子文件报告均为 Unknown / Couldn't fetch，原因未知，见[后续审计](audits/2026-10-11-search-followup.md)。此前两站总览 processing data；28 URL 为 8 已索引、19 未知、1 历史 noindex，英文排球页实时测试已允许索引并请求重新抓取，见[接入审计](audits/2026-10-11-search-console-onboarding.md)。本轮未重新验收这些 URL 的索引或曝光；账号邮箱与 TXT 值不入文档 |
 | 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index)；中文站优先搜索平台 | 2026-10-11 约 21:00 apex 已验证。约 21:10–21:15 复核：上一轮手动提交显示验证码错误；重填 14 URL 并由用户完成第二次验证码后，平台返回“您今日的链接提交量已达上限，请改天提交”，仍无成功回执，当前不再等待手动提交验证码。sitemap 当日上限/余额均 0，存量上限/余额均 1，入口禁用、文件列表暂无数据；不能提交索引型 sitemap，候选为 `/sitemap-0.xml`。Robots 平台检测已生效、无错误；索引量数据计算中。API token 未抄录使用，未配置自动推送；完整报告与限制见[本次审计](audits/2026-10-11-baidu-priority.md) |
 | 百度 HTML 验证配置 | GitHub Actions repository variable `BAIDU_SITE_VERIFICATION_ZH` → CI 环境 → 中文首页 `<head>` 的 `baidu-site-verification` | apex 新值已保存；[Actions 38141044881](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38141044881) 于约 21:01:40 确认整体成功，verify、deploy、IndexNow 通知三个 job 均成功，rollback skipped。约 20:58 独立检查 38 路由通过，两站 SHA 为 `57a0c8a9d744e9ed511594452737c75e09db65dc`，中文首页直接 200、不跟随跳转，唯一标签与新变量匹配。约 21:00 百度验证通过；保留标签，变量修改/移除须新 commit SHA，不能只重跑同 SHA。停用前核对所有权影响，不改 Google TXT 或现有 DNS |
-| Bing Webmaster Tools | [控制台](https://www.bing.com/webmasters/) | 2026-10-11 可用浏览器停留未登录介绍页；平台归属与提交状态待核查。IndexNow 是独立通知渠道，不代表此控制台已接入 |
+| Bing Webmaster Tools | [控制台](https://www.bing.com/webmasters/) | 2026-10-11 后续已通过 Google 完成基本登录，原站点列表为空；当前停在 GSC 只读权限授权页，尚未授权或导入。权限覆盖账号内全部已验证站点的只读访问，拟导入仅两域名，需用户确认该范围后继续；基本登录不等于两站已接入，见[后续审计](audits/2026-10-11-search-followup.md)。IndexNow 是独立通知渠道 |
 | IndexNow | `ops/indexnow.mjs`、CI/Deploy 工作流；GitHub 仓库 secrets `INDEXNOW_KEY_EN` / `INDEXNOW_KEY_ZH` | 2026-10-11 已配置两域名验证键；CI 从环境生成公开验证文件，源码和文档不存值。正常发布成功后独立通知；具体上线结果见当次审计 |
 | SEO 公共入口 | 每个域名的 `/robots.txt`、`/sitemap-index.xml`、`/sitemap-0.xml`、`/sitemap-images.xml`、`/sitemap-videos.xml`、`/rss.xml`、`/indexnow-manifest.json`；HTML canonical / hreflang / JSON-LD | 统一清单由 `src/utils/discoveryContent.ts` / `discovery.ts` 生成，构建集成逐页校验；详细清单与缺项报告只留 `.build/discovery/`。可被发现不等于已收录或有固定排名，维护规则见[搜索指南](SEARCH.md) |
+| AI 检索与引用验收 | [2026-10-11 AI 检索审计](audits/2026-10-11-ai-retrieval-validation.md)的全部候选、原样查询与直接读取矩阵 | 78 查询样本中自然文本仅返回两个不同本站页面；28 次 AI web 读取为 24 不可访问、1 Cache miss、3 旧快照，无当前正文读取确认。普通 HTTPS 28/28、媒体 HEAD 276/276 正常；3 个提供实时正文的受控综合不等于自然发现成功。另做 Gemini Auto 两次临时聊天，找到两域名与英文排球详情，但六个指定中文详情未获对应正文读取证据，出现角色错字、占位研究扩写和贡献遗漏。按产品/入口分别复跑、检查实际来源，不凭工具失败改页面或爬虫策略；只新增审计，无需服务恢复 |
 
 注册商、实例和搜索平台的缺项只需补非敏感信息；账号密码、证件、付款信息不要写入公开仓库。
 
@@ -202,6 +205,7 @@ git show archive/local-notes-and-hermes-memory-2026-09-16:docs/audits/2026-09-15
 |---|---|---|
 | 网站源码历史 | GitHub 网站仓库 `main` | 可 clone；不含服务器密钥、数据库、未推送归档或服务器安装状态 |
 | 个人主页历史 | GitHub `Siyuan-Xue/Siyuan-Xue` | 独立恢复 README；账号侧栏资料不是 Git 文件 |
+| 个人主页名称修正前备份 | 2026-10-11 原文及 API/差异验收临时保存在 `/tmp/pixeldone-profile-20261011/`；长期依据为独立仓库旧提交 `2de81af53ebe2241e2ef0869ec20463a46175562` | `/tmp` 不是长期备份。恢复时撤销 `7edf6cfb902f98a77dfa1129bfabf81037d500cc`，或核对后续改动后用当前 blob SHA 写回旧文；不能覆盖后续合法修改 |
 | Git 整理备份 | 本机仓库 `.git/cleanup-backups/2026-09-16/` | `refs.bundle`、`archive.bundle`、35 文件 tar、SHA-256 manifest、整理前 refs/worktrees、删除分支清单及恢复 README；**仅本机** |
 | GitHub 资料修改前备份 | 本机 `.git/seo-backups/2026-09-16/github-before.json` | 选定公开资料字段的旧值，非完整账号备份；仅本机 |
 | 网站旧 release | 服务器 `releases/` 与 `previous` | 正常保留 5 个成功版本；不等于服务器/聊天数据备份 |
@@ -277,8 +281,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日；2026-10-11 NS 查询确认两域名使用 DNSPod。仍需补注册商、域名到期日、自动续费、解析记录导出、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
 | 高 | 中文站百度接入 / 收录观察 | apex 已验证；手动 14 URL 提交返回当日上限，没有成功回执。用户直接确认网站号 `京ICP备2026004164号-4` 和主体号 `京ICP备2026004164号`；两者均被百度提示暂未查到信息，关闭表单后主体备案号仍显示未填写，未保存成功，不据此否定真实备案。用户随后明确“暂不备案，收尾任务”，百度侧备案登记和反馈按要求暂缓，不再等待材料或继续平台操作；这不撤销或否定既有备案。sitemap 日额度 0 是约 21:10–21:15 的上次结果，本轮未重新检查，未确认恢复。14 URL 和 sitemap 均无成功回执；相关登记/反馈待用户恢复时再继续。平台索引、明确时间范围内 PC/移动查询及抓取表现保留待观察，不创建自动任务。Robots 已检测生效不等于 HTML 实际抓取，诊断也因独立验证码未完成 |
-| 中 | 其他搜索平台 / AI 发现维护 | Google 两 Domain 属性已验证、两 sitemap 已提交；28 URL 检查已完成，约 21:00 等待期间中文 sitemap 刷新仍为 Couldn't fetch / Sitemap could not be read，无具体原因；继续复查中文报告、英文排球页后续收录，等待平台数据处理。Bing 登录后先复用已有属性，英文站继续维护 Google/Bing。各平台索引、曝光和 AI 引用分别记录，不承诺排名 |
-| 中 | 独立个人主页项目名称差异 | 2026-10-11 API 核对 README 仍为 `PixelDone / 像素清单`，独立仓库待按已确认展示名 `Pixel Done` 更新；本站与实际项目仓库 URL 保持不变 |
+| 中 | 其他搜索平台 / AI 发现维护 | Google 两 Domain 属性已验证；中文 index 与页面子 sitemap 的实时抓取均成功，额外提交子文件后报告仍 Couldn't fetch，无具体原因；公网协议/XML 检查通过，既有 SSH 凭据认证失败、未取到真实请求日志，后续以平台细节与授权日志访问定位，不直接改 XML/DNS。继续观察此前英文排球页收录和平台数据。Bing 已基本登录、原列表为空，GSC 只读权限与两站导入尚待用户确认后执行。AI 搜索、直接读取、多页综合分别验收；各平台索引、曝光和引用不互相替代，见[后续审计](audits/2026-10-11-search-followup.md) |
 | 中 | Node 26 聊天并发测试兼容性 | 2026-10-11 未修改聊天源码；Node 26.5.0 隔离并发测试出现实际 200 / 预期 429，Node 24.19.0 的 21 个 Node 子测试及完整 Bun 测试通过。只读诊断确认保留流式 Response 引用后 Node 26 也正确限流，差异涉及测试响应生命周期与运行时清理行为；后续运行时升级前复核测试。当前不据此改聊天实现，CI 未单独固定 Node 版本，实际结果按各次运行核对 |
 | 按需 | SuperGrok 服务器网络与认证 | 网络恢复、官方授权及一次真实推理均验收后才标启用；保留既有 GLM，不自动加付费回退 |
 
