@@ -28,12 +28,16 @@
 
 先运行针对性回归，新增 `homeMeta` 因 schema 丢弃字段而失败；真实 Astro 产物也显示原 `Gallery background`，没有使用 `Homepage context`。修改后内容测试及临时真实双语构建共 21 pass / 328 assertions，验证独立首页文案、图集背景保留、未提供字段的原时间回退，以及无时间图集不生成空括号。
 
-本轮 `bun run check` 检查 96 文件，0 errors / warnings / hints。完整单元套件有 118 项通过，聊天 bridge 的一项测试因沙箱禁止监听 `127.0.0.1`（`listen EPERM`）失败；仅该套件在允许本地监听后重跑，1 pass，生产 Node 子测试全部通过，未修改聊天代码或测试来绕过失败。在补齐话剧年月、录像链接与换行样式后重新运行双语构建，生产产物检查 32 pass / 6304 assertions；逐项检查两语言八条首页括号、排球队无括号、三部话剧图集背景保留及《家》录像外链通过。本轮本地中英文 390px 窄屏明暗主题与桌面预览通过，修复后两语言 `innerWidth` 和 `scrollWidth` 均为 390px，无横向溢出；未以桌面浏览器模拟当作实体手机验收。发布证据待本轮验收后补记。
+本轮 `bun run check` 检查 96 文件，0 errors / warnings / hints。完整单元套件有 118 项通过，聊天 bridge 的一项测试因沙箱禁止监听 `127.0.0.1`（`listen EPERM`）失败；仅该套件在允许本地监听后重跑，1 pass，生产 Node 子测试全部通过，未修改聊天代码或测试来绕过失败。在补齐话剧年月、录像链接与换行样式后重新运行双语构建，生产产物检查 32 pass / 6304 assertions；逐项检查两语言八条首页括号、排球队无括号、三部话剧图集背景保留及《家》录像外链通过。本轮本地中英文 390px 窄屏明暗主题与桌面预览通过，修复后两语言 `innerWidth` 和 `scrollWidth` 均为 390px，无横向溢出；未以桌面浏览器模拟当作实体手机验收。独立只读审查无 Critical / Important / Minor 问题；审查者另跑内容测试 20 pass / 68 assertions，核对实际双语 HTML 与差异检查通过。
+
+[Actions 38121089403](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38121089403) 已成功发布 `17bcc82ad6f22dec8fac278d18ca3a3c45e939d1`，`status: completed`、`conclusion: success` 与目标 `headSha` 一致。完成后 `ops/verify-public.sh` 再次确认两域名完整目标 SHA、固定语言和旧照片 410；实际公网 HTML 的八条首页括号、排球队无括号、三部话剧图集背景保留及《家》双语录像外链检查通过。
+
+生产浏览器核对中英文首页的日期和说明，390px 窄屏两语言均无横向溢出，明暗和桌面展示正常；恢复默认视口与浅色主题，保留中文首页作为交付。页面证明为本机临时 `/tmp/home-entry-production-2026-10-11.png`，不作为备份。临时本地预览服务已关闭；后续 `[skip ci]` 文档提交不改变上述静态 release。
 
 ## 维护清单与恢复
 
 - 已更新：八个图集的双语首页文案、两份《家》资料链接、内容模型、首页组件、换行样式、对应回归、图集指南与维护总览。
 - 不适用：新媒体上传、账户/身份资料、GitHub About/独立主页 README、域名、secret、依赖、Nginx/helper、聊天 bridge、Hermes、微信、记忆或其他独立服务安装；本轮仅调整首页说明和既有图集外链。
-- 待处理：本轮发布、目标 SHA 和线上布局验收；无未知话剧日期。既有异地备份及搜索平台待办仍以维护总览为准。
+- 待处理：本轮请求已完成，无未知话剧日期。既有异地备份及搜索平台待办仍以维护总览为准。
 
 恢复时从 Git 还原 `homeMeta`、对应模型/组件/样式及《家》的两份资料链接，通过现有双语 Actions 发布；亦可使用现有 Actions rollback 恢复仍保留的成功 release。媒体未变，无需重传或删除服务器快照；临时预览与证明截图不作为备份。
