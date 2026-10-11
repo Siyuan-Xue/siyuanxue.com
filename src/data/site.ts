@@ -165,6 +165,12 @@ export const site = {
 			external: true,
 		},
 		{
+			gallerySlug: 'finding-li-bai',
+			title: bi('Finding Li Bai · as Tian Bo', '话剧《寻找李白》· 饰 田波'),
+			href: '/gallery/finding-li-bai/',
+			external: false,
+		},
+		{
 			gallerySlug: 'volleyball',
 			title: bi(
 				'BUPT volleyball · school team & college team',

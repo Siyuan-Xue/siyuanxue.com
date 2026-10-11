@@ -90,6 +90,8 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 `walking-with-light` 在原址 `/gallery/walking-with-light/` 转为正式图集，中文标题为「话剧《与光同行》· 饰 叶培大」，英文为「Walking with Light · as Ye Peida」。用户确认饰演男主角叶培大、五个多月的排练及 2025 年 10–11 月演出经历；奖项在正文中作为剧目经历呈现，不另行推定个人获奖归属。16 张用户提供的真实照片共用 `walking-with-light/photo-01` 至 `photo-16` 媒体 ID；横向舞台照作为首图，后续包含舞台、幕后、谢幕和赴中戏合影，沿用 `photos` 自然比例与双语图注、灯箱。页末保留用户指定的四篇报道。原始编号对应素材输入顺序，页面可以按叙事顺序排列；恢复时以 JSON 的 ID 顺序为准。媒体直传、资料核对及本轮发布结果见 [话剧图集审计](audits/2026-10-11-walking-with-light-gallery.md)。
 
+`finding-li-bai` 是新增兴趣爱好图集，双语标题为「话剧《寻找李白》· 饰 田波 / Finding Li Bai · as Tian Bo」，路径为 `/gallery/finding-li-bai/`，首页排列在《与光同行》之后、排球队之前。用户确认这是第二次话剧演出及本人饰演田波，介绍保留剧团友谊与演出结束后的强烈不舍；未提供演出年月时，以「第二次参演话剧」表达相对经历，不猜测日期。九张真实照片对应 `finding-li-bai/photo-01` 至 `photo-09`；横向舞台全景作为首图，两张竖照并排，剧组与朋友合影在后，默认自然比例及灯箱保持不变。没有提供资料链接，`links` 为空，不添加推测来源。两语言同时为正式图集；媒体直传、内容与发布结果见 [本轮审计](audits/2026-10-11-finding-li-bai-gallery.md)。
+
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 
 `b-spline-policy` 为 2026 年 7–8 月极智深诣公司实习 Demo 的正式图集。首页关联位置在 Pixel Done 之后、BNDS.life 之前；两语言共享三个 1× / 2× / 4× 原始模拟视频、三张预览帧及一张真机结果图，引用 `b-spline-policy/*` 媒体 ID。正文说明论文复现与算法改进的实际参与，实验表格仅在原图中展示，图下保留简短结果说明；页末提供 [GitHub 仓库](https://github.com/Siyuan-Xue/openpi05-bsp) 和 [B-spline Policy 论文](https://arxiv.org/abs/2607.09648)。该图集的初次发布见 [审计](audits/2026-10-11-b-spline-gallery.md)，移除重复表格见 [后续调整](audits/2026-10-11-b-spline-table-cleanup.md)。
