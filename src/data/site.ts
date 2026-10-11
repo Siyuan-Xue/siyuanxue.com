@@ -59,12 +59,8 @@ export const site = {
 		),
 		more: [
 			bi(
-				'His favorite saying is',
-				'他最喜欢的一句话是',
-			),
-			bi(
-				'Stay hungry, stay foolish.',
-				'Stay hungry, stay foolish.',
+				'His favorite saying is “Stay hungry. Stay foolish.”',
+				'他最喜欢的一句话是：“Stay hungry. Stay foolish.”',
 			),
 		],
 	},
