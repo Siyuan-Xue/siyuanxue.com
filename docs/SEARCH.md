@@ -2,6 +2,19 @@
 
 长期目标见 [AGENTS.md](../AGENTS.md)，资源、发布和恢复见[维护总览](MAINTENANCE.md)。本指南覆盖全站当前及未来公开内容；以下样本是 2026-10-11 的基线，不是允许索引的主题白名单。
 
+## 平台优先级与下一阶段验收
+
+2026-10-11 用户明确：**中文站 `xuesiyuan.com` 重点在百度**。中文站优先验收百度发现、抓取、收录及中文查询曝光；继续维护 Google、Bing 与 AI 跨平台发现，保留已完成的 Google 站点验证和稳定路由。英文站继续安排 Google/Bing 维护，这是当前实施安排，不代表用户另行明确了英文平台排序。
+
+1. 在百度搜索资源平台核查已有站点，优先复用；没有站点时按平台提供的方式验证 `xuesiyuan.com`，保留既有 DNS 与 Google 验证记录。
+2. 从当前构建清单取得全部中文索引候选 URL（当前 14 个），按账号实际开放的普通提交、API 或 sitemap 能力提交，记录实际入口、配额和回执；不预设 API、快速收录或 sitemap 入口必定可用，未开放时记录限制和可执行的替代入口。
+3. 分别核查百度抓取、索引及中文查询报告；查询覆盖下表全部内容类型与查询方式。记录实际返回页面、时间和证据，暂无数据与未取得权限分别标注。
+4. 保持 Google 中文 sitemap 异常复查、英文索引观察和 Bing 接入待办；AI 搜索发现、直接读取 URL 与多页面综合继续独立检查。维护频率沿用月度检查和季度政策复核，不创建定时自动化。
+
+百度平台当前归属、提交与收录情况须以百度实际界面或回执取证。Google 本次 28 URL 的 8 个已索引、19 个未知及 1 个历史 noindex，以及 IndexNow HTTP 202，均不能视为百度状态。当前操作证据与待办见[百度优先级审计](audits/2026-10-11-baidu-priority.md)。
+
+本轮浏览器已登录百度搜索资源平台，普通收录页提示“因您未添加网站，只可以浏览部分内容”，站点管理列表无站点。点击“添加网站”后先弹出强制“完善账户信息”表单，尚未进入网站地址或所有权验证页面。已请用户在平台自行填写所需信息、完成手机/邮箱验证及隐私声明步骤；不向聊天或仓库发送私人信息和验证码。站点验证、提交、抓取和索引核查尚未完成。下文此前未登录的记录保留为当时事实。
+
 ## 内容发布约定
 
 1. 保持中英文内容配对和稳定 URL。正常页面经首页或正文的 HTML 链接可达；新页面类型须登记公开/索引策略。新文章与图集从内容集合自动进入清单。
@@ -62,7 +75,7 @@
 - 2026-10-11 首轮核查时 Google Search Console、Bing Webmaster Tools、百度搜索资源平台均未登录；这是当时的证据边界。同日后续 Chrome 已登录 Google，原资源列表只有 X 和 YouTube，没有两网站。用户明确确认保存 TXT 并授予当前账号所有者权限后，`sc-domain:siyuanxue.com` 显示 Ownership verified、`sc-domain:xuesiyuan.com` 显示 Ownership auto verified，方式均为 Domain name provider。
 - 两域名使用 DNSPod（`lennon.dnspod.net` / `radius.dnspod.net`）。19:01 分别保存 `@` Google 验证 TXT，默认线路、TTL 600，公开 DNS 值完全匹配；原有 `@` / `www` A 均指向 `82.156.77.131`、TTL 600，保持不变。持续验证需要保留 TXT；账号邮箱与 TXT 值不写入文档。注册商、到期日仍未知。
 - [中文 sitemap](https://xuesiyuan.com/sitemap-index.xml) 与[英文 sitemap](https://siyuanxue.com/sitemap-index.xml) 均已提交。英文详情显示 Sitemap index processed successfully，最终列表复查 Status Success；中文约 19:11 复查仍显示 Sitemap could not be read，但 19:11:49 Google 对该 XML 的实时抓取成功；未给 XML 申请索引。中文 Manual actions 为 No issues detected；报告失败原因尚未确定，不能断言一定是延迟，后续复查。两站 Last read 均为 `10/11/26`、discovered pages/videos 均为 0，不能用这些初始计数推断未收录；总览 processing data，平台提示约一天后查看，没有创建自动化。
-- 同次公网核对两域名 index、三个子 sitemap 与 robots.txt，在普通和 Googlebot UA 下共 20 次请求均返回 200、无重定向，XML 可解析且 robots 允许抓取；模拟 UA 不代表真实 Google 抓取来源。当前每站 14 个候选 URL 均已检查：[28 URL 清单](audits/2026-10-11-search-console-onboarding.md)记录 8 个已索引、19 个 Google 未知、1 个英文排球页历史 noindex 排除。当前英文排球 HTML 不含 noindex，Google 实时测试也已确认 Page can be indexed；该页及两站首页请求均返回 Indexing requested，已加入优先抓取队列；实际后续收录/更新仍待复查。不能将历史抓取或 URL unknown 当成当前 robots 阻断结论。Bing/百度仍待登录后核查，优先复用已有站点。
+- 同次公网核对两域名 index、三个子 sitemap 与 robots.txt，在普通和 Googlebot UA 下共 20 次请求均返回 200、无重定向，XML 可解析且 robots 允许抓取；模拟 UA 不代表真实 Google 抓取来源。当前每站 14 个候选 URL 均已检查：[28 URL 清单](audits/2026-10-11-search-console-onboarding.md)记录 8 个已索引、19 个 Google 未知、1 个英文排球页历史 noindex 排除。当前英文排球 HTML 不含 noindex，Google 实时测试也已确认 Page can be indexed；该页及两站首页请求均返回 Indexing requested，已加入优先抓取队列；实际后续收录/更新仍待复查。不能将历史抓取或 URL unknown 当成当前 robots 阻断结论。该次结束时 Bing/百度尚待登录后核查；本轮百度的新状态见上方平台优先级及本次审计。
 - IndexNow 验证键通过 GitHub 仓库 secrets `INDEXNOW_KEY_EN`、`INDEXNOW_KEY_ZH` 管理，值为公开所有权验证材料，但不写入源码或维护文档。变更键时重新构建发布并检查每域名验证文件；工作流通知结果与待重试列表独立记录。200/202 接收不等于已索引。
-- 每月检查新增/删除页面、平台排除原因、姓名与无姓名查询、媒体结果及 AI 引用准确性；每季度检查爬虫政策。没有创建定时自动任务。
+- 每月优先检查中文站百度新增/删除页面、抓取与索引原因、姓名与无姓名中文查询及媒体结果，同时维护 Google/Bing 和 AI 引用准确性；每季度检查爬虫政策。没有创建定时自动任务。
 - 搜索与 AI 的依据以官方说明为准：[Google AI 搜索](https://developers.google.com/search/docs/appearance/ai-features)、[Google noindex](https://developers.google.com/search/docs/crawling-indexing/block-indexing)、[OpenAI 爬虫](https://developers.openai.com/api/docs/bots)、[Anthropic 爬虫](https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler)、[Perplexity 爬虫](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)、[IndexNow](https://www.indexnow.org/faq)。保留现有训练策略；搜索可达不等于同意新增训练用途。

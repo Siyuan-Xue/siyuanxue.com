@@ -6,6 +6,8 @@
 
 **同日后续搜索平台接入：**用户确认后，已在 DNSPod 为两域名添加 Google 验证 TXT，公开 DNS 匹配且 Search Console 两个 Domain 属性均验证成功；原有网站 A 记录保持不变。两站 sitemap 已提交，英文 index 最终复查 Success；中文报告复查仍显示读取失败，但 Google 对 XML 的实时抓取成功、Manual actions 无问题，失败原因尚未确定，后续仍待复查。两站总览均在处理数据，平台提示约一天后查看；28 URL 已逐项检查：8 已索引、19 为 Google 未知、1 为英文排球页历史 noindex（当前 HTML 无 noindex，Google 实时测试已确认允许索引，已请求重新抓取）；曝光数据仍待处理，没有创建自动化。证据及 28 URL 检查清单见[接入审计](audits/2026-10-11-search-console-onboarding.md)；此前“未登录”保留为此前阶段事实。
 
+**同日用户明确平台优先级：**中文站 `xuesiyuan.com` 重点在百度，下一阶段优先核查百度站点归属、提交能力、抓取、收录及中文查询曝光。Google、Bing 与 AI 跨平台发现继续维护，已完成的 Google 验证和稳定路由保留；英文站继续安排 Google/Bing 维护，该安排不是用户另行指定的英文平台排序。Google 的 28 URL 检查结果和 IndexNow 202 回执均不能用作百度状态。具体步骤与平台证据见[百度优先级审计](audits/2026-10-11-baidu-priority.md)。
+
 这是网站及关联资源的维护入口。[本轮工作总结](WORK-SUMMARY-2026-09-16.md) 解释已做的工作；本文记录资源在哪里、怎样更新、怎样验收与恢复。以仓库和既有部署记录为依据，不包含密码、令牌、微信身份 ID、日记正文或恢复密钥。
 
 ## 1. 如何判断信息是否仍然有效
@@ -38,7 +40,7 @@
 | 腾讯云 Lighthouse | Ubuntu 24.04 / Nginx；IP `82.156.77.131`；实例 `lhins-aftjtoo4`，北京七区 / `ap-beijing` | 管理员 `ubuntu`，CI `deploy`，SSH 22；腾讯云控制台 OrcaTerm 为备用。2026-10-10 控制台核对：锐驰型 2 核 / 8GB / 80GB、无限流量 / 200Mbps 峰值带宽，到期 2027-08-23 07:46:25；自动续费与快照策略待核对。套餐峰值不代表实际跨境吞吐量 |
 | TLS 证书 | 两 apex 分别管理含自身 www 的证书；`/etc/letsencrypt/` | Certbot 自动续期及 Nginx reload hook；见 [HTTPS 运维](../ops/HTTPS.md)。当前有效期和最近续期结果需定期查证 |
 | Google Search Console | [控制台](https://search.google.com/search-console)；属性 `sc-domain:xuesiyuan.com` / `sc-domain:siyuanxue.com` | 2026-10-11 两属性通过 Domain name provider 验证，用户已确认当前账号所有者权限。两站 sitemap 已提交；英文 index 最终复查 Success，中文报告仍读取失败，但 XML 实时抓取成功、无人工处置，原因待后续复查；两站总览均 processing data。28 URL 为 8 已索引、19 未知、1 历史 noindex；当前英文排球页实时测试已确认允许索引，已请求重新抓取；曝光另查，见[接入审计](audits/2026-10-11-search-console-onboarding.md)；账号邮箱与 TXT 值不入文档 |
-| 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index) | 2026-10-11 平台明确显示未登录；未取得账号归属与提交证据，未配置百度推送令牌 |
+| 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index)；中文站优先搜索平台 | 2026-10-11 本轮浏览器已登录，站点管理列表无站点。点击“添加网站”先弹出强制“完善账户信息”表单，尚未进入网站地址或所有权验证页面；已请用户在平台自行填写所需信息、完成手机/邮箱验证并决定接受隐私声明，不向聊天或仓库发送私人信息与验证码。完成后按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，分别记录提交、抓取、收录及中文查询曝光；API、配额、快速收录与 sitemap 入口以实际账号界面为准。未配置百度推送令牌，见[本次审计](audits/2026-10-11-baidu-priority.md) |
 | Bing Webmaster Tools | [控制台](https://www.bing.com/webmasters/) | 2026-10-11 可用浏览器停留未登录介绍页；平台归属与提交状态待核查。IndexNow 是独立通知渠道，不代表此控制台已接入 |
 | IndexNow | `ops/indexnow.mjs`、CI/Deploy 工作流；GitHub 仓库 secrets `INDEXNOW_KEY_EN` / `INDEXNOW_KEY_ZH` | 2026-10-11 已配置两域名验证键；CI 从环境生成公开验证文件，源码和文档不存值。正常发布成功后独立通知；具体上线结果见当次审计 |
 | SEO 公共入口 | 每个域名的 `/robots.txt`、`/sitemap-index.xml`、`/sitemap-0.xml`、`/sitemap-images.xml`、`/sitemap-videos.xml`、`/rss.xml`、`/indexnow-manifest.json`；HTML canonical / hreflang / JSON-LD | 统一清单由 `src/utils/discoveryContent.ts` / `discovery.ts` 生成，构建集成逐页校验；详细清单与缺项报告只留 `.build/discovery/`。可被发现不等于已收录或有固定排名，维护规则见[搜索指南](SEARCH.md) |
@@ -231,6 +233,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 媒体上传 / 存储 | 本机 Sharp 准备、媒体清单、原生 SSH/rsync 与严格主机校验、服务器摘要/大小验证、两站媒体类型/缓存/Range、CI 无图片视频、独立媒体恢复与磁盘容量；先上传再发布，禁止密码入库 |
 | 图集 / 首页内容目录 | `src/content/galleries` 双语 JSON、真实角色/介绍/图片/alt/图注、来源资料与 `site.ts` 的 gallerySlug、双语 preview 一致、可选时间字段与独立首页 `homeMeta` 两语言显示一致，仅简短说明/不回退时间及无空括号、可选图片分区的标题/起点/顺序与连续灯箱、草稿隔离、首页站内入口、封面/canonical/hreflang/ImageGallery；sitemap 按内容 draft/preview 状态筛选；`bun run test:gallery` 在临时目录验证正式图集可索引，生产产物测试验证条目预览可由首页进入但 noindex/不进 sitemap、固定版式样例额外不进首页、普通草稿不出页；不改变博客 RSS 身份 |
 | 域名 / 路径 | 注册与 DNS、www/HTTP 跳转、两个证书、Nginx 根目录、SEO/RSS/sitemap、语言链接、聊天 ALLOWED_ORIGINS、CI 变量与域名校验、GitHub 各处链接、搜索平台属性 |
+| 搜索平台 / 提交策略 | 中文站优先核查百度站点归属及账号实际开放能力；两站稳定 URL、现有 Google 验证与 Bing/AI 发现继续维护。按平台分别记录提交回执、抓取、索引、查询曝光及 AI 引用，不将一个平台的数据移作另一个平台的验收 |
 | 肖像 / 动效 | 正常肖像与占位肖像区分、人物比例/压缩/alt、单击展开、刷新折叠、灯箱可访问性、两站可见英文文案、reduced-motion、旧照片永久拒绝、图片缓存；不恢复状态标语块 |
 | 明暗 / 顶栏 / 导航 | 首页/文章/聊天、两种语言、明暗初次加载/切换/返回、不透明背景与图标可读性、静态页滚动显隐/顶部/焦点/手机目录显示锁、聊天顶栏常显、Lucide 无圆框按钮、控件按「越小、越新越靠左」排序且 DOM/键盘顺序一致、桌面固定目录与锚点偏移、键盘/触屏/窄屏；桌面结果不能当实体手机验收 |
 | 聊天前端 / 协议 | 网站 CI、Node bridge 是否也需独立部署、真实 SSE/错误/停止/重试、会话恢复、两域名跨源配置、许可证归属 |
@@ -259,7 +262,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 
 - 每次发布后：两域名语言、TLS、`__health`、关键交互；聊天相关更新再做模型与记忆验收。
 - 每周：Actions 失败、服务失败、磁盘/共享资源、记忆队列积压、备份最近成功时间；备份未自动清理。
-- 每月：依赖与服务器更新、证书自动续期、模型额度/账单、账号权限、域名/云实例续费日期；检查搜索收录、查询曝光与引用准确性，搜索平台未接入时明确记录证据缺口。
+- 每月：依赖与服务器更新、证书自动续期、模型额度/账单、账号权限、域名/云实例续费日期；中文站优先检查百度抓取、收录和中文查询曝光，同时维护 Google/Bing 与 AI 引用准确性；搜索平台未接入时明确记录证据缺口。
 - 每季度及迁移前：隔离恢复演练、备份异地可用性、维护清单与运行状态的一致性；复核搜索与 AI 爬虫官方政策，分别检查搜索、用户发起读取、训练用途。尚未创建定时自动任务。
 
 ## 7. 仍需跟进的事项
@@ -270,7 +273,8 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 高 | 备份连续性与容量 | 定期验证服务器备份；确定异地自动备份与留存策略；目前 Mac 只是一份快照 |
 | 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日；2026-10-11 NS 查询确认两域名使用 DNSPod。仍需补注册商、域名到期日、自动续费、解析记录导出、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
-| 中 | 搜索平台接入 / 收录观察 | Google 两 Domain 属性已验证、两 sitemap 已提交；28 URL 检查已完成，复查中文 sitemap 读取状态、英文排球页后续收录，等待平台数据处理。Bing/百度仍未取得登录后的核查证据，先复用已有属性。IndexNow 独立接入不代替平台验证；索引、曝光和 AI 引用分别记录，不承诺排名 |
+| 高 | 中文站百度接入 / 收录观察 | 当前百度账号已登录且无站点，“添加网站”被强制完善账户信息拦住；待用户在平台自行填表、完成手机/邮箱验证及隐私声明步骤，再添加并验证中文站。按账号实际开放能力提交当前 14 个中文候选 URL 与 sitemap，记录入口、配额、回执、抓取、索引及中文查询表现。未开放的提交方式保留明确待办；不以 Google 或 IndexNow 结果替代百度证据 |
+| 中 | 其他搜索平台 / AI 发现维护 | Google 两 Domain 属性已验证、两 sitemap 已提交；28 URL 检查已完成，复查中文 sitemap 读取状态、英文排球页后续收录，等待平台数据处理。Bing 登录后先复用已有属性，英文站继续维护 Google/Bing。各平台索引、曝光和 AI 引用分别记录，不承诺排名 |
 | 中 | 独立个人主页项目名称差异 | 2026-10-11 API 核对 README 仍为 `PixelDone / 像素清单`，独立仓库待按已确认展示名 `Pixel Done` 更新；本站与实际项目仓库 URL 保持不变 |
 | 按需 | SuperGrok 服务器网络与认证 | 网络恢复、官方授权及一次真实推理均验收后才标启用；保留既有 GLM，不自动加付费回退 |
 
