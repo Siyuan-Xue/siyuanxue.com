@@ -75,7 +75,7 @@
 
 ### GitHub Actions
 
-**2026-10-11 B-Spline Policy 图集：**双语正文位于 `src/content/galleries/b-spline-policy/{en,zh}.json`，首页关联在 `src/data/site.ts`，公开路径为 `/gallery/b-spline-policy/`。实际材料为新易公司 2026 年 7–8 月实习 Demo 的三个模拟视频及一张真机实验图，资料链接为 [项目仓库](https://github.com/Siyuan-Xue/openpi05-bsp) 和 [论文](https://arxiv.org/abs/2607.09648)。新增可选视频与四列表格内容，更新方式见 [图集指南](GALLERIES.md)；播放无需页面脚本，图片仍独立进入灯箱。7 个媒体 ID 对应 19 个文件（1,304,018 字节）已直传并逐文件核验；服务器恢复快照为 `/var/backups/siyuanxue-media/587ad4b11888d4a497154c77546b33414a9b9efd93dc3059e7e63fec345d63a2/`。本机源副本与派生资源仍在忽略目录 `media-local/`。恢复时先还原双语 JSON 和清单，媒体缺失再从本机或快照恢复并核验；不改仓库设置、账户、CI secret 或独立服务。页面发布及本轮检查见 [审计](audits/2026-10-11-b-spline-gallery.md)；生产目标 SHA 尚待发布后补记。
+**2026-10-11 B-Spline Policy 图集：**双语正文位于 `src/content/galleries/b-spline-policy/{en,zh}.json`，首页关联在 `src/data/site.ts`，公开路径为 `/gallery/b-spline-policy/`。实际材料为极智深诣公司 2026 年 7–8 月实习 Demo 的三个模拟视频及一张真机实验图，资料链接为 [项目仓库](https://github.com/Siyuan-Xue/openpi05-bsp) 和 [论文](https://arxiv.org/abs/2607.09648)。新增可选视频与四列表格内容，更新方式见 [图集指南](GALLERIES.md)；播放无需页面脚本，图片仍独立进入灯箱。7 个媒体 ID 对应 19 个文件（1,304,018 字节）已直传并逐文件核验；服务器恢复快照为 `/var/backups/siyuanxue-media/587ad4b11888d4a497154c77546b33414a9b9efd93dc3059e7e63fec345d63a2/`。本机源副本与派生资源仍在忽略目录 `media-local/`。恢复时先还原双语 JSON 和清单，媒体缺失再从本机或快照恢复并核验；不改仓库设置、账户、CI secret 或独立服务。页面发布及本轮检查见 [审计](audits/2026-10-11-b-spline-gallery.md)；生产目标 SHA 尚待发布后补记。
 
 - [CI 工作流](../.github/workflows/ci.yml) 调用 `bash ops/verify.sh`，完成类型、行为、部署脚本、隔离 Nginx、双语构建及产物检查，再打包同一份产物；Actions artifact 保留 7 天，不能当长期备份。
 - [生产工作流](../.github/workflows/deploy.yml) 在 push `main` 后运行；`production` 并发不主动取消前次发布。上传已验证包及校验和，激活版本，验证公网两域名，最后保留 5 个成功 release。

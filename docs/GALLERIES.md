@@ -88,7 +88,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 
-`b-spline-policy` 为 2026 年 7–8 月新易公司实习 Demo 的正式图集。首页关联位置在 Pixel Done 之后、BNDS.life 之前；两语言共享三个 1× / 2× / 4× 原始模拟视频、三张预览帧及一张真机结果图，引用 `b-spline-policy/*` 媒体 ID。正文说明论文复现与算法改进的实际参与，图下四行表格保留跳变均值和方差，页末提供 [GitHub 仓库](https://github.com/Siyuan-Xue/openpi05-bsp) 和 [B-spline Policy 论文](https://arxiv.org/abs/2607.09648)。该图集的真实验证与发布记录见 [审计](audits/2026-10-11-b-spline-gallery.md)。
+`b-spline-policy` 为 2026 年 7–8 月极智深诣公司实习 Demo 的正式图集。首页关联位置在 Pixel Done 之后、BNDS.life 之前；两语言共享三个 1× / 2× / 4× 原始模拟视频、三张预览帧及一张真机结果图，引用 `b-spline-policy/*` 媒体 ID。正文说明论文复现与算法改进的实际参与，图下四行表格保留跳变均值和方差，页末提供 [GitHub 仓库](https://github.com/Siyuan-Xue/openpi05-bsp) 和 [B-spline Policy 论文](https://arxiv.org/abs/2607.09648)。该图集的真实验证与发布记录见 [审计](audits/2026-10-11-b-spline-gallery.md)。
 
 ## 预览转正式与发布检查
 

@@ -1,7 +1,7 @@
 {
   "title": "B-Spline Policy",
-  "description": "I completed this embodied AI demo during my internship at Xinyi (新易) in July–August 2026. Using a simulation environment and the company's real-robot setup, I attempted to reproduce B-spline Policy by Han, Xiong et al., then improved the algorithm in response to issues found during reproduction. The project gave me practical experience with embodied model training, inference, robot-arm control and the engineering connections between them. Below are simulation results at different execution speeds and a real-robot comparison of smoothness at action-chunk boundaries.",
-  "period": "July–August 2026 · internship at Xinyi (新易)",
+  "description": "I completed this embodied AI demo during my internship at SEEN-E in July–August 2026. Using a simulation environment and the company's real-robot setup, I attempted to reproduce B-spline Policy by Han, Xiong et al., then improved the algorithm in response to issues found during reproduction. The project gave me practical experience with embodied model training, inference, robot-arm control and the engineering connections between them. Below are simulation results at different execution speeds and a real-robot comparison of smoothness at action-chunk boundaries.",
+  "period": "July–August 2026 · internship at SEEN-E",
   "role": "Paper reproduction, model training and inference, simulation and real-robot experiments, algorithm improvements",
   "category": "projects",
   "order": 45,
