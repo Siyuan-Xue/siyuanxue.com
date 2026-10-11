@@ -79,7 +79,7 @@
 
 **2026-10-11 LeDA 视频布局后续调整：**按用户反馈取消 `demos` 的 480px 上限，播放器与正文共用窄栏宽度；两语言 LeDA JSON 将 `videoTitle` 显式设为 `null`，移除总标题，保留各视频标题、图注及辅助技术名称。更新位置为 `src/utils/gallery.ts`、`src/components/GalleryContent.astro`、`src/styles/gallery.css` 与双语 JSON；当前作者规则见 [图集指南](GALLERIES.md)，本轮验证、发布与恢复见 [布局审计](audits/2026-10-11-leda-video-layout.md)。上述正式图集段落保留首次上线时的 480px 验收事实。本次不涉及媒体直传或服务器配置；[Actions 38107179283](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38107179283) 成功发布 `0d5be1dc763ee72d16d66f4feec9cfdfb343d701`，两站目标 SHA、固定语言、跳转、旧照片拒绝、图集正文及索引元信息通过公网检查。两语言生产浏览器确认视频与正文桌面同宽 624px、390px 窄屏同宽 358px，总标题缺席；B-Spline 的三列与默认标题保持原样。后续 `[skip ci]` 文档提交不改变此静态 release；恢复沿用 Git 还原或 Actions rollback，无需重新上传媒体。
 
-**2026-10-11 图片与演示视频一致性后续调整：**LeDA 的 `demos` 改为与图片一致的下方图注，取消各视频上方的小标题，并把视频之间及视频区到图片区的留白统一为 2rem。修改位置为共享 `GalleryContent.astro` 和 `gallery.css`，两语言同步；媒体、正文事实、播放器控件和 `comparison` 速度标题不变。当前规则见 [图集指南](GALLERIES.md)，本轮验证、发布和恢复见 [展示一致性审计](audits/2026-10-11-gallery-media-consistency.md)。本机修改尚待本轮构建及生产验收，不将上一轮同宽检查当作本次结果。
+**2026-10-11 图片与演示视频一致性后续调整：**LeDA 的 `demos` 改为与图片一致的下方图注，取消各视频上方的小标题，并把视频之间及视频区到图片区的留白统一为 2rem。修改位置为共享 `GalleryContent.astro` 和 `gallery.css`，两语言同步；媒体、正文事实、播放器控件和 `comparison` 速度标题不变。当前规则见 [图集指南](GALLERIES.md)，本轮验证、发布和恢复见 [展示一致性审计](audits/2026-10-11-gallery-media-consistency.md)。本轮类型检查、双语构建、产物检查、临时图集构建、本机桌面及窄屏核对已通过；已完成合并前审查，生产 Actions 与两站验收待发布后补记，不将本机结果当作线上结果。
 
 ### GitHub Actions
 
