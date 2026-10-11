@@ -1,6 +1,8 @@
 .gallery-header { margin-bottom: var(--section-gap); }
 .gallery-period, .gallery-role { color: var(--fg-muted); font-size: var(--font-size-meta); margin: 0.35em 0; }
 .gallery-description { margin-top: 1.4em; }
+.gallery-photo-section + .gallery-photo-section { margin-top: var(--section-gap); }
+.gallery-photo-section > h2 { font-size: var(--font-size-h3); margin: 0 0 1.25rem; }
 .gallery-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.25rem; align-items: start; }
 .gallery-figure { margin: 0; min-width: 0; }
 .gallery-figure-wide { grid-column: 1 / -1; }

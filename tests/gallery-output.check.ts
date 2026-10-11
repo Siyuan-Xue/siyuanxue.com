@@ -17,6 +17,7 @@ const variants = [
 type Fixture = {
  title: string; description: string; period: string; role: string; draft: boolean; preview: boolean;
  images: { src: string; alt: string; caption: string }[];
+ imageSections?: { title: string; start: number }[];
  links: { label: string; href: string }[];
 };
 
@@ -38,6 +39,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    expect(fixture.draft).toBe(true);
    expect(fixture.images).toHaveLength(4);
    expect(fixture.links.length).toBeGreaterThan(0);
+   fixture.imageSections = [{ title: locale === 'en' ? 'University team' : '校排球队', start: 0 }, { title: locale === 'en' ? 'College team' : '院排球队', start: 2 }];
    fixtures.set(locale, fixture);
    await writeFile(join(draftDirectory, `${locale}.json`), JSON.stringify(fixture));
    await writeFile(join(publishedDirectory, `${locale}.json`), JSON.stringify({ ...fixture, draft: false, preview: false }));
@@ -55,6 +57,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    const { document: preview } = parseHTML(await readFile(join(output, previewPath, 'index.html'), 'utf8'));
    expect(preview.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
    expect(preview.querySelectorAll('article[data-gallery-page] figure')).toHaveLength(4);
+   expect(preview.querySelectorAll('.gallery-photo-section')).toHaveLength(0);
    expect(preview.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(origin + previewPath);
    expect(JSON.parse(await readFile(join(temporary, 'src/content/galleries/layout-preview', `${locale}.json`), 'utf8')).draft).toBe(true);
    const { document } = parseHTML(await readFile(join(output, pathname, 'index.html'), 'utf8'));
@@ -71,6 +74,16 @@ test('published bilingual gallery survives a real Astro build with crawlable con
 
    const figures = [...gallery.querySelectorAll('figure')];
    expect(figures).toHaveLength(4);
+   const sections = [...gallery.querySelectorAll('.gallery-photo-section')];
+   expect(sections).toHaveLength(2);
+   sections.forEach((section, index) => {
+    const heading = section.querySelector('h2')!;
+    expect(heading.textContent).toBe(fixture.imageSections![index].title);
+    expect(section.getAttribute('aria-labelledby')).toBe(heading.id);
+    expect(section.querySelectorAll('figure')).toHaveLength(2);
+   });
+   expect(new Set(figures.map(figure => figure.querySelector('figcaption')!.id)).size).toBe(4);
+   expect(figures.map(figure => figure.querySelector('img')!.getAttribute('loading'))).toEqual(['eager', 'lazy', 'lazy', 'lazy']);
    const originals: string[] = [];
    for (const [index, figure] of figures.entries()) {
     const expected = fixture.images[index];

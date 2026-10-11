@@ -1,32 +1,72 @@
 {
   "title": "校排球队 · 院排球队",
-  "description": "这里将展示与校排球队 · 院排球队相关的图片与资料。当前抽象图片均为占位图，用于查看图集效果；真实图片、本人实际角色和经核实的说明仍待补充。",
-  "period": "时间待补充",
-  "role": "待补充实际角色",
+  "description": "我深爱排球这项让人热血沸腾的运动。上大学后，我在一周内加入了校排球队和院排球队。此后，我代表学校参加了多次北京市的比赛，也与院队队友一起，代表学院多次赢得校内比赛冠军。",
+  "period": "大学期间",
+  "role": "校排球队与院排球队队员",
   "category": "appearances",
   "order": 1,
   "draft": false,
-  "preview": true,
+  "preview": false,
+  "imageSections": [
+    {
+      "title": "校排球队",
+      "start": 0
+    },
+    {
+      "title": "院排球队",
+      "start": 4
+    }
+  ],
   "images": [
     {
-      "src": "gallery-preview/hero",
-      "alt": "校排球队 · 院排球队的第1张抽象占位图",
-      "caption": "占位图：这里将展示球队场景。"
+      "src": "volleyball/photo-01",
+      "alt": "身穿红白15号球衣、戴运动眼镜的队员在室内排球场上低头拿着排球",
+      "caption": "代表学校站上赛场。"
     },
     {
-      "src": "gallery-preview/detail",
-      "alt": "校排球队 · 院排球队的第2张抽象占位图",
-      "caption": "占位图：这里将展示训练细节。"
+      "src": "volleyball/photo-02",
+      "alt": "身穿北邮红白球衣和深色球衣的校队队员在球网旁围在一起交流",
+      "caption": "与校队队友并肩作战。"
     },
     {
-      "src": "gallery-preview/portrait",
-      "alt": "校排球队 · 院排球队的第3张抽象占位图",
-      "caption": "占位图：这里将展示比赛照片。"
+      "src": "volleyball/photo-03",
+      "alt": "身穿红白15号球衣的队员抬臂击球，排球在他头顶上方，前方可见球网和其他队员",
+      "caption": "追着球的轨迹，全心投入比赛。"
     },
     {
-      "src": "gallery-preview/closing",
-      "alt": "校排球队 · 院排球队的第4张抽象占位图",
-      "caption": "占位图：这里将展示相关资料。"
+      "src": "volleyball/photo-04",
+      "alt": "校排球队队员穿着北邮球衣在室内赛场上并肩站成一排",
+      "caption": "一起站在赛场上的校队伙伴。"
+    },
+    {
+      "src": "volleyball/photo-05",
+      "alt": "身穿白色2号球衣的队员跃起扣球，对方蓝衣队员在网前拦网，其他队员准备接应",
+      "caption": "网前跃起，全力争取这一分。"
+    },
+    {
+      "src": "volleyball/photo-06",
+      "alt": "身穿白色球衣和黑色短裤、戴眼镜的队员在室内排球场上抛球准备发球",
+      "caption": "发球时刻。"
+    },
+    {
+      "src": "volleyball/photo-07",
+      "alt": "国际学院排球队队员身穿白色球衣，在场边围着一位身穿浅色外套的人交流",
+      "caption": "场边的讨论，为下一球做好准备。"
+    },
+    {
+      "src": "volleyball/photo-08",
+      "alt": "国际学院队员和伙伴在赛场合影，举着紫色院旗和两面写有冠军的锦旗，胸前挂着奖牌",
+      "caption": "和队友一起，为学院赢得冠军。"
+    },
+    {
+      "src": "volleyball/photo-09",
+      "alt": "身穿北邮球衣的队员和伙伴戴着奖牌，捧着奖杯与排球合影",
+      "caption": "捧起奖杯，留下赛后的合影。"
+    },
+    {
+      "src": "volleyball/photo-10",
+      "alt": "院队队员戴着奖牌在排联杯决赛横幅前站成一排，其中一人捧着奖杯",
+      "caption": "奖牌、奖杯，以及一起拼搏的伙伴。"
     }
   ],
   "links": []

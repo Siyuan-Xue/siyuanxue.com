@@ -179,7 +179,7 @@ export const site = {
 		{
 			gallerySlug: 'volleyball',
 			title: bi(
-				'BUPT volleyball · school team & college team',
+				'BUPT volleyball · university & college teams',
 				'校排球队 · 院排球队',
 			),
 			href: WIP_HREF,

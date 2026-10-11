@@ -1,32 +1,72 @@
 {
-  "title": "BUPT volleyball · school team & college team",
-  "description": "This gallery will present images and material related to BUPT volleyball · school team & college team. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
-  "period": "Date to be confirmed",
-  "role": "Actual role to be added",
+  "title": "BUPT volleyball · university & college teams",
+  "description": "I love volleyball and the exhilaration it brings. After starting university, I joined both the university and college volleyball teams within a week. Since then, I have represented BUPT in multiple competitions in Beijing and, alongside my college teammates, won campus championships for our college several times.",
+  "period": "During university",
+  "role": "Player on the university and college volleyball teams",
   "category": "appearances",
   "order": 1,
   "draft": false,
-  "preview": true,
+  "preview": false,
+  "imageSections": [
+    {
+      "title": "University team",
+      "start": 0
+    },
+    {
+      "title": "College team",
+      "start": 4
+    }
+  ],
   "images": [
     {
-      "src": "gallery-preview/hero",
-      "alt": "Abstract placeholder image 1 for BUPT volleyball · school team & college team",
-      "caption": "Placeholder image: this space will show team scenes."
+      "src": "volleyball/photo-01",
+      "alt": "A player in a red-and-white number 15 jersey and sports glasses holding a volleyball on an indoor court",
+      "caption": "Representing the university on court."
     },
     {
-      "src": "gallery-preview/detail",
-      "alt": "Abstract placeholder image 2 for BUPT volleyball · school team & college team",
-      "caption": "Placeholder image: this space will show training details."
+      "src": "volleyball/photo-02",
+      "alt": "University team players in red-and-white BUPT jerseys and dark jerseys gathered beside the net",
+      "caption": "Playing alongside my university teammates."
     },
     {
-      "src": "gallery-preview/portrait",
-      "alt": "Abstract placeholder image 3 for BUPT volleyball · school team & college team",
-      "caption": "Placeholder image: this space will show match photographs."
+      "src": "volleyball/photo-03",
+      "alt": "A player in a red-and-white number 15 jersey reaching up to strike the ball, with the net and other players in front",
+      "caption": "Following the ball, fully immersed in the game."
     },
     {
-      "src": "gallery-preview/closing",
-      "alt": "Abstract placeholder image 4 for BUPT volleyball · school team & college team",
-      "caption": "Placeholder image: this space will show related material."
+      "src": "volleyball/photo-04",
+      "alt": "University volleyball teammates in BUPT jerseys standing side by side in a row on an indoor court",
+      "caption": "The university teammates sharing the court."
+    },
+    {
+      "src": "volleyball/photo-05",
+      "alt": "A player in a white number 2 jersey jumping to spike against a blue-shirted blocker, with other players ready for the next touch",
+      "caption": "Rising above the net and giving everything for the point."
+    },
+    {
+      "src": "volleyball/photo-06",
+      "alt": "A player in a white jersey, black shorts and glasses tossing the ball to serve on an indoor volleyball court",
+      "caption": "A moment at the service line."
+    },
+    {
+      "src": "volleyball/photo-07",
+      "alt": "College volleyball players in white International School jerseys gathered around a person in a light jacket beside the court",
+      "caption": "Talking things through and preparing for the next point."
+    },
+    {
+      "src": "volleyball/photo-08",
+      "alt": "International School players and friends posing with medals, a purple college flag and two championship banners",
+      "caption": "Winning a championship for our college, together."
+    },
+    {
+      "src": "volleyball/photo-09",
+      "alt": "Players and friends in BUPT jerseys wearing medals and posing with trophies and volleyballs",
+      "caption": "Holding the trophies for a photograph after the matches."
+    },
+    {
+      "src": "volleyball/photo-10",
+      "alt": "College teammates wearing medals and standing in a row beneath a campus volleyball finals banner, with one person holding a trophy",
+      "caption": "Medals, a trophy, and the teammates who worked for them together."
     }
   ],
   "links": []

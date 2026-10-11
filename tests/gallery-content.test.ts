@@ -108,3 +108,28 @@ test('bilingual galleries agree on whether their video section heading is visibl
  expect(() => pairGalleries([entry('demo/en', { videoTitle: null }), entry('demo/zh')], 'en')).toThrow('video heading');
  expect(pairGalleries([entry('demo/en', { videoTitle: null }), entry('demo/zh', { videoTitle: null })], 'en')).toHaveLength(1);
 });
+
+test('image sections preserve titles and valid boundaries; incomplete or overlapping groups cannot publish', () => {
+ const schema = createGallerySchema(z.object({ src: z.string(), width: z.number(), height: z.number(), format: z.literal('webp') }));
+ const images = Array.from({ length: 10 }, () => data.images[0]);
+ const imageSections = [{ title: 'University team', start: 0 }, { title: 'College team', start: 4 }];
+ expect(schema.parse({ ...data, images, imageSections }).imageSections).toEqual(imageSections);
+ expect(schema.parse(data).imageSections).toEqual([]);
+ for (const sections of [
+  [{ title: 'Missing first group', start: 1 }],
+  [{ title: 'First', start: 0 }, { title: 'Duplicate boundary', start: 0 }],
+  [{ title: 'First', start: 0 }, { title: 'Outside images', start: 10 }],
+  [{ title: 'First', start: 0 }, { title: 'Later', start: 7 }, { title: 'Out of order', start: 4 }],
+  [{ title: ' ', start: 0 }],
+ ]) expect(schema.safeParse({ ...data, images, imageSections: sections }).success).toBe(false);
+});
+
+test('translations keep image section boundaries and photographs aligned while translating headings', () => {
+ const images = [data.images[0], { ...data.images[0], src: { ...data.images[0].src, src: '/second.webp' } }];
+ const en = entry('teams/en', { images, imageSections: [{ title: 'University', start: 0 }, { title: 'College', start: 1 }] });
+ const zh = entry('teams/zh', { images, imageSections: [{ title: '校队', start: 0 }, { title: '院队', start: 1 }] });
+ expect(pairGalleries([en, zh], 'zh')[0].entry.id).toBe('teams/zh');
+ expect(() => pairGalleries([en, entry('teams/zh', { images })], 'en')).toThrow('image sections');
+ expect(() => pairGalleries([en, entry('teams/zh', { images, imageSections: [{ title: '校队', start: 0 }] })], 'en')).toThrow('image sections');
+ expect(() => pairGalleries([en, { ...zh, data: { ...zh.data, images: [...images].reverse() } }], 'en')).toThrow('section images');
+});

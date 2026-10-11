@@ -89,6 +89,8 @@
 
 **2026-10-11《家》新增兴趣爱好图集：**双语内容位于 `src/content/galleries/family/{en,zh}.json`，`src/data/site.ts` 关联「话剧《家》· 饰 高觉新 / Family · as Gao Juexin」，稳定地址 `/gallery/family/`，位于《寻找李白》之后、排球队之前。用户确认首次登台及饰演男主角高觉新，没有提供演出年月，使用相对经历。九张真实照片及缩略图/封面共 90 文件（5,252,410 字节）已原生 SSH/rsync 直传并通过服务器摘要/大小核验，Git 只保存九个 `family/photo-*` 媒体 ID。原图副本位于 `media-local/originals/family/`，派生文件在 `media-local/`，服务器恢复快照为 `/var/backups/siyuanxue-media/06aa57f5a1a3cc92aa9ac1712bc1bd9e3882af3ab239551a58690c1e995c3ffa/`（同盘副本）。更新方式见 [图集指南](GALLERIES.md)，本轮检查及恢复见 [审计](audits/2026-10-11-family-gallery.md)。类型检查、双语构建、产物测试、独立审查和两域名媒体公网摘要检查通过；[Actions 38112284028](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38112284028) 已成功发布 `3df850bcf4effe2c62c8303924586d1ecc17953e`。两站目标 SHA、固定语言、跳转、旧照片拒绝、正文/九图/首页顺序/索引元信息，以及生产明暗主题、390px 窄屏和灯箱键盘切图/缩放/关闭/焦点返回均验收通过。后续 `[skip ci]` 文档提交不改变该静态 release。内容恢复走 Git 与原 Actions，媒体缺失再从本机或快照恢复并核验；未修改 Nginx/helper 或独立服务，实体手机、搜索实际收录及媒体异地备份仍沿用原有待办。
 
+**2026-10-11 排球队真实图集与分区：**双语内容位于 `src/content/galleries/volleyball/{en,zh}.json`，沿用首页条目及 `/gallery/volleyball/`。十张用户照片按输入顺序保存为 `volleyball/photo-01` 至 `photo-10`，可选 `imageSections` 显示校排球队前四张、院排球队后六张；共享验证要求两语言分区起点和图片顺序一致，灯箱保持十图连续浏览。更新入口为 `gallery.ts`、`GalleryContent.astro`、`GalleryImageGrid.astro`、图集样式及双语 JSON，规则见 [图集指南](GALLERIES.md)。本机原图副本在忽略目录 `media-local/originals/volleyball/`，派生文件在 `media-local/`；100 文件共 7,524,469 字节已完成本机摘要/大小校验。媒体上传、静态 Actions 发布与公网验收仍待完成，不能将本机准备记成上线；状态与恢复入口见 [本轮审计](audits/2026-10-11-volleyball-gallery.md)。内容恢复走 Git 和原 Actions，媒体缺失从核验过的本机或服务器快照恢复；不修改 Nginx/helper 或独立服务。
+
 ### GitHub Actions
 
 **2026-10-11 后续图集展示调整：**按用户要求，B-Spline Policy 真机实验表格仅保留在原图中；已从双语 JSON 与共享模板移除重复的 HTML 表格、数值副本及不再使用的表格样式，保留图片灯箱、图注和结果说明。更新位置仍为双语图集、`GalleryContent.astro`、`gallery.ts` 与图集样式；恢复通过 Git 还原对应源码并走 Actions，媒体不需重传或删除。该次调整已由 [Actions 38103994833](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38103994833) 成功发布 `0f1b0ac407d8b57b14a67059406528390e9e8bae`，两域名 SHA、语言、旧照片拒绝、新图集无重复表格、原图/说明/视频及索引元信息验收通过，中文线上灯箱放大和键盘操作再次通过；见 [审计](audits/2026-10-11-b-spline-table-cleanup.md)。上段表格验收是初次发布的历史记录。
@@ -212,7 +214,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 姓名、身份、简介、项目、联系方式 | `src/data/site.ts` 中英资料、BaseHead Person/WebSite/ProfilePage/BlogPosting、站点 README、GitHub 账号 name/bio/blog、个人主页 README、两仓库 About；小薛人设/精选记忆仅在事实相关时更新 |
 | 文章 | 中英文配对、日期/ID/草稿、标题/描述、canonical/hreflang、RSS/sitemap、站内链接；不要把未完成占位页加入索引 |
 | 媒体上传 / 存储 | 本机 Sharp 准备、媒体清单、原生 SSH/rsync 与严格主机校验、服务器摘要/大小验证、两站媒体类型/缓存/Range、CI 无图片视频、独立媒体恢复与磁盘容量；先上传再发布，禁止密码入库 |
-| 图集 / 首页内容目录 | `src/content/galleries` 双语 JSON、真实角色/介绍/图片/alt/图注、来源资料与 `site.ts` 的 gallerySlug、双语 preview 一致、草稿隔离、首页站内入口、封面/canonical/hreflang/ImageGallery；sitemap 按内容 draft/preview 状态筛选；`bun run test:gallery` 在临时目录验证正式图集可索引，生产产物测试验证条目预览可由首页进入但 noindex/不进 sitemap、固定版式样例额外不进首页、普通草稿不出页；不改变博客 RSS 身份 |
+| 图集 / 首页内容目录 | `src/content/galleries` 双语 JSON、真实角色/介绍/图片/alt/图注、来源资料与 `site.ts` 的 gallerySlug、双语 preview 一致、可选图片分区的标题/起点/顺序与连续灯箱、草稿隔离、首页站内入口、封面/canonical/hreflang/ImageGallery；sitemap 按内容 draft/preview 状态筛选；`bun run test:gallery` 在临时目录验证正式图集可索引，生产产物测试验证条目预览可由首页进入但 noindex/不进 sitemap、固定版式样例额外不进首页、普通草稿不出页；不改变博客 RSS 身份 |
 | 域名 / 路径 | 注册与 DNS、www/HTTP 跳转、两个证书、Nginx 根目录、SEO/RSS/sitemap、语言链接、聊天 ALLOWED_ORIGINS、CI 变量与域名校验、GitHub 各处链接、搜索平台属性 |
 | 肖像 / 动效 | 正常肖像与占位肖像区分、人物比例/压缩/alt、单击展开、刷新折叠、灯箱可访问性、两站可见英文文案、reduced-motion、旧照片永久拒绝、图片缓存；不恢复状态标语块 |
 | 明暗 / 顶栏 / 导航 | 首页/文章/聊天、两种语言、明暗初次加载/切换/返回、70% 背景与图标可读性、Lucide 无圆框按钮、键盘/触屏/窄屏；桌面结果不能当实体手机验收 |

@@ -1,12 +1,11 @@
 ---
-import MediaPicture from './MediaPicture.astro';
+import GalleryImageGrid from './GalleryImageGrid.astro';
 import type { GalleryData } from '../utils/gallery';
 import { t } from '../i18n/locale';
 import '../styles/gallery.css';
 
-type Props = Pick<GalleryData, 'title' | 'description' | 'period' | 'role' | 'layout' | 'images' | 'links' | 'videos' | 'videoTitle' | 'videoLayout' | 'videoDescription' | 'comparison'>;
-const { title, description, period, role, layout = 'photos', images, links, videos = [], videoTitle, videoLayout = 'comparison', videoDescription, comparison } = Astro.props;
-const productLayout = layout === 'product';
+type Props = Pick<GalleryData, 'title' | 'description' | 'period' | 'role' | 'layout' | 'images' | 'imageSections' | 'links' | 'videos' | 'videoTitle' | 'videoLayout' | 'videoDescription' | 'comparison'>;
+const { title, description, period, role, layout = 'photos', images, imageSections = [], links, videos = [], videoTitle, videoLayout = 'comparison', videoDescription, comparison } = Astro.props;
 const showVideoTitle = videoTitle !== null;
 const demoLayout = videoLayout === 'demos';
 ---
@@ -36,21 +35,10 @@ const demoLayout = videoLayout === 'demos';
   </div>
  </section>}
  {comparison && <h2 class="gallery-results-heading">{t({ en: 'Real robot experiments', zh: '真机实验' })}</h2>}
- <div class:list={['gallery-grid', { 'gallery-grid-product': productLayout }]}>
-  {images.map((image, index) => {
-   const fullWidth = !productLayout && (index === 0 || (index === images.length - 1 && images.length % 2 === 0));
-   const captionId = `gallery-caption-${index}`;
-   return <figure class:list={['gallery-figure', { 'gallery-figure-wide': fullWidth }]}>
-    <a href={image.src.src} data-gallery-image data-width={image.src.width} data-height={image.src.height}
-     data-alt={image.alt} data-caption={image.caption} aria-describedby={captionId}>
-     <MediaPicture asset={image.src} alt={image.alt}
-      sizes={productLayout ? '(max-width: 480px) min(180px, calc((100vw - 3.25rem) / 2)), 180px' : fullWidth ? '(max-width: 480px) calc(100vw - 2rem), (max-width: 672px) calc(100vw - 3rem), 624px' : '(max-width: 480px) calc(100vw - 2rem), (max-width: 600px) calc(100vw - 3rem), (max-width: 672px) calc((100vw - 4.25rem) / 2), 302px'}
-      loading={index === 0 ? 'eager' : 'lazy'} fetchpriority={index === 0 ? 'high' : 'auto'} />
-    </a>
-    <figcaption id={captionId}>{image.caption}</figcaption>
-   </figure>;
-  })}
- </div>
+ {imageSections.length > 0 ? imageSections.map((section, index) => <section class="gallery-photo-section" aria-labelledby={`gallery-photo-heading-${index}`}>
+  <h2 id={`gallery-photo-heading-${index}`}>{section.title}</h2>
+  <GalleryImageGrid images={images.slice(section.start, imageSections[index + 1]?.start)} layout={layout} offset={section.start} />
+ </section>) : <GalleryImageGrid images={images} layout={layout} />}
  {comparison && <section class="gallery-comparison" aria-label={comparison.title}>
   <p>{comparison.description}</p>
  </section>}
