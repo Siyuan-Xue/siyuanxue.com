@@ -125,6 +125,7 @@ html.has-xue-chat[data-lang='zh'] { --xue-text-offset: 1px; }
   .xue-chat-main[data-chat-state='welcome'] { padding-bottom: clamp(24px, 10vh, 80px); }
   .xue-welcome-heading { flex-direction: column; gap: 18px; }
   .xue-welcome h1 { font-size: 28px; }
+  html[data-lang='en'] .xue-welcome h1 { font-size: clamp(22px, 7vw, 28px); }
   .xue-message.is-user .xue-message-content { max-width: 94%; }
   .xue-compose-area { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
   .xue-composer { border-radius: 16px; padding: 8px; }
@@ -147,6 +148,7 @@ html.has-xue-chat[data-lang='zh'] { --xue-text-offset: 1px; }
   .xue-chat-main[data-chat-state='welcome'] .xue-conversation-content { padding-bottom: 14px; padding-top: 14px; }
   .xue-welcome-heading { flex-direction: row; gap: 10px; }
   .xue-welcome h1 { font-size: 24px; }
+  html[data-lang='en'] .xue-welcome h1 { font-size: clamp(19px, 6.2vw, 24px); }
   .xue-welcome-icon { height: 28px; width: 28px; }
   .xue-prompts { display: none; }
 }
