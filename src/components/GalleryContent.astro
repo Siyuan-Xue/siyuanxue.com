@@ -4,8 +4,8 @@ import type { GalleryData } from '../utils/gallery';
 import { t } from '../i18n/locale';
 import '../styles/gallery.css';
 
-type Props = Pick<GalleryData, 'title' | 'description' | 'period' | 'role' | 'layout' | 'images' | 'links' | 'videos' | 'videoDescription' | 'comparison'>;
-const { title, description, period, role, layout = 'photos', images, links, videos = [], videoDescription, comparison } = Astro.props;
+type Props = Pick<GalleryData, 'title' | 'description' | 'period' | 'role' | 'layout' | 'images' | 'links' | 'videos' | 'videoTitle' | 'videoLayout' | 'videoDescription' | 'comparison'>;
+const { title, description, period, role, layout = 'photos', images, links, videos = [], videoTitle, videoLayout = 'comparison', videoDescription, comparison } = Astro.props;
 const productLayout = layout === 'product';
 ---
 <article class="gallery-page" data-gallery-page>
@@ -16,9 +16,9 @@ const productLayout = layout === 'product';
   <p class="gallery-description">{description}</p>
  </header>
  {videos.length > 0 && <section class="gallery-videos" aria-labelledby="gallery-videos-heading">
-  <h2 id="gallery-videos-heading">{t({ en: 'Simulation results', zh: '模拟器结果' })}</h2>
+  <h2 id="gallery-videos-heading">{videoTitle ?? t({ en: 'Simulation results', zh: '模拟器结果' })}</h2>
   {videoDescription && <p>{videoDescription}</p>}
-  <div class="gallery-video-grid">
+  <div class:list={['gallery-video-grid', { 'gallery-video-demos': videoLayout === 'demos' }]}>
    {videos.map(video => <figure class="gallery-figure">
     <h3>{video.label}</h3>
     <video controls playsinline preload="metadata" poster={video.poster.cover.src}

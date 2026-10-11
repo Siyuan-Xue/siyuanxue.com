@@ -286,6 +286,41 @@ for (const v of variants) {
 }
 
 for (const v of variants) {
+ test(`${v.lang}: LeDA replaces its placeholder with two native demos and its national-level certificate`, async () => {
+  const { document } = parseHTML(await readFile(join(v.root, 'gallery/leda-agent/index.html'), 'utf8'));
+  const source = JSON.parse(await readFile(`src/content/galleries/leda-agent/${v.lang === 'en' ? 'en' : 'zh'}.json`, 'utf8'));
+  expect(document.querySelector('#gallery-videos-heading')?.textContent).toBe(source.videoTitle);
+  expect(document.querySelectorAll('.gallery-video-demos')).toHaveLength(1);
+  const videos = [...document.querySelectorAll('video')];
+  expect(videos).toHaveLength(2);
+  for (const [index, video] of videos.entries()) {
+   expect(video.hasAttribute('controls')).toBe(true);
+   expect(video.hasAttribute('playsinline')).toBe(true);
+   expect(video.hasAttribute('autoplay')).toBe(false);
+   expect(video.getAttribute('preload')).toBe('metadata');
+   expect(mediaPaths.has(video.querySelector('source')!.getAttribute('src')!)).toBe(true);
+   expect(video.querySelector('source')!.getAttribute('type')).toBe('video/mp4');
+   expect(mediaPaths.has(video.getAttribute('poster')!)).toBe(true);
+   expect(video.getAttribute('aria-label')).toContain(source.videos[index].label);
+   expect(video.closest('figure')?.textContent).toContain(source.videos[index].caption);
+   expect(video.closest('figure')?.querySelector('a[download]')?.getAttribute('href')).toBe(video.querySelector('source')!.getAttribute('src'));
+  }
+  const certificate = document.querySelectorAll('a[data-gallery-image]');
+  expect(certificate).toHaveLength(1);
+  expect(certificate[0]?.getAttribute('data-alt')).toBe(source.images[0].alt);
+  expect(document.querySelectorAll('.gallery-results-heading, .gallery-comparison, article table')).toHaveLength(0);
+  expect(document.querySelector('.gallery-description')?.textContent).toBe(source.description);
+  const schema = JSON.parse(document.querySelector('script[type="application/ld+json"]')!.textContent!);
+  expect(schema.video).toHaveLength(2);
+  for (const [index, clip] of schema.video.entries()) {
+   expect(clip['@type']).toBe('VideoObject');
+   expect(clip.contentUrl).toBe(v.origin+videos[index].querySelector('source')!.getAttribute('src'));
+   expect(clip.thumbnailUrl).toBe(v.origin+videos[index].getAttribute('poster'));
+   expect(clip.duration).toBe(`PT${source.videos[index].duration}S`);
+   expect(clip.uploadDate).toBe(source.videos[index].uploadDate);
+  }
+  for (const link of source.links) expect(document.querySelectorAll(`a[href="${link.href}"]`)).toHaveLength(1);
+ });
  test(`${v.lang}: B-Spline videos and results remain crawlable native HTML without JavaScript`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'gallery/b-spline-policy/index.html'), 'utf8'));
   const source = JSON.parse(await readFile(`src/content/galleries/b-spline-policy/${v.lang === 'en' ? 'en' : 'zh'}.json`, 'utf8'));

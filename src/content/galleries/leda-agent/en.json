@@ -1,38 +1,47 @@
 {
-  "title": "LeDA Agent",
-  "description": "This gallery will present images and material related to LeDA Agent. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
-  "period": "2026",
-  "role": "Actual role to be added",
+  "period": "2025–2026",
   "category": "projects",
   "order": 2,
   "draft": false,
-  "preview": true,
+  "preview": false,
+  "videoLayout": "demos",
+  "title": "LeDA Agent",
+  "description": "In July and August 2025, my roommates and I joined BUPT’s Undergraduate Innovation and Entrepreneurship Training Program and began building LeDA. We organized developer resources from the Awesome repository into a Neo4j knowledge graph and built a graph-based RAG agent with LangGraph. It retrieves resources in response to a user’s questions and returns relevant links. By persisting each user’s question history and intent, it also provides personalized learning-resource recommendations over time. LeDA went on to complete the program as a national-level project. Building something meaningful with friends was a thrill.",
+  "role": "Project team member; co-developed with my roommates",
+  "videoTitle": "Demos and knowledge graph",
+  "videos": [
+    {
+      "src": "leda-agent/agent-demo",
+      "poster": "leda-agent/agent-demo-poster",
+      "duration": 81,
+      "uploadDate": "2026-10-11",
+      "label": "Resource search, memory and recommendations",
+      "caption": "A demonstration of resource search, persistent question history and intent, and personalized learning-resource recommendations based on that information."
+    },
+    {
+      "src": "leda-agent/knowledge-graph",
+      "poster": "leda-agent/knowledge-graph-poster",
+      "duration": 38.5,
+      "uploadDate": "2026-10-11",
+      "label": "Developer-resource knowledge graph",
+      "caption": "Browsing the Neo4j knowledge graph. The full database contains more than 80,000 developer-resource nodes, which the agent uses for retrieval and queries."
+    }
+  ],
   "images": [
     {
-      "src": "gallery-preview/hero",
-      "alt": "Abstract placeholder image 1 for LeDA Agent",
-      "caption": "Placeholder image: this space will show agent overview."
-    },
-    {
-      "src": "gallery-preview/detail",
-      "alt": "Abstract placeholder image 2 for LeDA Agent",
-      "caption": "Placeholder image: this space will show interface details."
-    },
-    {
-      "src": "gallery-preview/portrait",
-      "alt": "Abstract placeholder image 3 for LeDA Agent",
-      "caption": "Placeholder image: this space will show workflow examples."
-    },
-    {
-      "src": "gallery-preview/closing",
-      "alt": "Abstract placeholder image 4 for LeDA Agent",
-      "caption": "Placeholder image: this space will show related material."
+      "src": "leda-agent/national-certificate",
+      "alt": "BUPT completion certificate for the national-level LeDA student innovation project, listing Siyuan Xue as a team member",
+      "caption": "Completion certificate for the national-level LeDA project, an educational multimodal recommendation system based on cognitive modeling and guidance. It passed its completion review in July 2026."
     }
   ],
   "links": [
     {
-      "label": "BUPT project information",
+      "label": "BUPT project page",
       "href": "https://win.bupt.edu.cn/program.do?id=9909"
+    },
+    {
+      "label": "Awesome GitHub repository",
+      "href": "https://github.com/sindresorhus/awesome"
     }
   ]
 }

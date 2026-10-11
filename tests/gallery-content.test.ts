@@ -89,3 +89,16 @@ test('bilingual galleries reject mismatched video recordings or ordering', () =>
  const other = { ...video, src: { ...video.src, src: '/media/other.mp4' } };
  expect(() => pairGalleries([pair[0], entry('demo/zh', { videos: [other] })], 'en')).toThrow('videos');
 });
+
+test('video sections accept their own heading and demo layout without changing simulation defaults', () => {
+ const schema = createGallerySchema(z.object({ src: z.string(), kind: z.literal('image') }), z.object({ src: z.string(), kind: z.literal('video') }));
+ expect(schema.parse({ ...data, videos: [video], videoTitle: 'Demos and knowledge graph', videoLayout: 'demos' })).toMatchObject({ videoTitle: 'Demos and knowledge graph', videoLayout: 'demos' });
+ expect(schema.parse(data).videoLayout).toBe('comparison');
+ expect(schema.safeParse({ ...data, videoTitle: ' ' }).success).toBe(false);
+ expect(schema.safeParse({ ...data, videoLayout: 'invalid' }).success).toBe(false);
+});
+
+test('bilingual galleries cannot publish with different video layouts', () => {
+ expect(() => pairGalleries([entry('demo/en', { videoLayout: 'demos' }), entry('demo/zh')], 'en')).toThrow('video layout');
+ expect(pairGalleries([entry('demo/en', { videoLayout: 'comparison' }), entry('demo/zh')], 'en')).toHaveLength(1);
+});

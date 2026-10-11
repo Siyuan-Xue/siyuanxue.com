@@ -114,7 +114,7 @@ export const site = {
 			gallerySlug: 'leda-agent',
 			title: bi('LeDA Agent', 'LeDA 智能体'),
 			href: 'https://win.bupt.edu.cn/program.do?id=9909',
-			year: 2026,
+			year: '2025–2026',
 			external: true,
 		},
 		{
