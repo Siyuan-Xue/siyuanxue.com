@@ -23,7 +23,9 @@
 
 沿用用户已有「授权上线」，仅通过现有 GitHub Actions 发布双语静态网页。不手动切换服务器 release。
 
-发布待执行；完成后记录 Actions 与两域名完整 SHA。
+[Actions 38130560932](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38130560932) 已完成且 conclusion 为 success，发布完整静态 SHA `4b5a65f77b47bc6b8d45cc17d873971cf295f304`。`ops/verify-public.sh` 核对两域名 `/__health` 均为该 SHA、首页分别为 zh-CN / en、旧照片路由均返回 410；另核对两站 HTTP 与 www 均 301 至各自 HTTPS 主域名。
+
+生产 Codex 内置浏览器核对中英文首页八条说明均无时间、排球队无括号及页面无横向溢出；中文桌面目录 X 悬停后离开，顶栏计算滤镜为 none、独立背景层为 blur(12px)，截图未见残留黑边。中文 390px 目录按钮位于组内最左、打开后跳转恢复章节焦点并释放滚动锁；英文 320px 明暗模式无横向溢出，目录打开/Escape 收起恢复按钮焦点。原生截图保存在本机临时 `/tmp/header-refinements-home-production-2026-10-11.png` 与 `/tmp/header-refinements-production-2026-10-11.png`，不是长期归档。后续 `[skip ci]` 文档提交不改变此静态 release。
 
 恢复：通过 Git 还原 `Header.astro`、`BulletList.astro`、`gallery.ts`、双语 `homeMeta` 与共享顶栏样式，再走原 Actions；必要时可使用现有 Actions rollback 选择保留的完整 SHA。无需重传媒体或更新服务器服务。
 
@@ -31,4 +33,4 @@
 
 - 已更新：首页双语内容/回退规则、顶栏样式/按钮顺序、相关产物检查、`AGENTS.md`、图集指南、维护总览和本审计。
 - 不适用：媒体上传、域名、身份资料、GitHub 账号/About、CI 变量/secret、Nginx/helper、聊天 bridge、Hermes、微信、记忆/模型、存储与备份。此次未变更这些资源，不将静态验收视为其能力验收。
-- 待处理：最终 Actions 与两域名生产验收；实体手机和实际打印保留为浏览器环境以外的验证边界。
+- 待处理：本次请求无剩余上线事项。实体手机和实际打印保留为浏览器环境以外的验证边界，不将桌面窄屏预览与产物检查记为实体设备或纸张验收。
