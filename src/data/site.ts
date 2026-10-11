@@ -161,7 +161,7 @@ export const site = {
 				'话剧《与光同行》· 饰 叶培大',
 			),
 			href: 'https://www.bupt.edu.cn/info/1079/90114.htm',
-			year: 2025,
+			venue: bi('BUPT 70th anniversary', '北邮70周年校庆'),
 			external: true,
 		},
 		{

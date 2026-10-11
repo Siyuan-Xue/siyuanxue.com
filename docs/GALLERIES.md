@@ -54,7 +54,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 }
 ```
 
-`title`、`description`、`period`、`role` 及每张图片的 `alt`、`caption` 都必须是非空文本。`description` 同时用于页内短介绍与页面描述，无需另写 Markdown 正文。`period` 是可见时间文本，可表达区间或持续进行的工作；它不是文章发布日期，不应为了 SEO 编造日期。正式图集的 `role` 应写本人实际角色，不把参与写成领导，也不把设计示意写成实际成果。占位预览可明确写「待补充实际角色」或「时间待补充」，不能用推测填满必填字段。
+`title`、`description`、`role` 及每张图片的 `alt`、`caption` 都必须是非空文本。`description` 同时用于页内短介绍与页面描述，无需另写 Markdown 正文。`period` 是可选的可见时间或活动背景文本，可表达区间、持续工作或周年活动；它不是文章发布日期，不应为了 SEO 编造日期。不需要时间标注的持续兴趣可同时省略两语言的 `period`，首页不显示括号元信息，图集也不输出空的时间段落；填写时仍必须非空，两语言必须一致选择显示或省略。正式图集的 `role` 应写本人实际角色，不把参与写成领导，也不把设计示意写成实际成果。占位预览可明确写「待补充实际角色」或「时间待补充」，不能用推测填满字段。
 
 `images` 至少一张。`src` 是 [media.json](../src/data/media.json) 中的图片 ID，例如 `project-notes/overview`；未知 ID 或视频 ID 会阻止构建。两语言可以引用同一图片。原图和缩略图保存在服务器 `shared/media/`，不再保存在 Git；先按 [直传流程](../ops/README.md#direct-media-uploads) 准备、上传、校验，再修改双语 JSON。使用有权展示的真实图片或实际项目截图，保留准确图注和出处。`alt` 描述图片本身，`caption` 补充上下文，两者都要提供各语言版本。不要虚构人物身份、照片、成果或活动事实。
 
@@ -96,7 +96,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 `family` 是新增的正式兴趣爱好图集，标题为「话剧《家》· 饰 高觉新 / Family · as Gao Juexin」，稳定地址为 `/gallery/family/`，首页排列在《寻找李白》之后、排球队之前。用户确认这是首次登上话剧舞台并饰演男主角高觉新；介绍说明曹禺改编的剧目背景及本人大学生活体验。未提供年月时以「首次登上话剧舞台 / My theatre debut」表达经历，不猜测演出日期。九张真实照片按用户输入顺序引用 `family/photo-01` 至 `photo-09`，自然比例、图注与灯箱沿用现有 `photos` 布局，合影位于末尾。两语言同步公开并可索引，`links` 为空。媒体直传、验收与恢复见 [本轮审计](audits/2026-10-11-family-gallery.md)。
 
-`volleyball` 在原址 `/gallery/volleyball/` 补齐十张真实照片及用户确认的经历：上大学后一周内加入校队和院队、代表学校参加多次北京市比赛、代表学院多次赢得校内比赛冠军。时间使用「大学期间 / During university」，不从单张横幅推定全部照片年份。编号 `volleyball/photo-01` 至 `photo-10` 保留输入顺序，`imageSections` 分为前四张「校排球队 / University team」和后六张「院排球队 / College team」。两语言均为正式图集，首页原位置保持，`links` 为空；素材准备、验证及实际上线状态见 [排球队审计](audits/2026-10-11-volleyball-gallery.md)。
+`volleyball` 在原址 `/gallery/volleyball/` 补齐十张真实照片及用户确认的经历：上大学后一周内加入校队和院队、代表学校参加多次北京市比赛、代表学院多次赢得校内比赛冠军。按用户后续要求，排球贯穿大学生活，两语言省略 `period`，首页和图集均不显示时间，不从单张横幅推定全部照片年份。编号 `volleyball/photo-01` 至 `photo-10` 保留输入顺序，`imageSections` 分为前四张「校排球队 / University team」和后六张「院排球队 / College team」。两语言均为正式图集，首页原位置保持，`links` 为空；《与光同行》条目的括号背景同时改为「北邮70周年校庆 / BUPT 70th anniversary」，正文演出经历保留。素材准备、验证及实际上线状态见 [排球队审计](audits/2026-10-11-volleyball-gallery.md)。
 
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 

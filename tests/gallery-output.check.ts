@@ -15,7 +15,7 @@ const variants = [
  { locale: 'zh', language: 'zh-CN', origin: 'https://xuesiyuan.com' },
 ];
 type Fixture = {
- title: string; description: string; period: string; role: string; draft: boolean; preview: boolean;
+ title: string; description: string; period?: string; role: string; draft: boolean; preview: boolean;
  images: { src: string; alt: string; caption: string }[];
  imageSections?: { title: string; start: number }[];
  links: { label: string; href: string }[];
@@ -39,6 +39,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    expect(fixture.draft).toBe(true);
    expect(fixture.images).toHaveLength(4);
    expect(fixture.links.length).toBeGreaterThan(0);
+   delete fixture.period;
    fixture.imageSections = [{ title: locale === 'en' ? 'University team' : '校排球队', start: 0 }, { title: locale === 'en' ? 'College team' : '院排球队', start: 2 }];
    fixtures.set(locale, fixture);
    await writeFile(join(draftDirectory, `${locale}.json`), JSON.stringify(fixture));
@@ -58,6 +59,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    expect(preview.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
    expect(preview.querySelectorAll('article[data-gallery-page] figure')).toHaveLength(4);
    expect(preview.querySelectorAll('.gallery-photo-section')).toHaveLength(0);
+   expect(preview.querySelector('.gallery-period')).not.toBeNull();
    expect(preview.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(origin + previewPath);
    expect(JSON.parse(await readFile(join(temporary, 'src/content/galleries/layout-preview', `${locale}.json`), 'utf8')).draft).toBe(true);
    const { document } = parseHTML(await readFile(join(output, pathname, 'index.html'), 'utf8'));
@@ -65,7 +67,8 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    expect(gallery).not.toBeNull();
    expect(document.documentElement.lang).toBe(language);
    expect(gallery.querySelector('h1')?.textContent).toBe(fixture.title);
-   for (const text of [fixture.description, fixture.period, fixture.role]) expect(gallery.textContent).toContain(text);
+   for (const text of [fixture.description, fixture.role]) expect(gallery.textContent).toContain(text);
+   expect(gallery.querySelector('.gallery-period')).toBeNull();
    expect(document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '').not.toContain('noindex');
    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(origin + pathname);
    for (const [lang, domain] of [['en', 'https://siyuanxue.com'], ['zh-CN', 'https://xuesiyuan.com'], ['x-default', 'https://siyuanxue.com']]) {
@@ -138,6 +141,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    const homeLinks = home.querySelectorAll(`a[href="${pathname}"]`);
    expect(homeLinks).toHaveLength(1);
    expect(homeLinks[0].textContent).toBe(fixture.title);
+   expect(homeLinks[0].closest('li')?.querySelector('.bullet-list_meta')).toBeNull();
    expect(home.querySelector(`a[href="${previewPath}"]`)).toBeNull();
    expect(home.querySelector('a[href="/gallery/unpublished-fixture/"]')).toBeNull();
    expect(await access(join(output, 'gallery/unpublished-fixture/index.html')).then(() => true, () => false)).toBe(false);

@@ -12,7 +12,7 @@ const demoLayout = videoLayout === 'demos';
 <article class="gallery-page" data-gallery-page>
  <header class="gallery-header">
   <h1 class="post-title">{title}</h1>
-  <p class="gallery-period">{period}</p>
+  {period && <p class="gallery-period">{period}</p>}
   <p class="gallery-role"><span>{t({ en: 'My role', zh: '本人角色' })}:</span> {role}</p>
   <p class="gallery-description">{description}</p>
  </header>

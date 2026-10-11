@@ -14,6 +14,16 @@ test('gallery schema rejects empty images, whitespace text and unsafe links; def
  const { draft, order, ...rest } = data;
  expect(schema.parse(rest)).toMatchObject({ draft: true, order: 0 });
 });
+test('ongoing galleries can omit period but cannot publish blank period text', () => {
+ const schema = createGallerySchema(z.object({ src: z.string(), width: z.number(), height: z.number(), format: z.literal('webp') }));
+ const { period, ...ongoing } = data;
+ expect(schema.safeParse(ongoing).success).toBe(true);
+ expect(schema.safeParse({ ...data, period: ' ' }).success).toBe(false);
+});
+test('translations agree on whether the homepage and gallery show a period', () => {
+ expect(() => pairGalleries([entry('ongoing/en', { period: undefined }), entry('ongoing/zh')], 'en')).toThrow('period');
+ expect(pairGalleries([entry('ongoing/en', { period: undefined }), entry('ongoing/zh', { period: undefined })], 'en')).toHaveLength(1);
+});
 test('only complete bilingual galleries publish; either draft isolates both', () => {
  expect(pairGalleries([entry('one/en'), entry('one/zh', { draft: true })], 'en')).toEqual([]);
  expect(() => pairGalleries([entry('one/en')], 'en')).toThrow('translation');

@@ -8,10 +8,10 @@ export type GalleryComparison = { title: string; description: string };
 export type GalleryHomeItem = { title: string; href: string; year?: string | number; venue?: string; external?: boolean };
 export type GalleryLink = { label: string; href: string };
 export type GalleryImageSection = { title: string; start: number };
-export type GalleryData = { title: string; description: string; period: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; imageSections?: GalleryImageSection[]; links: GalleryLink[]; videos?: GalleryVideo[]; videoTitle?: string | null; videoLayout?: 'comparison' | 'demos'; videoDescription?: string; comparison?: GalleryComparison };
+export type GalleryData = { title: string; description: string; period?: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; imageSections?: GalleryImageSection[]; links: GalleryLink[]; videos?: GalleryVideo[]; videoTitle?: string | null; videoLayout?: 'comparison' | 'demos'; videoDescription?: string; comparison?: GalleryComparison };
 export function createGallerySchema<T extends z.ZodType, V extends z.ZodType = z.ZodNever>(image: T, video?: V) {
  const text = z.string().trim().min(1);
- return z.object({ title: text, description: text, period: text, role: text, category: z.enum(['projects', 'research', 'appearances']), order: z.number().int().default(0), draft: z.boolean().default(true), preview: z.boolean().default(false), layout: z.enum(['photos', 'product']).default('photos'), images: z.array(z.object({ src: image, alt: text, caption: text })).min(1), links: z.array(z.object({ label: text, href: text.pipe(z.url({ protocol: /^https?$/ })) })).default([]),
+ return z.object({ title: text, description: text, period: text.optional(), role: text, category: z.enum(['projects', 'research', 'appearances']), order: z.number().int().default(0), draft: z.boolean().default(true), preview: z.boolean().default(false), layout: z.enum(['photos', 'product']).default('photos'), images: z.array(z.object({ src: image, alt: text, caption: text })).min(1), links: z.array(z.object({ label: text, href: text.pipe(z.url({ protocol: /^https?$/ })) })).default([]),
   imageSections: z.array(z.object({ title: text, start: z.number().int().nonnegative() })).default([]),
   videos: z.array(z.object({ src: video ?? z.never(), poster: image, label: text, caption: text, duration: z.number().positive(), uploadDate: z.iso.date() })).default([]),
   videoTitle: text.nullable().optional(), videoLayout: z.enum(['comparison', 'demos']).default('comparison'), videoDescription: text.optional(), comparison: z.object({ title: text, description: text }).optional(),
@@ -36,6 +36,7 @@ export function pairGalleries<T extends { id: string; data: GalleryData }>(entri
   if (en.data.order !== zh.data.order) throw new Error(`Mismatched gallery order for ${slug}`);
   if (Boolean(en.data.preview) !== Boolean(zh.data.preview)) throw new Error(`Mismatched gallery preview status for ${slug}`);
   if ((en.data.layout ?? 'photos') !== (zh.data.layout ?? 'photos')) throw new Error(`Mismatched gallery layout for ${slug}`);
+  if (Boolean(en.data.period) !== Boolean(zh.data.period)) throw new Error(`Mismatched gallery period visibility for ${slug}`);
   const enSections = en.data.imageSections ?? [], zhSections = zh.data.imageSections ?? [];
   if (enSections.length !== zhSections.length || enSections.some((section, index) => section.start !== zhSections[index].start)) throw new Error(`Mismatched gallery image sections for ${slug}`);
   if (enSections.length > 0 && (en.data.images.length !== zh.data.images.length || en.data.images.some((image, index) => image.src.src !== zh.data.images[index].src.src))) throw new Error(`Mismatched gallery section images for ${slug}`);
