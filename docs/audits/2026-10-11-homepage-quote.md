@@ -6,7 +6,7 @@
 
 - [斯坦福官方演讲稿](https://news.stanford.edu/stories/2005/06/youve-got-find-love-jobs-says)：页面标明 Steve Jobs 于 2005 年 6 月 12 日发表毕业演讲。结尾的文字版本是 `Stay hungry. Stay foolish.`，两个句号，两个 `Stay` 首字母大写。
 - 官方稿说明 Jobs 引用了《The Whole Earth Catalog》封底的告别语。首页不将其署名为 Jobs 原创，也不把编辑 Stewart Brand 直接写成这四个词的已核实个人作者。
-- [Whole Earth Index 的 1974 年 10 月《Whole Earth Epilog》目录](https://wholeearth.info/p/whole-earth-epilog-october-1974)可确认该期出版资料；本次 web 工具无法打开其 Internet Archive 封底扫描和 PDF。因此采用斯坦福正式文字稿的标点，不声称核验了纸本封底的大小写或排版。
+- [Whole Earth Index 的 1974 年 10 月《Whole Earth Epilog》目录](https://wholeearth.info/p/whole-earth-epilog-october-1974)可确认该期出版资料。初次 web 工具不能打开 Internet Archive 扫描和 PDF；随后用 Codex 内置浏览器成功打开目录提供的[封底扫描](https://archive.org/download/wholeearthepilog00unse/page/n321_medium.jpg)，画面上可读的文字同为 `Stay hungry. Stay foolish.`，上方有亮点图像、下方为公路照片。首页采用与原刊扫描及斯坦福正式文字稿一致的拼写、大小写和句号。
 
 ## 文字处理
 
@@ -27,7 +27,7 @@
 - 已核对：`Bio.astro` 沿用现有纯文本段落渲染；首段、分享摘要和 Person 描述不变，所有结构化身份仍来自既有公共资料。
 - 不适用：姓名、专业等身份事实没有变更，GitHub 账号、独立主页 README、两仓库 About 和小薛人设无需因引述标点修改。网站 README 与人设中没有该格言副本。
 - 不适用：媒体、图集、控件、路由、域名、DNS、搜索平台验证、CI 配置、secret 及独立服务器服务均未修改；本地归档和备份保留。
-- 待处理：Actions 与两域名目标 SHA、上线正文和显示结果待发布后补录。
+- 本次请求无待处理项；既有搜索收录观察、备份与独立服务待办仍按维护总览继续维护，不属于本次标点修正的未完成项。
 
 ## 本次验证
 
@@ -36,6 +36,11 @@
 - 额外读取两首页生成 HTML：正文两段，格言与新定稿逐字一致；分享/搜索摘要、ProfilePage 中嵌套的 Person 描述及稳定 ID 均正确。一次性核对脚本最初误用 Person 层级和英文输出路径，按实际模板与构建脚本修正后两语言通过；网站代码没有因此变更。
 - 文档相对链接全部可解析，`git diff --check` 无错误。
 - 发布前重新读取两域名 `/__health`，均为 `b1a0a3919cc323f391afce6a6b873b6a9315bdd9`，与上一成功静态版本一致。
+- 新版本激活后 `bash ops/verify-public.sh 3c159d95c8a54d65fac0492d8daaee0561bd1e51` 通过；额外直接请求两首页 HTTP 200，正文、两段、引述标点、摘要、Person 描述和 canonical 均与源资料一致，中文百度验证标签保留。
+- Codex 内置浏览器查看了两站 1280×720 桌面和 390×844 窄屏排版；正文/格言完整，窄屏 `scrollWidth = clientWidth = 390`，无横向溢出。临时 viewport 已 reset，临时标签已关闭；未触碰用户标签、主题或肖像展开状态。本项为浏览器窄屏模拟，不代表实体手机验收。
+- [Actions 38151893543](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38151893543) 最终 API 状态 completed / success，源码提交为 `3c159d95c8a54d65fac0492d8daaee0561bd1e51`；共享验证、部署和 IndexNow 通知三个 job 均 success，rollback skipped。部署完成两站公网与全量媒体响应头检查；通知成功不代表搜索平台已经收录或更新展示，本次没有重新验收搜索曝光/AI 引用。
+
+后续仅维护记录提交使用 `[skip ci]`，静态 release 保持上述 SHA。
 
 ## 恢复
 
