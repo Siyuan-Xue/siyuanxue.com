@@ -1,18 +1,12 @@
 ---
 import Base from '../layouts/Base.astro';
-import { bi } from '../i18n/types';
-import { t, locale } from '../i18n/locale';
+import { locale } from '../i18n/locale';
 import '../styles/wip.css';
 import { House } from '@lucide/astro';
 
-const title = bi('Under construction', '正在施工');
-const description = bi(
-	'This page is still under construction.',
-	'这个页面还在施工中。',
-);
 ---
 
-<Base title={t(title)} description={t(description)} noindex>
+<Base>
 	<div class="container cc-narrow wip">
 		<div class="wip-panel" role="status" aria-live="polite">
 			{/*

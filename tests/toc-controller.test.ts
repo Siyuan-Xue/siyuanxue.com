@@ -127,3 +127,31 @@ test('cleanup restores article interaction and removes the toggle binding', () =
  expect(f.nav.hidden).toBe(true);
  f.toggle.click(); expect(f.nav.hidden).toBe(true);
 });
+
+test('a fully hidden header keeps the reading line at 16px rather than above the viewport', () => {
+ const f = fixture();
+ const header = f.document.querySelector('header')!;
+ header.className = 'header';
+ header.getBoundingClientRect = () => ({ bottom: -30 }) as DOMRect;
+ f.second.getBoundingClientRect = () => ({ top: 10 }) as DOMRect;
+ bind(f.document);
+ expect(f.nav.querySelector('[aria-current="location"]')?.getAttribute('data-toc-link')).toBe('second');
+});
+
+test('the reading line follows the visible header edge after its top transition ends', async () => {
+ const f = fixture();
+ const header = f.document.querySelector('header')!;
+ header.className = 'header';
+ let bottom = 68;
+ header.getBoundingClientRect = () => ({ bottom }) as DOMRect;
+ f.second.getBoundingClientRect = () => ({ top: 50 }) as DOMRect;
+ bind(f.document);
+ expect(f.nav.querySelector('[aria-current="location"]')?.getAttribute('data-toc-link')).toBe('second');
+ bottom = 0;
+ // happy-dom exposes TransitionEvent without its propertyName initialization.
+ const transition = new f.window.Event('transitionend', { bubbles: true });
+ Object.defineProperty(transition, 'propertyName', { value: 'top' });
+ header.dispatchEvent(transition as unknown as Event);
+ await new Promise(resolve => setTimeout(resolve, 30));
+ expect(f.nav.querySelector('[aria-current="location"]')?.getAttribute('data-toc-link')).toBe('first');
+});

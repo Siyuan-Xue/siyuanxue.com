@@ -3,6 +3,7 @@ title: Why this site
 subtitle: A place for longer thoughts that can be found later
 date: 2026-07-14
 description: Why this personal site exists — clear writing, a short list of work, and room to grow.
+seoDescription: "Siyuan Xue on building a personal website for clear writing, projects and activities, with room for the site to grow."
 draft: false
 ---
 

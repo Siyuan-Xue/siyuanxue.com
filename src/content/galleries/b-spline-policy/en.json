@@ -47,7 +47,14 @@
     "description": "In this real-robot experiment, BSP nearest-point handover has lower means and variances for both jump metrics than direct baseline handover, indicating smoother transitions between chunks. These observations apply to this experiment, rather than every task or speed setting."
   },
   "links": [
-    { "label": "GitHub repository", "href": "https://github.com/Siyuan-Xue/openpi05-bsp" },
-    { "label": "B-spline Policy paper · Han, Xiong et al.", "href": "https://arxiv.org/abs/2607.09648" }
-  ]
+    {
+      "label": "GitHub repository",
+      "href": "https://github.com/Siyuan-Xue/openpi05-bsp"
+    },
+    {
+      "label": "B-spline Policy paper · Han, Xiong et al.",
+      "href": "https://arxiv.org/abs/2607.09648"
+    }
+  ],
+  "seoDescription": "Siyuan Xue’s B-Spline Policy reproduction and algorithm experiments during a SEEN-E internship, with simulation and real-robot demo videos."
 }

@@ -4,6 +4,11 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_call:
+    secrets:
+      INDEXNOW_KEY_EN:
+        required: false
+      INDEXNOW_KEY_ZH:
+        required: false
     outputs:
       archive_name:
         value: ${{ jobs.verify.outputs.archive_name }}
@@ -18,6 +23,8 @@ jobs:
     timeout-minutes: 20
     env:
       ASTRO_TELEMETRY_DISABLED: "1"
+      INDEXNOW_KEY_EN: ${{ secrets.INDEXNOW_KEY_EN }}
+      INDEXNOW_KEY_ZH: ${{ secrets.INDEXNOW_KEY_ZH }}
     outputs:
       archive_name: ${{ steps.package.outputs.archive_name }}
       artifact_name: ${{ steps.package.outputs.artifact_name }}

@@ -2,6 +2,7 @@
 title: A short note on launch
 date: 2026-07-14
 description: Shipping notes for v1 — structure first, content fills in.
+seoDescription: "Siyuan Xue’s short note on launching the first version of his personal website: structure first, with content added over time."
 draft: false
 ---
 

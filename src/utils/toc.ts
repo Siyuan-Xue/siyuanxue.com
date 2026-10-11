@@ -8,6 +8,7 @@ export function bindToc(document: Document): () => void {
  const main = document.querySelector<HTMLElement>('.page-main');
  if (!window || !nav || !toggle || !main) return () => {};
  const wide = window.matchMedia('(min-width: 1024px)');
+ const header = document.querySelector<HTMLElement>('header.header');
  const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>('[data-toc-link]'));
  const headings = links.map(link => document.getElementById(link.dataset.tocLink ?? '')).filter((heading): heading is HTMLElement => Boolean(heading));
  const initialOverflow = document.body.style.overflow;
@@ -27,6 +28,7 @@ export function bindToc(document: Document): () => void {
   main.inert = coverArticle || initialInert;
   document.body.style.overflow = coverArticle ? 'hidden' : initialOverflow;
   if (!open && (ownedFocus || returnFocus)) toggle.focus({ preventScroll: true });
+  document.dispatchEvent(new window.Event('tocchange'));
  };
  const activate = (id: string | undefined) => {
   links.forEach(link => {
@@ -38,7 +40,7 @@ export function bindToc(document: Document): () => void {
  };
  const updateActive = () => {
   frame = 0;
-  const readingLine = (document.querySelector('header.header')?.getBoundingClientRect().bottom ?? 0) + 16;
+  const readingLine = Math.max(0, header?.getBoundingClientRect().bottom ?? 0) + 16;
   let current: HTMLElement | undefined = headings[0];
   for (const heading of headings) {
    if (heading.getBoundingClientRect().top > readingLine) break;
@@ -49,6 +51,9 @@ export function bindToc(document: Document): () => void {
   activate(current?.id);
  };
  const scheduleActive = () => { if (!frame) frame = window.requestAnimationFrame(updateActive); };
+ const onHeaderTransition = (event: TransitionEvent) => {
+  if (event.target === header && event.propertyName === 'top') scheduleActive();
+ };
  const onToggle = (event: MouseEvent) => {
   setOpen(!open);
   if (open && !wide.matches && event.detail === 0) (nav.querySelector<HTMLAnchorElement>('[aria-current="location"]') ?? links[0])?.focus();
@@ -79,6 +84,8 @@ export function bindToc(document: Document): () => void {
  window.addEventListener('scroll', scheduleActive, { passive: true });
  window.addEventListener('resize', scheduleActive);
  window.addEventListener('hashchange', scheduleActive);
+ header?.addEventListener('transitionend', onHeaderTransition);
+ document.addEventListener('headervisibilitychange', scheduleActive);
  return () => {
   setOpen(false);
   toggle.hidden = true;
@@ -89,6 +96,8 @@ export function bindToc(document: Document): () => void {
   window.removeEventListener('scroll', scheduleActive);
   window.removeEventListener('resize', scheduleActive);
   window.removeEventListener('hashchange', scheduleActive);
+  header?.removeEventListener('transitionend', onHeaderTransition);
+  document.removeEventListener('headervisibilitychange', scheduleActive);
   if (frame) window.cancelAnimationFrame(frame);
  };
 }

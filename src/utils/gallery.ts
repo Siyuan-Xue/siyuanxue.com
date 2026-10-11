@@ -3,17 +3,17 @@ import { z } from 'astro/zod';
 import type { Locale } from '../i18n/types';
 import type { LinkItem } from '../data/site';
 export type GalleryImage = { src: ImageMedia; alt: string; caption: string };
-export type GalleryVideo = { src: VideoMedia; poster: ImageMedia; label: string; caption: string; duration: number; uploadDate: string };
+export type GalleryVideo = { src: VideoMedia; poster: ImageMedia; label: string; caption: string; duration?: number; uploadDate?: string };
 export type GalleryComparison = { title: string; description: string };
 export type GalleryHomeItem = { title: string; href: string; meta?: string; year?: string | number; venue?: string; external?: boolean };
 export type GalleryLink = { label: string; href: string };
 export type GalleryImageSection = { title: string; start: number };
-export type GalleryData = { title: string; description: string; period?: string; homeMeta?: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; imageSections?: GalleryImageSection[]; links: GalleryLink[]; videos?: GalleryVideo[]; videoTitle?: string | null; videoLayout?: 'comparison' | 'demos'; videoDescription?: string; comparison?: GalleryComparison };
+export type GalleryData = { title: string; description: string; seoDescription?: string; datePublished?: string; dateModified?: string; period?: string; homeMeta?: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; imageSections?: GalleryImageSection[]; links: GalleryLink[]; videos?: GalleryVideo[]; videoTitle?: string | null; videoLayout?: 'comparison' | 'demos'; videoDescription?: string; comparison?: GalleryComparison };
 export function createGallerySchema<T extends z.ZodType, V extends z.ZodType = z.ZodNever>(image: T, video?: V) {
  const text = z.string().trim().min(1);
- return z.object({ title: text, description: text, period: text.optional(), homeMeta: text.optional(), role: text, category: z.enum(['projects', 'research', 'appearances']), order: z.number().int().default(0), draft: z.boolean().default(true), preview: z.boolean().default(false), layout: z.enum(['photos', 'product']).default('photos'), images: z.array(z.object({ src: image, alt: text, caption: text })).min(1), links: z.array(z.object({ label: text, href: text.pipe(z.url({ protocol: /^https?$/ })) })).default([]),
+ return z.object({ title: text, description: text, seoDescription: text.optional(), datePublished: z.iso.date().optional(), dateModified: z.iso.date().optional(), period: text.optional(), homeMeta: text.optional(), role: text, category: z.enum(['projects', 'research', 'appearances']), order: z.number().int().default(0), draft: z.boolean().default(true), preview: z.boolean().default(false), layout: z.enum(['photos', 'product']).default('photos'), images: z.array(z.object({ src: image, alt: text, caption: text })).min(1), links: z.array(z.object({ label: text, href: text.pipe(z.url({ protocol: /^https?$/ })) })).default([]),
   imageSections: z.array(z.object({ title: text, start: z.number().int().nonnegative() })).default([]),
-  videos: z.array(z.object({ src: video ?? z.never(), poster: image, label: text, caption: text, duration: z.number().positive(), uploadDate: z.iso.date() })).default([]),
+  videos: z.array(z.object({ src: video ?? z.never(), poster: image, label: text, caption: text, duration: z.number().positive().optional(), uploadDate: z.iso.date().optional() })).default([]),
   videoTitle: text.nullable().optional(), videoLayout: z.enum(['comparison', 'demos']).default('comparison'), videoDescription: text.optional(), comparison: z.object({ title: text, description: text }).optional(),
  }).refine(({ imageSections, images }) => imageSections.every((section, index) => section.start < images.length && (index === 0 ? section.start === 0 : section.start > imageSections[index - 1].start)), { path: ['imageSections'], message: 'Image sections must partition images in order, starting at zero.' });
 }

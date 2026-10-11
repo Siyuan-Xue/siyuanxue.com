@@ -12,12 +12,17 @@ const isChat = Astro.url.pathname === '/chat/' || Astro.url.pathname === '/chat'
 const isHome = Astro.url.pathname === '/';
 const Brand = isHome ? 'h1' : 'span';
 ---
-<header class="header"><div class="container cc-narrow header-inner">
+<header class="header" data-scroll-header={!isChat || undefined}><div class="container cc-narrow header-inner">
  <a href="/" class="header-name-link" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}><Brand class="header-name">{t(site.name)}</Brand></a>
  <div class="header-controls">
   {showTocToggle && <TocToggle />}
-  {!isHome && <a class="header-control-button header-home-link" href="/" aria-label={homeLabel} title={homeLabel}><House size={18} stroke-width={1.8} aria-hidden="true" /></a>}
-  {!isChat && <a class="header-control-button header-chat-link" href="/chat/" aria-label={chatLabel} title={chatLabel}><MessageCircleMore size={18} stroke-width={1.8} aria-hidden="true" /></a>}
+  {!isHome && <a class="header-control-button header-home-link" href="/" aria-label={homeLabel} title={homeLabel}><House size={20} stroke-width={1.8} aria-hidden="true" /></a>}
+  {!isChat && <a class="header-control-button header-chat-link" href="/chat/" aria-label={chatLabel} title={chatLabel}><MessageCircleMore size={20} stroke-width={1.8} aria-hidden="true" /></a>}
   <ThemeToggle />
  </div>
 </div></header>
+
+<script>
+ import { bindHeader } from '../utils/header';
+ bindHeader(document);
+</script>

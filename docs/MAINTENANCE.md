@@ -2,6 +2,8 @@
 
 维护负责人：Siyuan Xue / 薛思远。整理日期：2026-09-16。
 
+**2026-10-11 全站可发现性治理：**用户长期意图已落入根目录 [AGENTS.md](../AGENTS.md)。治理覆盖所有现有及未来公开内容、查询方式和 AI 检索方式；稳定路由不因 SEO 更名，可见正文保持不变。此次明确授权顶栏改为纯色和滚动自动显隐，聊天页保持可见，替代旧的始终可见/70% 模糊背景约定；历史段落保留当时事实。实现、核验、搜索平台待办与恢复见[本次审计](audits/2026-10-11-discoverability-header.md)；进行中的条目不代表已发布。
+
 这是网站及关联资源的维护入口。[本轮工作总结](WORK-SUMMARY-2026-09-16.md) 解释已做的工作；本文记录资源在哪里、怎样更新、怎样验收与恢复。以仓库和既有部署记录为依据，不包含密码、令牌、微信身份 ID、日记正文或恢复密钥。
 
 ## 1. 如何判断信息是否仍然有效
@@ -33,12 +35,15 @@
 | 域名注册与 DNS | 注册商/DNS 控制台才是续费、解析记录的权威来源 | **待补**：服务商、账号入口、到期日、自动续费、完整解析导出；不因服务器在腾讯云就推定域名也在腾讯云 |
 | 腾讯云 Lighthouse | Ubuntu 24.04 / Nginx；IP `82.156.77.131`；实例 `lhins-aftjtoo4`，北京七区 / `ap-beijing` | 管理员 `ubuntu`，CI `deploy`，SSH 22；腾讯云控制台 OrcaTerm 为备用。2026-10-10 控制台核对：锐驰型 2 核 / 8GB / 80GB、无限流量 / 200Mbps 峰值带宽，到期 2027-08-23 07:46:25；自动续费与快照策略待核对。套餐峰值不代表实际跨境吞吐量 |
 | TLS 证书 | 两 apex 分别管理含自身 www 的证书；`/etc/letsencrypt/` | Certbot 自动续期及 Nginx reload hook；见 [HTTPS 运维](../ops/HTTPS.md)。当前有效期和最近续期结果需定期查证 |
-| Google Search Console | [控制台](https://search.google.com/search-console) 管理归属验证、sitemap、收录/查询词 | 本轮未完成账号归属验证与提交；不能声称已经接入或排名第一 |
-| 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index) | 本轮未完成归属验证/提交；未配置推送令牌 |
-| Bing Webmaster Tools | [控制台](https://www.bing.com/webmasters/) | 本轮未完成归属验证/提交；未配置 IndexNow 密钥 |
-| SEO 公共入口 | 每个域名的 `/robots.txt`、`/sitemap-index.xml`、`/rss.xml`；HTML canonical / hreflang / JSON-LD | 源码构建生成，免额外平台认证；可被发现不等于已收录或有固定排名 |
+| Google Search Console | [控制台](https://search.google.com/search-console) 管理归属验证、sitemap、收录/查询词 | 2026-10-11 可用浏览器未登录，未取得已有属性/验证/提交状态；待登录后复用已有站点并检查全部候选 URL |
+| 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index) | 2026-10-11 平台明确显示未登录；未取得账号归属与提交证据，未配置百度推送令牌 |
+| Bing Webmaster Tools | [控制台](https://www.bing.com/webmasters/) | 2026-10-11 可用浏览器停留未登录介绍页；平台归属与提交状态待核查。IndexNow 是独立通知渠道，不代表此控制台已接入 |
+| IndexNow | `ops/indexnow.mjs`、CI/Deploy 工作流；GitHub 仓库 secrets `INDEXNOW_KEY_EN` / `INDEXNOW_KEY_ZH` | 2026-10-11 已配置两域名验证键；CI 从环境生成公开验证文件，源码和文档不存值。正常发布成功后独立通知；具体上线结果见当次审计 |
+| SEO 公共入口 | 每个域名的 `/robots.txt`、`/sitemap-index.xml`、`/sitemap-0.xml`、`/sitemap-images.xml`、`/sitemap-videos.xml`、`/rss.xml`、`/indexnow-manifest.json`；HTML canonical / hreflang / JSON-LD | 统一清单由 `src/utils/discoveryContent.ts` / `discovery.ts` 生成，构建集成逐页校验；详细清单与缺项报告只留 `.build/discovery/`。可被发现不等于已收录或有固定排名，维护规则见[搜索指南](SEARCH.md) |
 
 注册商、实例和搜索平台的缺项只需补非敏感信息；账号密码、证件、付款信息不要写入公开仓库。
+
+**IndexNow 更新、验证与恢复：**仓库 secrets 通过可复用 CI 的可选输入提供给构建；修改后走正常双语发布，检查两域名验证文件及通知 job summary。发布前清单 `indexnow-before-<run_id>`、通知状态 `indexnow-state-<run_id>-<attempt>` 在 GitHub Actions artifacts 保存 90 天，记录未确认地址与上次清单，失败后重跑工作流或在下次成功发布补交。通知 job 独立于已完成的静态发布，失败不触发网站回滚；超过保留期后没有历史状态则全量提交当前 URL，历史删除地址需要从此前清单补回。现有 rollback 不主动发送通知，后续正常发布会重新比较；必要时按历史 URL 清单人工复核删除状态。HTTP 200/202 仅证明收到/待验证，不代表收录。恢复代码用 Git/Actions，停用通知可移除对应 secret，地址队列仍保留；无需服务器安装额外服务。
 
 ## 3. 网站发布链路及维护边界
 
@@ -225,7 +230,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 图集 / 首页内容目录 | `src/content/galleries` 双语 JSON、真实角色/介绍/图片/alt/图注、来源资料与 `site.ts` 的 gallerySlug、双语 preview 一致、可选时间字段与独立首页 `homeMeta` 两语言显示一致，仅简短说明/不回退时间及无空括号、可选图片分区的标题/起点/顺序与连续灯箱、草稿隔离、首页站内入口、封面/canonical/hreflang/ImageGallery；sitemap 按内容 draft/preview 状态筛选；`bun run test:gallery` 在临时目录验证正式图集可索引，生产产物测试验证条目预览可由首页进入但 noindex/不进 sitemap、固定版式样例额外不进首页、普通草稿不出页；不改变博客 RSS 身份 |
 | 域名 / 路径 | 注册与 DNS、www/HTTP 跳转、两个证书、Nginx 根目录、SEO/RSS/sitemap、语言链接、聊天 ALLOWED_ORIGINS、CI 变量与域名校验、GitHub 各处链接、搜索平台属性 |
 | 肖像 / 动效 | 正常肖像与占位肖像区分、人物比例/压缩/alt、单击展开、刷新折叠、灯箱可访问性、两站可见英文文案、reduced-motion、旧照片永久拒绝、图片缓存；不恢复状态标语块 |
-| 明暗 / 顶栏 / 导航 | 首页/文章/聊天、两种语言、明暗初次加载/切换/返回、70% 背景与图标可读性、Lucide 无圆框按钮、控件按「越小、越新越靠左」排序且 DOM/键盘顺序一致、目录按钮与模糊背景分层、键盘/触屏/窄屏；桌面结果不能当实体手机验收 |
+| 明暗 / 顶栏 / 导航 | 首页/文章/聊天、两种语言、明暗初次加载/切换/返回、不透明背景与图标可读性、静态页滚动显隐/顶部/焦点/手机目录显示锁、聊天顶栏常显、Lucide 无圆框按钮、控件按「越小、越新越靠左」排序且 DOM/键盘顺序一致、桌面固定目录与锚点偏移、键盘/触屏/窄屏；桌面结果不能当实体手机验收 |
 | 聊天前端 / 协议 | 网站 CI、Node bridge 是否也需独立部署、真实 SSE/错误/停止/重试、会话恢复、两域名跨源配置、许可证归属 |
 | Hermes / 记忆 / 模型 | 服务与源码版本、profile overlays、实际工具白名单、主人路由、GLM 主/辅助端点、插件、语音模型、数据库扩展、timer、备份恢复；先核对归档与旧文档差异 |
 | 依赖 / 运行时 | `package.json`+锁文件、CI Bun/Node、服务器 bridge Node、Hermes/Python/数据库/模型分别版本；安全 overrides 是否仍需要；第三方许可 |
@@ -252,8 +257,8 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 
 - 每次发布后：两域名语言、TLS、`__health`、关键交互；聊天相关更新再做模型与记忆验收。
 - 每周：Actions 失败、服务失败、磁盘/共享资源、记忆队列积压、备份最近成功时间；备份未自动清理。
-- 每月：依赖与服务器更新、证书自动续期、模型额度/账单、账号权限、域名/云实例续费日期、搜索收录数据（接入平台之后）。
-- 每季度及迁移前：隔离恢复演练、备份异地可用性、维护清单与运行状态的一致性。实际频率由负责人确定。
+- 每月：依赖与服务器更新、证书自动续期、模型额度/账单、账号权限、域名/云实例续费日期；检查搜索收录、查询曝光与引用准确性，搜索平台未接入时明确记录证据缺口。
+- 每季度及迁移前：隔离恢复演练、备份异地可用性、维护清单与运行状态的一致性；复核搜索与 AI 爬虫官方政策，分别检查搜索、用户发起读取、训练用途。尚未创建定时自动任务。
 
 ## 7. 仍需跟进的事项
 
@@ -263,7 +268,8 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 高 | 备份连续性与容量 | 定期验证服务器备份；确定异地自动备份与留存策略；目前 Mac 只是一份快照 |
 | 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日（见第 2 节）；仍需补注册商/DNS、域名到期日、自动续费、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
-| 中 | 搜索平台接入 / 收录观察 | 用户愿意完成归属验证后，分别提交两域名 sitemap，观察查询词、展现/点击、收录与错误；SEO 本身不保证姓名搜索第一个词条 |
+| 中 | 搜索平台接入 / 收录观察 | 本次已授权治理，但可用浏览器未登录。登录后核对/复用已有属性并完成必要验证，提交两域名 sitemap、检查全量候选 URL；IndexNow 独立接入不代替平台验证。观察查询词、展现/点击、收录及引用准确性，不承诺排名 |
+| 中 | 独立个人主页项目名称差异 | 2026-10-11 API 核对 README 仍为 `PixelDone / 像素清单`，独立仓库待按已确认展示名 `Pixel Done` 更新；本站与实际项目仓库 URL 保持不变 |
 | 按需 | SuperGrok 服务器网络与认证 | 网络恢复、官方授权及一次真实推理均验收后才标启用；保留既有 GLM，不自动加付费回退 |
 
 上一轮 `gh auth refresh` 的最终网页授权被自动审批拦截，原因是权限页包含私有仓库、全部用户资料和工作流等广泛范围；尚未得到这组具体范围的新确认。本次仅复核现有权限可读内容，不重试授权，也不把设备码或会话信息写进长期文档。

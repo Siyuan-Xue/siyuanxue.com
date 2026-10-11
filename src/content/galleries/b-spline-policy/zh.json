@@ -47,7 +47,14 @@
     "description": "这组真机数据中，BSP 最近点接管的两项跳变均值与方差均低于 baseline 直接接管，体现了更平滑的片段衔接。结果对应本次实验，不代表所有任务或速度设置下的表现。"
   },
   "links": [
-    { "label": "GitHub 仓库", "href": "https://github.com/Siyuan-Xue/openpi05-bsp" },
-    { "label": "B-spline Policy 论文 · Han、Xiong 等", "href": "https://arxiv.org/abs/2607.09648" }
-  ]
+    {
+      "label": "GitHub 仓库",
+      "href": "https://github.com/Siyuan-Xue/openpi05-bsp"
+    },
+    {
+      "label": "B-spline Policy 论文 · Han、Xiong 等",
+      "href": "https://arxiv.org/abs/2607.09648"
+    }
+  ],
+  "seoDescription": "薛思远在极智深诣实习期间开展的 B-Spline Policy 论文复现与算法实验，包含仿真演示、真机视频及训练与推理实践。"
 }

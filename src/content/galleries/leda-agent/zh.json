@@ -44,5 +44,6 @@
       "label": "Awesome GitHub 仓库",
       "href": "https://github.com/sindresorhus/awesome"
     }
-  ]
+  ],
+  "seoDescription": "薛思远与室友共同开发的 LeDA 智能体：使用 Neo4j、LangGraph 和图谱 RAG 检索开发者学习资源，记录北邮大创项目经历与演示。"
 }

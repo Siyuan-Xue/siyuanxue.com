@@ -31,8 +31,8 @@ export const site = {
 	homeTitle: bi('Siyuan Xue（薛思远）｜Personal Website', '薛思远（Siyuan Xue）｜个人网站'),
 	github: 'https://github.com/Siyuan-Xue',
 	description: bi(
-		'Siyuan Xue (薛思远), a student in Intelligence Science and Technology at BUPT. Projects and writing on AI systems, agents, and full-stack engineering.',
-		'薛思远（Siyuan Xue）的个人网站。北京邮电大学智能科学与技术学生，分享 AI 系统、智能体与全栈工程的项目和思考。',
+		'Siyuan Xue (薛思远), a student in Intelligence Science and Technology at BUPT. Projects and writing on AI systems, agents and full-stack engineering, alongside university theatre and volleyball.',
+		'薛思远（Siyuan Xue）的个人网站。北京邮电大学智能科学与技术学生，分享 AI 系统、智能体与全栈工程的项目和思考，记录大学话剧与排球经历。',
 	),
 
 	ui: {

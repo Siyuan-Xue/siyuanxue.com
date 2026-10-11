@@ -44,10 +44,10 @@
 .toc-container[hidden], .toc-toggle[hidden] { display: none; }
 .toc-toggle {
  position: fixed;
- top: 22px;
+ top: var(--header-pad-top);
  left: 12px;
- width: 44px;
- height: 44px;
+ width: var(--header-control-size);
+ height: var(--header-control-size);
  color: var(--fg);
 }
 .toc-toggle-close, .toc-toggle[aria-expanded='true'] .toc-toggle-menu { display: none; }

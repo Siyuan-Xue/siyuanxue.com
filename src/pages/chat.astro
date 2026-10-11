@@ -42,6 +42,6 @@ const prompts = [
   { label: t({ en: 'Just say hello', zh: '随便聊两句' }), text: t({ en: 'Hi, xue. Let’s chat about something fun.', zh: '嗨，小薛，我们随便聊点有趣的吧。' }) },
 ];
 ---
-<Base title={copy.title} description={copy.intro} htmlClass="has-xue-chat" showHeader={false}>
+<Base htmlClass="has-xue-chat" showHeader={false}>
   <ChatApp client:load copy={copy} prompts={prompts} locale={locale} />
 </Base>

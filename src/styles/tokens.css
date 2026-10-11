@@ -59,7 +59,7 @@
 	--font-size-h1: 3.1em;
 	--font-size-h2: 1.6em;
 	--font-size-h3: 1.2em;
-	--font-size-header-name: 1.44em;
+	--font-size-header-name: 1.8rem;
 	--font-size-meta: 0.9em;
 	/* CJK title tracking — light newspaper-style openness */
 	--letter-spacing-zh-title: 0.04em;
@@ -105,5 +105,5 @@ html[data-lang='zh'] {
 	--list-gap: 0.7em;
 	--font-size-h2: 1.45em;
 	--font-size-h3: 1.15em;
-	--font-size-header-name: 1.32em;
+	--font-size-header-name: 1.625rem;
 }

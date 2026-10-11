@@ -2,6 +2,7 @@
 title: Congrats, You Hit the Limit
 date: 2026-07-19
 description: Why the same AI usage feels like value to consumers, cost to developers, and growth to businesses.
+seoDescription: "Siyuan Xue on AI pricing: why usage feels like value to subscribers, cost to developers and growth to businesses."
 draft: false
 ---
 

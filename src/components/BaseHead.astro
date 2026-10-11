@@ -4,44 +4,54 @@ import { locale, localeOrigin, t } from '../i18n/locale';
 import '../styles/base.css';
 import 'site-fonts';
 import themeScript from '../scripts/theme.js?raw';
-import type { ShareImage, GalleryMetadataImage, GalleryMetadataVideo } from '../utils/pageMetadata';
 import { imageMedia } from '../utils/media';
-interface Props { title?: string; description?: string; articleDate?: Date; noindex?: boolean; shareImage?: ShareImage; galleryImages?: GalleryMetadataImage[]; galleryVideos?: GalleryMetadataVideo[] }
-const { title = t(site.title), description = t(site.description), articleDate, noindex = false, shareImage, galleryImages, galleryVideos } = Astro.props;
-const canonical = new URL(Astro.url.pathname, localeOrigin(locale)).href;
+import { getDiscoveryPage } from '../utils/discoveryContent';
+const page = await getDiscoveryPage(Astro.url.pathname);
+const { title, description, structuredDescription, canonical, fullTitle, shareImage } = page;
+const noindex = !page.indexable;
+const articleDate = (page.kind === 'essay' || page.kind === 'post') && page.datePublished ? new Date(page.datePublished) : undefined;
+const galleryImages = page.kind === 'gallery' ? page.images : undefined;
+const galleryVideos = page.kind === 'gallery' ? page.videos : undefined;
 const defaultCover = imageMedia(`share-${locale}`);
 const cover = shareImage ?? { src: defaultCover.src, width: defaultCover.width, height: defaultCover.height, alt: t(site.name) };
 const image = new URL(cover.src, localeOrigin(locale)).href;
 const isHome = Astro.url.pathname === '/';
-const fullTitle = isHome ? t(site.homeTitle) : `${title} — ${t(site.name)}`;
 const language = locale === 'zh' ? 'zh-CN' : 'en';
 const person = {
  '@type': 'Person', '@id': `${localeOrigin('en')}/#person`,
  name: t(site.name), alternateName: [locale === 'zh' ? site.name.en : site.name.zh, 'Miles'],
  url: `${localeOrigin('en')}/`, sameAs: [site.github, `${localeOrigin('zh')}/`],
+ description: t(site.bio.lead),
+ image: new URL(imageMedia('portrait').src, localeOrigin('en')).href,
+ knowsAbout: ['AI systems', 'AI agents', 'Full-stack engineering'],
 };
 const schema = galleryImages?.length
  ? {
-  '@context': 'https://schema.org', '@type': 'ImageGallery', name: title, description,
+  '@context': 'https://schema.org', '@type': 'ImageGallery', '@id': `${canonical}#gallery`, name: title, description: structuredDescription,
   url: canonical, inLanguage: language, author: person, about: person,
+  isPartOf: { '@id': `${localeOrigin(locale)}/#website` },
+  ...(page.datePublished ? { datePublished: page.datePublished } : {}),
+  ...(page.dateModified ? { dateModified: page.dateModified } : {}),
   primaryImageOfPage: { '@type': 'ImageObject', contentUrl: image, width: cover.width, height: cover.height, description: cover.alt },
   image: galleryImages.map(photo => ({
-   '@type': 'ImageObject', contentUrl: new URL(photo.src, localeOrigin(locale)).href,
+   '@type': 'ImageObject', '@id': new URL(photo.src, localeOrigin(locale)).href, contentUrl: new URL(photo.src, localeOrigin(locale)).href,
    width: photo.width, height: photo.height, description: photo.alt, caption: photo.caption,
+   isPartOf: { '@id': `${canonical}#gallery` },
   })),
   ...(galleryVideos?.length ? { video: galleryVideos.map(video => ({
-   '@type': 'VideoObject', name: video.name, description: video.description,
+   '@type': 'VideoObject', '@id': new URL(video.src, localeOrigin(locale)).href, name: video.name, description: video.description,
    contentUrl: new URL(video.src, localeOrigin(locale)).href,
    thumbnailUrl: new URL(video.poster, localeOrigin(locale)).href,
-   duration: `PT${video.duration}S`, uploadDate: video.uploadDate,
+   ...(video.duration ? { duration: `PT${video.duration}S` } : {}), ...(video.uploadDate ? { uploadDate: video.uploadDate } : {}),
+   isPartOf: { '@id': `${canonical}#gallery` },
   })) } : {}),
  }
  : articleDate
- ? { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description, datePublished: articleDate.toISOString(), author: person, inLanguage: language, mainEntityOfPage: canonical, url: canonical, image }
+ ? { '@context': 'https://schema.org', '@type': 'BlogPosting', '@id': `${canonical}#article`, headline: title, description: structuredDescription, datePublished: articleDate.toISOString(), ...(page.dateModified ? { dateModified: page.dateModified } : {}), author: person, publisher: { '@id': person['@id'] }, inLanguage: language, mainEntityOfPage: canonical, isPartOf: { '@id': `${localeOrigin(locale)}/#website` }, url: canonical, image }
  : isHome ? {
   '@context': 'https://schema.org',
   '@graph': [
-   { '@type': 'ProfilePage', '@id': `${canonical}#profile`, url: canonical, name: fullTitle, description, inLanguage: language, mainEntity: person },
+   { '@type': 'ProfilePage', '@id': `${canonical}#profile`, url: canonical, name: fullTitle, description: structuredDescription, inLanguage: language, mainEntity: person },
    { '@type': 'WebSite', '@id': `${canonical}#website`, url: canonical, name: t(site.name), alternateName: locale === 'zh' ? site.name.en : site.name.zh, inLanguage: language, publisher: { '@id': person['@id'] } },
   ],
  } : undefined;
@@ -56,9 +66,7 @@ const schema = galleryImages?.length
 <meta name="description" content={description} />
 {noindex && <meta name="robots" content="noindex, follow" />}
 <link rel="canonical" href={canonical} />
-<link rel="alternate" hreflang="en" href={new URL(Astro.url.pathname, localeOrigin('en'))} />
-<link rel="alternate" hreflang="zh-CN" href={new URL(Astro.url.pathname, localeOrigin('zh'))} />
-<link rel="alternate" hreflang="x-default" href={new URL(Astro.url.pathname, localeOrigin('en'))} />
+{Object.entries(page.alternates).map(([language, url]) => <link rel="alternate" hreflang={language} href={url} />)}
 <link rel="alternate" type="application/rss+xml" title={t(site.title)} href="/rss.xml" />
 <meta property="og:type" content={articleDate ? 'article' : 'website'} />
 <meta property="og:title" content={title} />
@@ -70,6 +78,7 @@ const schema = galleryImages?.length
 <meta property="og:image:width" content={String(cover.width)} /><meta property="og:image:height" content={String(cover.height)} />
 <meta property="og:image:alt" content={cover.alt} />
 {articleDate && <meta property="article:published_time" content={articleDate.toISOString()} />}
+{articleDate && page.dateModified && <meta property="article:modified_time" content={page.dateModified} />}
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />

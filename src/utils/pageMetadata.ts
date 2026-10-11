@@ -15,6 +15,6 @@ export interface GalleryMetadataVideo {
  poster: string;
  name: string;
  description: string;
- duration: number;
- uploadDate: string;
+ duration?: number;
+ uploadDate?: string;
 }

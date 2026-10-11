@@ -98,6 +98,11 @@ test('gallery accepts optional native videos and a results summary while requiri
  for (const change of [{ poster: undefined }, { duration: 0 }, { uploadDate: 'not-a-date' }]) expect(schema.safeParse({ ...data, videos: [{ ...video, ...change }] }).success).toBe(false);
  expect(schema.safeParse({ ...data, comparison: { ...comparison, description: '' } }).success).toBe(false);
 });
+test('a video with unknown upload date or duration can remain visible without inventing indexing metadata', () => {
+ const schema = createGallerySchema(z.object({ src: z.string(), kind: z.literal('image') }), z.object({ src: z.string(), kind: z.literal('video') }));
+ const { duration, uploadDate, ...unknown } = video;
+ expect(schema.safeParse({ ...data, videos: [unknown] }).success).toBe(true);
+});
 test('bilingual galleries reject mismatched video recordings or ordering', () => {
  const pair = [entry('demo/en', { videos: [video] }), entry('demo/zh', { videos: [video] })];
  expect(pairGalleries(pair, 'en')).toHaveLength(1);

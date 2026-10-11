@@ -2,6 +2,7 @@
 title: 站点开张的一条短记
 date: 2026-07-14
 description: 第一版上线时的备注：框架优先，内容慢慢填。
+seoDescription: "薛思远记录个人网站第一版上线：先搭好框架，再逐步补充内容。"
 draft: false
 ---
 

@@ -44,5 +44,6 @@
       "label": "Awesome GitHub repository",
       "href": "https://github.com/sindresorhus/awesome"
     }
-  ]
+  ],
+  "seoDescription": "Siyuan Xue’s LeDA Agent team project at BUPT, using Neo4j, LangGraph and graph-based RAG to recommend developer learning resources."
 }

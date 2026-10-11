@@ -41,5 +41,6 @@
       "label": "GitHub 仓库",
       "href": "https://github.com/Siyuan-Xue/PixelDone"
     }
-  ]
+  ],
+  "seoDescription": "薛思远设计与开发的安卓待办应用 Pixel Done，支持任务与列表编辑、自定义 Dock、云端备份和多端同步，收录开发经历与真实 App 截图。"
 }

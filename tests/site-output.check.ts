@@ -4,10 +4,17 @@ import { join } from 'node:path';
 import { createContext, runInContext } from 'node:vm';
 import { parseHTML, DOMParser } from 'linkedom';
 import { imageMedia, media } from '../src/utils/media';
+import { auditDiscoveryHtml, type DiscoveryPage } from '../src/utils/discovery';
 const mediaPaths = new Set(Object.values(media).flatMap(asset => asset.kind === 'image' ? [asset.src, asset.cover.src, ...asset.variants.map(file => file.src)] : [asset.src]));
 async function checkAsset(root: string, path: string) {
  if (path.startsWith('/media/')) expect(mediaPaths.has(path)).toBe(true);
  else await access(join(root, path));
+}
+function windowWithMedia(document: Document) {
+ const window = document.defaultView!;
+ window.matchMedia = (() => ({ matches: false, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
+ Object.defineProperty(window, 'scrollY', { value: 0, configurable: true });
+ return window;
 }
 test('release contains no photo/video binaries or media directory; image payloads remain outside CI', async () => {
  const paths = await readdir('dist', { recursive: true });
@@ -29,6 +36,48 @@ const variants = [
 const entryGallerySlugs = ['imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'family', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
+ test(`${v.lang}: every generated route matches discovery policy and all sitemap URLs are indexable canonical pages`, async () => {
+  const locale = v.lang === 'en' ? 'en' : 'zh';
+  const inventory: DiscoveryPage[] = JSON.parse(await readFile(`.build/discovery/${locale}.json`, 'utf8'));
+  const files = await htmlFiles(v.root);
+  expect(files).toHaveLength(inventory.length);
+  for (const file of files) {
+   const pathname = file.slice(v.root.length).replace(/index\.html$/, '').replace(/404\.html$/, '404/');
+   const page = auditDiscoveryHtml(pathname, await readFile(file, 'utf8'), inventory);
+   if (page.kind === 'gallery') {
+    const source = JSON.parse(await readFile(`src/content/galleries/${pathname.split('/')[2]}/${locale}.json`, 'utf8'));
+    const { document } = parseHTML(await readFile(file, 'utf8'));
+    expect(document.querySelector('.gallery-description')?.textContent).toBe(source.description);
+    expect(document.querySelector('meta[name="description"]')?.getAttribute('content')).toBe(source.seoDescription ?? source.description);
+   }
+  }
+  const indexable = inventory.filter(page => page.indexable);
+  const sitemap = new DOMParser().parseFromString(await readFile(join(v.root, 'sitemap-0.xml'), 'utf8'), 'text/xml');
+  expect([...sitemap.querySelectorAll('url > loc')].map(node => node.textContent).sort()).toEqual(indexable.map(page => page.canonical).sort());
+  for (const node of sitemap.querySelectorAll('url')) {
+   const page = indexable.find(page => page.canonical === node.querySelector('loc')?.textContent)!;
+   expect(node.querySelector('lastmod')?.textContent ?? undefined).toBe(page.dateModified ?? page.datePublished);
+   const links = [...node.getElementsByTagName('xhtml:link')];
+   expect(links).toHaveLength(3);
+   for (const [language, url] of Object.entries(page.alternates)) expect(links.some(link => link.getAttribute('hreflang') === language && link.getAttribute('href') === url)).toBe(true);
+  }
+  const index = new DOMParser().parseFromString(await readFile(join(v.root, 'sitemap-index.xml'), 'utf8'), 'text/xml');
+  expect([...index.querySelectorAll('sitemap > loc')].map(node => node.textContent)).toEqual(['sitemap-0.xml', 'sitemap-images.xml', 'sitemap-videos.xml'].map(file => `${v.origin}/${file}`));
+  for (const name of ['sitemap-images.xml', 'sitemap-videos.xml']) {
+   const sitemap = new DOMParser().parseFromString(await readFile(join(v.root, name), 'utf8'), 'text/xml');
+   for (const node of sitemap.querySelectorAll('url > loc')) expect(indexable.map(page => page.canonical)).toContain(node.textContent!);
+  }
+  const imageMap = new DOMParser().parseFromString(await readFile(join(v.root, 'sitemap-images.xml'), 'utf8'), 'text/xml');
+  const originals = new Set(Object.values(media).filter(asset => asset.kind === 'image').map(asset => `${v.origin}${asset.src}`));
+  for (const node of imageMap.getElementsByTagName('image:loc')) expect(originals.has(node.textContent!)).toBe(true);
+  const manifest = JSON.parse(await readFile(join(v.root, 'indexnow-manifest.json'), 'utf8'));
+  expect(manifest.version).toBe(1);
+  expect(manifest.host).toBe(new URL(v.origin).host);
+  expect(Object.keys(manifest.pages).sort()).toEqual(indexable.map(page => page.canonical).sort());
+  for (const hash of Object.values(manifest.pages)) expect(hash).toMatch(/^[a-f0-9]{64}$/);
+  expect(await readFile(join(v.root, 'robots.txt'), 'utf8')).not.toContain('Disallow: /wip/');
+  expect((await readdir(v.root)).some(path => path === 'discovery' || path === 'discovery.json')).toBe(false);
+ });
  test(`${v.lang}: merged mathematics project has one homepage entrance and preserves the old ProbFun address`, async () => {
   const home = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8')).document;
   const projectLinks = [...home.querySelectorAll('.home-container > section')[1].querySelectorAll('.bullet-list_link')];
@@ -66,7 +115,7 @@ for (const v of variants) {
  test(`${v.lang}: shipped theme controls work when browser storage throws`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
   const storage = { getItem() { throw new Error('SecurityError'); }, setItem() { throw new Error('SecurityError'); } };
-  const context = createContext({ document, window: document.defaultView, localStorage: storage, matchMedia: () => ({ matches: false }) });
+  const context = createContext({ document, window: windowWithMedia(document), localStorage: storage, matchMedia: () => ({ matches: false }) });
   for (const script of document.querySelectorAll('script:not([src])')) {
    if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
   }
@@ -103,6 +152,7 @@ for (const v of variants) {
  }
  test(`${v.lang}: returning through browser history restores the latest chosen theme`, async () => {
   const { document, window } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+  windowWithMedia(document);
   let saved = 'light';
   const context = createContext({ document, window, localStorage: { getItem: () => saved, setItem: (_key: string, value: string) => { saved = value; } }, matchMedia: () => ({ matches: false }) });
   for (const script of document.querySelectorAll('script:not([src])')) {
