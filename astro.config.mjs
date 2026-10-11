@@ -7,7 +7,7 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 const locale = resolveLocale(process.env.SITE_LOCALE);
 // The sitemap integration sees routes, not page robots metadata. Derive exclusions from content.
 const galleryRoot = new URL('./src/content/galleries/', import.meta.url);
-const unindexedGalleries = new Set(['/gallery/layout-preview/']);
+const unindexedGalleries = new Set(['/gallery/layout-preview/', '/gallery/probfun/']);
 for (const directory of readdirSync(galleryRoot, { withFileTypes: true })) {
  if (!directory.isDirectory()) continue;
  const entries = ['en', 'zh'].flatMap(language => {
@@ -19,6 +19,7 @@ for (const directory of readdirSync(galleryRoot, { withFileTypes: true })) {
 export default defineConfig({
  site: localeOrigin(locale),
  outDir: `./.build/${locale}`,
+ redirects: { '/gallery/probfun/': '/gallery/imathbook/' },
  integrations: [react(), sitemap({ filter: (page) => {
   const pathname = new URL(page).pathname.replace(/\/?$/, '/');
   return !/\/(wip|404)\/$/.test(pathname) && !unindexedGalleries.has(pathname);

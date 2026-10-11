@@ -84,6 +84,8 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 原有七个条目分别关联 `probfun`、`imathbook`、`leda-agent`、`pixeldone`、`yuheng`、`walking-with-light`、`volleyball`，以独立的公开占位页打通站内入口。没有公开图集的其他条目仍显示「整理中 / In preparation」，不继续外跳。来源数据中的原始外链仍被保留；适用链接及准确双语标签放入图集的 `links`，作为相关资料展示。不要把原外链替换成尚不存在的图集地址。
 
+2026-10-11 后续按用户要求，`probfun` 与 `imathbook` 已合并为单一「iMathBook · uMathHub」条目，沿用 `/gallery/imathbook/`，在首页项目列表首位展示。原 `probfun` 双语占位 JSON 撤下，旧 `/gallery/probfun/` 由 Astro 静态跳转到合并页：HTML 提供即时刷新、可点击的备用入口、目标 canonical 和 `noindex`，旧路径不进入 sitemap；无需修改 Nginx。两个平台外链都在合并页保留。七张真实截图按用户顺序引用 `imathbook/screenshot-01` 至 `screenshot-07`，分为前三张 uMathHub 和后四张 iMathBook；双语 JSON 同时为正式图集。介绍、参与时间与本人角色依据用户提供的经历，素材直传、验证、实际发布和恢复见 [合并审计](audits/2026-10-11-imathbook-umathhub-gallery.md)。上段七个入口是此前占位阶段的记录，不代表合并后的首页数量。
+
 `bnds-life` 是有真实截图与已确认介绍的正式项目图集，使用 `draft: false`、`preview: false`，首页项目列表进入 `/gallery/bnds-life/`。五张用户提供的原始截图已直传至服务器，由 `bnds-life/*` 媒体 ID 引用，两语言 JSON 共用图片并各自提供介绍、alt 和图注；页末保留项目网站和公开源码链接。其构建产物进入 sitemap，实际上线状态以维护总览及审计为准。
 
 `pixeldone` 也已补齐用户确认的开发经历与五张真实 App 截图，在原址 `/gallery/pixeldone/` 转为正式图集。双语 JSON 共用 `pixeldone/*` 媒体 ID 对应的原始截图，依次展示待办首页、任务编辑、清单编辑、Dock 自定义和云端设置；相关资料保留 GitHub 仓库链接。时间写明首版开发一天，后续根据同学反馈持续迭代，不把截图里的同步异常状态当作成功同步的验收。其构建产物进入 sitemap；LeDA、《与光同行》和排球队同样补齐正式内容后，余下三个原有条目仍为占位预览。Pixel Done 与 BNDS.life 中文资料链接的可见名称均为「GitHub 仓库」。

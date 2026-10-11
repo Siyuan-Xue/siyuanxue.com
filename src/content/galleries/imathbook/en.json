@@ -1,38 +1,67 @@
 {
-  "title": "iMathBook",
-  "description": "This gallery will present images and material related to iMathBook. The current abstract images are placeholders for viewing the gallery layout; real images, my actual role, and verified details are still to be added.",
-  "period": "2025",
-  "role": "Actual role to be added",
+  "title": "iMathBook · uMathHub",
+  "description": "This was the first project I contributed to. I poured my passion for product design into it and greatly strengthened my engineering skills through the work. In May 2025, I joined ProbFun, the predecessor of uMathHub. In July, I started an independent branch, formed the iMathBook project team and led its development. Both iMathBook and uMathHub are officially recognized mathematics teaching platforms at BUPT. They are now used in mathematics teaching and have supported more than 1,000 student engagements in total.",
+  "period": "Since May 2025",
+  "role": "ProbFun contributor · formed the iMathBook team and led development",
   "category": "projects",
-  "order": 1,
+  "order": 0,
   "draft": false,
-  "preview": true,
+  "preview": false,
   "images": [
     {
-      "src": "gallery-preview/hero",
-      "alt": "Abstract placeholder image 1 for iMathBook",
-      "caption": "Placeholder image: this space will show book overview."
+      "src": "imathbook/screenshot-01",
+      "alt": "The uMathHub uniform-distribution experiment, with a probability density formula, an interactive graph and an experiment summary",
+      "caption": "uMathHub · Visual, interactive mathematics experiments."
     },
     {
-      "src": "gallery-preview/detail",
-      "alt": "Abstract placeholder image 2 for iMathBook",
-      "caption": "Placeholder image: this space will show page details."
+      "src": "imathbook/screenshot-02",
+      "alt": "A uMathHub probability exercise with multiple-choice distribution functions, difficulty ratings and answer controls",
+      "caption": "uMathHub · Practice that reinforces understanding."
     },
     {
-      "src": "gallery-preview/portrait",
-      "alt": "Abstract placeholder image 3 for iMathBook",
-      "caption": "Placeholder image: this space will show reading scenarios."
+      "src": "imathbook/screenshot-03",
+      "alt": "A uMathHub concept map connecting multivariate random variables, marginal distributions and conditional distributions",
+      "caption": "uMathHub · Mapping the connections between mathematical concepts."
     },
     {
-      "src": "gallery-preview/closing",
-      "alt": "Abstract placeholder image 4 for iMathBook",
-      "caption": "Placeholder image: this space will show related material."
+      "src": "imathbook/screenshot-04",
+      "alt": "An iMathBook textbook page with a bookshelf and chapter navigation beside theorems, proofs and distribution-function formulas",
+      "caption": "iMathBook · Bringing mathematics textbooks to life."
+    },
+    {
+      "src": "imathbook/screenshot-05",
+      "alt": "The iMathBook editor insertion menu with tables, LaTeX formulas, GeoGebra boards, exercises and theorem blocks",
+      "caption": "iMathBook · Interactive, multimodal editing."
+    },
+    {
+      "src": "imathbook/screenshot-06",
+      "alt": "An iMathBook random-variables chapter beside the persistent AI teaching assistant, which offers exercises based on the reading",
+      "caption": "iMathBook · An AI teaching assistant always alongside the text."
+    },
+    {
+      "src": "imathbook/screenshot-07",
+      "alt": "The iMathBook personal-memory page with learning events and AI guidance for explaining the page, reviewing key points and starting exercises",
+      "caption": "iMathBook · Personalized memory and learning guidance."
+    }
+  ],
+  "imageSections": [
+    {
+      "title": "uMathHub",
+      "start": 0
+    },
+    {
+      "title": "iMathBook",
+      "start": 3
     }
   ],
   "links": [
     {
-      "label": "Project website",
+      "label": "iMathBook",
       "href": "https://imathbook.com"
+    },
+    {
+      "label": "uMathHub",
+      "href": "https://umathhub.com"
     }
   ]
 }

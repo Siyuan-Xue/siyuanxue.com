@@ -26,9 +26,25 @@ const variants = [
  { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', chatLabel: 'Chat with xue', homeLabel: 'Home' },
  { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', chatLabel: '与小薛聊聊', homeLabel: '首页' },
 ];
-const entryGallerySlugs = ['probfun', 'imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'family', 'volleyball'];
+const entryGallerySlugs = ['imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'family', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
+ test(`${v.lang}: merged mathematics project has one homepage entrance and preserves the old ProbFun address`, async () => {
+  const home = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8')).document;
+  const projectLinks = [...home.querySelectorAll('.home-container > section')[1].querySelectorAll('.bullet-list_link')];
+  expect(projectLinks[0].getAttribute('href')).toBe('/gallery/imathbook/');
+  expect(projectLinks[0].textContent).toBe('iMathBook · uMathHub');
+  expect(home.querySelectorAll('a[href="/gallery/imathbook/"]')).toHaveLength(1);
+  expect(home.querySelector('a[href="/gallery/probfun/"]')).toBeNull();
+  const legacy = parseHTML(await readFile(join(v.root, 'gallery/probfun/index.html'), 'utf8')).document;
+  expect(legacy.querySelector('meta[http-equiv="refresh"]')?.getAttribute('content')).toBe('0;url=/gallery/imathbook/');
+  expect(legacy.querySelector('a[href="/gallery/imathbook/"]')).not.toBeNull();
+  expect(legacy.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(v.origin + '/gallery/imathbook/');
+  expect(legacy.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
+  const sitemap = await readFile(join(v.root, 'sitemap-0.xml'), 'utf8');
+  expect(sitemap).not.toContain('/gallery/probfun/');
+  expect(sitemap).toContain(v.origin + '/gallery/imathbook/');
+ });
  test(`${v.lang}: homepage identifies the same bilingual author as articles`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
   expect(document.title).toBe(v.lang === 'en' ? 'Siyuan Xue（薛思远）｜Personal Website' : '薛思远（Siyuan Xue）｜个人网站');
@@ -108,6 +124,8 @@ for (const v of variants) {
   for (const path of files) {
    const { document } = parseHTML(await readFile(path, 'utf8'));
    const pathname = path.slice(v.root.length).replace(/index\.html$/, '').replace(/404\.html$/, '404/');
+   // The merged project's legacy URL is a framework-generated redirect, checked above.
+   if (pathname === '/gallery/probfun/') continue;
    expect(document.documentElement.lang).toBe(v.lang);
    expect(document.querySelectorAll('meta[name="theme-color"]').length).toBe(1);
    expect(document.querySelectorAll('meta[name="color-scheme"]').length).toBe(1);

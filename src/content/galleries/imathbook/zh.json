@@ -1,38 +1,67 @@
 {
-  "title": "iMathBook",
-  "description": "这里将展示与iMathBook相关的图片与资料。当前抽象图片均为占位图，用于查看图集效果；真实图片、本人实际角色和经核实的说明仍待补充。",
-  "period": "2025",
-  "role": "待补充实际角色",
+  "title": "iMathBook · uMathHub",
+  "description": "这是我参与的第一个项目，我为它倾注了对产品的激情，也在实践中极大地锻炼了工程能力。2025 年 5 月，我加入 ProbFun（邮趣概率，uMathHub 的前身）；同年 7 月，我独立分支，组建 iMathBook 项目团队，并主导了 iMathBook 的开发。如今，iMathBook 与 uMathHub 作为北邮官方认证的数学教学平台，已投入数学教学实践，累计服务超千人次。",
+  "period": "2025 年 5 月起",
+  "role": "ProbFun 项目参与者 · iMathBook 团队组建与开发负责人",
   "category": "projects",
-  "order": 1,
+  "order": 0,
   "draft": false,
-  "preview": true,
+  "preview": false,
   "images": [
     {
-      "src": "gallery-preview/hero",
-      "alt": "iMathBook的第1张抽象占位图",
-      "caption": "占位图：这里将展示数学书概览。"
+      "src": "imathbook/screenshot-01",
+      "alt": "uMathHub 的均匀分布实验界面，包含概率密度公式、可视化曲线与右侧实验结论",
+      "caption": "uMathHub · 可视化、可交互的数学实验。"
     },
     {
-      "src": "gallery-preview/detail",
-      "alt": "iMathBook的第2张抽象占位图",
-      "caption": "占位图：这里将展示页面细节。"
+      "src": "imathbook/screenshot-02",
+      "alt": "uMathHub 的概率论练习界面，显示一道二维随机变量分布函数选择题、难度评分与作答按钮",
+      "caption": "uMathHub · 做题与巩固知识。"
     },
     {
-      "src": "gallery-preview/portrait",
-      "alt": "iMathBook的第3张抽象占位图",
-      "caption": "占位图：这里将展示阅读场景。"
+      "src": "imathbook/screenshot-03",
+      "alt": "uMathHub 的知识点思维导图，以节点和连线展示多维随机变量、边缘分布与条件分布之间的关系",
+      "caption": "uMathHub · 用思维导图梳理知识点。"
     },
     {
-      "src": "gallery-preview/closing",
-      "alt": "iMathBook的第4张抽象占位图",
-      "caption": "占位图：这里将展示相关资料。"
+      "src": "imathbook/screenshot-04",
+      "alt": "iMathBook 的数学教科书页面，左侧为书架与章节目录，正文包含分布函数的定理、证明和公式",
+      "caption": "iMathBook · 让数学教科书「活」起来。"
+    },
+    {
+      "src": "imathbook/screenshot-05",
+      "alt": "iMathBook 编辑器的插入菜单，提供表格、LaTeX 数学公式、GeoGebra 画板、练习题和定理区块",
+      "caption": "iMathBook · 可交互的多模态编辑。"
+    },
+    {
+      "src": "imathbook/screenshot-06",
+      "alt": "iMathBook 的随机变量章节与右侧常驻 AI 助教，助教结合阅读章节提供由浅入深的练习",
+      "caption": "iMathBook · 阅读时始终相伴的 AI 助教。"
+    },
+    {
+      "src": "imathbook/screenshot-07",
+      "alt": "iMathBook 的个人记忆页面，记录学习事件，右侧 AI 提供讲清这一页、梳理重点和开始练习的导学入口",
+      "caption": "iMathBook · 个性化记忆与导学。"
+    }
+  ],
+  "imageSections": [
+    {
+      "title": "uMathHub",
+      "start": 0
+    },
+    {
+      "title": "iMathBook",
+      "start": 3
     }
   ],
   "links": [
     {
-      "label": "项目网站",
+      "label": "iMathBook",
       "href": "https://imathbook.com"
+    },
+    {
+      "label": "uMathHub",
+      "href": "https://umathhub.com"
     }
   ]
 }

@@ -97,15 +97,8 @@ export const site = {
 
 	projects: [
 		{
-			gallerySlug: 'probfun',
-			title: bi('ProbFun', '邮趣数学'),
-			href: 'https://umathhub.com',
-			year: 2025,
-			external: true,
-		},
-		{
 			gallerySlug: 'imathbook',
-			title: bi('iMathBook', 'iMathBook'),
+			title: bi('iMathBook · uMathHub', 'iMathBook · uMathHub'),
 			href: 'https://imathbook.com',
 			year: 2025,
 			external: true,
