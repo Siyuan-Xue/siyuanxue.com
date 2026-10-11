@@ -71,16 +71,16 @@ test('published placeholder galleries are reachable from their existing homepage
 });
 
 const video = { src: { src: '/media/movie.mp4', kind: 'video' as const, format: 'mp4' as const, bytes: 100, sha256: 'a'.repeat(64) }, poster: data.images[0].src, label: '1×', caption: 'Normal-speed simulation result', duration: 10, uploadDate: '2026-10-11' };
-test('gallery accepts optional native videos and a readable results table while requiring a poster and valid metadata', () => {
+test('gallery accepts optional native videos and a results summary while requiring a poster and valid metadata', () => {
  const schema = createGallerySchema(z.object({ src: z.string(), kind: z.literal('image') }), z.object({ src: z.string(), kind: z.literal('video') }));
- const comparison: GalleryComparison = { title: 'Real robot results', description: 'Observed chunk boundary jumps', columns: ['Metric', 'Policy', 'Mean (rad)', 'Variance (rad²)'], rows: [['RMS', 'BSP', '0.0083', '0.00046']] };
+ const comparison: GalleryComparison = { title: 'Real robot results', description: 'Observed chunk boundary jumps' };
  const parsed = schema.parse({ ...data, videos: [video], videoDescription: 'Compare these recordings', comparison });
  expect(parsed.videos[0].label).toBe('1×');
  expect(parsed.videos[0].src.kind).toBe('video');
  expect(parsed.comparison).toEqual(comparison);
  expect(schema.parse(data).videos).toEqual([]);
  for (const change of [{ poster: undefined }, { duration: 0 }, { uploadDate: 'not-a-date' }]) expect(schema.safeParse({ ...data, videos: [{ ...video, ...change }] }).success).toBe(false);
- expect(schema.safeParse({ ...data, comparison: { ...comparison, rows: [['RMS', 'BSP']] } }).success).toBe(false);
+ expect(schema.safeParse({ ...data, comparison: { ...comparison, description: '' } }).success).toBe(false);
 });
 test('bilingual galleries reject mismatched video recordings or ordering', () => {
  const pair = [entry('demo/en', { videos: [video] }), entry('demo/zh', { videos: [video] })];

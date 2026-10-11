@@ -43,14 +43,7 @@
   ],
   "comparison": {
     "title": "Action-chunk boundary jump comparison",
-    "description": "In this real-robot experiment, BSP nearest-point handover has lower means and variances for both jump metrics than direct baseline handover, indicating smoother transitions between chunks. These observations apply to this experiment, rather than every task or speed setting.",
-    "columns": ["Jump metric", "Policy", "Mean (rad)", "Variance (rad²)"],
-    "rows": [
-      ["Maximum single-joint jump", "Direct baseline handover", "0.0376", "0.00073"],
-      ["Maximum single-joint jump", "BSP nearest-point handover", "0.0224", "0.00054"],
-      ["14-joint RMS jump", "Direct baseline handover", "0.0127", "0.000055"],
-      ["14-joint RMS jump", "BSP nearest-point handover", "0.0083", "0.000046"]
-    ]
+    "description": "In this real-robot experiment, BSP nearest-point handover has lower means and variances for both jump metrics than direct baseline handover, indicating smoother transitions between chunks. These observations apply to this experiment, rather than every task or speed setting."
   },
   "links": [
     { "label": "GitHub repository", "href": "https://github.com/Siyuan-Xue/openpi05-bsp" },

@@ -49,13 +49,6 @@ const productLayout = layout === 'product';
  </div>
  {comparison && <section class="gallery-comparison" aria-label={comparison.title}>
   <p>{comparison.description}</p>
-  <div class="gallery-table-scroll" tabindex="0" role="region" aria-label={comparison.title}>
-   <table>
-    <caption>{comparison.title}</caption>
-    <thead><tr>{comparison.columns.map(column => <th scope="col">{column}</th>)}</tr></thead>
-    <tbody>{comparison.rows.map(row => <tr>{row.map((cell, index) => index === 0 ? <th scope="row">{cell}</th> : <td>{cell}</td>)}</tr>)}</tbody>
-   </table>
-  </div>
  </section>}
  {links.length > 0 && <section class="gallery-links" aria-labelledby="gallery-links-heading">
   <h2 id="gallery-links-heading">{t({ en: 'Related material', zh: '相关资料' })}</h2>

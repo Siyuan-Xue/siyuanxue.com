@@ -77,6 +77,8 @@
 
 ### GitHub Actions
 
+**2026-10-11 后续图集展示调整：**按用户要求，B-Spline Policy 真机实验表格仅保留在原图中；已从双语 JSON 与共享模板移除重复的 HTML 表格、数值副本及不再使用的表格样式，保留图片灯箱、图注和结果说明。更新位置仍为双语图集、`GalleryContent.astro`、`gallery.ts` 与图集样式；恢复通过 Git 还原对应源码并走 Actions，媒体不需重传或删除。该次调整的发布与验收待完成，见 [审计](audits/2026-10-11-b-spline-table-cleanup.md)。上段表格验收是初次发布的历史记录。
+
 - [CI 工作流](../.github/workflows/ci.yml) 调用 `bash ops/verify.sh`，完成类型、行为、部署脚本、隔离 Nginx、双语构建及产物检查，再打包同一份产物；Actions artifact 保留 7 天，不能当长期备份。
 - [生产工作流](../.github/workflows/deploy.yml) 在 push `main` 后运行；`production` 并发不主动取消前次发布。上传已验证包及校验和，激活版本，验证公网两域名，最后保留 5 个成功 release。
 - 手动运行支持 `operation=deploy` 或 `rollback`；回滚需要保留版本的完整 40 位 SHA。`migrate_domains=true` 仅用于已有管理员准备的首次迁移，日常不用。

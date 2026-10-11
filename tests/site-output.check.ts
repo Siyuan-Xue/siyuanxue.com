@@ -304,10 +304,8 @@ for (const v of variants) {
    expect(video.closest('figure')?.querySelector('a[download]')?.getAttribute('href')).toBe(video.querySelector('source')!.getAttribute('src'));
    expect(video.closest('figure')?.querySelector('a[data-gallery-image]')).toBeNull();
   }
-  const table = document.querySelector('.gallery-comparison table')!;
-  expect(table.querySelector('caption')?.textContent).toBe(source.comparison.title);
-  expect([...table.querySelectorAll('thead th')].map(cell=>cell.textContent)).toEqual(source.comparison.columns);
-  expect([...table.querySelectorAll('tbody tr')].map(row=>[...row.querySelectorAll('th,td')].map(cell=>cell.textContent))).toEqual(source.comparison.rows);
+  expect(document.querySelectorAll('article table')).toHaveLength(0);
+  expect(document.querySelector('.gallery-comparison p')?.textContent).toBe(source.comparison.description);
   const schema = JSON.parse(document.querySelector('script[type="application/ld+json"]')!.textContent!);
   expect(schema.video).toHaveLength(3);
   for (const [index, video] of schema.video.entries()) {

@@ -70,7 +70,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 视频桌面三列并排，600px 及以下单列，每个最多 224px；保持原比例，使用浏览器原生播放控件、行内播放和元数据预加载，不自动播放。视频下方保留下载链接，即使脚本关闭也可播放或获取原文件；图片灯箱只处理图片。页面元信息在 `ImageGallery` 中添加对应 `VideoObject`，使用真实时长、公开日期与预览帧。
 
-需要让实验数据直接可读时，可填写 `comparison`：非空 `title`、`description`、四项 `columns` 和每行四项的 `rows`。表格直接输出 HTML，窄屏仅在表格区域横向滚动，该区域可用键盘聚焦。数值、单位与条件应忠实于实验记录，不将单次结果写成普遍性能保证。
+可使用 `comparison` 的非空 `title`、`description` 提供简短结果说明，直接输出 HTML。图片内已有的实验表格不在正文中重复制作；原图可通过灯箱放大。说明应忠实于实验记录，不将单次结果写成普遍性能保证。
 
 `links` 默认是空数组，只有需要资料链接时才填写。每个链接必须有非空 `label`，且 `href` 只允许完整 HTTP(S) 地址。不要写 `javascript:`、设备码、私有配置、带凭据的 URL 或恢复密钥。
 
@@ -88,7 +88,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 
-`b-spline-policy` 为 2026 年 7–8 月极智深诣公司实习 Demo 的正式图集。首页关联位置在 Pixel Done 之后、BNDS.life 之前；两语言共享三个 1× / 2× / 4× 原始模拟视频、三张预览帧及一张真机结果图，引用 `b-spline-policy/*` 媒体 ID。正文说明论文复现与算法改进的实际参与，图下四行表格保留跳变均值和方差，页末提供 [GitHub 仓库](https://github.com/Siyuan-Xue/openpi05-bsp) 和 [B-spline Policy 论文](https://arxiv.org/abs/2607.09648)。该图集的真实验证与发布记录见 [审计](audits/2026-10-11-b-spline-gallery.md)。
+`b-spline-policy` 为 2026 年 7–8 月极智深诣公司实习 Demo 的正式图集。首页关联位置在 Pixel Done 之后、BNDS.life 之前；两语言共享三个 1× / 2× / 4× 原始模拟视频、三张预览帧及一张真机结果图，引用 `b-spline-policy/*` 媒体 ID。正文说明论文复现与算法改进的实际参与，实验表格仅在原图中展示，图下保留简短结果说明；页末提供 [GitHub 仓库](https://github.com/Siyuan-Xue/openpi05-bsp) 和 [B-spline Policy 论文](https://arxiv.org/abs/2607.09648)。该图集的初次发布见 [审计](audits/2026-10-11-b-spline-gallery.md)，移除重复表格见 [后续调整](audits/2026-10-11-b-spline-table-cleanup.md)。
 
 ## 预览转正式与发布检查
 
@@ -107,7 +107,7 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 - 两份 JSON、真实介绍、时间、角色、图片、替代文本和图注齐全，资料来源可核对。
 - 双语 `category`、`order` 相同，两个 `draft` 和两个 `preview` 均设为 `false`。
 - 媒体 ID 正确且两站原图和缩略图已校验，原始外链已按需要转入 `links`，不含敏感资料。
-- 有视频时核对两语言顺序、预览帧、时长和首次公开日期，并验证原生播放、下载、两域名 Range 响应及不自动播放；实验表格核对数值、单位和适用条件。
+- 有视频时核对两语言顺序、预览帧、时长和首次公开日期，并验证原生播放、下载、两域名 Range 响应及不自动播放；实验图片与文字说明核对单位和适用条件，避免重复展示图内表格。
 - 两语言桌面及窄屏、明暗主题、无 JavaScript 原图链接、灯箱键盘操作和焦点回归可用。
 - 运行与改动匹配的类型检查、测试及双语构建，核对 canonical、hreflang、首页入口和 sitemap。
 

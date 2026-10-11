@@ -4,16 +4,15 @@ import type { Locale } from '../i18n/types';
 import type { LinkItem } from '../data/site';
 export type GalleryImage = { src: ImageMedia; alt: string; caption: string };
 export type GalleryVideo = { src: VideoMedia; poster: ImageMedia; label: string; caption: string; duration: number; uploadDate: string };
-export type GalleryComparison = { title: string; description: string; columns: [string, string, string, string]; rows: [string, string, string, string][] };
+export type GalleryComparison = { title: string; description: string };
 export type GalleryHomeItem = { title: string; href: string; year?: string | number; venue?: string; external?: boolean };
 export type GalleryLink = { label: string; href: string };
 export type GalleryData = { title: string; description: string; period: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; links: GalleryLink[]; videos?: GalleryVideo[]; videoDescription?: string; comparison?: GalleryComparison };
 export function createGallerySchema<T extends z.ZodType, V extends z.ZodType = z.ZodNever>(image: T, video?: V) {
  const text = z.string().trim().min(1);
- const row = z.tuple([text, text, text, text]);
  return z.object({ title: text, description: text, period: text, role: text, category: z.enum(['projects', 'research', 'appearances']), order: z.number().int().default(0), draft: z.boolean().default(true), preview: z.boolean().default(false), layout: z.enum(['photos', 'product']).default('photos'), images: z.array(z.object({ src: image, alt: text, caption: text })).min(1), links: z.array(z.object({ label: text, href: text.pipe(z.url({ protocol: /^https?$/ })) })).default([]),
   videos: z.array(z.object({ src: video ?? z.never(), poster: image, label: text, caption: text, duration: z.number().positive(), uploadDate: z.iso.date() })).default([]),
-  videoDescription: text.optional(), comparison: z.object({ title: text, description: text, columns: row, rows: z.array(row).min(1) }).optional(),
+  videoDescription: text.optional(), comparison: z.object({ title: text, description: text }).optional(),
  });
 }
 export function pairGalleries<T extends { id: string; data: GalleryData }>(entries: T[], language: Locale, includeDrafts = false): { slug: string; entry: T }[] {
