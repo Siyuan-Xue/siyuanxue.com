@@ -31,8 +31,8 @@ export const site = {
 	homeTitle: bi('Siyuan Xue（薛思远）｜Personal Website', '薛思远（Siyuan Xue）｜个人网站'),
 	github: 'https://github.com/Siyuan-Xue',
 	description: bi(
-		'Siyuan Xue (薛思远), a student in Intelligence Science and Technology at BUPT. Projects and writing on AI systems, agents and full-stack engineering, alongside university theatre and volleyball.',
-		'薛思远（Siyuan Xue）的个人网站。北京邮电大学智能科学与技术学生，分享 AI 系统、智能体与全栈工程的项目和思考，记录大学话剧与排球经历。',
+		'Siyuan Xue (薛思远), a BUPT student of Intelligence Science and Technology, passionate about products and technology, exploring the unknown, and pursuing excellence and perfection.',
+		'薛思远（Siyuan Xue）的个人网站。北京邮电大学智能科学与技术专业的学生，热衷于探索未知，追求极致与完美，对产品与技术倾注热情。',
 	),
 
 	ui: {
@@ -54,17 +54,17 @@ export const site = {
 
 	bio: {
 		lead: bi(
-			'Siyuan Xue is a student in Intelligence Science and Technology at Beijing University of Posts and Telecommunications, focused on AI systems, agents, and full-stack engineering.',
-			'薛思远是北京邮电大学智能科学与技术专业的学生，关注 AI 系统、智能体与全栈工程。',
+			'Siyuan Xue is a student of Intelligence Science and Technology at Beijing University of Posts and Telecommunications. He is passionate about exploring the unknown and pursuing excellence and perfection. He pours his passion into products and technology, finding joy in making things himself and bringing moments of surprise to everyday life.',
+			'薛思远是北京邮电大学智能科学与技术专业的学生。他热衷于探索未知，追求极致与完美。他对产品与技术倾注热情，享受亲手做出一些东西的快乐，给生活带来惊喜。',
 		),
 		more: [
 			bi(
-				'He has worked on university math teaching platforms, developer-facing agents, and end-to-end delivery of model inference services with demo sites.',
-				'目前参与高校数学教学平台、开发者智能体等项目的设计与实现，也做过模型推理服务与配套展示站点的全链路交付。',
+				'His favorite saying is',
+				'他最喜欢的一句话是',
 			),
 			bi(
-				'He studies at BUPT. Outside class he acts in university theatre and plays on the volleyball team.',
-				'本科就读于北京邮电大学。课余参与话剧演出与排球校队。',
+				'Stay hungry, stay foolish.',
+				'Stay hungry, stay foolish.',
 			),
 		],
 	},

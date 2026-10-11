@@ -2,6 +2,8 @@
 
 维护负责人：Siyuan Xue / 薛思远。整理日期：2026-09-16。
 
+**2026-10-11 首页简介更新：**用户确认第三人称中文定稿并明确授权中英文上线。双语文字和分享摘要在 `src/data/site.ts`，沿用 `Bio.astro` 的段落渲染，首页人物结构化数据自动引用同一简介；以专业身份、探索未知、追求极致与完美、产品技术热情和生活态度介绍本人，末段保留 `Stay hungry, stay foolish.`。联动核对了网站 README、公开 GitHub 账号、独立主页 README 与两仓库 About，学校/专业、姓名别名、域名一致，无需因首页措辞更新而改动其他平台资料或独立服务。更新与恢复通过该数据文件及原 Actions 双语发布；本次验证、发布状态与回滚入口见[简介审计](audits/2026-10-11-homepage-bio.md)。
+
 **2026-10-11 全站可发现性治理：**用户长期意图已落入根目录 [AGENTS.md](../AGENTS.md)。治理覆盖所有现有及未来公开内容、查询方式和 AI 检索方式；稳定路由不因 SEO 更名，可见正文保持不变。此次明确授权顶栏改为纯色和滚动自动显隐，聊天页保持可见，替代旧的始终可见/70% 模糊背景约定；历史段落保留当时事实。已由 [Actions 38132649214](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38132649214) 发布 `c42d2fdd957c0d39470d2525d40d5c8a45ada785`，两域名 38 页验收通过，IndexNow 每域名 14 URL 返回 202（待平台验证，不等于收录）。实现、核验、搜索平台待办与恢复见[本次审计](audits/2026-10-11-discoverability-header.md)。
 
 **同日后续搜索平台接入：**用户确认后，已在 DNSPod 为两域名添加 Google 验证 TXT，公开 DNS 匹配且 Search Console 两个 Domain 属性均验证成功；原有网站 A 记录保持不变。两站 sitemap 已提交，英文 index 最终复查 Success；中文报告复查仍显示读取失败，但 Google 对 XML 的实时抓取成功、Manual actions 无问题，失败原因尚未确定，后续仍待复查。两站总览均在处理数据，平台提示约一天后查看；28 URL 已逐项检查：8 已索引、19 为 Google 未知、1 为英文排球页历史 noindex（当前 HTML 无 noindex，Google 实时测试已确认允许索引，已请求重新抓取）；曝光数据仍待处理，没有创建自动化。证据及 28 URL 检查清单见[接入审计](audits/2026-10-11-search-console-onboarding.md)；此前“未登录”保留为此前阶段事实。
