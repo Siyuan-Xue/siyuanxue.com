@@ -17,7 +17,7 @@
 | 后续账户资料状态 | 用户已自行填写并保存平台要求的资料，浏览器确认进入添加网站第 1 步；不在文档记录账号名、私人资料或任何字段值 |
 | 此前安全验证步骤 | 添加第 1 步选择 HTTPS、填写 `xuesiyuan.com`，点击下一步后出现百度安全验证码；当时等待用户自行完成，尚未进入站点属性或所有权验证页面 |
 | 站点领域 | 用户已完成安全验证码，站点领域步骤显示 `https://www.xuesiyuan.com`；已选择“信息技术”“其它” |
-| 当前所有权步骤 | 验证页只提供文件验证和 HTML 标签验证，没有 DNS 选项。已选择 HTML 标签方式，平台要求首页 `<head>` 包含 `baidu-site-verification` 并在验证后保留；构建变量已配置，代码待发布，平台“完成验证”权限操作待确认，尚未验证或提交 |
+| 当前所有权步骤 | 验证页只提供文件验证和 HTML 标签验证，没有 DNS 选项。已选择 HTML 标签方式，平台要求首页 `<head>` 包含 `baidu-site-verification` 并在验证后保留；约 20:42 公网确认标签已输出，平台“完成验证”权限操作已请求用户确认，尚未点击、验证或提交 |
 | 平台站点地址差异 | 此前输入 apex、当前页面显示 www，尚未确定原因及平台属性适用范围；保留事实差异，不据此修改现有 apex canonical 或 www 重定向 |
 | 中文候选页面 | 当前构建产物 `.build/zh/indexnow-manifest.json` 核对为 14 个 canonical URL；它们是公开可索引的提交候选，不是百度已抓取或已收录页面数，不另建固定 URL 白名单 |
 | 提交入口 | 按账号实际开放能力选择普通提交、API 或 sitemap；记录入口、配额和回执，不预设快速收录、API 或 sitemap 必定开放 |
@@ -28,7 +28,7 @@
 
 GitHub Actions repository variable `BAIDU_SITE_VERIFICATION_ZH` 通过 CI 环境提供给构建，仅在有值时向中文首页的 `<head>` 输出 `baidu-site-verification`。变量已用 `gh variable set` 设置成功，后续 API 仅核对名称及 `configured: true`，没有输出值。验证值不进入源码或本审计；配置与验证标签不代表百度推送 API 凭据，也不等于站点已经验证。
 
-代码与构建配置已完成本地检查，正在准备以新 SHA 走现有 Actions 发布，网站发布、点击平台完成验证和后续提交尚未执行。公开验证变量配置和发布沿用用户既定授权，先完成原始 HTML 与两域名发布 SHA 验收；在百度“完成验证”按钮实际授予当前账号新站点所有者权限前，再确认这项具体权限操作。随后核对百度回执及 www/apex 属性适用范围；验证成功后按平台要求保留标签，现有 canonical、重定向和 Google DNS TXT 不变。
+代码与构建配置完成本地检查后，以新 SHA 走现有 Actions 发布；提交发布前的阶段为“变量已配置、代码待发布”，后续线上结果见下节。公开验证变量配置和发布沿用用户既定授权，先完成原始 HTML 与两域名发布 SHA 验收；在百度“完成验证”按钮实际授予当前账号新站点所有者权限前确认这项具体权限操作。当前已请求用户确认，尚未点击按钮。验证成功后按平台要求保留标签，现有 canonical、重定向和 Google DNS TXT 不变。
 
 配置顺序必须先设置 `BAIDU_SITE_VERIFICATION_ZH`，再首次发布包含验证代码的新 commit SHA。`ops/release.sh` 会复用 `releases/<SHA>`，当前 SHA 已激活时直接返回；后续变量修改或移除也必须产生新 commit SHA 并走正常 Actions。同 SHA 的工作流重跑或 `workflow_dispatch` 即使成功，也不足以证明变量变更已更新线上标签，须核对实际 HTML。
 
@@ -39,6 +39,21 @@ GitHub Actions repository variable `BAIDU_SITE_VERIFICATION_ZH` 通过 CI 环境
 - 首次完整 `bun test` 为 171 passed、1 failed，失败位于未修改的聊天测试。最初出现 loopback `EPERM`；允许本地 loopback 后，Node 26.5.0 的 21 个子测试通过 20 个，隔离执行并发用例仍出现实际 200 / 预期 429。
 - 后续将已安装的 bundled Node 24.19.0 放在 PATH 首位并允许 loopback，完整 `bun run test` 为 **172 passed、0 failed、703 assertions**（5.51 秒），Node 子套件 21/21 通过。只读内存诊断中，Node 26 丢弃流式 `Response` 引用时连接提前关闭、第五个请求为 200；保留引用时连接持续、第五个请求正确为 429，定位为测试响应生命周期与运行时清理行为交互，未进一步断言具体 GC 机制。未修改聊天源码，Node 26 测试兼容性留作后续复核。CI 未单独固定 Node 版本，仍以实际运行结果作为发布验收。
 - 代码审查发现的同 SHA 产物复用问题已补入操作说明：变量须在首次新 SHA 发布前配置，之后变更也需要新 SHA。
+
+## 正式发布与约 20:42 独立公网验收
+
+代码 SHA：`c3821e4825176caa70850671a86dbf9856c46df0`。[Actions 38139843736](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38139843736) 最终为 **completed / success**，`verify`、`Deploy verified release`、`Notify IndexNow after successful release` 三个 job 均成功，rollback skipped。约 20:42 独立公网检查时 deploy 尚在 `Verify both public locales`，当时未提前标记整个工作流成功；本段以后续最终回执补齐正式发布状态。IndexNow 此处仅记录 job 成功，不推断通知数量、逐项 HTTP 回执或实际收录。
+
+独立公网检查 38 个实际路由全部通过：
+
+- 两域名 `/__health` 均为上述新 SHA。
+- 恰有中文首页包含 1 个 `baidu-site-verification`，与专用 repository variable 精确匹配；其余 37 个 HTML 均不含该标签。验证值未输出或入文档。
+- 两站语言、canonical 和 noindex 与 discovery 清单一致；旧 `/gallery/probfun/` 按实际旧路由抓取，其 canonical 仍指向 iMathBook，noindex 保持。
+- `https://www.xuesiyuan.com` 经现有 301 重定向至 apex 首页，最终 HTML 可读到验证标签；这不等于百度平台已经接受该验证方式或确认 www/apex 属性范围。
+
+初次核查脚本曾按 canonical 抓取旧 probfun 页，因实际读取目标不符出现断言；修正为按路由路径抓取后通过，未发现线上页面问题，也未因此修改页面或部署代码。
+
+此时已向用户请求百度新站点所有权的具体操作确认，尚未点击“完成验证”。网站标签验收不等于百度验证、提交、真实抓取、收录或曝光。
 
 ## 20:07:47 公网可读取性核查
 
@@ -53,7 +68,7 @@ GitHub Actions repository variable `BAIDU_SITE_VERIFICATION_ZH` 通过 CI 环境
 
 ## 接下来按序执行
 
-1. 构建变量已配置，以新 commit SHA 按既有 Actions 发布并核对页面标签与两站 SHA；在百度“完成验证”按钮前确认新站点所有权操作，再完成平台验证，并核查 www 属性与 apex canonical 的适用范围。验证尚未完成，不能将 14 个候选 URL 记为已提交。
+1. Actions 已整体成功，独立公网标签和两站 SHA 已核对；等待用户对百度新站点所有权操作的确认，再点击“完成验证”并核查 www 属性与 apex canonical 的适用范围。验证尚未完成，不能将 14 个候选 URL 记为已提交。
 2. 根据当前清单提交全部 14 个符合条件的中文 URL；平台有 sitemap 提交能力时提交现有 sitemap，实际入口和格式以界面为准。若额度或入口受限，记录具体限制与尚未提交的页面。
 3. 检查百度抓取诊断、索引及查询报告的可用范围，分别记录实际抓取、收录、曝光和排除原因；需要服务器日志时再针对实际异常排查。
 4. 按[搜索指南](../SEARCH.md)覆盖姓名、无姓名主题、组织/角色、文章、自然语言、跨语言及图片/视频查询；AI 搜索发现、直接读取与多页面综合独立记录来源及事实准确性。
@@ -61,8 +76,8 @@ GitHub Actions repository variable `BAIDU_SITE_VERIFICATION_ZH` 通过 CI 环境
 
 ## 联动、验证与恢复
 
-- **已更新：**根目录 `AGENTS.md`、维护总览和搜索指南的平台优先级，以及本次审计；HTML 验证构建链路、repository variable 和操作说明已准备，待发布。Google 接入等历史审计不改写。
-- **待处理：**CI 发布与公网验收、百度“完成验证”的具体权限确认、平台站点地址适用范围与所有权验证，以及实际提交能力、抓取、索引与中文查询证据。账户资料及验证码已通过，当前无百度提交、真实抓取或索引证据；Node 26 既有聊天并发测试差异另留运行时兼容性待办。
-- **不适用：**此前账户资料与公网核查阶段未修改网站代码或部署；后续 HTML 验证配置已实现并准备发布，不能沿用此前状态声称整轮无代码变更。没有媒体、独立服务、Google DNS TXT 变更或定时自动化，文档不保存验证值、secret 或私人资料。
-- **验证：**浏览器核对百度登录状态、初始站点列表为空、此前账户信息表单及安全验证码；用户完成后核对站点领域步骤显示的 www 地址及分类选择。模拟 Baiduspider 公开 GET 检查 21 个 URL；文档核对差异、相对链接和状态表述。已有代码测试与上线记录不当作本次新验收。
+- **已更新：**根目录 `AGENTS.md`、维护总览和搜索指南的平台优先级，以及本次审计；HTML 验证构建链路、repository variable 和操作说明已发布至两站新 SHA，独立公网验收通过，Actions 整体成功。Google 接入等历史审计不改写。
+- **待处理：**百度“完成验证”的具体权限确认、平台站点地址适用范围与所有权验证，以及实际提交能力、抓取、索引与中文查询证据。账户资料及验证码已通过，当前无百度提交、真实抓取或索引证据；Node 26 既有聊天并发测试差异另留运行时兼容性待办。
+- **不适用：**此前账户资料与公网核查阶段未修改网站代码或部署；后续 HTML 验证配置已实现并经新 SHA 在公网生效，不能沿用此前状态声称整轮无代码变更。没有媒体、独立服务、Google DNS TXT 变更或定时自动化，文档不保存验证值、secret 或私人资料。
+- **验证：**浏览器核对百度登录状态、初始站点列表为空、此前账户信息表单及安全验证码；用户完成后核对站点领域步骤显示的 www 地址及分类选择。模拟 Baiduspider 公开 GET 检查 21 个 URL，以及新 SHA 下 38 路由与 www 跳转的独立公网核查；本次本地测试与 CI verify 结果见上节。文档核对差异、相对链接和状态表述，旧版测试不当作本次新验收。
 - **恢复：**文档可按 Git 历史恢复；验证标签配置上线后，停用需先核对百度所有权影响，再移除变量、生成新 commit SHA 并按既有 Actions 发布和核对实际 HTML，不能只重跑同 SHA，也不能把日常清理当作移除验证标签的理由。本次不撤销 Google 所有权验证，不删除 DNS TXT 或其他解析。

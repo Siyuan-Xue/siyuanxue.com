@@ -13,7 +13,7 @@
 
 百度平台当前归属、提交与收录情况须以百度实际界面或回执取证。Google 本次 28 URL 的 8 个已索引、19 个未知及 1 个历史 noindex，以及 IndexNow HTTP 202，均不能视为百度状态。当前操作证据与待办见[百度优先级审计](audits/2026-10-11-baidu-priority.md)。
 
-百度接入当前进展：用户已完成账户资料和安全验证码，平台站点显示 `https://www.xuesiyuan.com`，分类为“信息技术”“其它”。所有权页仅提供文件和 HTML 标签验证，已选择 HTML 标签；GitHub Actions repository variable `BAIDU_SITE_VERIFICATION_ZH` 已配置，用于仅向中文首页 `<head>` 输出 `baidu-site-verification`。代码待发布，百度“完成验证”权限操作待确认，尚未完成平台验证或提交。平台要求验证后保留标签；实际值不写入源码或文档。此前输入 apex、当前显示 www 的原因及属性适用范围待核查，现有 canonical 与重定向保持不变。各阶段事实保留在本次审计，私人资料和验证码不入文档。
+百度接入当前进展：用户已完成账户资料和安全验证码，平台站点显示 `https://www.xuesiyuan.com`，分类为“信息技术”“其它”。所有权页仅提供文件和 HTML 标签验证，已选择 HTML 标签；`BAIDU_SITE_VERIFICATION_ZH` 已配置，[Actions 38139843736](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38139843736) 整体成功，两站已发布 `c3821e4825176caa70850671a86dbf9856c46df0`。约 20:42 公网 38 路由核查确认仅中文首页输出匹配的 `baidu-site-verification`；百度“完成验证”已请求用户确认、尚未点击，没有平台验证或提交证据。www 首页重定向后标签可读取，但平台属性适用范围仍待核查，canonical 与重定向保持不变。各阶段事实保留在本次审计，验证值、私人资料和验证码不入文档。
 
 百度验证变量须在首次新提交发布前配置。部署按 SHA 复用产物，后续修改或移除变量都必须使用新 commit SHA 走正常 Actions；重跑或手动触发同一 SHA 不足以更新线上标签。验证实际中文首页 HTML、英文站排除、两域名 release SHA 及百度回执；停用前先核对所有权影响。
 
