@@ -15,9 +15,9 @@ const Brand = isHome ? 'h1' : 'span';
 <header class="header"><div class="container cc-narrow header-inner">
  <a href="/" class="header-name-link" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}><Brand class="header-name">{t(site.name)}</Brand></a>
  <div class="header-controls">
+  {showTocToggle && <TocToggle />}
   {!isHome && <a class="header-control-button header-home-link" href="/" aria-label={homeLabel} title={homeLabel}><House size={18} stroke-width={1.8} aria-hidden="true" /></a>}
   {!isChat && <a class="header-control-button header-chat-link" href="/chat/" aria-label={chatLabel} title={chatLabel}><MessageCircleMore size={18} stroke-width={1.8} aria-hidden="true" /></a>}
-  {showTocToggle && <TocToggle />}
   <ThemeToggle />
  </div>
 </div></header>

@@ -5,7 +5,7 @@ interface Props { items: BulletItem[] }
 const { items } = Astro.props;
 ---
 {items.length > 0 && <ul class="bullet-list">{items.map(item => {
- const metadata = item.meta ?? [item.venue, item.year].filter(Boolean).join(', ');
+ const metadata = item.meta ?? item.venue;
  return <li class="bullet-list_item">
  {item.href === '/wip/' ? <span>{item.title} <small class="bullet-list_meta">({locale === 'en' ? 'In preparation' : '整理中'})</small></span> : <a href={item.href} class="bullet-list_link" target={item.external ? '_blank' : undefined} rel={item.external ? 'noopener noreferrer' : undefined}>{item.title}</a>}
  {metadata && <span class="bullet-list_meta"> ({metadata})</span>}

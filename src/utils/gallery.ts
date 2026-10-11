@@ -53,11 +53,11 @@ export function galleryHomeItems<T extends { data: GalleryData }>(sources: LinkI
  const available = galleries.filter(item => item.entry.data.category === category && !item.entry.data.draft);
  const bySlug = new Map(available.map(item => [item.slug, item]));
  const seen = new Set<string>();
- const published = ({ slug, entry }: { slug: string; entry: T }): GalleryHomeItem => ({ title: entry.data.title, href: `/gallery/${slug}/`, meta: entry.data.homeMeta, year: entry.data.period, external: false });
+ const published = ({ slug, entry }: { slug: string; entry: T }): GalleryHomeItem => ({ title: entry.data.title, href: `/gallery/${slug}/`, meta: entry.data.homeMeta, external: false });
  const result = sources.flatMap<GalleryHomeItem>(source => {
   const gallery = source.gallerySlug ? bySlug.get(source.gallerySlug) : undefined;
   if (gallery) { if (seen.has(gallery.slug)) return []; seen.add(gallery.slug); return [published(gallery)]; }
-  return [{ title: source.title[language], href: '/wip/', venue: source.venue?.[language], year: source.year, external: false }];
+  return [{ title: source.title[language], href: '/wip/', venue: source.venue?.[language], external: false }];
  });
  for (const gallery of available) if (!seen.has(gallery.slug)) { result.push(published(gallery)); seen.add(gallery.slug); }
  return result;

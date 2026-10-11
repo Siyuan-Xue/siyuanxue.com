@@ -2,7 +2,7 @@
   "title": "BNDS.life",
   "description": "At the start of my final year at university, I spent some spare time revisiting old videos from my final year of high school. Those moments with friends still meant a lot to me, so I wanted to collect them on a publicly accessible website where we could return to them together. I built the main features of BNDS.life in one week in September 2026; the project is now largely complete. Inspired by YouTube's browsing and playback design, I organized a year's worth of memories into longer videos grouped by month and short clips in a continuous vertical feed. Both formats let us write down the stories behind the footage, keeping those memories alongside the videos.",
   "period": "September 2026 · one week of development",
-  "homeMeta": "September 2026 · video streaming platform",
+  "homeMeta": "video streaming platform",
   "role": "Project concept, website design and development, video curation and deployment",
   "category": "projects",
   "order": 4,

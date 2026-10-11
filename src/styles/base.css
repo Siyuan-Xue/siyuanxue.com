@@ -230,10 +230,18 @@ a:is(:hover, :focus-visible)  {
 	gap: 0.75rem;
 }
 
-/* An opaque sticky surface can leave Safari's native toolbar tint stale.
- * Let its native backdrop follow the canvas without changing header layout. */
+/* Keep the native toolbar tint following the canvas. The filtered backdrop
+ * has its own layer so fixed controls do not invalidate its painted edge. */
 @supports ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) and (background: color-mix(in srgb, white 70%, transparent)) {
 	.header {
+		background-color: transparent;
+	}
+	.header::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
 		background-color: color-mix(in srgb, var(--bg) 70%, transparent);
 		-webkit-backdrop-filter: blur(12px);
 		backdrop-filter: blur(12px);
@@ -448,6 +456,7 @@ html.u-mode-invert .theme-toggle_icon--moon  {
  }
  html, body  { background: white !important; color: black !important; }
  .header { position: static; }
+ .header::before { display: none; }
  .header-controls, .back-to-top, .romantic-portrait_error, .romantic-portrait_secret  { display: none !important; }
  .container  { max-width: none; padding: 0; }
  a  { color: inherit; }

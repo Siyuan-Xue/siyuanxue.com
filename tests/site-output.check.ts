@@ -182,6 +182,7 @@ for (const v of variants) {
     expect(document.querySelectorAll('#site-toc a').length).toBe(count);
     expect(Boolean(document.querySelector('nav#site-toc[aria-labelledby="toc-title"]'))).toBe(count > 0);
     expect(Boolean(document.querySelector('[data-toc-toggle][aria-controls="site-toc"]'))).toBe(count > 0);
+    if (count > 0) expect(document.querySelector('.header-controls')?.firstElementChild?.hasAttribute('data-toc-toggle')).toBe(true);
    }
   }
  });
@@ -191,6 +192,7 @@ for (const v of variants) {
   expect(sections[0].classList.contains('bio')).toBe(true);
   const headings = sections.slice(1).map(section => section.querySelector('h2')?.textContent);
   expect(headings).toEqual(v.lang === 'en' ? ['Projects', 'Research', 'Interests', 'Blog'] : ['项目', '研究', '兴趣爱好', '博客']);
+  for (const meta of document.querySelectorAll('.bullet-list_meta')) expect(meta.textContent).not.toMatch(/(?:19|20)\d{2}/);
   for (const section of sections.slice(1, 4)) {
    expect(section.querySelectorAll('a[href^="http"],a[target="_blank"]')).toHaveLength(0);
    expect(section.querySelectorAll('a[href="/wip/"]')).toHaveLength(0);

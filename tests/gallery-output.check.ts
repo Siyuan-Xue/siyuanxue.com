@@ -46,7 +46,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    fixtures.set(locale, fixture);
    await writeFile(join(draftDirectory, `${locale}.json`), JSON.stringify(fixture));
    await writeFile(join(publishedDirectory, `${locale}.json`), JSON.stringify({ ...fixture, draft: false, preview: false }));
-   await writeFile(join(contextDirectory, `${locale}.json`), JSON.stringify({ ...fixture, draft: false, preview: false, period: 'Gallery background', homeMeta: '2026 · Homepage context' }));
+   await writeFile(join(contextDirectory, `${locale}.json`), JSON.stringify({ ...fixture, draft: false, preview: false, period: 'Gallery background', homeMeta: 'Homepage context' }));
   }
 
   for (const { locale, language, origin } of variants) {
@@ -146,12 +146,12 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    expect(homeLinks[0].textContent).toBe(fixture.title);
    expect(homeLinks[0].closest('li')?.querySelector('.bullet-list_meta')).toBeNull();
    const contextLink = home.querySelector('a[href="/gallery/context-fixture/"]')!;
-   expect(contextLink.closest('li')?.querySelector('.bullet-list_meta')?.textContent?.trim()).toBe('(2026 · Homepage context)');
+   expect(contextLink.closest('li')?.querySelector('.bullet-list_meta')?.textContent?.trim()).toBe('(Homepage context)');
    const { document: contextGallery } = parseHTML(await readFile(join(output, 'gallery/context-fixture/index.html'), 'utf8'));
    expect(contextGallery.querySelector('.gallery-period')?.textContent).toBe('Gallery background');
    expect(contextGallery.querySelector('.gallery-period')?.textContent).not.toContain('Homepage context');
    const legacyLink = home.querySelector('a[href="/gallery/yuheng/"]')!;
-   expect(legacyLink.closest('li')?.querySelector('.bullet-list_meta')?.textContent?.trim()).toBe('(2026)');
+   expect(legacyLink.closest('li')?.querySelector('.bullet-list_meta')).toBeNull();
    expect(home.querySelector(`a[href="${previewPath}"]`)).toBeNull();
    expect(home.querySelector('a[href="/gallery/unpublished-fixture/"]')).toBeNull();
    expect(await access(join(output, 'gallery/unpublished-fixture/index.html')).then(() => true, () => false)).toBe(false);
