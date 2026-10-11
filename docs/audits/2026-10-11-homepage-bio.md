@@ -42,7 +42,12 @@
 - `bun run check`：105 个 Astro 文件，0 errors / warnings / hints；TypeScript 检查成功。
 - `bun run build`：两语言均构建成功，逐语言发现策略各核对 19 个 HTML 路由；产物测试 34 pass / 0 fail、6702 个断言。
 - 额外核对两首页产物：中文首段逐字匹配用户定稿；两语言均为三段，英文原句独立成段；description / Open Graph / Twitter 摘要、Person 描述和稳定人物 ID 一致。
-- Git 差异与远端已核对，本次只有源资料及维护记录修改。生产 Actions 与两域名公网验收待发布后补入。
+- Git 差异与远端已核对，本次只有源资料及维护记录修改。
+- [生产 Actions 38150083083](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38150083083) 已成功发布提交 `b1a0a3919cc323f391afce6a6b873b6a9315bdd9`。最终 API 状态为 completed / success；共享验证、部署、IndexNow 通知三个 job 均 success，rollback skipped。共享验证按既有 `ops/verify.sh` 执行，部署含两站版本/语言/旧照片拒绝和全量媒体响应头检查。通知 job 成功与平台实际收录/曝光分开记录，本次没有重新验收搜索平台的收录或引用。
+- 本次独立公网验收：`bash ops/verify-public.sh b1a0a3919cc323f391afce6a6b873b6a9315bdd9` 成功，两站目标完整 SHA、固定语言、旧照片 410 正确；额外直接请求确认两首页 HTTP 200、正文/三段/格言与源资料一致、三类分享摘要与 Person 描述一致，canonical 正确，中文百度验证标签保留，HTTP/www 均 301 到本域名 apex。
+- Codex 内置浏览器生产页面：两语言均查看 1280×720 桌面和 390×844 窄屏实际排版；正文与格言完整，窄屏 `scrollWidth = clientWidth = 390`，无横向溢出。沿用当前浅色显示，没有改动主题设置、肖像行为或控件顺序；临时 viewport override 已 reset。此项为浏览器窄屏模拟，不宣称实体手机验收。
+
+本次请求已完成。后续 `[skip ci]` 维护文档提交不改变上述静态 release；既有搜索平台收录观察、备份与独立服务待办仍保留在维护总览，不属于本次简介更新的未完成项。
 
 ## 恢复
 
