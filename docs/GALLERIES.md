@@ -92,6 +92,8 @@ slug 只用小写英文字母、数字及单个连字符，例如 `project-notes
 
 `finding-li-bai` 是新增兴趣爱好图集，双语标题为「话剧《寻找李白》· 饰 田波 / Finding Li Bai · as Tian Bo」，路径为 `/gallery/finding-li-bai/`，首页排列在《与光同行》之后、排球队之前。用户确认这是第二次话剧演出及本人饰演田波，介绍保留剧团友谊与演出结束后的强烈不舍；未提供演出年月时，以「第二次参演话剧」表达相对经历，不猜测日期。九张真实照片对应 `finding-li-bai/photo-01` 至 `photo-09`；横向舞台全景作为首图，两张竖照并排，剧组与朋友合影在后，默认自然比例及灯箱保持不变。没有提供资料链接，`links` 为空，不添加推测来源。两语言同时为正式图集；媒体直传、内容与发布结果见 [本轮审计](audits/2026-10-11-finding-li-bai-gallery.md)。
 
+`family` 是新增的正式兴趣爱好图集，标题为「话剧《家》· 饰 高觉新 / Family · as Gao Juexin」，稳定地址为 `/gallery/family/`，首页排列在《寻找李白》之后、排球队之前。用户确认这是首次登上话剧舞台并饰演男主角高觉新；介绍说明曹禺改编的剧目背景及本人大学生活体验。未提供年月时以「首次登上话剧舞台 / My theatre debut」表达经历，不猜测演出日期。九张真实照片按用户输入顺序引用 `family/photo-01` 至 `photo-09`，自然比例、图注与灯箱沿用现有 `photos` 布局，合影位于末尾。两语言同步公开并可索引，`links` 为空。媒体直传、验收与恢复见 [本轮审计](audits/2026-10-11-family-gallery.md)。
+
 博客合并展示 essays 与 posts，按日期倒序排列；文章仍使用原有 kind 和 slug 对应的 URL，RSS 身份也保持原样。图集不要求迁移或重命名既有文章。
 
 `b-spline-policy` 为 2026 年 7–8 月极智深诣公司实习 Demo 的正式图集。首页关联位置在 Pixel Done 之后、BNDS.life 之前；两语言共享三个 1× / 2× / 4× 原始模拟视频、三张预览帧及一张真机结果图，引用 `b-spline-policy/*` 媒体 ID。正文说明论文复现与算法改进的实际参与，实验表格仅在原图中展示，图下保留简短结果说明；页末提供 [GitHub 仓库](https://github.com/Siyuan-Xue/openpi05-bsp) 和 [B-spline Policy 论文](https://arxiv.org/abs/2607.09648)。该图集的初次发布见 [审计](audits/2026-10-11-b-spline-gallery.md)，移除重复表格见 [后续调整](audits/2026-10-11-b-spline-table-cleanup.md)。

@@ -171,6 +171,12 @@ export const site = {
 			external: false,
 		},
 		{
+			gallerySlug: 'family',
+			title: bi('Family · as Gao Juexin', '话剧《家》· 饰 高觉新'),
+			href: '/gallery/family/',
+			external: false,
+		},
+		{
 			gallerySlug: 'volleyball',
 			title: bi(
 				'BUPT volleyball · school team & college team',

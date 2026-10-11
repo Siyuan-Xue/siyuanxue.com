@@ -26,7 +26,7 @@ const variants = [
  { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', chatLabel: 'Chat with xue', homeLabel: 'Home' },
  { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', chatLabel: '与小薛聊聊', homeLabel: '首页' },
 ];
-const entryGallerySlugs = ['probfun', 'imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'volleyball'];
+const entryGallerySlugs = ['probfun', 'imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'family', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
  test(`${v.lang}: homepage identifies the same bilingual author as articles`, async () => {
