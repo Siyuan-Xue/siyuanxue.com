@@ -59,7 +59,10 @@
 
 ## 平台、通知与维护
 
-- Google Search Console、Bing Webmaster Tools、百度搜索资源平台：本轮可用浏览器均处于未登录状态，无法读取已有属性、所有权或逐 URL 索引报告。登录后先复用已有站点，分别提交两个域名的 `/sitemap-index.xml`，按配额检查全量候选 URL，不创建重复属性。
+- 2026-10-11 首轮核查时 Google Search Console、Bing Webmaster Tools、百度搜索资源平台均未登录；这是当时的证据边界。同日后续 Chrome 已登录 Google，原资源列表只有 X 和 YouTube，没有两网站。用户明确确认保存 TXT 并授予当前账号所有者权限后，`sc-domain:siyuanxue.com` 显示 Ownership verified、`sc-domain:xuesiyuan.com` 显示 Ownership auto verified，方式均为 Domain name provider。
+- 两域名使用 DNSPod（`lennon.dnspod.net` / `radius.dnspod.net`）。19:01 分别保存 `@` Google 验证 TXT，默认线路、TTL 600，公开 DNS 值完全匹配；原有 `@` / `www` A 均指向 `82.156.77.131`、TTL 600，保持不变。持续验证需要保留 TXT；账号邮箱与 TXT 值不写入文档。注册商、到期日仍未知。
+- [中文 sitemap](https://xuesiyuan.com/sitemap-index.xml) 与[英文 sitemap](https://siyuanxue.com/sitemap-index.xml) 均已提交。英文详情显示 Sitemap index processed successfully，最终列表复查 Status Success；中文约 19:11 复查仍显示 Sitemap could not be read，但 19:11:49 Google 对该 XML 的实时抓取成功；未给 XML 申请索引。中文 Manual actions 为 No issues detected；报告失败原因尚未确定，不能断言一定是延迟，后续复查。两站 Last read 均为 `10/11/26`、discovered pages/videos 均为 0，不能用这些初始计数推断未收录；总览 processing data，平台提示约一天后查看，没有创建自动化。
+- 同次公网核对两域名 index、三个子 sitemap 与 robots.txt，在普通和 Googlebot UA 下共 20 次请求均返回 200、无重定向，XML 可解析且 robots 允许抓取；模拟 UA 不代表真实 Google 抓取来源。当前每站 14 个候选 URL 均已检查：[28 URL 清单](audits/2026-10-11-search-console-onboarding.md)记录 8 个已索引、19 个 Google 未知、1 个英文排球页历史 noindex 排除。当前英文排球 HTML 不含 noindex，Google 实时测试也已确认 Page can be indexed；该页及两站首页请求均返回 Indexing requested，已加入优先抓取队列；实际后续收录/更新仍待复查。不能将历史抓取或 URL unknown 当成当前 robots 阻断结论。Bing/百度仍待登录后核查，优先复用已有站点。
 - IndexNow 验证键通过 GitHub 仓库 secrets `INDEXNOW_KEY_EN`、`INDEXNOW_KEY_ZH` 管理，值为公开所有权验证材料，但不写入源码或维护文档。变更键时重新构建发布并检查每域名验证文件；工作流通知结果与待重试列表独立记录。200/202 接收不等于已索引。
 - 每月检查新增/删除页面、平台排除原因、姓名与无姓名查询、媒体结果及 AI 引用准确性；每季度检查爬虫政策。没有创建定时自动任务。
 - 搜索与 AI 的依据以官方说明为准：[Google AI 搜索](https://developers.google.com/search/docs/appearance/ai-features)、[Google noindex](https://developers.google.com/search/docs/crawling-indexing/block-indexing)、[OpenAI 爬虫](https://developers.openai.com/api/docs/bots)、[Anthropic 爬虫](https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler)、[Perplexity 爬虫](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)、[IndexNow](https://www.indexnow.org/faq)。保留现有训练策略；搜索可达不等于同意新增训练用途。

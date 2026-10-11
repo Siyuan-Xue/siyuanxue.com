@@ -4,6 +4,8 @@
 
 **2026-10-11 全站可发现性治理：**用户长期意图已落入根目录 [AGENTS.md](../AGENTS.md)。治理覆盖所有现有及未来公开内容、查询方式和 AI 检索方式；稳定路由不因 SEO 更名，可见正文保持不变。此次明确授权顶栏改为纯色和滚动自动显隐，聊天页保持可见，替代旧的始终可见/70% 模糊背景约定；历史段落保留当时事实。已由 [Actions 38132649214](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38132649214) 发布 `c42d2fdd957c0d39470d2525d40d5c8a45ada785`，两域名 38 页验收通过，IndexNow 每域名 14 URL 返回 202（待平台验证，不等于收录）。实现、核验、搜索平台待办与恢复见[本次审计](audits/2026-10-11-discoverability-header.md)。
 
+**同日后续搜索平台接入：**用户确认后，已在 DNSPod 为两域名添加 Google 验证 TXT，公开 DNS 匹配且 Search Console 两个 Domain 属性均验证成功；原有网站 A 记录保持不变。两站 sitemap 已提交，英文 index 最终复查 Success；中文报告复查仍显示读取失败，但 Google 对 XML 的实时抓取成功、Manual actions 无问题，失败原因尚未确定，后续仍待复查。两站总览均在处理数据，平台提示约一天后查看；28 URL 已逐项检查：8 已索引、19 为 Google 未知、1 为英文排球页历史 noindex（当前 HTML 无 noindex，Google 实时测试已确认允许索引，已请求重新抓取）；曝光数据仍待处理，没有创建自动化。证据及 28 URL 检查清单见[接入审计](audits/2026-10-11-search-console-onboarding.md)；此前“未登录”保留为此前阶段事实。
+
 这是网站及关联资源的维护入口。[本轮工作总结](WORK-SUMMARY-2026-09-16.md) 解释已做的工作；本文记录资源在哪里、怎样更新、怎样验收与恢复。以仓库和既有部署记录为依据，不包含密码、令牌、微信身份 ID、日记正文或恢复密钥。
 
 ## 1. 如何判断信息是否仍然有效
@@ -32,10 +34,10 @@
 | 中文域名 | `xuesiyuan.com`；`www.xuesiyuan.com` 跳到其 apex | DNS、TLS、Nginx、站点元数据一起维护。固定中文，不按浏览器语言判断 |
 | 英文域名 | `siyuanxue.com`；`www.siyuanxue.com` 跳到其 apex | 固定英文；语言按钮指向对应译文。上述域名路由有部署记录 |
 | 旧域名 | `xuesiyuan.com.cn` 及 www 已退出本站配置 | 不作为当前入口；退役不等于注销域名或关闭续费 |
-| 域名注册与 DNS | 注册商/DNS 控制台才是续费、解析记录的权威来源 | **待补**：服务商、账号入口、到期日、自动续费、完整解析导出；不因服务器在腾讯云就推定域名也在腾讯云 |
+| 域名注册与 DNS | 注册商控制台管理注册/续费；[DNSPod 控制台](https://console.dnspod.cn/)管理当前解析 | 2026-10-11 NS 查询确认两域名均为 `lennon.dnspod.net` / `radius.dnspod.net`。19:01 经用户确认分别新增 `@` Google 验证 TXT，默认线路、TTL 600；公开 DNS 与所需值匹配。原有 `@` / `www` A 均为 `82.156.77.131`、TTL 600，保持不变；Google 持续验证需要保留 TXT。注册商、到期日、自动续费及完整解析导出仍待补 |
 | 腾讯云 Lighthouse | Ubuntu 24.04 / Nginx；IP `82.156.77.131`；实例 `lhins-aftjtoo4`，北京七区 / `ap-beijing` | 管理员 `ubuntu`，CI `deploy`，SSH 22；腾讯云控制台 OrcaTerm 为备用。2026-10-10 控制台核对：锐驰型 2 核 / 8GB / 80GB、无限流量 / 200Mbps 峰值带宽，到期 2027-08-23 07:46:25；自动续费与快照策略待核对。套餐峰值不代表实际跨境吞吐量 |
 | TLS 证书 | 两 apex 分别管理含自身 www 的证书；`/etc/letsencrypt/` | Certbot 自动续期及 Nginx reload hook；见 [HTTPS 运维](../ops/HTTPS.md)。当前有效期和最近续期结果需定期查证 |
-| Google Search Console | [控制台](https://search.google.com/search-console) 管理归属验证、sitemap、收录/查询词 | 2026-10-11 可用浏览器未登录，未取得已有属性/验证/提交状态；待登录后复用已有站点并检查全部候选 URL |
+| Google Search Console | [控制台](https://search.google.com/search-console)；属性 `sc-domain:xuesiyuan.com` / `sc-domain:siyuanxue.com` | 2026-10-11 两属性通过 Domain name provider 验证，用户已确认当前账号所有者权限。两站 sitemap 已提交；英文 index 最终复查 Success，中文报告仍读取失败，但 XML 实时抓取成功、无人工处置，原因待后续复查；两站总览均 processing data。28 URL 为 8 已索引、19 未知、1 历史 noindex；当前英文排球页实时测试已确认允许索引，已请求重新抓取；曝光另查，见[接入审计](audits/2026-10-11-search-console-onboarding.md)；账号邮箱与 TXT 值不入文档 |
 | 百度搜索资源平台 | [链接提交](https://ziyuan.baidu.com/linksubmit/index) | 2026-10-11 平台明确显示未登录；未取得账号归属与提交证据，未配置百度推送令牌 |
 | Bing Webmaster Tools | [控制台](https://www.bing.com/webmasters/) | 2026-10-11 可用浏览器停留未登录介绍页；平台归属与提交状态待核查。IndexNow 是独立通知渠道，不代表此控制台已接入 |
 | IndexNow | `ops/indexnow.mjs`、CI/Deploy 工作流；GitHub 仓库 secrets `INDEXNOW_KEY_EN` / `INDEXNOW_KEY_ZH` | 2026-10-11 已配置两域名验证键；CI 从环境生成公开验证文件，源码和文档不存值。正常发布成功后独立通知；具体上线结果见当次审计 |
@@ -266,9 +268,9 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 |---|---|---|
 | 高 | 历史长期记忆源码归档在当前 checkout 中未找到；旧 overlay 与运行记录不一致 | 先核对原本地仓库、bundle 与私有备份的实际保存位置，再选择正式备份/版本管理位置；评审并同步文档/验证器；新机器可按说明重建，不暴露私有配置 |
 | 高 | 备份连续性与容量 | 定期验证服务器备份；确定异地自动备份与留存策略；目前 Mac 只是一份快照 |
-| 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日（见第 2 节）；仍需补注册商/DNS、域名到期日、自动续费、快照策略、告警入口和负责人 |
+| 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日；2026-10-11 NS 查询确认两域名使用 DNSPod。仍需补注册商、域名到期日、自动续费、解析记录导出、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
-| 中 | 搜索平台接入 / 收录观察 | 本次已授权治理，但可用浏览器未登录。登录后核对/复用已有属性并完成必要验证，提交两域名 sitemap、检查全量候选 URL；IndexNow 独立接入不代替平台验证。观察查询词、展现/点击、收录及引用准确性，不承诺排名 |
+| 中 | 搜索平台接入 / 收录观察 | Google 两 Domain 属性已验证、两 sitemap 已提交；28 URL 检查已完成，复查中文 sitemap 读取状态、英文排球页后续收录，等待平台数据处理。Bing/百度仍未取得登录后的核查证据，先复用已有属性。IndexNow 独立接入不代替平台验证；索引、曝光和 AI 引用分别记录，不承诺排名 |
 | 中 | 独立个人主页项目名称差异 | 2026-10-11 API 核对 README 仍为 `PixelDone / 像素清单`，独立仓库待按已确认展示名 `Pixel Done` 更新；本站与实际项目仓库 URL 保持不变 |
 | 按需 | SuperGrok 服务器网络与认证 | 网络恢复、官方授权及一次真实推理均验收后才标启用；保留既有 GLM，不自动加付费回退 |
 
