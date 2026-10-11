@@ -125,6 +125,13 @@ export const site = {
 			external: true,
 		},
 		{
+			gallerySlug: 'b-spline-policy',
+			title: bi('B-Spline Policy', 'B-Spline Policy'),
+			href: 'https://github.com/Siyuan-Xue/openpi05-bsp',
+			year: 2026,
+			external: true,
+		},
+		{
 			gallerySlug: 'bnds-life',
 			title: bi('BNDS.life', 'BNDS.life'),
 			href: 'https://bnds.life',

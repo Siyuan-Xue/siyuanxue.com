@@ -1,6 +1,6 @@
 import { expect, test } from 'bun:test';
 import { z } from 'astro/zod';
-import { createGallerySchema, pairGalleries, galleryHomeItems } from '../src/utils/gallery';
+import { createGallerySchema, pairGalleries, galleryHomeItems, type GalleryComparison } from '../src/utils/gallery';
 import { mergeBlogEntries } from '../src/utils/blog';
 import { bi } from '../src/i18n/types';
 const file = { src: '/image.webp', width: 10, height: 10, format: 'webp' as const, sha256: 'a'.repeat(64), bytes: 100 };
@@ -68,4 +68,24 @@ test('published placeholder galleries are reachable from their existing homepage
  const items = galleryHomeItems(sources, [{ slug: 'sample', entry: entry('sample/en', { preview: true }) }], 'projects', 'en');
  expect(items.map(item => item.href)).toEqual(['/gallery/sample/']);
  expect(items[0].title).toBe(data.title);
+});
+
+const video = { src: { src: '/media/movie.mp4', kind: 'video' as const, format: 'mp4' as const, bytes: 100, sha256: 'a'.repeat(64) }, poster: data.images[0].src, label: '1×', caption: 'Normal-speed simulation result', duration: 10, uploadDate: '2026-10-11' };
+test('gallery accepts optional native videos and a readable results table while requiring a poster and valid metadata', () => {
+ const schema = createGallerySchema(z.object({ src: z.string(), kind: z.literal('image') }), z.object({ src: z.string(), kind: z.literal('video') }));
+ const comparison: GalleryComparison = { title: 'Real robot results', description: 'Observed chunk boundary jumps', columns: ['Metric', 'Policy', 'Mean (rad)', 'Variance (rad²)'], rows: [['RMS', 'BSP', '0.0083', '0.00046']] };
+ const parsed = schema.parse({ ...data, videos: [video], videoDescription: 'Compare these recordings', comparison });
+ expect(parsed.videos[0].label).toBe('1×');
+ expect(parsed.videos[0].src.kind).toBe('video');
+ expect(parsed.comparison).toEqual(comparison);
+ expect(schema.parse(data).videos).toEqual([]);
+ for (const change of [{ poster: undefined }, { duration: 0 }, { uploadDate: 'not-a-date' }]) expect(schema.safeParse({ ...data, videos: [{ ...video, ...change }] }).success).toBe(false);
+ expect(schema.safeParse({ ...data, comparison: { ...comparison, rows: [['RMS', 'BSP']] } }).success).toBe(false);
+});
+test('bilingual galleries reject mismatched video recordings or ordering', () => {
+ const pair = [entry('demo/en', { videos: [video] }), entry('demo/zh', { videos: [video] })];
+ expect(pairGalleries(pair, 'en')).toHaveLength(1);
+ expect(() => pairGalleries([pair[0], entry('demo/zh')], 'en')).toThrow('videos');
+ const other = { ...video, src: { ...video.src, src: '/media/other.mp4' } };
+ expect(() => pairGalleries([pair[0], entry('demo/zh', { videos: [other] })], 'en')).toThrow('videos');
 });

@@ -1,0 +1,59 @@
+{
+  "title": "B-Spline Policy",
+  "description": "I completed this embodied AI demo during my internship at Xinyi (新易) in July–August 2026. Using a simulation environment and the company's real-robot setup, I attempted to reproduce B-spline Policy by Han, Xiong et al., then improved the algorithm in response to issues found during reproduction. The project gave me practical experience with embodied model training, inference, robot-arm control and the engineering connections between them. Below are simulation results at different execution speeds and a real-robot comparison of smoothness at action-chunk boundaries.",
+  "period": "July–August 2026 · internship at Xinyi (新易)",
+  "role": "Paper reproduction, model training and inference, simulation and real-robot experiments, algorithm improvements",
+  "category": "projects",
+  "order": 45,
+  "draft": false,
+  "preview": false,
+  "videoDescription": "Compare the 1×, 2× and 4× simulation results side by side. Moderate acceleration brings a clear efficiency gain, while pushing beyond a certain limit becomes counterproductive. Each recording preserves the original result and can be played or downloaded separately.",
+  "videos": [
+    {
+      "src": "b-spline-policy/1x",
+      "poster": "b-spline-policy/1x-poster",
+      "label": "1×",
+      "caption": "Simulation at the reference execution speed.",
+      "duration": 13.975,
+      "uploadDate": "2026-10-11"
+    },
+    {
+      "src": "b-spline-policy/2x",
+      "poster": "b-spline-policy/2x-poster",
+      "label": "2×",
+      "caption": "Simulation with a higher execution speed.",
+      "duration": 8.525,
+      "uploadDate": "2026-10-11"
+    },
+    {
+      "src": "b-spline-policy/4x",
+      "poster": "b-spline-policy/4x-poster",
+      "label": "4×",
+      "caption": "Further acceleration, showing the degradation when speed is pushed too far.",
+      "duration": 9.725,
+      "uploadDate": "2026-10-11"
+    }
+  ],
+  "images": [
+    {
+      "src": "b-spline-policy/real-robot-results",
+      "alt": "B-Spline Policy real-robot runtime trace and action-chunk boundary jump comparison: means and variances of maximum single-joint and 14-joint RMS jumps for direct baseline handover and BSP nearest-point handover",
+      "caption": "Real-robot experiment: the upper plots record asynchronous inference and control at 4× execution speed; the table compares jumps at chunk boundaries under direct baseline handover and BSP nearest-point handover. Click to enlarge."
+    }
+  ],
+  "comparison": {
+    "title": "Action-chunk boundary jump comparison",
+    "description": "In this real-robot experiment, BSP nearest-point handover has lower means and variances for both jump metrics than direct baseline handover, indicating smoother transitions between chunks. These observations apply to this experiment, rather than every task or speed setting.",
+    "columns": ["Jump metric", "Policy", "Mean (rad)", "Variance (rad²)"],
+    "rows": [
+      ["Maximum single-joint jump", "Direct baseline handover", "0.0376", "0.00073"],
+      ["Maximum single-joint jump", "BSP nearest-point handover", "0.0224", "0.00054"],
+      ["14-joint RMS jump", "Direct baseline handover", "0.0127", "0.000055"],
+      ["14-joint RMS jump", "BSP nearest-point handover", "0.0083", "0.000046"]
+    ]
+  },
+  "links": [
+    { "label": "GitHub repository", "href": "https://github.com/Siyuan-Xue/openpi05-bsp" },
+    { "label": "B-spline Policy paper · Han, Xiong et al.", "href": "https://arxiv.org/abs/2607.09648" }
+  ]
+}

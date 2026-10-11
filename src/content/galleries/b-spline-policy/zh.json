@@ -1,0 +1,59 @@
+{
+  "title": "B-Spline Policy",
+  "description": "2026 年 7 月至 8 月，我在新易公司实习期间完成了这个具身智能 Demo。基于仿真环境和公司的真机实验场景，我尝试复现 Han、Xiong 等人的 B-spline Policy 研究，并针对复现中发现的问题进一步改进算法。这个项目让我从实践中了解了具身模型的训练、推理、机械臂控制，以及这些环节之间的工程衔接。下面展示模拟器中的不同速度结果，以及真机上动作片段切换时的平滑度对比。",
+  "period": "2026 年 7 月至 8 月 · 新易公司实习",
+  "role": "论文复现、模型训练与推理、仿真及真机实验、算法改进",
+  "category": "projects",
+  "order": 45,
+  "draft": false,
+  "preview": false,
+  "videoDescription": "将 1×、2×、4× 三档模拟器结果放在一起比较：适度加速能带来明显的效率提升，但超过一定限度后，效果会适得其反。每个视频保留原始结果，可分别播放或下载。",
+  "videos": [
+    {
+      "src": "b-spline-policy/1x",
+      "poster": "b-spline-policy/1x-poster",
+      "label": "1×",
+      "caption": "参考速度下的模拟器演示。",
+      "duration": 13.975,
+      "uploadDate": "2026-10-11"
+    },
+    {
+      "src": "b-spline-policy/2x",
+      "poster": "b-spline-policy/2x-poster",
+      "label": "2×",
+      "caption": "提高执行速度后的模拟器演示。",
+      "duration": 8.525,
+      "uploadDate": "2026-10-11"
+    },
+    {
+      "src": "b-spline-policy/4x",
+      "poster": "b-spline-policy/4x-poster",
+      "label": "4×",
+      "caption": "继续加速后的演示，观察加速过度带来的效果退化。",
+      "duration": 9.725,
+      "uploadDate": "2026-10-11"
+    }
+  ],
+  "images": [
+    {
+      "src": "b-spline-policy/real-robot-results",
+      "alt": "B-Spline Policy 真机实验记录与片段衔接跳变对比：baseline 直接接管和 BSP 最近点接管的最大单关节跳变、14 关节 RMS 跳变均值及方差",
+      "caption": "真机实验：上方记录 4× 执行时的异步推理与控制状态；下方对比 baseline 直接接管与 BSP 最近点接管在动作片段衔接处的跳变。点击图片可放大查看。"
+    }
+  ],
+  "comparison": {
+    "title": "动作片段衔接处的跳变对比",
+    "description": "这组真机数据中，BSP 最近点接管的两项跳变均值与方差均低于 baseline 直接接管，体现了更平滑的片段衔接。结果对应本次实验，不代表所有任务或速度设置下的表现。",
+    "columns": ["跳变指标", "策略", "均值（rad）", "方差（rad²）"],
+    "rows": [
+      ["最大单关节跳变", "baseline 直接接管", "0.0376", "0.00073"],
+      ["最大单关节跳变", "BSP 最近点接管", "0.0224", "0.00054"],
+      ["14 关节 RMS 跳变", "baseline 直接接管", "0.0127", "0.000055"],
+      ["14 关节 RMS 跳变", "BSP 最近点接管", "0.0083", "0.000046"]
+    ]
+  },
+  "links": [
+    { "label": "GitHub 仓库", "href": "https://github.com/Siyuan-Xue/openpi05-bsp" },
+    { "label": "B-spline Policy 论文 · Han、Xiong 等", "href": "https://arxiv.org/abs/2607.09648" }
+  ]
+}

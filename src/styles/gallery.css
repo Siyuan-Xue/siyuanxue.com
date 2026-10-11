@@ -14,6 +14,20 @@
 .gallery-links { margin-top: var(--section-gap); }
 .gallery-links h2 { font-size: var(--font-size-h3); }
 .gallery-links ul { padding-left: 1.2em; }
+.gallery-videos { margin-bottom: var(--section-gap); }
+.gallery-videos h2, .gallery-results-heading { font-size: var(--font-size-h3); }
+.gallery-video-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; align-items: start; }
+.gallery-video-grid h3 { font-size: var(--font-size-body); margin: 0 0 0.5em; }
+.gallery-video-grid video { display: block; width: 100%; max-width: 14rem; height: auto; }
+.gallery-video-download { display: block; width: fit-content; margin-top: 0.5em; }
+.gallery-comparison { margin-top: 1.5rem; }
+.gallery-table-scroll { overflow-x: auto; }
+.gallery-table-scroll:focus-visible { outline: 2px solid var(--fg-interactive); outline-offset: 4px; }
+.gallery-comparison table { border-collapse: collapse; width: 100%; font-size: var(--font-size-meta); line-height: 1.5; }
+.gallery-comparison caption { text-align: left; margin-bottom: 0.75em; }
+.gallery-comparison th, .gallery-comparison td { padding: 0.65em 0.5em; text-align: left; border-bottom: 1px solid var(--fg-muted); }
+.gallery-comparison th { font-weight: 500; }
+.gallery-comparison td:nth-child(n+3) { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .gallery-lightbox .pswp__top-bar { align-items: center; gap: 0.5rem; padding-inline: 1rem; }
 .gallery-lightbox .pswp__counter { margin: 0 auto 0 0; flex-shrink: 0; }
 /* Outrank PhotoSwipe's hover/focus reset, even when its CSS is loaded later. */
@@ -24,6 +38,8 @@
 @media (max-width: 600px) {
  .gallery-grid { grid-template-columns: minmax(0, 1fr); }
  .gallery-grid-product { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+ .gallery-video-grid { grid-template-columns: minmax(0, 1fr); gap: 1.75rem; }
+ .gallery-video-grid .gallery-figure { width: 100%; max-width: 14rem; margin-inline: auto; }
  .gallery-lightbox .pswp__top-bar { gap: 0.25rem; padding-inline: 0.75rem; }
  .gallery-lightbox button.pswp__button { font-size: 1rem; padding: 0.5rem 0.25rem; }
 }

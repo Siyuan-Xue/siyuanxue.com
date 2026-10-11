@@ -4,8 +4,8 @@ import type { GalleryData } from '../utils/gallery';
 import { t } from '../i18n/locale';
 import '../styles/gallery.css';
 
-type Props = Pick<GalleryData, 'title' | 'description' | 'period' | 'role' | 'layout' | 'images' | 'links'>;
-const { title, description, period, role, layout = 'photos', images, links } = Astro.props;
+type Props = Pick<GalleryData, 'title' | 'description' | 'period' | 'role' | 'layout' | 'images' | 'links' | 'videos' | 'videoDescription' | 'comparison'>;
+const { title, description, period, role, layout = 'photos', images, links, videos = [], videoDescription, comparison } = Astro.props;
 const productLayout = layout === 'product';
 ---
 <article class="gallery-page" data-gallery-page>
@@ -15,6 +15,23 @@ const productLayout = layout === 'product';
   <p class="gallery-role"><span>{t({ en: 'My role', zh: '本人角色' })}:</span> {role}</p>
   <p class="gallery-description">{description}</p>
  </header>
+ {videos.length > 0 && <section class="gallery-videos" aria-labelledby="gallery-videos-heading">
+  <h2 id="gallery-videos-heading">{t({ en: 'Simulation results', zh: '模拟器结果' })}</h2>
+  {videoDescription && <p>{videoDescription}</p>}
+  <div class="gallery-video-grid">
+   {videos.map(video => <figure class="gallery-figure">
+    <h3>{video.label}</h3>
+    <video controls playsinline preload="metadata" poster={video.poster.cover.src}
+     width={video.poster.width} height={video.poster.height} aria-label={`${title} · ${video.label}`}>
+     <source src={video.src.src} type={`video/${video.src.format === 'mov' ? 'quicktime' : video.src.format}`} />
+     {t({ en: 'Your browser cannot play this video. Use the download link below.', zh: '浏览器无法播放此视频时，可使用下方链接下载。' })}
+    </video>
+    <figcaption>{video.caption}<a class="gallery-video-download" href={video.src.src} download
+     aria-label={`${t({ en: 'Download video', zh: '下载视频' })}: ${video.label}`}>{t({ en: 'Download video', zh: '下载视频' })}</a></figcaption>
+   </figure>)}
+  </div>
+ </section>}
+ {comparison && <h2 class="gallery-results-heading">{t({ en: 'Real robot experiments', zh: '真机实验' })}</h2>}
  <div class:list={['gallery-grid', { 'gallery-grid-product': productLayout }]}>
   {images.map((image, index) => {
    const fullWidth = !productLayout && (index === 0 || (index === images.length - 1 && images.length % 2 === 0));
@@ -30,6 +47,16 @@ const productLayout = layout === 'product';
    </figure>;
   })}
  </div>
+ {comparison && <section class="gallery-comparison" aria-label={comparison.title}>
+  <p>{comparison.description}</p>
+  <div class="gallery-table-scroll" tabindex="0" role="region" aria-label={comparison.title}>
+   <table>
+    <caption>{comparison.title}</caption>
+    <thead><tr>{comparison.columns.map(column => <th scope="col">{column}</th>)}</tr></thead>
+    <tbody>{comparison.rows.map(row => <tr>{row.map((cell, index) => index === 0 ? <th scope="row">{cell}</th> : <td>{cell}</td>)}</tr>)}</tbody>
+   </table>
+  </div>
+ </section>}
  {links.length > 0 && <section class="gallery-links" aria-labelledby="gallery-links-heading">
   <h2 id="gallery-links-heading">{t({ en: 'Related material', zh: '相关资料' })}</h2>
   <ul>{links.map(link => <li><a href={link.href} rel="noopener noreferrer">{link.label}</a></li>)}</ul>

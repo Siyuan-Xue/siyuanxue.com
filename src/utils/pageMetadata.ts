@@ -9,3 +9,12 @@ export interface ShareImage {
 export interface GalleryMetadataImage extends ShareImage {
  caption: string;
 }
+
+export interface GalleryMetadataVideo {
+ src: string;
+ poster: string;
+ name: string;
+ description: string;
+ duration: number;
+ uploadDate: string;
+}

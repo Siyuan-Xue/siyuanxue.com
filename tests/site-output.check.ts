@@ -26,7 +26,7 @@ const variants = [
  { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', chatLabel: 'Chat with xue', homeLabel: 'Home' },
  { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', chatLabel: '与小薛聊聊', homeLabel: '首页' },
 ];
-const entryGallerySlugs = ['probfun', 'imathbook', 'leda-agent', 'pixeldone', 'bnds-life', 'yuheng', 'walking-with-light', 'volleyball'];
+const entryGallerySlugs = ['probfun', 'imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
  test(`${v.lang}: homepage identifies the same bilingual author as articles`, async () => {
@@ -146,7 +146,7 @@ for (const v of variants) {
     expect(gallery.author['@id']).toBe('https://siyuanxue.com/#person');
     expect(nodes.some((node: { '@type': string }) => node['@type'] === 'BlogPosting')).toBe(false);
     expect(document.querySelector('meta[property="article:published_time"]')).toBeNull();
-    const figures = document.querySelectorAll('article[data-gallery-page] figure');
+    const figures = document.querySelectorAll('article[data-gallery-page] .gallery-grid > figure');
     expect(figures.length).toBeGreaterThan(0);
     for (const figure of figures) {
      const image = figure.querySelector('img')!;
@@ -257,7 +257,7 @@ for (const v of variants) {
     expect(locations).toContain(v.origin + href);
    }
    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(v.origin + href);
-   const figures = [...article.querySelectorAll('figure')];
+   const figures = [...article.querySelectorAll('.gallery-grid > figure')];
    expect(figures).toHaveLength(source.images.length);
    expect(figures.length).toBeGreaterThan(0);
    for (const [index, figure] of figures.entries()) {
@@ -282,5 +282,42 @@ for (const v of variants) {
     expect(link.getAttribute('rel')).toContain('noopener');
    }
   }
+ });
+}
+
+for (const v of variants) {
+ test(`${v.lang}: B-Spline videos and results remain crawlable native HTML without JavaScript`, async () => {
+  const { document } = parseHTML(await readFile(join(v.root, 'gallery/b-spline-policy/index.html'), 'utf8'));
+  const source = JSON.parse(await readFile(`src/content/galleries/b-spline-policy/${v.lang === 'en' ? 'en' : 'zh'}.json`, 'utf8'));
+  const videos = [...document.querySelectorAll('video')];
+  expect(videos).toHaveLength(3);
+  for (const [index, video] of videos.entries()) {
+   expect(video.hasAttribute('controls')).toBe(true);
+   expect(video.hasAttribute('playsinline')).toBe(true);
+   expect(video.hasAttribute('autoplay')).toBe(false);
+   expect(video.getAttribute('preload')).toBe('metadata');
+   expect(mediaPaths.has(video.querySelector('source')!.getAttribute('src')!)).toBe(true);
+   expect(video.querySelector('source')!.getAttribute('type')).toBe('video/mp4');
+   expect(mediaPaths.has(video.getAttribute('poster')!)).toBe(true);
+   expect(video.getAttribute('aria-label')).toContain(source.videos[index].label);
+   expect(video.closest('figure')?.textContent).toContain(source.videos[index].caption);
+   expect(video.closest('figure')?.querySelector('a[download]')?.getAttribute('href')).toBe(video.querySelector('source')!.getAttribute('src'));
+   expect(video.closest('figure')?.querySelector('a[data-gallery-image]')).toBeNull();
+  }
+  const table = document.querySelector('.gallery-comparison table')!;
+  expect(table.querySelector('caption')?.textContent).toBe(source.comparison.title);
+  expect([...table.querySelectorAll('thead th')].map(cell=>cell.textContent)).toEqual(source.comparison.columns);
+  expect([...table.querySelectorAll('tbody tr')].map(row=>[...row.querySelectorAll('th,td')].map(cell=>cell.textContent))).toEqual(source.comparison.rows);
+  const schema = JSON.parse(document.querySelector('script[type="application/ld+json"]')!.textContent!);
+  expect(schema.video).toHaveLength(3);
+  for (const [index, video] of schema.video.entries()) {
+   expect(video['@type']).toBe('VideoObject');
+   expect(video.contentUrl).toBe(v.origin+videos[index].querySelector('source')!.getAttribute('src'));
+   expect(video.thumbnailUrl).toBe(v.origin+videos[index].getAttribute('poster'));
+   expect(video.duration).toBe(`PT${source.videos[index].duration}S`);
+   expect(video.uploadDate).toBe(source.videos[index].uploadDate);
+  }
+  expect(document.querySelector('a[href="https://arxiv.org/abs/2607.09648"]')).not.toBeNull();
+  expect(document.querySelector('a[href="https://github.com/Siyuan-Xue/openpi05-bsp"]')).not.toBeNull();
  });
 }
