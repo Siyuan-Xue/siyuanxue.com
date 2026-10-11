@@ -179,8 +179,9 @@ for (const v of variants) {
     expect(schema['@type']).toBe('BlogPosting'); expect(schema.headline).toBe(document.querySelector('h1')!.textContent); expect(schema.url).toBe(v.origin + pathname);
     for (const link of document.querySelectorAll('[data-toc-link]')) expect(document.getElementById(link.getAttribute('data-toc-link')!)).not.toBeNull();
     const count = document.querySelectorAll('.prose h2[id],.prose h3[id]').length;
-    expect(document.querySelectorAll('.toc-desktop a').length).toBe(count);
-    expect(Boolean(document.querySelector('dialog#site-toc'))).toBe(count > 0);
+    expect(document.querySelectorAll('#site-toc a').length).toBe(count);
+    expect(Boolean(document.querySelector('nav#site-toc[aria-labelledby="toc-title"]'))).toBe(count > 0);
+    expect(Boolean(document.querySelector('[data-toc-toggle][aria-controls="site-toc"]'))).toBe(count > 0);
    }
   }
  });

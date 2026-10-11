@@ -1,52 +1,17 @@
 ---
 import type { MarkdownHeading } from 'astro';
-import { locale, t } from '../i18n/locale';
-import { site } from '../data/site';
+import { locale } from '../i18n/locale';
 import TocList from './TocList.astro';
-import { X } from '@lucide/astro';
 import '../styles/toc.css';
 interface Props { headings: MarkdownHeading[] }
 const { headings } = Astro.props;
 const label = locale === 'en' ? 'Contents' : '目录';
 ---
-<nav class="toc-desktop" aria-label={label}><h2 class="toc-title">{label}</h2><TocList headings={headings} /></nav>
-<dialog id="site-toc" class="toc-dialog" aria-labelledby="toc-dialog-title">
- <div class="toc-dialog-header">
-  <h2 id="toc-dialog-title" class="toc-title" tabindex="-1">{label}</h2>
-  <button type="button" class="header-control-button toc-dialog-close" data-toc-close aria-label={t(site.ui.closeContents)} title={t(site.ui.closeContents)}><X size={20} stroke-width={1.8} aria-hidden="true" /></button>
- </div>
- <nav aria-label={label}><TocList headings={headings} /></nav>
-</dialog>
+<nav id="site-toc" class="toc-container" aria-labelledby="toc-title">
+ <h2 id="toc-title" class="toc-title">{label}</h2>
+ <TocList headings={headings} />
+</nav>
 <script>
- const dialog = document.querySelector<HTMLDialogElement>('#site-toc');
- const toggle = document.querySelector<HTMLButtonElement>('[data-toc-toggle]');
- if (dialog && toggle) {
-  const wide = matchMedia('(min-width: 1024px)');
-  let navigationTarget: HTMLElement | null = null;
-  const desktop = document.querySelector<HTMLElement>('.toc-desktop');
-  let lastDesktopLink: HTMLAnchorElement | null = null;
-  const focusDesktop = () => (lastDesktopLink ?? desktop?.querySelector<HTMLAnchorElement>('a.cc-active') ?? desktop?.querySelector<HTMLAnchorElement>('a'))?.focus();
-  const close = () => { if (dialog.open) dialog.close(); };
-  const sync = () => {
-   const focused = document.activeElement;
-   const desktopOwnsFocus = Boolean(focused && desktop?.contains(focused));
-   const toggleOwnsFocus = focused === toggle;
-   if (desktopOwnsFocus && focused instanceof HTMLAnchorElement) lastDesktopLink = focused;
-   toggle.hidden = wide.matches;
-   if (wide.matches) {
-    if (dialog.open) close();
-    else if (toggleOwnsFocus) focusDesktop();
-   } else if (desktopOwnsFocus) toggle.focus();
-  };
-  toggle.addEventListener('click', () => { if (!wide.matches && !dialog.open) { dialog.showModal(); dialog.querySelector<HTMLElement>('#toc-dialog-title')?.focus({ preventScroll: true }); toggle.setAttribute('aria-expanded', 'true'); document.body.style.overflow = 'hidden'; } });
-  dialog.querySelector('[data-toc-close]')?.addEventListener('click', close);
-  dialog.addEventListener('close', () => { toggle.setAttribute('aria-expanded', 'false'); document.body.style.overflow = ''; if (navigationTarget) { navigationTarget.tabIndex = -1; navigationTarget.focus({ preventScroll: true }); navigationTarget = null; } else if (!wide.matches) toggle.focus(); else focusDesktop(); });
-  dialog.addEventListener('click', event => { const link = (event.target as Element).closest<HTMLAnchorElement>('a[data-toc-link]'); if (!link) return; navigationTarget = document.getElementById(link.dataset.tocLink ?? ''); close(); });
-  dialog.addEventListener('click', event => { if (event.target !== dialog) return; const rect = dialog.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) close(); });
-  wide.addEventListener('change', sync); sync();
-  const links = document.querySelectorAll<HTMLAnchorElement>('[data-toc-link]');
-  const headings = document.querySelectorAll<HTMLElement>('.prose h2[id], .prose h3[id]');
-  const observer = new IntersectionObserver(entries => { for (const entry of entries) { if (entry.isIntersecting) links.forEach(link => link.classList.toggle('cc-active', link.dataset.tocLink === entry.target.id)); } }, { rootMargin: '-10% 0px -70% 0px' });
-  headings.forEach(heading => observer.observe(heading));
- }
+ import { bindToc } from '../utils/toc';
+ bindToc(document);
 </script>
