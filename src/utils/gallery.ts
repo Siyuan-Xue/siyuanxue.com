@@ -7,12 +7,12 @@ export type GalleryVideo = { src: VideoMedia; poster: ImageMedia; label: string;
 export type GalleryComparison = { title: string; description: string };
 export type GalleryHomeItem = { title: string; href: string; year?: string | number; venue?: string; external?: boolean };
 export type GalleryLink = { label: string; href: string };
-export type GalleryData = { title: string; description: string; period: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; links: GalleryLink[]; videos?: GalleryVideo[]; videoTitle?: string; videoLayout?: 'comparison' | 'demos'; videoDescription?: string; comparison?: GalleryComparison };
+export type GalleryData = { title: string; description: string; period: string; role: string; category: 'projects' | 'research' | 'appearances'; order: number; draft: boolean; preview?: boolean; layout?: 'photos' | 'product'; images: GalleryImage[]; links: GalleryLink[]; videos?: GalleryVideo[]; videoTitle?: string | null; videoLayout?: 'comparison' | 'demos'; videoDescription?: string; comparison?: GalleryComparison };
 export function createGallerySchema<T extends z.ZodType, V extends z.ZodType = z.ZodNever>(image: T, video?: V) {
  const text = z.string().trim().min(1);
  return z.object({ title: text, description: text, period: text, role: text, category: z.enum(['projects', 'research', 'appearances']), order: z.number().int().default(0), draft: z.boolean().default(true), preview: z.boolean().default(false), layout: z.enum(['photos', 'product']).default('photos'), images: z.array(z.object({ src: image, alt: text, caption: text })).min(1), links: z.array(z.object({ label: text, href: text.pipe(z.url({ protocol: /^https?$/ })) })).default([]),
   videos: z.array(z.object({ src: video ?? z.never(), poster: image, label: text, caption: text, duration: z.number().positive(), uploadDate: z.iso.date() })).default([]),
-  videoTitle: text.optional(), videoLayout: z.enum(['comparison', 'demos']).default('comparison'), videoDescription: text.optional(), comparison: z.object({ title: text, description: text }).optional(),
+  videoTitle: text.nullable().optional(), videoLayout: z.enum(['comparison', 'demos']).default('comparison'), videoDescription: text.optional(), comparison: z.object({ title: text, description: text }).optional(),
  });
 }
 export function pairGalleries<T extends { id: string; data: GalleryData }>(entries: T[], language: Locale, includeDrafts = false): { slug: string; entry: T }[] {
@@ -35,6 +35,7 @@ export function pairGalleries<T extends { id: string; data: GalleryData }>(entri
   if (Boolean(en.data.preview) !== Boolean(zh.data.preview)) throw new Error(`Mismatched gallery preview status for ${slug}`);
   if ((en.data.layout ?? 'photos') !== (zh.data.layout ?? 'photos')) throw new Error(`Mismatched gallery layout for ${slug}`);
   if ((en.data.videoLayout ?? 'comparison') !== (zh.data.videoLayout ?? 'comparison')) throw new Error(`Mismatched gallery video layout for ${slug}`);
+  if ((en.data.videoTitle === null) !== (zh.data.videoTitle === null)) throw new Error(`Mismatched gallery video heading for ${slug}`);
   const enVideos = en.data.videos ?? [], zhVideos = zh.data.videos ?? [];
   if (enVideos.length !== zhVideos.length || enVideos.some((clip, index) => clip.src.src !== zhVideos[index].src.src || clip.poster.src !== zhVideos[index].poster.src)) throw new Error(`Mismatched gallery videos for ${slug}`);
   result.push({ slug, entry: language === 'en' ? en : zh });

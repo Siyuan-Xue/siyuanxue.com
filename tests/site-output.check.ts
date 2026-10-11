@@ -289,7 +289,10 @@ for (const v of variants) {
  test(`${v.lang}: LeDA replaces its placeholder with two native demos and its national-level certificate`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'gallery/leda-agent/index.html'), 'utf8'));
   const source = JSON.parse(await readFile(`src/content/galleries/leda-agent/${v.lang === 'en' ? 'en' : 'zh'}.json`, 'utf8'));
-  expect(document.querySelector('#gallery-videos-heading')?.textContent).toBe(source.videoTitle);
+  expect(document.querySelectorAll('#gallery-videos-heading')).toHaveLength(0);
+  expect(document.querySelector('.gallery-videos')?.getAttribute('aria-labelledby')).toBeNull();
+  expect(document.querySelector('.gallery-videos')?.getAttribute('aria-label')).toBe(v.lang === 'en' ? 'Videos' : '视频');
+  expect([...document.querySelectorAll('.gallery-video-grid h2')].map(heading => heading.textContent)).toEqual(source.videos.map((clip: { label: string }) => clip.label));
   expect(document.querySelectorAll('.gallery-video-demos')).toHaveLength(1);
   const videos = [...document.querySelectorAll('video')];
   expect(videos).toHaveLength(2);
@@ -324,6 +327,8 @@ for (const v of variants) {
  test(`${v.lang}: B-Spline videos and results remain crawlable native HTML without JavaScript`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, 'gallery/b-spline-policy/index.html'), 'utf8'));
   const source = JSON.parse(await readFile(`src/content/galleries/b-spline-policy/${v.lang === 'en' ? 'en' : 'zh'}.json`, 'utf8'));
+  expect(document.querySelector('#gallery-videos-heading')?.textContent).toBe(v.lang === 'en' ? 'Simulation results' : '模拟器结果');
+  expect(document.querySelectorAll('.gallery-video-demos')).toHaveLength(0);
   const videos = [...document.querySelectorAll('video')];
   expect(videos).toHaveLength(3);
   for (const [index, video] of videos.entries()) {

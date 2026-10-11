@@ -8,7 +8,7 @@
   "title": "LeDA Agent",
   "description": "In July and August 2025, my roommates and I joined BUPT’s Undergraduate Innovation and Entrepreneurship Training Program and began building LeDA. We organized developer resources from the Awesome repository into a Neo4j knowledge graph and built a graph-based RAG agent with LangGraph. It retrieves resources in response to a user’s questions and returns relevant links. By persisting each user’s question history and intent, it also provides personalized learning-resource recommendations over time. LeDA went on to complete the program as a national-level project. Building something meaningful with friends was a thrill.",
   "role": "Project team member; co-developed with my roommates",
-  "videoTitle": "Demos and knowledge graph",
+  "videoTitle": null,
   "videos": [
     {
       "src": "leda-agent/agent-demo",

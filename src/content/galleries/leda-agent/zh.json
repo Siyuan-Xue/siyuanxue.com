@@ -8,7 +8,7 @@
   "title": "LeDA 智能体",
   "description": "2025 年 7–8 月，我和室友一起报名参加北京邮电大学大学生创新创业训练计划，开始开发 LeDA 智能体。我们把 Awesome 仓库收录的开发者资源整理成 Neo4j 知识图谱，基于 LangGraph 构建 RAG Agent：根据用户的问题检索资源，返回相应链接，同时持久化提问历史与意图，为用户长期推荐个性化的学习资源。这个项目最终作为国家级大创项目完成结题。和朋友一起做成一件大事，让我很振奋。",
   "role": "项目组成员，与室友共同开发",
-  "videoTitle": "功能演示与知识图谱",
+  "videoTitle": null,
   "videos": [
     {
       "src": "leda-agent/agent-demo",

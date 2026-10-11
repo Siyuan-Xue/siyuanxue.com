@@ -7,6 +7,7 @@ import '../styles/gallery.css';
 type Props = Pick<GalleryData, 'title' | 'description' | 'period' | 'role' | 'layout' | 'images' | 'links' | 'videos' | 'videoTitle' | 'videoLayout' | 'videoDescription' | 'comparison'>;
 const { title, description, period, role, layout = 'photos', images, links, videos = [], videoTitle, videoLayout = 'comparison', videoDescription, comparison } = Astro.props;
 const productLayout = layout === 'product';
+const showVideoTitle = videoTitle !== null;
 ---
 <article class="gallery-page" data-gallery-page>
  <header class="gallery-header">
@@ -15,12 +16,14 @@ const productLayout = layout === 'product';
   <p class="gallery-role"><span>{t({ en: 'My role', zh: '本人角色' })}:</span> {role}</p>
   <p class="gallery-description">{description}</p>
  </header>
- {videos.length > 0 && <section class="gallery-videos" aria-labelledby="gallery-videos-heading">
-  <h2 id="gallery-videos-heading">{videoTitle ?? t({ en: 'Simulation results', zh: '模拟器结果' })}</h2>
+ {videos.length > 0 && <section class="gallery-videos"
+  aria-labelledby={showVideoTitle ? 'gallery-videos-heading' : undefined}
+  aria-label={showVideoTitle ? undefined : t({ en: 'Videos', zh: '视频' })}>
+  {showVideoTitle && <h2 id="gallery-videos-heading">{videoTitle ?? t({ en: 'Simulation results', zh: '模拟器结果' })}</h2>}
   {videoDescription && <p>{videoDescription}</p>}
   <div class:list={['gallery-video-grid', { 'gallery-video-demos': videoLayout === 'demos' }]}>
    {videos.map(video => <figure class="gallery-figure">
-    <h3>{video.label}</h3>
+    {showVideoTitle ? <h3>{video.label}</h3> : <h2>{video.label}</h2>}
     <video controls playsinline preload="metadata" poster={video.poster.cover.src}
      width={video.poster.width} height={video.poster.height} aria-label={`${title} · ${video.label}`}>
      <source src={video.src.src} type={`video/${video.src.format === 'mov' ? 'quicktime' : video.src.format}`} />

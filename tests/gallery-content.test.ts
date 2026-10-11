@@ -96,9 +96,15 @@ test('video sections accept their own heading and demo layout without changing s
  expect(schema.parse(data).videoLayout).toBe('comparison');
  expect(schema.safeParse({ ...data, videoTitle: ' ' }).success).toBe(false);
  expect(schema.safeParse({ ...data, videoLayout: 'invalid' }).success).toBe(false);
+ expect(schema.parse({ ...data, videoTitle: null }).videoTitle).toBeNull();
 });
 
 test('bilingual galleries cannot publish with different video layouts', () => {
  expect(() => pairGalleries([entry('demo/en', { videoLayout: 'demos' }), entry('demo/zh')], 'en')).toThrow('video layout');
  expect(pairGalleries([entry('demo/en', { videoLayout: 'comparison' }), entry('demo/zh')], 'en')).toHaveLength(1);
+});
+
+test('bilingual galleries agree on whether their video section heading is visible', () => {
+ expect(() => pairGalleries([entry('demo/en', { videoTitle: null }), entry('demo/zh')], 'en')).toThrow('video heading');
+ expect(pairGalleries([entry('demo/en', { videoTitle: null }), entry('demo/zh', { videoTitle: null })], 'en')).toHaveLength(1);
 });
