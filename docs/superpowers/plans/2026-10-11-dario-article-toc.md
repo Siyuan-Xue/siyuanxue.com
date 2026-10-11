@@ -34,4 +34,4 @@
 - [x] Run `bun test tests/toc-controller.test.ts`; expected failure because the new binding is absent.
 - [x] Implement the single nav, Menu/X icon and controller; style the fixed desktop and full-width mobile menu without moving article content.
 - [x] Run the DOM suite, `bun run check`, unit suite, bilingual build/output checks; expected all pass. Inspect actual browser layouts and keyboard paths.
-- [ ] Commit, obtain independent review, then publish under the existing authorization. Record Actions/public SHA and screenshot evidence in the audit and maintenance guide.
+- [x] Commit, obtain independent review, then publish under the existing authorization. Record Actions/public SHA and screenshot evidence in the audit and maintenance guide.
