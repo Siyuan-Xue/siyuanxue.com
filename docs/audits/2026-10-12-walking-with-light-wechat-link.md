@@ -19,14 +19,18 @@
 | GitHub 账号/独立主页 README/About、聊天人设/记忆 | 不适用；没有身份、角色或经历事实变更 |
 | 域名、DNS、搜索平台验证、CI 配置/secret、Nginx/helper、独立服务 | 不适用；沿用现有静态发布链路 |
 | 维护总览、审计和恢复说明 | 已更新 |
-| 验证与发布 | 待处理；实际构建、产物、Actions 和两域名目标 SHA 结果待执行后补录 |
+| 验证与发布 | 已完成；本次请求无待处理项，外部文章正文仍按上述未核验边界记录 |
 
 ## 本次验证
 
 - 发布前两站 `/__health` 同为 `3c159d95c8a54d65fac0492d8daaee0561bd1e51`。
 - `bun run build`：双语构建成功，产物测试 34 pass / 0 fail、6706 个断言。
 - 两图集产物的五个相关资料入口逐项匹配双语源 JSON；新增 URL 和标签各出现一次、全部查询参数保留，沿用同页导航及 `noopener noreferrer`，canonical 正确。一次性核对脚本最初误把既有链接导航假设为 `_blank`，核对 `GalleryContent.astro` 后改按实际同页行为验收通过，没有修改链接模板。
-- 文档相对链接可解析，`git diff --check` 通过。实际上线记录待发布后补录。
+- 文档相对链接可解析，`git diff --check` 通过。
+- 新版本激活后 `bash ops/verify-public.sh b5df50113d5812d6ab4b20e984c9bcfe047a1190` 通过。两站图集直接请求 HTTP 200，五个资料链接逐项匹配源 JSON、新增完整 URL 各一次、正文与 canonical 正确。本次未打开外部微信入口，未绕过前述浏览器安全限制。
+- [Actions 38188122799](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38188122799) 最终 API 状态 completed / success，源码提交为 `b5df50113d5812d6ab4b20e984c9bcfe047a1190`；共享验证、部署和 IndexNow 通知均 success，rollback skipped。CLI 状态监听有一次网络 EOF，重新读取 API 确认工作流整体成功；并非 CI 失败。部署包含两站公网与全量媒体响应头检查；通知成功不代表搜索平台已收录或更新展示。
+
+后续仅维护记录提交使用 `[skip ci]`，静态 release 保持上述 SHA。
 
 ## 恢复
 
