@@ -2,6 +2,8 @@
 
 维护负责人：Siyuan Xue / 薛思远。整理日期：2026-09-16。
 
+**2026-10-12《与光同行》链接追加：**用户提供的微信文章此前未列入条目，已追加到 `src/content/galleries/walking-with-light/{zh,en}.json` 的 `links`，使用「微信公众号文章 / WeChat article」中性入口，完整保留地址参数。外部正文因访问限制未核验，不新增其标题或内容事实。更新经原双语 Actions；联动、实际验收、发布状态与移除/回退方式见[链接审计](audits/2026-10-12-walking-with-light-wechat-link.md)。本次上线结果待补录。
+
 **2026-10-11 首页格言后续修正：**用户要求查证出处并整理引述标点。已核对 1974 年《Whole Earth Epilog》封底扫描和斯坦福 2005 年 6 月 12 日 Jobs 演讲官方文字稿，使用 `Stay hungry. Stay foolish.`；引导语与带双引号的引文合段，中文补冒号，英文按表语引述不加冒号。已确认的简介首段、分享摘要及身份事实不变，不误署为 Jobs 原创。更新位置仍为 `src/data/site.ts`，[Actions 38151893543](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38151893543) 已成功发布 `3c159d95c8a54d65fac0492d8daaee0561bd1e51`，验证、部署及通知均成功；两站完整目标 SHA、正文标点、元信息、桌面及窄屏排版已核对。后续 `[skip ci]` 文档提交不改变该静态 release。来源、联动、不适用项、实际验收和恢复入口见[格言审计](audits/2026-10-11-homepage-quote.md)；下段保留此前发布时的事实。
 
 **2026-10-11 首页简介更新：**用户确认第三人称中文定稿并明确授权中英文上线。双语文字和分享摘要在 `src/data/site.ts`，沿用 `Bio.astro` 的段落渲染，首页人物结构化数据自动引用同一简介；以专业身份、探索未知、追求极致与完美、产品技术热情和生活态度介绍本人，末段保留 `Stay hungry, stay foolish.`。联动核对了网站 README、公开 GitHub 账号、独立主页 README 与两仓库 About，学校/专业、姓名别名、域名一致，无需因首页措辞更新而改动其他平台资料或独立服务。[Actions 38150083083](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38150083083) 已成功发布 `b1a0a3919cc323f391afce6a6b873b6a9315bdd9`，共享验证、部署、通知成功；两域名完整目标 SHA、定稿正文、元信息、固定语言/跳转/旧照片拒绝，以及生产两语言桌面与390px窄屏显示均核对通过。后续 `[skip ci]` 文档提交不改变该静态 release。更新与恢复通过该数据文件及原 Actions 双语发布；本次验证、发布状态与回滚入口见[简介审计](audits/2026-10-11-homepage-bio.md)。
