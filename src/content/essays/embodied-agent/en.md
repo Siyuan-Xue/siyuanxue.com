@@ -4,7 +4,7 @@ subtitle: LLMs as the brain, VLA models as the hands
 date: 2026-10-14
 description: A graduation-project blueprint for an embodied agent that uses an LLM to plan, task-specific VLA models to act, and memory to connect tasks over time.
 seoDescription: "Miles (Siyuan Xue) proposes an embodied agent combining LLM planning, VLA tools, and stores for skills, execution traces and task relationships."
-draft: true
+draft: false
 figures:
   - id: architecture
     src: essays/embodied-agent/architecture

@@ -4,7 +4,7 @@ subtitle: 让 LLM 做大脑，让 VLA 模型做双手
 date: 2026-10-14
 description: 一份毕业设计蓝图：由大语言模型负责规划，擅长特定任务的 VLA 模型负责行动，再用记忆连接不同任务。
 seoDescription: "薛思远（Miles）的具身智能体构想：结合 LLM 规划、VLA 工具，以及保存技能说明、执行轨迹和任务关系的存储。"
-draft: true
+draft: false
 figures:
   - id: architecture
     src: essays/embodied-agent/architecture

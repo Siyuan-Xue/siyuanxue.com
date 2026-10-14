@@ -2,6 +2,10 @@
 
 来源为用户提供的 `/workspace/blog-src/draft.txt` 及 `fig-000.png` 至 `fig-003.png`。开工基线为干净的 `main`，SHA `ac6a1fe3f5b23b1736cc1ee223aa7c0f62bb484d`，一个工作树。用户要求自行完成写作与代码、保留草稿、本机准备媒体并提交；媒体上传和 PR 交由父任务，撰写时待处理，后续见 PR。
 
+**2026-10-15 发布准备更新：**用户已批准公开，双语文章仅将 `draft` 改为 `false`，正文及其他 frontmatter 不变。下表四个媒体 ID 的 40 个文件已上传并安装，恢复快照为 `/var/backups/siyuanxue-media/618b9fa2241d68a71b1f68dd380868b8abeba7ac76662ee3839c06856442fe1e/`（同盘副本）。部署验收仍待完成，见 [PR #4](https://github.com/Siyuan-Xue/siyuanxue.com/pull/4)；本次不提交、不推送、不执行 Git 写操作。
+
+2026-10-15 本地验收使用 Node v22.23.3、Bun 1.4.2（`fnm` 状态目录设于 `/tmp`）：`bun run check` 0 errors/0 warnings/0 hints，`bun run test` 176 pass，`bun run build` 双语成功，`bun run test:output` 34 pass，`bun run test:gallery` 1 pass，均无失败。联动清单：**已更新**双语发布标志、首页/RSS/sitemap 与配图产物预期、维护记录；保留临时草稿隔离及未知媒体 ID 拒绝检查，确认两篇 Markdown 仅改发布标志，文档本地链接与差异检查通过。**不适用**身份、账号、域名、CI 配置与独立服务变更。**待处理**PR #4 部署后 Actions、两域名目标 SHA、媒体及浏览器验收；撤回文章可将双语恢复为草稿并同步测试，已安装媒体保留。以下各节保留 2026-10-14 草稿阶段的事实和验证记录。
+
 ## 内容与实现
 
 - [英文](../../src/content/essays/embodied-agent/en.md)及[中文](../../src/content/essays/embodied-agent/zh.md)使用同一日期 `2026-10-14`，均为 `draft: true`。四个编号章节依次说明构想、动机、蓝图与个人原因；明确这是 Miles / 薛思远的本科毕业设计方案，没有新增实验结果、论文引文、导师信息或已实现能力。

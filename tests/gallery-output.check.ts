@@ -49,13 +49,13 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    await writeFile(join(contextDirectory, `${locale}.json`), JSON.stringify({ ...fixture, draft: false, preview: false, period: 'Gallery background', homeMeta: 'Homepage context' }));
   }
 
-  // Exercise essay figures in the same isolated builds while keeping the real essay a draft.
+  // Keep a draft copy to verify exclusion and media validation alongside the published essay.
   const essayDirectory = join(temporary, 'src/content/essays/figure-fixture');
   await mkdir(essayDirectory);
   for (const { locale } of variants) {
-   const draft = await readFile(join(temporary, 'src/content/essays/embodied-agent', `${locale}.md`), 'utf8');
-   expect(draft).toContain('draft: true');
-   await writeFile(join(essayDirectory, `${locale}.md`), draft.replace('draft: true', 'draft: false'));
+   const published = await readFile(join(temporary, 'src/content/essays/embodied-agent', `${locale}.md`), 'utf8');
+   expect(published).toContain('draft: false');
+   await writeFile(join(essayDirectory, `${locale}.md`), published.replace('draft: false', 'draft: true'));
   }
 
   for (const { locale, language, origin } of variants) {
@@ -66,7 +66,7 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    });
    if (build.error || build.status !== 0) throw new Error(`Astro ${locale} fixture build failed: ${build.error ?? build.signal ?? build.status}\n${build.stdout}\n${build.stderr}`);
    const output = join(temporary, '.build', locale);
-   const essayHtml = await readFile(join(output, 'essay/figure-fixture/index.html'), 'utf8');
+   const essayHtml = await readFile(join(output, 'essay/embodied-agent/index.html'), 'utf8');
    const { document: essay } = parseHTML(essayHtml);
    const essayFigures = [...essay.querySelectorAll('.prose figure.essay-figure')];
    expect(essayFigures).toHaveLength(4);
@@ -89,8 +89,8 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    for (const heading of essay.querySelectorAll('.prose h2')) {
     expect(essay.querySelector(`a[href="#${heading.id}"]`)).not.toBeNull();
    }
-   expect(essay.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(origin + '/essay/figure-fixture/');
-   expect(await access(join(output, 'essay/embodied-agent/index.html')).then(() => true, () => false)).toBe(false);
+   expect(essay.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(origin + '/essay/embodied-agent/');
+   expect(await access(join(output, 'essay/figure-fixture/index.html')).then(() => true, () => false)).toBe(false);
    const fixture = fixtures.get(locale)!;
    const { document: preview } = parseHTML(await readFile(join(output, previewPath, 'index.html'), 'utf8'));
    expect(preview.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
@@ -188,17 +188,18 @@ test('published bilingual gallery survives a real Astro build with crawlable con
    expect(legacyLink.closest('li')?.querySelector('.bullet-list_meta')).toBeNull();
    expect(home.querySelector(`a[href="${previewPath}"]`)).toBeNull();
    expect(home.querySelector('a[href="/gallery/unpublished-fixture/"]')).toBeNull();
-   expect(home.querySelector('a[href="/essay/embodied-agent/"]')).toBeNull();
+   expect(home.querySelector('a[href="/essay/embodied-agent/"]')).not.toBeNull();
+   expect(home.querySelector('a[href="/essay/figure-fixture/"]')).toBeNull();
    expect(await access(join(output, 'gallery/unpublished-fixture/index.html')).then(() => true, () => false)).toBe(false);
    const sitemap = new DOMParser().parseFromString(await readFile(join(output, 'sitemap-0.xml'), 'utf8'), 'text/xml');
    const locations = [...sitemap.querySelectorAll('url > loc')].map(loc => loc.textContent);
    expect(locations).toContain(origin + pathname);
    expect(locations).not.toContain(origin + previewPath);
    expect(locations).not.toContain(origin + '/gallery/unpublished-fixture/');
-   expect(locations).toContain(origin + '/essay/figure-fixture/');
-   expect(locations).not.toContain(origin + '/essay/embodied-agent/');
+   expect(locations).not.toContain(origin + '/essay/figure-fixture/');
+   expect(locations).toContain(origin + '/essay/embodied-agent/');
   }
-  const draftFile = join(temporary, 'src/content/essays/embodied-agent/en.md');
+  const draftFile = join(essayDirectory, 'en.md');
   await writeFile(draftFile, (await readFile(draftFile, 'utf8')).replace('src: essays/embodied-agent/architecture', 'src: essays/embodied-agent/missing'));
   const invalid = spawnSync('node', ['node_modules/astro/bin/astro.mjs', 'build'], {
    cwd: temporary, env: { ...process.env, NODE_ENV: 'production', SITE_LOCALE: 'en', ASTRO_TELEMETRY_DISABLED: '1' },
