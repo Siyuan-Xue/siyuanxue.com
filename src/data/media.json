@@ -5703,5 +5703,337 @@
       "width": 1200,
       "height": 721
     }
+  },
+  "essays/embodied-agent/architecture": {
+    "src": "/media/b3fd0dc845246fdafc659be627637089b64348f619d7bd53d3fce9c6a3edc1e8.png",
+    "sha256": "b3fd0dc845246fdafc659be627637089b64348f619d7bd53d3fce9c6a3edc1e8",
+    "bytes": 403284,
+    "format": "png",
+    "width": 2560,
+    "height": 1440,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/3398fbf17067b3eb5691ef1cfbca7ba13d985335e5f7beb0c32d155895b4fc15.avif",
+        "sha256": "3398fbf17067b3eb5691ef1cfbca7ba13d985335e5f7beb0c32d155895b4fc15",
+        "bytes": 3511,
+        "format": "avif",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/6abcd99cbc4f2feea2f56e28a073cfe66837a1e297201a353b69a3af4241d82c.avif",
+        "sha256": "6abcd99cbc4f2feea2f56e28a073cfe66837a1e297201a353b69a3af4241d82c",
+        "bytes": 8892,
+        "format": "avif",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/ac5d14aacee9f5161953dfaecb827acb40375a6590903b0403e137024d5a6833.avif",
+        "sha256": "ac5d14aacee9f5161953dfaecb827acb40375a6590903b0403e137024d5a6833",
+        "bytes": 14008,
+        "format": "avif",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/1592c51eb73336678e9d0ff5dbb67921e4e8b9650dc7e40ec21016ca1d9a3cb9.avif",
+        "sha256": "1592c51eb73336678e9d0ff5dbb67921e4e8b9650dc7e40ec21016ca1d9a3cb9",
+        "bytes": 19567,
+        "format": "avif",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "src": "/media/30faa75f00cb62bcfe7d882ef91304ae7456b4c9ebeba8d9b9906cfc67c785f7.webp",
+        "sha256": "30faa75f00cb62bcfe7d882ef91304ae7456b4c9ebeba8d9b9906cfc67c785f7",
+        "bytes": 4730,
+        "format": "webp",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/228ce5827df3ee65e25ed065c0139a2c166c770e19b5741e015d8e7f455e3380.webp",
+        "sha256": "228ce5827df3ee65e25ed065c0139a2c166c770e19b5741e015d8e7f455e3380",
+        "bytes": 12560,
+        "format": "webp",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/4e4c9d900769e2b118019ab58b48f2bb5ff69b53bcc78f940dec89d2deb1d68d.webp",
+        "sha256": "4e4c9d900769e2b118019ab58b48f2bb5ff69b53bcc78f940dec89d2deb1d68d",
+        "bytes": 21744,
+        "format": "webp",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/0e7287080108241f02b4294ad40b3aea3e1500ada7cf78598e89b464341fa7bc.webp",
+        "sha256": "0e7287080108241f02b4294ad40b3aea3e1500ada7cf78598e89b464341fa7bc",
+        "bytes": 30106,
+        "format": "webp",
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "cover": {
+      "src": "/media/1ba31099e15fe1cc7c264febb90aeca0c17f6b5832a3dca1267f4a53d967fa6f.jpeg",
+      "sha256": "1ba31099e15fe1cc7c264febb90aeca0c17f6b5832a3dca1267f4a53d967fa6f",
+      "bytes": 63420,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 675
+    }
+  },
+  "essays/embodied-agent/orchestration": {
+    "src": "/media/f62e9fcabea8b3dd56266555a2c5433b80a3a07a11ae97e30f95aa46cf6afc75.png",
+    "sha256": "f62e9fcabea8b3dd56266555a2c5433b80a3a07a11ae97e30f95aa46cf6afc75",
+    "bytes": 345509,
+    "format": "png",
+    "width": 2560,
+    "height": 1440,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/1e17ce811e22aae53ee1b2aef1f9b181460a0c9743aa843a75486a15a8145559.avif",
+        "sha256": "1e17ce811e22aae53ee1b2aef1f9b181460a0c9743aa843a75486a15a8145559",
+        "bytes": 3114,
+        "format": "avif",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/ee05b3edf65b3826ab68be8bde78396a30e4270b21c88957b6a21a9bcfe81890.avif",
+        "sha256": "ee05b3edf65b3826ab68be8bde78396a30e4270b21c88957b6a21a9bcfe81890",
+        "bytes": 7814,
+        "format": "avif",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/43f74b555b3b7e1e9d53acc42c4c784141acee0c3053a51602dc24b523af6f9a.avif",
+        "sha256": "43f74b555b3b7e1e9d53acc42c4c784141acee0c3053a51602dc24b523af6f9a",
+        "bytes": 12865,
+        "format": "avif",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/683bccf2acbe1e7f11283a21c9559e3af9890ec259234d812283a7c15f739218.avif",
+        "sha256": "683bccf2acbe1e7f11283a21c9559e3af9890ec259234d812283a7c15f739218",
+        "bytes": 17701,
+        "format": "avif",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "src": "/media/7b4cd747a155f2777484725d5adfceec336a77c3fa87f32e87032bb249d2eab7.webp",
+        "sha256": "7b4cd747a155f2777484725d5adfceec336a77c3fa87f32e87032bb249d2eab7",
+        "bytes": 3826,
+        "format": "webp",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/5eb0de7f7c695249af3f1befa3a6a73b5020b1c8875ed9bcaf428bde4c9b12be.webp",
+        "sha256": "5eb0de7f7c695249af3f1befa3a6a73b5020b1c8875ed9bcaf428bde4c9b12be",
+        "bytes": 10068,
+        "format": "webp",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/960998bd4d295d569d885a4843b7de1e2a0fba82683834e2c940e4b9a04aa3ef.webp",
+        "sha256": "960998bd4d295d569d885a4843b7de1e2a0fba82683834e2c940e4b9a04aa3ef",
+        "bytes": 17782,
+        "format": "webp",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/7b50724ad31d927ba7c6416ce6caf1c8a39ca6f1f33a74466b275ad3bbc0b31a.webp",
+        "sha256": "7b50724ad31d927ba7c6416ce6caf1c8a39ca6f1f33a74466b275ad3bbc0b31a",
+        "bytes": 25474,
+        "format": "webp",
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "cover": {
+      "src": "/media/b594346c71110429e10c7d1cd983195a7446177eb6e884c5a084cdd0994cebe9.jpeg",
+      "sha256": "b594346c71110429e10c7d1cd983195a7446177eb6e884c5a084cdd0994cebe9",
+      "bytes": 53980,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 675
+    }
+  },
+  "essays/embodied-agent/generation": {
+    "src": "/media/d51e5aa975c022ac533a7a7e25abb0de0ba0ea2c31c4a3e69e57d8cafc8ab7eb.png",
+    "sha256": "d51e5aa975c022ac533a7a7e25abb0de0ba0ea2c31c4a3e69e57d8cafc8ab7eb",
+    "bytes": 348246,
+    "format": "png",
+    "width": 2560,
+    "height": 1440,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/464f8b80c447e3718958ef9069ca57b6cb16caf113525ea4436a69646c9e6626.avif",
+        "sha256": "464f8b80c447e3718958ef9069ca57b6cb16caf113525ea4436a69646c9e6626",
+        "bytes": 3083,
+        "format": "avif",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/58ab2d9b8be9148a10682c93e9e3903263e5946be17d8da69a57270e575a6a2b.avif",
+        "sha256": "58ab2d9b8be9148a10682c93e9e3903263e5946be17d8da69a57270e575a6a2b",
+        "bytes": 7753,
+        "format": "avif",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/6a1703a96f3d73e9cf2e0f96b996973e419d8dcfb1e98757aadb2e4a7ee9c6a3.avif",
+        "sha256": "6a1703a96f3d73e9cf2e0f96b996973e419d8dcfb1e98757aadb2e4a7ee9c6a3",
+        "bytes": 12931,
+        "format": "avif",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/655f2f0f9cf6539eb4afa506fa11b2c9933d24a493d5d314968a8a5489a0c256.avif",
+        "sha256": "655f2f0f9cf6539eb4afa506fa11b2c9933d24a493d5d314968a8a5489a0c256",
+        "bytes": 17872,
+        "format": "avif",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "src": "/media/3a2395175b7663ddc4e4cf72da7c77b4698d133d58d396c0e2b4ae0946c3d9f9.webp",
+        "sha256": "3a2395175b7663ddc4e4cf72da7c77b4698d133d58d396c0e2b4ae0946c3d9f9",
+        "bytes": 3810,
+        "format": "webp",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/c9b8348f2246c3ef23d47a53d127540c1ce33522e08d0d0b6ece9b405bf61907.webp",
+        "sha256": "c9b8348f2246c3ef23d47a53d127540c1ce33522e08d0d0b6ece9b405bf61907",
+        "bytes": 10374,
+        "format": "webp",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/2193d3b04e23d65639aba9e72c78c0fd59eee3ca45e490cfbe7b3d0689a90922.webp",
+        "sha256": "2193d3b04e23d65639aba9e72c78c0fd59eee3ca45e490cfbe7b3d0689a90922",
+        "bytes": 18410,
+        "format": "webp",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/e991e463a854a008c85a64e1312f7ed85b894014b9ab009e01b5647876da99c6.webp",
+        "sha256": "e991e463a854a008c85a64e1312f7ed85b894014b9ab009e01b5647876da99c6",
+        "bytes": 26084,
+        "format": "webp",
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "cover": {
+      "src": "/media/d767860ec98a70cef3015d91ac9f79bd494e498eec415fd46be725a2b02d6c32.jpeg",
+      "sha256": "d767860ec98a70cef3015d91ac9f79bd494e498eec415fd46be725a2b02d6c32",
+      "bytes": 53546,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 675
+    }
+  },
+  "essays/embodied-agent/pipelines": {
+    "src": "/media/008dda6ddaa76ea6b378f8d041dd59dc9aa71a84946501541232d1421d54bf6c.png",
+    "sha256": "008dda6ddaa76ea6b378f8d041dd59dc9aa71a84946501541232d1421d54bf6c",
+    "bytes": 359589,
+    "format": "png",
+    "width": 2560,
+    "height": 1440,
+    "kind": "image",
+    "variants": [
+      {
+        "src": "/media/4d6b6878458789385199c85dc44c752f8c2223590501aac3c9d3f044966c5286.avif",
+        "sha256": "4d6b6878458789385199c85dc44c752f8c2223590501aac3c9d3f044966c5286",
+        "bytes": 2991,
+        "format": "avif",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/b79b8d59e7432d0101a1f64f7e9feec94ac8d5db3303afd8801559a7cddc82f1.avif",
+        "sha256": "b79b8d59e7432d0101a1f64f7e9feec94ac8d5db3303afd8801559a7cddc82f1",
+        "bytes": 7938,
+        "format": "avif",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/b2694a946aaefcddebf18f5d9da7f8c40be46912cd936f668874004f1a66ef77.avif",
+        "sha256": "b2694a946aaefcddebf18f5d9da7f8c40be46912cd936f668874004f1a66ef77",
+        "bytes": 12451,
+        "format": "avif",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/0baf47a95f168e127ed6e6ecd0e01825ed8a69fa20973e37194799a40b6f81e5.avif",
+        "sha256": "0baf47a95f168e127ed6e6ecd0e01825ed8a69fa20973e37194799a40b6f81e5",
+        "bytes": 17956,
+        "format": "avif",
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "src": "/media/3cf0afa398315e33bf6c11b0470f006e06143486888e161b82fd85dd703eb441.webp",
+        "sha256": "3cf0afa398315e33bf6c11b0470f006e06143486888e161b82fd85dd703eb441",
+        "bytes": 3898,
+        "format": "webp",
+        "width": 320,
+        "height": 180
+      },
+      {
+        "src": "/media/4ecfb8e2f0ceead4004ec6a756b8f9c1940b11cc76f36c0dbda9deacec36bb51.webp",
+        "sha256": "4ecfb8e2f0ceead4004ec6a756b8f9c1940b11cc76f36c0dbda9deacec36bb51",
+        "bytes": 10502,
+        "format": "webp",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "src": "/media/42e2d585cbc7cac5b0d680c7cb88bbf049baca4013a467bba56d7bbc2ad5d2b0.webp",
+        "sha256": "42e2d585cbc7cac5b0d680c7cb88bbf049baca4013a467bba56d7bbc2ad5d2b0",
+        "bytes": 18928,
+        "format": "webp",
+        "width": 960,
+        "height": 540
+      },
+      {
+        "src": "/media/f537a3f806a5be9be3f32a19047f570c7abf1d11ab29c3f42e728e302e1a8bda.webp",
+        "sha256": "f537a3f806a5be9be3f32a19047f570c7abf1d11ab29c3f42e728e302e1a8bda",
+        "bytes": 26534,
+        "format": "webp",
+        "width": 1280,
+        "height": 720
+      }
+    ],
+    "cover": {
+      "src": "/media/d65328c7de482a5479bf72abf61528ee9db8d9d88d197b213ad320212d3911bc.jpeg",
+      "sha256": "d65328c7de482a5479bf72abf61528ee9db8d9d88d197b213ad320212d3911bc",
+      "bytes": 53909,
+      "format": "jpeg",
+      "width": 1200,
+      "height": 675
+    }
   }
 }

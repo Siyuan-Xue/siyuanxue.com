@@ -265,6 +265,7 @@ for (const v of variants) {
   expect(dates.every(Number.isFinite)).toBe(true);
   expect(dates).toEqual([...dates].sort((a, b) => b - a));
   expect(blogLinks).toContain('/essay/why-this-site/');
+  expect(blogLinks).toContain('/essay/embodied-agent/');
   expect(blogLinks).toContain('/post/first-note/');
   expect(blogLinks).toContain('/post/congrats-you-hit-the-limit/');
  });
@@ -288,7 +289,7 @@ for (const v of variants) {
  test(`${v.lang}: localized feeds, sitemap and noindex placeholders`, async () => {
   const rss = new DOMParser().parseFromString(await readFile(join(v.root,'rss.xml'), 'utf8'), 'text/xml');
   expect(rss.querySelector('channel > title')?.textContent).toBe(v.title);
-  expect(rss.querySelectorAll('item').length).toBe(3);
+  expect(rss.querySelectorAll('item').length).toBe(4);
   for (const link of rss.querySelectorAll('item > link')) expect(link.textContent).toStartWith(v.origin);
   const sitemap = await readFile(join(v.root,'sitemap-0.xml'), 'utf8'); expect(sitemap).toContain(v.origin); expect(sitemap).not.toContain('/wip'); expect(sitemap).not.toContain('/404'); expect(sitemap).not.toContain('/gallery/layout-preview/'); expect(sitemap).not.toContain('/dev/');
   const { document: preview } = parseHTML(await readFile(join(v.root, 'gallery/layout-preview/index.html'), 'utf8'));
