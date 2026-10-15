@@ -8,7 +8,7 @@ import { bindThemeLink } from '../src/utils/themeLink';
 
 const script = inlineThemeScript(readFileSync(new URL('../src/scripts/theme.js', import.meta.url), 'utf8'));
 const head = readFileSync(new URL('../src/components/BaseHead.astro', import.meta.url), 'utf8');
-const styles = ['tokens', 'base'].map(name => readFileSync(new URL(`../src/styles/${name}.css`, import.meta.url), 'utf8').replace(/^@import .*;$/gm, '')).join('\n');
+const styles = ['theme-colors', 'tokens', 'base'].map(name => readFileSync(new URL(`../src/styles/${name}.css`, import.meta.url), 'utf8').replace(/^@import .*;$/gm, '')).join('\n');
 const windows: Window[] = [];
 afterEach(() => { for (const window of windows.splice(0)) window.happyDOM.abort(); });
 
@@ -47,7 +47,8 @@ function fixture(saved: string | null = null, systemDark = false, blocked: boole
  return { window, document, mount, replacements, reads: () => reads, scrolled: () => scrolled,
   link: () => document.querySelector('a')!.getAttribute('href'),
   preference: () => (window as unknown as globalThis.Window).__siteTheme!.getPreference(),
-  themeColor: () => document.querySelector('meta[name="theme-color"]')!,
+  systemDark: () => systemDark,
+  themeColor: () => document.querySelector(`meta[name="theme-color"]:not([media]), meta[name="theme-color"][media="(prefers-color-scheme: ${systemDark ? 'dark' : 'light'})"]`)!,
   toggle: () => document.querySelector('svg')!.dispatchEvent(new window.MouseEvent('click', { bubbles: true })),
   changeSystem: (dark: boolean) => { systemDark = dark; media.dispatchEvent(new window.Event('change')); },
   restore: (nextSaved: string | null, persisted = true) => {
@@ -65,8 +66,12 @@ function expectTheme(f: ReturnType<typeof fixture>, dark: boolean) {
  const color = dark ? '#1f1e1d' : '#f0eee6';
  expect(document.documentElement.classList.contains('u-mode-invert')).toBe(dark);
  expect(f.themeColor().getAttribute('content')).toBe(dark ? '#1f1e1d' : '#f0eee6');
- expect(document.querySelectorAll('meta[name="theme-color"]').length).toBe(1);
- expect(f.themeColor().hasAttribute('media')).toBe(false);
+ const override = f.preference() !== null && dark !== f.systemDark();
+ expect(document.querySelectorAll('meta[name="theme-color"]').length).toBe(override ? 1 : 2);
+ expect(f.themeColor().hasAttribute('media')).toBe(!override);
+ expect(document.documentElement.dataset.theme).toBe(dark ? 'dark' : 'light');
+ expect(document.documentElement.style.backgroundColor).toBe(color);
+ expect(document.documentElement.style.colorScheme).toBe(dark ? 'dark' : 'light');
  expect(document.querySelector('meta[name="color-scheme"]')!.getAttribute('content')).toBe(dark ? 'dark' : 'light');
  expect(window.getComputedStyle(document.documentElement).colorScheme).toBe(dark ? 'dark' : 'light');
  for (const element of document.querySelectorAll('html, body, .header')) {
@@ -89,7 +94,7 @@ for (const [saved, systemDark, dark] of [
  });
 }
 
-test('manual toggles replace the connected theme-color node on every change without accumulating tags', () => {
+test('manual toggles alternate the system pair and unconditional override without accumulating tags', () => {
  const f = fixture(null, true); f.mount();
  for (const dark of [false, true, false, true]) {
   const previous = f.themeColor();
@@ -275,4 +280,39 @@ test('language href tracks real header toggles, portrait events, theme, storage,
  f.window.dispatchEvent(new f.window.Event('pageshow'));
  expect(f.link()).toBe('https://xuesiyuan.com/');
  cleanupHeader();
+});
+
+
+test('system pair survives matching preferences and is restored when an override starts matching', () => {
+ const f = fixture('dark', true); f.mount();
+ const pair = [...f.document.querySelectorAll('meta[name="theme-color"]')];
+ expectTheme(f, true);
+ f.changeSystem(false); expectTheme(f, true);
+ expect(pair.every(meta => !meta.isConnected)).toBe(true);
+ f.changeSystem(true); expectTheme(f, true);
+ expect([...f.document.querySelectorAll('meta[name="theme-color"]')]).toEqual(pair);
+ f.restore(null); expectTheme(f, true);
+ f.changeSystem(false); expectTheme(f, false);
+ expect([...f.document.querySelectorAll('meta[name="theme-color"]')]).toEqual(pair);
+});
+
+test('root canvas and scheme do not depend on external CSS on every theme entry path', () => {
+ const f = fixture('light', true, false, '#theme=dark');
+ f.document.querySelector('style')!.remove();
+ const check = (dark: boolean) => {
+  const computed = f.window.getComputedStyle(f.document.documentElement);
+  expect(computed.backgroundColor).toBe(dark ? '#1f1e1d' : '#f0eee6');
+  expect(computed.colorScheme).toBe(dark ? 'dark' : 'light');
+ };
+ check(true); f.mount(); f.toggle(); check(false);
+ f.restore('dark'); check(true);
+ f.restore(null); f.changeSystem(false); check(false);
+ f.restore('dark', false);
+ f.window.dispatchEvent(new f.window.StorageEvent('storage', { key: 'color-mode' })); check(true);
+});
+
+test('critical palette precedes the blocking script and no-JS dark palette matches explicit dark', () => {
+ expect(head.indexOf('set:html={themeColors}')).toBeLessThan(head.indexOf('set:html={inlineThemeScript'));
+ const css = readFileSync(new URL('../src/styles/theme-colors.css', import.meta.url), 'utf8');
+ expect(css.match(/html\.u-mode-invert \{([^}]+)\}/)![1]).toBe(css.match(/:root:not\(\[data-theme\]\) \{([^}]+)\}/)![1]);
 });

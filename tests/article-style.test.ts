@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { Window } from 'happy-dom';
 import { createMarkdownProcessor } from '@astrojs/markdown-remark';
 
-const styles = ['tokens', 'prose', 'base', 'toc', 'article'].map(name => readFileSync(new URL(`../src/styles/${name}.css`, import.meta.url), 'utf8').replace(/^@import .*;$/gm, '')).join('\n');
+const styles = ['theme-colors', 'tokens', 'prose', 'base', 'toc', 'article'].map(name => readFileSync(new URL(`../src/styles/${name}.css`, import.meta.url), 'utf8').replace(/^@import .*;$/gm, '')).join('\n');
 const windows: Window[] = [];
 afterEach(() => { for (const window of windows.splice(0)) window.happyDOM.abort(); });
 

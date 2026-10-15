@@ -2,7 +2,9 @@
 // Receives the single themeHint implementation serialized by BaseHead.
 (hint) => {
  const root = document.documentElement;
- let themeColor = document.querySelector('meta[name="theme-color"]');
+ const themeColors = Array.from(document.querySelectorAll('meta[name="theme-color"]'));
+ const colors = themeColors[0].dataset;
+ let overrideColor = null;
  const colorScheme = document.querySelector('meta[name="color-scheme"]');
  const systemTheme = matchMedia('(prefers-color-scheme: dark)');
  const preferredMode = () => systemTheme.matches ? 'dark' : 'light';
@@ -39,15 +41,28 @@
  };
  const applyTheme = (mode) => {
   root.classList.toggle('u-mode-invert', mode === 'dark');
+  root.dataset.theme = mode;
+  // Paint the root canvas even before external styles arrive. Every entry path
+  // (hint, storage, toggle, system and BFCache) goes through this same function.
+  root.style.backgroundColor = colors[mode];
+  root.style.colorScheme = mode;
   colorScheme?.setAttribute('content', mode);
-  const color = themeColor?.dataset[mode];
-  if (themeColor && color) {
-   // WebKit reprocesses insertion/removal as well as attribute changes (#220944).
-   // Replace the node to avoid relying only on an in-place content update.
-   const next = themeColor.cloneNode();
-   next.content = color;
-   themeColor.replaceWith(next);
-   themeColor = next;
+  // Media queries describe the OS preference, not the forced CSS color-scheme.
+  // Keep the parser's pair when it agrees; use one unconditional node otherwise.
+  if (preference !== null && mode !== preferredMode()) {
+   const next = themeColors[0].cloneNode();
+   next.removeAttribute('media');
+   next.content = colors[mode];
+   if (overrideColor) overrideColor.replaceWith(next);
+   else {
+    themeColors[0].before(next);
+    themeColors.forEach(meta => meta.remove());
+   }
+   overrideColor = next;
+  } else if (overrideColor) {
+   overrideColor.before(...themeColors);
+   overrideColor.remove();
+   overrideColor = null;
   }
   syncButtons();
   document.dispatchEvent(new window.Event('site-theme-change'));
@@ -120,7 +135,8 @@
   applyTheme(mode);
  });
  systemTheme.addEventListener('change', () => {
-  if (preference === null) applyTheme(preferredMode());
+  // An explicit choice stays fixed, but may now need (or cease needing) an override.
+  applyTheme(preference ?? preferredMode());
  });
  // A cached page can predate a theme choice made on another page.
  window.addEventListener('pageshow', (event) => {

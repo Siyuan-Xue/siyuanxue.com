@@ -120,3 +120,17 @@ test('crossing the mobile breakpoint settles the current target and releases lay
  expect(f.window.getComputedStyle(f.panel as never).visibility).toBe('hidden');
  f.motion.destroy();
 });
+
+
+test('action panel, row and items explicitly retain a single unshrunk line', () => {
+ const window = new Window({ width: 320 });
+ window.document.head.innerHTML = `<style>${readFileSync('src/styles/header-actions.css', 'utf8')}</style>`;
+ window.document.body.innerHTML = '<header class="header"><div class="header-controls"><div class="header-actions-panel"><div class="header-actions-row"><button></button></div></div></div></header>';
+ for (const selector of ['.header-controls', '.header-actions-row']) {
+  const css = window.getComputedStyle(window.document.querySelector(selector)!);
+  expect(css.flexWrap).toBe('nowrap');
+  expect(css.minWidth).toBe('0');
+ }
+ expect(window.getComputedStyle(window.document.querySelector('button')!).flexShrink).toBe('0');
+ window.happyDOM.abort();
+});

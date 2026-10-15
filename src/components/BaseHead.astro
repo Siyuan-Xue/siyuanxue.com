@@ -4,6 +4,7 @@ import { locale, localeOrigin, t } from '../i18n/locale';
 import '../styles/base.css';
 import 'site-fonts';
 import themeScript from '../scripts/theme.js?raw';
+import themeColors from '../styles/theme-colors.css?raw';
 import { inlineThemeScript } from '../utils/themeHint';
 import { imageMedia } from '../utils/media';
 import { getDiscoveryPage } from '../utils/discoveryContent';
@@ -60,9 +61,11 @@ const schema = galleryImages?.length
 ---
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<!-- One unconditional theme color: manual preference can differ from OS media queries. -->
-<meta name="theme-color" content="#f0eee6" data-light="#f0eee6" data-dark="#1f1e1d" />
-<meta name="color-scheme" content="light" />
+<!-- System colors are available to the parser, including when scripting is off. -->
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f0eee6" data-light="#f0eee6" data-dark="#1f1e1d" />
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f1e1d" />
+<meta name="color-scheme" content="light dark" />
+<style is:inline set:html={themeColors} />
 <script is:inline set:html={inlineThemeScript(themeScript)} />
 <!-- With scripting disabled, expose the real navigation links before first paint. -->
 <noscript><style is:global>

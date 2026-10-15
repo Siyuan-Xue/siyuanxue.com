@@ -1,9 +1,9 @@
 /* Reserve the desktop row's width so the brand and arrow never move sideways.
  * Only individual controls transform; no transformed ancestor of the fixed TOC. */
-.header .header-controls { gap: 0; }
-.header-actions-panel { visibility: hidden; }
-.header-actions-row { display: flex; align-items: center; gap: 4px; width: max-content; padding-right: 4px; }
-.header-actions-row > * { opacity: 0; transform: translate(16px, 0px); }
+.header .header-controls { gap: 0; flex-wrap: nowrap; min-width: 0; }
+.header-actions-panel { visibility: hidden; min-width: 0; flex: 0 0 auto; }
+.header-actions-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 4px; width: max-content; min-width: 0; padding-right: 4px; }
+.header-actions-row > * { flex: 0 0 auto; opacity: 0; transform: translate(16px, 0px); }
 .header-actions-icon { display: inline-flex; transform: rotate(0deg); pointer-events: none; }
 html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .header-actions-panel,
 .header-controls[data-actions-expanded='true'] .header-actions-panel { visibility: visible; }
@@ -31,6 +31,8 @@ html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .
  html[data-header-hint='open'] .header-controls:not([data-actions-initialized]),
  .header-controls[data-actions-expanded='true'] { padding-top: calc(var(--header-control-size) + 4px); }
 }
+/* Six 44px targets = 264px; the 320px article has 280px available.
+ * Remove gaps at the narrowest widths instead of shrinking targets or scrolling. */
 @media (max-width: 360px) {
  .header-actions-row { gap: 0; padding-right: 0; }
 }

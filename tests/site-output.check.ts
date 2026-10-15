@@ -326,10 +326,49 @@ for (const v of variants) {
     if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
    }
    expect(document.documentElement.classList.contains('u-mode-invert')).toBe(expectedDark);
-   expect(document.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe(expectedDark ? '#1f1e1d' : '#f0eee6');
+   const override = saved !== null && (saved === 'dark') !== systemDark;
+   const metas = document.querySelectorAll('meta[name="theme-color"]');
+   expect(metas.length).toBe(override ? 1 : 2);
+   const activeMeta = [...metas].find(meta => !meta.hasAttribute('media') || meta.getAttribute('media') === `(prefers-color-scheme: ${systemDark ? 'dark' : 'light'})`)!;
+   expect(activeMeta.getAttribute('content')).toBe(expectedDark ? '#1f1e1d' : '#f0eee6');
+   expect(document.documentElement.style.backgroundColor).toBe(expectedDark ? '#1f1e1d' : '#f0eee6');
+   expect(document.documentElement.style.colorScheme).toBe(expectedDark ? 'dark' : 'light');
    expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe(expectedDark ? 'dark' : 'light');
   });
  }
+ test(`${v.lang}: built theme bootstrap keeps canvas and meta topology aligned on every update path`, async () => {
+  const { document, window } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+  windowWithMedia(document);
+  let saved: string | null = 'light';
+  let systemDark = true;
+  let onSystemChange = () => {};
+  const context = createContext({ document, window,
+   localStorage: { getItem: () => saved, setItem: (_key: string, value: string) => { saved = value; } },
+   matchMedia: () => ({ get matches() { return systemDark; }, addEventListener(_type: string, handler: () => void) { onSystemChange = handler; } }),
+  });
+  const script = [...document.head.querySelectorAll('script:not([src])')].find(node => node.textContent?.includes('// Inlined in the head'))!;
+  runInContext(script.textContent!, context);
+  const check = (mode: 'light' | 'dark', count: number) => {
+   expect(document.documentElement.style.backgroundColor).toBe(mode === 'dark' ? '#1f1e1d' : '#f0eee6');
+   expect(document.documentElement.style.colorScheme).toBe(mode);
+   expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe(mode);
+   const metas = [...document.querySelectorAll('meta[name="theme-color"]')];
+   expect(metas.length).toBe(count);
+   const active = metas.find(meta => !meta.hasAttribute('media') || meta.getAttribute('media') === `(prefers-color-scheme: ${systemDark ? 'dark' : 'light'})`)!;
+   expect(active.getAttribute('content')).toBe(mode === 'dark' ? '#1f1e1d' : '#f0eee6');
+   expect(active.hasAttribute('media')).toBe(count === 2);
+  };
+  check('light', 1); // Saved choice differs from OS.
+  document.querySelector<HTMLElement>('[data-theme-toggle]')!.click(); check('dark', 2);
+  systemDark = false; onSystemChange(); check('dark', 1); // Choice is unchanged, topology changes.
+  saved = null; window.dispatchEvent(new window.Event('storage')); // Unrelated event is ignored.
+  check('dark', 1);
+  const storage = new window.Event('storage'); Object.defineProperty(storage, 'key', { value: 'color-mode' });
+  window.dispatchEvent(storage); check('light', 2);
+  systemDark = true; onSystemChange(); check('dark', 2);
+  saved = 'light'; const restore = new window.Event('pageshow'); Object.defineProperty(restore, 'persisted', { value: true });
+  window.dispatchEvent(restore); check('light', 1);
+ });
  test(`${v.lang}: returning through browser history restores the latest chosen theme`, async () => {
   const { document, window } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
   windowWithMedia(document);
@@ -357,8 +396,20 @@ for (const v of variants) {
    // The merged project's legacy redirect keeps its target canonical, checked above.
    if (pathname === '/gallery/probfun/') continue;
    expect(document.documentElement.lang).toBe(v.lang);
-   expect(document.querySelectorAll('meta[name="theme-color"]').length).toBe(1);
-   expect(document.querySelector('meta[name="theme-color"]')?.hasAttribute('media')).toBe(false);
+   const metas = [...document.querySelectorAll('meta[name="theme-color"]')];
+   expect(metas.map(meta => [meta.getAttribute('media'), meta.getAttribute('content')])).toEqual([
+    ['(prefers-color-scheme: light)', '#f0eee6'], ['(prefers-color-scheme: dark)', '#1f1e1d'],
+   ]);
+   expect(document.querySelector('meta[name="color-scheme"]')?.getAttribute('content')).toBe('light dark');
+   const html = await readFile(path, 'utf8');
+   const script = html.indexOf('// Inlined in the head');
+   expect(script).toBeGreaterThan(html.indexOf('name="theme-color"'));
+   expect(script).toBeGreaterThan(html.indexOf('background-color: var(--bg)'));
+   expect(script).toBeLessThan(html.indexOf('<body'));
+   expect(html.slice(html.lastIndexOf('<script', script), script)).not.toMatch(/src=|async|defer|type="module"/);
+   // Astro must not move a blocking external stylesheet ahead of the theme bootstrap.
+   const cssLink = html.search(/<link[^>]+rel="stylesheet"/);
+   if (cssLink >= 0) expect(script).toBeLessThan(cssLink);
    expect(document.querySelectorAll('meta[name="color-scheme"]').length).toBe(1);
    expect(document.querySelectorAll('h1').length).toBe(1);
    expect(document.querySelectorAll('.i18n-en,.i18n-zh,.lang-body-en,.lang-body-zh,[data-page-boot]').length).toBe(0);

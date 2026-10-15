@@ -55,3 +55,7 @@
 - **不适用：**身份/域名/路由/搜索元信息/正文/媒体、GitHub 资料、CI 变量和 secret、服务器/helper/聊天 bridge/Hermes/微信/记忆/模型/数据/备份均未改动。没有媒体上传、外部写入或独立服务安装。
 - **待处理：**上述原生 Safari 验收；用户明确本次不发布，因此 Actions 与两域名目标 SHA 验收未执行。未来发布仍走现有双语 CI/CD。
 - **恢复：**按本次 diff 撤销 `BaseHead.astro`、`theme.js`、`base.css` 及配套测试即可；没有存储格式迁移，沿用 `color-mode`。若仅滤镜引入兼容问题，可撤销 `.header` 的两条 backdrop-filter 声明并重验。历史审计和本地备份保持原样。
+
+## 同日 Task C 后续
+
+`6278d68` 基线的 [Task C 审计](2026-10-15-safari-theme-color-2.md) 记录了新的 iPhone 截图反馈、对根画布与 parse-time meta 的复核、Linux WebKit 实测、media 配对/显式覆盖和内联调色板方案。本文的单个无 media 标签与测试数字保留为初版历史；后续仍未验证真实 iPhone 原生工具栏，不将 Linux 结果当真机修复证明。
