@@ -112,11 +112,12 @@ for (const v of variants) {
   const articleSchema = JSON.parse(article.querySelector('script[type="application/ld+json"]')!.textContent!);
   expect(articleSchema.author['@id']).toBe(profile.mainEntity['@id']);
  });
- test(`${v.lang}: shipped theme controls work when browser storage throws`, async () => {
-  const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
+ for (const page of ['index.html', 'essay/why-this-site/index.html', 'chat/index.html']) {
+ test(`${v.lang}: ${page} theme controls work when browser storage throws`, async () => {
+  const { document } = parseHTML(await readFile(join(v.root, page), 'utf8'));
   const storage = { getItem() { throw new Error('SecurityError'); }, setItem() { throw new Error('SecurityError'); } };
-  const context = createContext({ document, window: windowWithMedia(document), localStorage: storage, matchMedia: () => ({ matches: false }) });
-  for (const script of document.querySelectorAll('script:not([src])')) {
+  const context = createContext({ document, window: windowWithMedia(document), localStorage: storage, matchMedia: () => ({ matches: false, addEventListener() {} }) });
+  for (const script of document.head.querySelectorAll('script:not([src])')) {
    if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
   }
   const button = document.querySelector<HTMLElement>('[data-theme-toggle]')!;
@@ -128,20 +129,24 @@ for (const v of variants) {
   button.click();
   expect(button.getAttribute('aria-pressed')).toBe('true');
   expect(document.documentElement.classList.contains('u-mode-invert')).toBe(true);
-  expect(themeColor?.getAttribute('content')).toBe('#1f1e1d');
+  const darkThemeColor = document.querySelector('meta[name="theme-color"]');
+  expect(darkThemeColor?.getAttribute('content')).toBe('#1f1e1d');
+  expect(darkThemeColor).not.toBe(themeColor);
   expect(colorScheme?.getAttribute('content')).toBe('dark');
   button.click();
   expect(button.getAttribute('aria-pressed')).toBe('false');
   expect(document.documentElement.classList.contains('u-mode-invert')).toBe(false);
-  expect(themeColor?.getAttribute('content')).toBe('#f0eee6');
+  expect(document.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe('#f0eee6');
+  expect(document.querySelector('meta[name="theme-color"]')).not.toBe(darkThemeColor);
   expect(colorScheme?.getAttribute('content')).toBe('light');
  });
+ }
  for (const [saved, systemDark, expectedDark] of [
   ['dark', false, true], ['light', true, false], [null, true, true], [null, false, false],
  ] as const) {
   test(`${v.lang}: theme at first paint respects saved=${saved}, systemDark=${systemDark}`, async () => {
    const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
-   const context = createContext({ document, window: document.defaultView, localStorage: { getItem: () => saved }, matchMedia: () => ({ matches: systemDark }) });
+   const context = createContext({ document, window: document.defaultView, localStorage: { getItem: () => saved }, matchMedia: () => ({ matches: systemDark, addEventListener() {} }) });
    for (const script of document.head.querySelectorAll('script:not([src])')) {
     if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
    }
@@ -154,7 +159,7 @@ for (const v of variants) {
   const { document, window } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
   windowWithMedia(document);
   let saved = 'light';
-  const context = createContext({ document, window, localStorage: { getItem: () => saved, setItem: (_key: string, value: string) => { saved = value; } }, matchMedia: () => ({ matches: false }) });
+  const context = createContext({ document, window, localStorage: { getItem: () => saved, setItem: (_key: string, value: string) => { saved = value; } }, matchMedia: () => ({ matches: false, addEventListener() {} }) });
   for (const script of document.querySelectorAll('script:not([src])')) {
    if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
   }
@@ -178,6 +183,7 @@ for (const v of variants) {
    if (pathname === '/gallery/probfun/') continue;
    expect(document.documentElement.lang).toBe(v.lang);
    expect(document.querySelectorAll('meta[name="theme-color"]').length).toBe(1);
+   expect(document.querySelector('meta[name="theme-color"]')?.hasAttribute('media')).toBe(false);
    expect(document.querySelectorAll('meta[name="color-scheme"]').length).toBe(1);
    expect(document.querySelectorAll('h1').length).toBe(1);
    expect(document.querySelectorAll('.i18n-en,.i18n-zh,.lang-body-en,.lang-body-zh,[data-page-boot]').length).toBe(0);

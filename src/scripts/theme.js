@@ -1,9 +1,17 @@
 // Inlined in the head so the saved theme is applied before the first paint.
 (() => {
  const root = document.documentElement;
- const themeColor = document.querySelector('meta[name="theme-color"]');
+ let themeColor = document.querySelector('meta[name="theme-color"]');
  const colorScheme = document.querySelector('meta[name="color-scheme"]');
- const preferredMode = () => matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+ const systemTheme = matchMedia('(prefers-color-scheme: dark)');
+ const preferredMode = () => systemTheme.matches ? 'dark' : 'light';
+ let preference = null;
+ const readPreference = () => {
+  try {
+   const saved = localStorage.getItem('color-mode');
+   return saved === 'dark' || saved === 'light' ? saved : null;
+  } catch { return preference; }
+ };
 
  const syncButtons = () => {
   const dark = root.classList.contains('u-mode-invert');
@@ -16,27 +24,36 @@
  };
  const applyTheme = (mode) => {
   root.classList.toggle('u-mode-invert', mode === 'dark');
-  const color = themeColor?.dataset[mode];
-  if (themeColor && color) themeColor.content = color;
   colorScheme?.setAttribute('content', mode);
+  const color = themeColor?.dataset[mode];
+  if (themeColor && color) {
+   // WebKit reprocesses insertion/removal as well as attribute changes (#220944).
+   // Replace the node to avoid relying only on an in-place content update.
+   const next = themeColor.cloneNode();
+   next.content = color;
+   themeColor.replaceWith(next);
+   themeColor = next;
+  }
   syncButtons();
  };
 
- let saved;
- try { saved = localStorage.getItem('color-mode'); } catch {}
- applyTheme(saved === 'dark' || saved === 'light' ? saved : preferredMode());
+ preference = readPreference();
+ applyTheme(preference ?? preferredMode());
  document.addEventListener('DOMContentLoaded', syncButtons, { once: true });
  document.addEventListener('click', (event) => {
   if (!event.target?.closest?.('[data-theme-toggle]')) return;
   const mode = root.classList.contains('u-mode-invert') ? 'light' : 'dark';
+  preference = mode; // Keep the manual override even if storage is unavailable.
   applyTheme(mode);
   try { localStorage.setItem('color-mode', mode); } catch {}
+ });
+ systemTheme.addEventListener('change', () => {
+  if (preference === null) applyTheme(preferredMode());
  });
  // A cached page can predate a theme choice made on another page.
  window.addEventListener('pageshow', (event) => {
   if (!event.persisted) return;
-  let current;
-  try { current = localStorage.getItem('color-mode'); } catch { return; }
-  applyTheme(current === 'dark' || current === 'light' ? current : preferredMode());
+  preference = readPreference();
+  applyTheme(preference ?? preferredMode());
  });
 })();

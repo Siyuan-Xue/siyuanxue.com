@@ -221,6 +221,10 @@ a:is(:hover, :focus-visible)  {
 	flex-shrink: 0;
 	padding: var(--header-pad-top) 0 var(--header-pad-bottom);
 	background-color: var(--bg);
+	/* Avoid Safari's cached solid edge tint; keep the header fully opaque.
+	 * A zero-radius filter changes sampling, not pixels. See the 2026-10-15 audit. */
+	-webkit-backdrop-filter: blur(0px);
+	backdrop-filter: blur(0px);
 }
 
 .header-inner  {

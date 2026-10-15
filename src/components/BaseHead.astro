@@ -59,8 +59,10 @@ const schema = galleryImages?.length
 ---
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- One unconditional theme color: manual preference can differ from OS media queries. -->
 <meta name="theme-color" content="#f0eee6" data-light="#f0eee6" data-dark="#1f1e1d" />
 <meta name="color-scheme" content="light" />
+<script is:inline set:html={themeScript} />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
 <title>{fullTitle}</title>
@@ -88,4 +90,3 @@ const schema = galleryImages?.length
 <meta name="twitter:image:alt" content={cover.alt} />
 <meta name="generator" content={Astro.generator} />
 {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />}
-<script is:inline set:html={themeScript} />
