@@ -106,6 +106,37 @@ test('manual toggles alternate the system pair and unconditional override withou
  }
 });
 
+test('live theme changes fade for 100ms without delaying theme state; initialization and BFCache are immediate', () => {
+ const f = fixture('light', false, false, '#theme=dark');
+ const root = f.document.documentElement;
+ expect(root.hasAttribute('data-theme-transition')).toBe(false);
+ expectTheme(f, true);
+ f.mount(); f.toggle();
+ expectTheme(f, false);
+ expect(f.saved()).toBe('light');
+ expect(f.link()).toBe('https://xuesiyuan.com/#theme=light');
+ const style = f.window.getComputedStyle(root);
+ expect(style.transitionDuration).toBe('100ms');
+ expect(style.transitionTimingFunction).toBe('linear');
+ expect(style.transitionDelay).toBe('0s');
+ f.toggle(); expectTheme(f, true);
+ f.restore('light'); expectTheme(f, false);
+ expect(root.hasAttribute('data-theme-transition')).toBe(false);
+});
+
+test('system and storage changes use the same fade, with reduced motion opting out', () => {
+ const f = fixture(); f.mount();
+ f.changeSystem(true); expectTheme(f, true);
+ expect(f.window.getComputedStyle(f.document.documentElement).transitionDuration).toBe('100ms');
+ f.restore('light', false);
+ f.window.dispatchEvent(new f.window.StorageEvent('storage', { key: 'color-mode' }));
+ expectTheme(f, false);
+ expect(f.window.getComputedStyle(f.document.documentElement).transitionDuration).toBe('100ms');
+ f.window.happyDOM.settings.device.prefersReducedMotion = 'reduce';
+ f.toggle(); expectTheme(f, true);
+ expect(f.window.getComputedStyle(f.document.documentElement).transition).toBe('none');
+});
+
 test('system changes update the theme until a manual choice takes precedence', () => {
  const f = fixture(); f.mount();
  f.changeSystem(true); expectTheme(f, true);

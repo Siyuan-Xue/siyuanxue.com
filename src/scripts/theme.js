@@ -43,7 +43,10 @@
    button.title = label;
   }
  };
- const applyTheme = (mode) => {
+ const applyTheme = (mode, animate = false) => {
+  // Only live changes fade. First paint, incoming hints and BFCache restoration
+  // apply immediately; metadata, storage and controls never wait for animation.
+  root.toggleAttribute('data-theme-transition', animate);
   root.classList.toggle('u-mode-invert', mode === 'dark');
   root.dataset.theme = mode;
   // Paint the root canvas even before external styles arrive. Every entry path
@@ -136,11 +139,11 @@
   if (!event.target?.closest?.('[data-theme-toggle]')) return;
   const mode = root.classList.contains('u-mode-invert') ? 'light' : 'dark';
   savePreference(mode); // Keep the manual override even if storage is unavailable.
-  applyTheme(mode);
+  applyTheme(mode, true);
  });
  systemTheme.addEventListener('change', () => {
   // An explicit choice stays fixed, but may now need (or cease needing) an override.
-  applyTheme(preference ?? preferredMode());
+  applyTheme(preference ?? preferredMode(), true);
  });
  // A cached page can predate a theme choice made on another page.
  window.addEventListener('pageshow', (event) => {
@@ -152,6 +155,6 @@
  window.addEventListener('storage', (event) => {
   if (event.key !== 'color-mode' && event.key !== null) return;
   preference = readPreference();
-  applyTheme(preference ?? preferredMode());
+  applyTheme(preference ?? preferredMode(), true);
  });
 }

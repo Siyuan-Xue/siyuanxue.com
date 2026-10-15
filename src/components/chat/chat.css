@@ -1,14 +1,11 @@
 /* Claude reference layout; typography and colors inherit the homepage tokens. */
 html.has-xue-chat {
   --xue-selected: var(--bg-soft);
-  --xue-accent: var(--accent-clay);
+  --xue-accent: var(--accent-ui);
   --xue-text-offset: 2px;
   height: var(--xue-viewport-height, 100dvh);
   overflow: hidden;
   scrollbar-gutter: auto;
-}
-html.has-xue-chat.u-mode-invert {
-  --xue-accent: var(--fg-interactive);
 }
 .has-xue-chat body { height: 100%; min-height: 0; overflow: hidden; }
 .has-xue-chat .page-wrapper { height: 100%; min-height: 0; }

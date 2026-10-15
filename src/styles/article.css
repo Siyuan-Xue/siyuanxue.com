@@ -11,15 +11,8 @@ html.prose-page {
  --header-pad-top: 30px;
  --header-pad-bottom: 10px;
  --header-height: calc(var(--safe-area-top) + var(--header-pad-top) + var(--header-control-size) + var(--header-pad-bottom));
- --article-footnote-bg: rgb(0 0 0 / 8%);
- --article-footnote-hover: rgb(0 0 0 / 15%);
  /* Match the reference's viewport centering, without the reserved 15px gutter. */
  scrollbar-gutter: auto;
-}
-
-html.prose-page.u-mode-invert {
- --article-footnote-bg: rgb(255 255 255 / 15%);
- --article-footnote-hover: rgb(255 255 255 / 40%);
 }
 
 html.prose-page body {
@@ -89,7 +82,8 @@ html.prose-page body {
  color: inherit;
  text-decoration-thickness: .08em;
  text-underline-offset: .1em;
- transition: color .2s linear;
+ /* The shared palette owns color timing; a second transition would lag it. */
+ transition: none;
 }
 .prose-page .prose a:is(:hover, :focus-visible) { color: var(--fg-muted); }
 .prose-page .prose figure { margin: 4rem 0; }
@@ -128,7 +122,7 @@ html.prose-page body {
  opacity: .5;
  text-decoration: none;
  overflow-wrap: normal;
- transition: color .2s, opacity .3s cubic-bezier(.165,.84,.44,1);
+ transition: opacity .3s cubic-bezier(.165,.84,.44,1);
 }
 .prose-page .toc-link.cc-active { opacity: 1; }
 .prose-page .toc-link:is(:hover, :focus-visible) { color: var(--fg-muted); text-decoration: none; }

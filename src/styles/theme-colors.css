@@ -7,6 +7,39 @@
  * Light page bg = ivory-medium; dark page bg = slate-dark (html.u-mode-invert).
  */
 
+/* Interpolate the shared palette once on html. Descendants consume the same
+ * frame without overriding their own hover, scroll or portrait transitions.
+ * Browsers without @property keep the existing immediate palette switch. */
+@property --bg { syntax: '<color>'; inherits: true; initial-value: #f0eee6; }
+@property --bg-elevated { syntax: '<color>'; inherits: true; initial-value: #faf9f5; }
+@property --bg-soft { syntax: '<color>'; inherits: true; initial-value: #e8e6dc; }
+@property --bg-interactive { syntax: '<color>'; inherits: true; initial-value: #f1e2d9; }
+@property --fg { syntax: '<color>'; inherits: true; initial-value: #1f1e1d; }
+@property --fg-body { syntax: '<color>'; inherits: true; initial-value: #1f1e1d; }
+@property --fg-muted { syntax: '<color>'; inherits: true; initial-value: #5e5d59; }
+@property --fg-interactive { syntax: '<color>'; inherits: true; initial-value: #a14f35; }
+@property --accent-ui { syntax: '<color>'; inherits: true; initial-value: #d97757; }
+@property --border { syntax: '<color>'; inherits: true; initial-value: #d1cfc5; }
+@property --border-soft { syntax: '<color>'; inherits: true; initial-value: #b0aea5; }
+@property --article-footnote-bg { syntax: '<color>'; inherits: true; initial-value: rgb(0 0 0 / 8%); }
+@property --article-footnote-hover { syntax: '<color>'; inherits: true; initial-value: rgb(0 0 0 / 15%); }
+
+:root[data-theme-transition] {
+ /* background-color also covers the head script's explicit root canvas color. */
+ transition-property: background-color, --bg, --bg-elevated, --bg-soft, --bg-interactive,
+  --fg, --fg-body, --fg-muted, --fg-interactive, --accent-ui, --border, --border-soft,
+  --article-footnote-bg, --article-footnote-hover;
+ transition-duration: 100ms;
+ transition-timing-function: linear;
+ transition-delay: 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+ :root[data-theme-transition] { transition: none !important; }
+}
+@media print {
+ :root[data-theme-transition] { transition: none !important; }
+}
+
 /* Inlined before the head script: the root canvas must not wait for a CSS fetch. */
 :root {
  --safe-area-top: env(safe-area-inset-top, 0px);
@@ -32,6 +65,7 @@
 	--fg-faint: #87867f;
 	/* Claude clay, with readable interaction shades for each theme. */
 	--accent-clay: #d97757;
+	--accent-ui: #d97757;
 	--fg-interactive: #a14f35;
 	--bg-interactive: #f1e2d9;
 
@@ -39,6 +73,8 @@
 	--border: #d1cfc5;
 	/* cloud-medium */
 	--border-soft: #b0aea5;
+	--article-footnote-bg: rgb(0 0 0 / 8%);
+	--article-footnote-hover: rgb(0 0 0 / 15%);
 
 }
 
@@ -56,11 +92,14 @@ html.u-mode-invert {
 	/* cloud-dark */
 	--fg-faint: #87867f;
 	--fg-interactive: #e59b7d;
+	--accent-ui: #e59b7d;
 	--bg-interactive: #4a332c;
 	/* --colors--border: slate-light */
 	--border: #5e5d59;
 	/* slate-medium / input-border */
 	--border-soft: #3d3d3a;
+	--article-footnote-bg: rgb(255 255 255 / 15%);
+	--article-footnote-hover: rgb(255 255 255 / 40%);
 }
 
 /* With JS disabled, the page palette and the media-specific meta stay together.
@@ -80,10 +119,13 @@ html.u-mode-invert {
 	/* cloud-dark */
 	--fg-faint: #87867f;
 	--fg-interactive: #e59b7d;
+	--accent-ui: #e59b7d;
 	--bg-interactive: #4a332c;
 	/* --colors--border: slate-light */
 	--border: #5e5d59;
 	/* slate-medium / input-border */
 	--border-soft: #3d3d3a;
+	--article-footnote-bg: rgb(255 255 255 / 15%);
+	--article-footnote-hover: rgb(255 255 255 / 40%);
 }
 }
