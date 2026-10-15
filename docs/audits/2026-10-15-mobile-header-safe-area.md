@@ -52,6 +52,15 @@
 | 姓名身份、GitHub 账号、个人主页、仓库 About | 不适用：无身份或内容事实变更 |
 | 域名/DNS/TLS、CI 变量/secret、依赖与许可、媒体上传、数据存储/备份 | 不适用：配置及资源未变更 |
 | Nginx/helper、bridge、Hermes、微信、模型/记忆、定时器 | 不适用：不安装或覆盖独立服务 |
-| Actions 与两域名目标 SHA | 待本轮推送完成后补记 |
+| Actions 与两域名目标 SHA | 已通过；发布 `4cadf06604c5d75195cb626683a5efe623f169dc`，见下方记录 |
 
 恢复：通过普通 Git revert 撤销本轮实现并走现有 Actions 双语发布；若仅撤销 `viewport-fit=cover`，须同时撤销本轮安全区 CSS/灯箱 padding 联动，保留原主题状态机。不需要数据库、存储或服务迁移，不重置归档分支或本地备份。公开 `/__health` 与 `ops/verify-public.sh <完整 SHA>` 用于确认恢复目标。
+
+## 发布记录
+
+- 修复提交 `4cadf06604c5d75195cb626683a5efe623f169dc` 已推送 `origin/main`。
+- [Actions 38744373587](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38744373587) 全部成功：共享验证、Deploy verified release、IndexNow 通知；公网检查还验证了 725 个媒体文件在两个域名上的 1,450 个响应。
+- 本机另行执行 `bash ops/verify-public.sh 4cadf06604c5d75195cb626683a5efe623f169dc` 成功，确认两域名完整 SHA、固定语言和旧照片 HTTP 410。
+- 正式中文站 390px：展开时姓名可见、四个按钮同一行，各 44×44px、顶栏高度 76px；head 包含 `viewport-fit=cover`。此为桌面浏览器窄视口证据，不替代 iPhone 原生状态栏验收。
+- 目录锚点模拟 top59 时最终标题 y188.75，保留顶部安全区间距。独立代码审查提出的图集图片留白与聊天跳转链接问题均已修复并复核。
+- 本次开发/预览进程、临时安全区 fixture 和测试标签页已清理；归档分支与备份未变更。随后仅将这份验收记录及维护总览以 `[skip ci]` 文档提交推送，生产版本保持上述修复 SHA。
