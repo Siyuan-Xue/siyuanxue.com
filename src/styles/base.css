@@ -31,6 +31,7 @@ html  {
 	*,
 	*::before,
 	*::after  {
+		scroll-behavior: auto !important;
 		animation-duration: 0.01ms !important;
 		animation-iteration-count: 1 !important;
 		transition-duration: 0.01ms !important;
@@ -426,10 +427,6 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 	color: var(--fg-interactive);
 }
 
-
-@media (prefers-reduced-motion: reduce) {
- *, *::before, *::after  { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; animation-iteration-count: 1 !important; }
-}
 @media (max-width: 480px) {
 	:root {
 		--font-size-body: 1.125rem;
