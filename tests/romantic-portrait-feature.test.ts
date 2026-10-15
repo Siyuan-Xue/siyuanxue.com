@@ -98,3 +98,33 @@ test('loading the primary photo does not clear a failed secondary photo', () => 
  root.querySelector('[data-secret-image-slot] img')!.dispatchEvent(new window.Event('load'));
  expect(error.hidden).toBe(true);
 }));
+
+
+test('incoming shown activates without a click or animation and still toggles and retries images', () => withPortrait(async (root, window) => {
+ root.ownerDocument.documentElement.dataset.mediaHint = 'shown';
+ let frames = 0;
+ Object.defineProperty(window, 'requestAnimationFrame', { configurable: true, value: () => { frames++; return 1; } });
+ initRomanticPortraitController(root);
+ await new Promise(resolve => setTimeout(resolve, 20));
+ expect(root.classList.contains('is-active')).toBe(true);
+ expect(frames).toBe(0);
+ const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]')!;
+ expect(trigger.getAttribute('aria-expanded')).toBe('true');
+ expect(trigger.getAttribute('aria-pressed')).toBe('true');
+ expect(trigger.getAttribute('aria-label')).toBe('Turn off');
+ expect(root.querySelector('[data-secret-card]')!.hasAttribute('hidden')).toBe(false);
+ expect(root.querySelectorAll('[data-secret-image-slot] img').length).toBe(1);
+ expect(root.querySelector('.pswp')).toBeNull();
+ trigger.click();
+ expect(trigger.getAttribute('aria-expanded')).toBe('false');
+}));
+
+
+test('real portrait toggles notify language-link subscribers immediately', () => withPortrait(root => {
+ const observed: string[] = [];
+ root.ownerDocument.addEventListener('portraitchange', () => observed.push(root.querySelector('[data-romantic-trigger]')!.getAttribute('aria-expanded')!));
+ initRomanticPortrait(root, createRomanticModeState(true));
+ const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]')!;
+ trigger.click(); trigger.click();
+ expect(observed).toEqual(['true', 'false', 'true']);
+}));

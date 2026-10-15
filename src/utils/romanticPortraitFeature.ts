@@ -19,7 +19,7 @@ import PhotoSwipe from 'photoswipe';
 		type RomanticLightboxMotionController,
 	} from './romanticLightboxMotion';
 
-	export function initRomanticPortrait(root: HTMLElement, initialState?: RomanticModeState) {
+	export function initRomanticPortrait(root: HTMLElement, initialState?: RomanticModeState, animateInitial = true) {
 		const trigger = root.querySelector<HTMLButtonElement>('[data-romantic-trigger]');
 		const primaryImage = root.querySelector<HTMLImageElement>('[data-primary-image]');
 		const primaryLoadingSlot = root.querySelector<HTMLElement>('[data-primary-loading-slot]');
@@ -325,6 +325,7 @@ import PhotoSwipe from 'photoswipe';
 					localized(state.active ? 'turnOffLabel' : 'turnOnLabel'),
 				);
 
+			root.ownerDocument.dispatchEvent(new window.Event('portraitchange'));
 		};
 
 		const reveal = (animate: boolean) => {
@@ -390,7 +391,7 @@ import PhotoSwipe from 'photoswipe';
 		lightbox.init();
 		syncLanguage();
 		if (state.active) {
-			reveal(true);
+			reveal(animateInitial);
 		} else {
 			conceal(false);
 		}

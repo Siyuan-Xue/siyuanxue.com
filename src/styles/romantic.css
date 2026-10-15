@@ -101,11 +101,13 @@
 	object-fit: cover;
 }
 
+html[data-media-hint='shown'] .romantic-portrait:not([data-initialized]) .romantic-portrait_primary,
 .romantic-portrait.is-active .romantic-portrait_primary {
 	filter: drop-shadow(0 0.65rem 0.9rem rgb(31 30 29 / 18%));
 	transform: translateX(-9%) rotate(-1deg);
 }
 
+html[data-media-hint='shown'] .romantic-portrait:not([data-initialized]) .romantic-portrait_secret,
 .romantic-portrait.is-active .romantic-portrait_secret {
 	box-shadow: 0 0.85rem 2rem rgb(31 30 29 / 24%);
 	transform: translateX(14%) rotate(2deg);
@@ -310,11 +312,13 @@
 }
 
 @media (max-width: 960px) {
-	.romantic-portrait.is-active .romantic-portrait_primary {
+	html[data-media-hint='shown'] .romantic-portrait:not([data-initialized]) .romantic-portrait_primary,
+.romantic-portrait.is-active .romantic-portrait_primary {
 		transform: translateX(-7%) rotate(-1deg);
 	}
 
-	.romantic-portrait.is-active .romantic-portrait_secret {
+	html[data-media-hint='shown'] .romantic-portrait:not([data-initialized]) .romantic-portrait_secret,
+.romantic-portrait.is-active .romantic-portrait_secret {
 		transform: translateX(10%) rotate(2deg);
 	}
 }
@@ -364,3 +368,6 @@
 		transition: none;
 	}
 }
+
+html[data-media-hint='shown'] .romantic-portrait:not([data-initialized]) .romantic-portrait_secret[hidden] { display: block; }
+html[data-media-hint='shown'] .romantic-portrait:not([data-initialized]) :is(.romantic-portrait_primary, .romantic-portrait_secret) { transition: none; }

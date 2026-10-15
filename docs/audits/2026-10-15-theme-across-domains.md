@@ -89,3 +89,8 @@ Node **v22.23.3**（用户指定 fnm 初始化；临时 `XDG_STATE_HOME` 在 `/t
 - **不适用：**姓名/账号/GitHub 资料、正文/媒体/灯箱、域名/DNS/TLS、依赖/锁文件/CI/secret、nginx/server/ops、bridge/Hermes/微信/模型/记忆/服务器数据/备份。无媒体上传、服务安装、数据格式迁移；浏览器仍沿用原 color-mode 键。
 - **待处理 / 未验证：**实体 macOS Safari/iOS（含原生工具栏即时 tint）、Android 真机、生产两个域名实际点击、Actions 和生产目标 SHA。用户明确本次不发布；Chrome 首帧证据不替代 Safari 原生行为。
 - **恢复：**按本轮 diff 恢复 BaseHead、HeaderActions、ChatApp、theme.js 及对应 helper/测试与当前维护规则；保留历史审计、Safari 兼容样式及所有备份。不需要服务器恢复。已接收的 color-mode 仍是旧代码可读的 light/dark；需恢复系统跟随时在各 origin 移除该键并重载。后续授权发布走原双语 Actions，再验收两域名目标 SHA 与真实跨域点击。
+
+
+## 2026-10-15 后续：同一机制扩展为三项页面状态
+
+基线 `05976b6` 上的后续实现保留本审计的主题优先级、存储异常、Safari 与 SEO 合同，并将同一 `createThemeHint` 扩展为按键独立验证的 `theme=light|dark`、`header=open`、`media=shown`。header/media 仅作用于当前页面视图，不新增存储；BFCache 保留本视图，重新加载干净 URL 恢复折叠。`themeLink.ts` 现在同时订阅操作行和肖像变化，旧文件名及 `window.__siteTheme` API 名称保留以复用现有入口。仅有效消费的键被清理，混合 fragment 中的非法/重复/未知键原样保留。第 3 项的代码核实、首帧接管、完整文件清单、本轮重新执行的测试和双 origin 验证见[跨域状态审计](2026-10-15-state-across-domains.md)。上方仅传主题的说明和测试数字保留为初版记录。

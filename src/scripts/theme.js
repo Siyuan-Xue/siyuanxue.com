@@ -1,4 +1,4 @@
-// Inlined in the head so the saved theme is applied before the first paint.
+// Inlined in the head so theme and incoming layout state apply before first paint.
 // Receives the single themeHint implementation serialized by BaseHead.
 (hint) => {
  const root = document.documentElement;
@@ -21,7 +21,11 @@
  };
  window.__siteTheme = {
   getPreference: () => preference,
-  hintHref: (href) => hint.href(href, preference),
+  hintHref: (href) => hint.href(href, {
+   theme: preference,
+   header: document.querySelector('[data-header-actions]')?.dataset.actionsExpanded === 'true' ? 'open' : undefined,
+   media: document.querySelector('[data-romantic-trigger]')?.getAttribute('aria-expanded') === 'true' ? 'shown' : undefined,
+  }),
  };
 
  const syncButtons = () => {
@@ -51,11 +55,53 @@
 
  const incoming = hint.parse(window.location.hash);
  // An incoming explicit choice wins without reading/applying the origin's old value.
- if (incoming) savePreference(incoming);
+ if (incoming.theme) savePreference(incoming.theme);
  else preference = readPreference();
  applyTheme(preference ?? preferredMode());
- if (incoming) {
-  const hash = hint.strip(window.location.hash);
+ // CSS covers streaming HTML before the modules load. The observer synchronizes
+ // semantics as each SSR component arrives, before the browser can paint it.
+ if (incoming.header) root.dataset.headerHint = incoming.header;
+ if (incoming.media) root.dataset.mediaHint = incoming.media;
+ const prepareLayout = () => {
+  if (incoming.header) {
+   const actions = document.querySelector('[data-header-actions]');
+   if (actions && !actions.dataset.actionsInitialized) {
+    actions.dataset.actionsExpanded = 'true';
+    const header = actions.closest('header');
+    if (header) header.dataset.actionsExpanded = 'true';
+    const toggle = actions.querySelector('[data-actions-toggle]');
+    const panel = actions.querySelector('[data-actions-panel]');
+    if (toggle) {
+     toggle.setAttribute('aria-expanded', 'true');
+     toggle.setAttribute('aria-label', toggle.dataset.hideLabel ?? '');
+     toggle.title = toggle.dataset.hideLabel ?? '';
+    }
+    if (panel) { panel.inert = false; panel.setAttribute('aria-hidden', 'false'); }
+   }
+  }
+  if (incoming.media) {
+   const portrait = document.querySelector('[data-romantic-mode]');
+   if (portrait && !portrait.dataset.initialized) {
+    portrait.classList.add('is-active');
+    const trigger = portrait.querySelector('[data-romantic-trigger]');
+    const card = portrait.querySelector('[data-secret-card]');
+    if (trigger) {
+     trigger.setAttribute('aria-expanded', 'true');
+     trigger.setAttribute('aria-pressed', 'true');
+     trigger.setAttribute('aria-label', portrait.dataset.turnOffLabel ?? '');
+    }
+    if (card) { card.hidden = false; card.classList.add('is-loading'); }
+   }
+  }
+ };
+ if (incoming.header || incoming.media) {
+  prepareLayout();
+  const observer = new window.MutationObserver(prepareLayout);
+  observer.observe(root, { childList: true, subtree: true });
+  document.addEventListener('DOMContentLoaded', () => { prepareLayout(); observer.disconnect(); }, { once: true });
+ }
+ if (Object.keys(incoming).length) {
+  const hash = hint.strip(window.location.hash, Object.keys(incoming));
   try {
    window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search + hash);
    // replaceState does not perform fragment scrolling. The target is not parsed yet.

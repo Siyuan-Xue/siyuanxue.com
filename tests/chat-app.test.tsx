@@ -99,7 +99,7 @@ test('chat binds the real language href on mount and theme changes without losin
   let preference: ThemePreference | null = 'dark';
   (browser as unknown as globalThis.Window).__siteTheme = {
     getPreference: () => preference,
-    hintHref: href => hints.href(href, preference),
+    hintHref: href => hints.href(href, { theme: preference, header: browser.document.querySelector('[data-header-actions]')?.getAttribute('data-actions-expanded') === 'true' ? 'open' : undefined }),
   };
   const props = { copy, prompts, locale: 'en' as const, languageLink, fetcher: async () => uiStream('unused') };
   const view = render(<ChatApp {...props} />);
@@ -115,6 +115,12 @@ test('chat binds the real language href on mount and theme changes without losin
   expect(link.getAttribute('href')).toBe(`${fallback.href}#theme=light`);
   preference = null;
   browser.document.dispatchEvent(new browser.Event('site-theme-change'));
+  expect(link.getAttribute('href')).toBe(fallback.href);
+  fireEvent.click(view.container.querySelector('[data-actions-toggle]')!);
+  expect(link.getAttribute('href')).toBe(`${fallback.href}#header=open`);
+  fireEvent.change(view.getByLabelText(copy.label), { target: { value: 'Still here' } });
+  expect(link.getAttribute('href')).toBe(`${fallback.href}#header=open`);
+  fireEvent.click(view.container.querySelector('[data-actions-toggle]')!);
   expect(link.getAttribute('href')).toBe(fallback.href);
   view.unmount();
   preference = 'dark';

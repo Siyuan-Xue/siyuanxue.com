@@ -47,8 +47,11 @@ export function bindHeaderActions(root: HTMLElement): () => void {
   const target = event.target as Element;
   if (open && !root.contains(target) && !target.closest('#site-toc')) setOpen(false);
  };
- const onPageShow = (event: PageTransitionEvent) => { if (event.persisted) setOpen(false); };
- setOpen(false);
+ const onPageShow = (event: PageTransitionEvent) => { if (event.persisted) setOpen(open); };
+ setOpen(document.documentElement.dataset.headerHint === 'open');
+ // Commit the starting layout while transitions are disabled, before taking ownership.
+ void panel.offsetWidth;
+ root.dataset.actionsInitialized = 'true';
  toggle.addEventListener('click', onToggle);
  document.addEventListener('keydown', onKey, true);
  document.addEventListener('click', onClick);

@@ -55,7 +55,7 @@ for (const v of variants) {
   for (const file of await htmlFiles(v.root)) {
    const { document } = parseHTML(await readFile(file, 'utf8'));
    const window = windowWithMedia(document);
-   const url = new URL(`${v.origin}/?keep=yes#theme=dark`);
+   const url = new URL(`${v.origin}/?keep=yes#theme=dark&header=open&media=shown`);
    Object.defineProperty(window, 'location', { value: url, configurable: true });
    const state = { preserved: true };
    let cleaned = '';
@@ -70,10 +70,18 @@ for (const v of variants) {
    expect(cleaned).toBe('/?keep=yes');
    expect(document.documentElement.classList.contains('u-mode-invert')).toBe(true);
    expect(document.querySelector('meta[name="theme-color"]')!.getAttribute('content')).toBe('#1f1e1d');
-   expect(window.__siteTheme!.hintHref(document.querySelector('a.header-language-link')!.getAttribute('href')!)).toEndWith('#theme=dark');
+   const portrait = document.querySelector('[data-romantic-mode]');
+   expect(document.querySelector('[data-actions-toggle]')!.getAttribute('aria-expanded')).toBe('true');
+   expect(document.querySelector<HTMLElement>('[data-actions-panel]')!.inert).toBe(false);
+   if (portrait) {
+    expect(portrait.classList.contains('is-active')).toBe(true);
+    expect(document.querySelector('[data-secret-card]')!.hasAttribute('hidden')).toBe(false);
+   }
+   expect(window.__siteTheme!.hintHref(document.querySelector('a.header-language-link')!.getAttribute('href')!)).toEndWith('#theme=dark&header=open' + (portrait ? '&media=shown' : ''));
+   document.dispatchEvent(new window.Event('DOMContentLoaded'));
   }
  });
- test(`${v.lang}: all SEO URLs and build-time language links stay free of theme hints`, async () => {
+ test(`${v.lang}: all SEO URLs and build-time language links stay free of all UI-state hints`, async () => {
   for (const file of await htmlFiles(v.root)) {
    const { document } = parseHTML(await readFile(file, 'utf8'));
    const canonical = document.querySelector('link[rel="canonical"]')!.getAttribute('href')!;
@@ -90,10 +98,10 @@ for (const v of variants) {
     const url = new URL(node.getAttribute('href')!);
     expect(url.hash).toBe(''); expect(url.search).toBe('');
    }
-   for (const schema of document.querySelectorAll('script[type="application/ld+json"]')) expect(schema.textContent).not.toContain('theme=');
+   for (const schema of document.querySelectorAll('script[type="application/ld+json"]')) expect(schema.textContent).not.toMatch(/(?:theme|header|media)=/);
   }
   for (const name of ['sitemap-index.xml', 'sitemap-0.xml', 'sitemap-images.xml', 'sitemap-videos.xml']) {
-   expect(await readFile(join(v.root, name), 'utf8')).not.toContain('theme=');
+   expect(await readFile(join(v.root, name), 'utf8')).not.toMatch(/(?:theme|header|media)=/);
   }
  });
  test(`${v.lang}: every HTML page has a build-time language link to an existing route on the other site`, async () => {

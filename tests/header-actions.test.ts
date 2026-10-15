@@ -5,7 +5,7 @@ import { bindHeaderActions } from '../src/utils/headerActions';
 import { bindToc } from '../src/utils/toc';
 
 const css = readFileSync('src/styles/header-actions.css', 'utf8');
-function fixture(reduce = false) {
+function fixture(reduce = false, incoming = false) {
  const window = new Window({ settings: { device: { prefersReducedMotion: reduce ? 'reduce' : 'no-preference' } } });
  window.innerWidth = 390;
  window.document.head.innerHTML = `<style>${css}</style>`;
@@ -21,8 +21,11 @@ function fixture(reduce = false) {
  const panel = document.querySelector<HTMLElement>('[data-actions-panel]')!;
  const toggle = document.querySelector<HTMLButtonElement>('[data-actions-toggle]')!;
  const outside = document.querySelector<HTMLButtonElement>('#outside')!;
+ if (incoming) document.documentElement.dataset.headerHint = 'open';
+ let initialTransition = '';
+ Object.defineProperty(panel, 'offsetWidth', { get: () => { initialTransition = window.getComputedStyle(panel as never).transition; return 0; } });
  const cleanup = bindHeaderActions(root);
- return { window, document, root, panel, toggle, outside, cleanup };
+ return { window, document, root, panel, toggle, outside, cleanup, initialTransition };
 }
 
 test('SSR is visually collapsed; activation updates ARIA, inert and labels in both directions', () => {
@@ -75,7 +78,8 @@ test('new chat dismisses the row; repeat clicks and BFCache never leave hidden a
  f.toggle.click();
  const event = new f.window.Event('pageshow'); Object.defineProperty(event, 'persisted', { value: true });
  f.window.dispatchEvent(event);
- expect(f.panel.inert).toBe(true);
+ expect(f.panel.inert).toBe(false);
+ f.toggle.click();
  f.cleanup(); f.toggle.click(); expect(f.panel.inert).toBe(true);
 });
 
@@ -111,4 +115,20 @@ test('the desktop TOC returns focus to the visible arrow when its own toggle is 
  expect(f.document.querySelector<HTMLElement>('#site-toc')!.hidden).toBe(true);
  expect(f.document.activeElement).toBe(f.toggle);
  expect(f.panel.inert).toBe(true);
+});
+
+
+test('incoming open initializes before transitions, with matching ARIA, focusability and header lock', () => {
+ const f = fixture(false, true);
+ expect(f.initialTransition).toBe('none');
+ expect(f.root.dataset.actionsExpanded).toBe('true');
+ expect(f.document.querySelector('header')!.dataset.actionsExpanded).toBe('true');
+ expect(f.toggle.getAttribute('aria-expanded')).toBe('true');
+ expect(f.toggle.getAttribute('aria-label')).toBe('Hide actions');
+ expect(f.panel.inert).toBe(false);
+ expect(f.panel.getAttribute('aria-hidden')).toBe('false');
+ expect(f.window.getComputedStyle(f.panel as never).visibility).toBe('visible');
+ f.toggle.click();
+ expect(f.panel.inert).toBe(true);
+ expect(f.root.dataset.actionsExpanded).toBe('false');
 });

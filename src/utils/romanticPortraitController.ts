@@ -15,6 +15,7 @@ export function initRomanticPortraitController(root: HTMLElement) {
   image.addEventListener('error', finish, { once: true });
  }
  let loading = false;
+ const incoming = root.ownerDocument.documentElement.dataset.mediaHint === 'shown';
  const activate = async () => {
   if (loading) return;
   loading = true;
@@ -23,9 +24,10 @@ export function initRomanticPortraitController(root: HTMLElement) {
   errorMessage.hidden = true;
   try {
    const { initRomanticPortrait } = await import('./romanticPortraitFeature');
-   initRomanticPortrait(root, createRomanticModeState(true));
+   initRomanticPortrait(root, createRomanticModeState(true), !incoming);
    trigger.removeEventListener('click', activate);
   } catch {
+   root.querySelector('[data-secret-card]')?.classList.remove('is-loading');
    errorMessage.textContent = root.dataset.loadError ?? '';
    errorMessage.hidden = false;
   } finally {
@@ -34,4 +36,5 @@ export function initRomanticPortraitController(root: HTMLElement) {
   }
  };
  trigger.addEventListener('click', activate);
+ if (incoming) void activate();
 }

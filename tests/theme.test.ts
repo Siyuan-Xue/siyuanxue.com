@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { createContext, runInContext } from 'node:vm';
 import { Window } from 'happy-dom';
 import { inlineThemeScript } from '../src/utils/themeHint';
+import { bindHeaderActions } from '../src/utils/headerActions';
 import { bindThemeLink } from '../src/utils/themeLink';
 
 const script = inlineThemeScript(readFileSync(new URL('../src/scripts/theme.js', import.meta.url), 'utf8'));
@@ -217,4 +218,61 @@ test('header retains its opaque theme background and sticky layout with the samp
   expect(computed.top).toBe('0px');
   expect(computed.backdropFilter).toBe('blur(0px)');
  }
+});
+
+
+test('head prepares incoming SSR header/portrait semantics before deferred controllers, consumes only valid keys', async () => {
+ const f = fixture('light', false, false, '#a%20b&theme=dark&header=open&media=shown&unknown=%2f');
+ expect(f.document.documentElement.dataset.headerHint).toBe('open');
+ expect(f.document.documentElement.dataset.mediaHint).toBe('shown');
+ expect(f.window.location.hash).toBe('#a%20b&unknown=%2f');
+ f.document.documentElement.insertAdjacentHTML('beforeend', `<body><header><div data-header-actions data-actions-expanded="false"><div data-actions-panel></div><button data-actions-toggle data-hide-label="Hide actions" aria-expanded="false"></button></div></header><div data-romantic-mode data-turn-off-label="Hide image"><button data-romantic-trigger aria-expanded="false"></button><a data-secret-card hidden></a></div></body>`);
+ await f.window.happyDOM.waitUntilComplete();
+ const toggle = f.document.querySelector<import('happy-dom').HTMLButtonElement>('[data-actions-toggle]')!;
+ expect(toggle.getAttribute('aria-expanded')).toBe('true');
+ expect(toggle.getAttribute('aria-label')).toBe('Hide actions');
+ expect(f.document.querySelector<import('happy-dom').HTMLElement>('[data-actions-panel]')!.inert).toBe(false);
+ expect(f.document.querySelector<import('happy-dom').HTMLElement>('[data-actions-panel]')!.getAttribute('aria-hidden')).toBe('false');
+ expect(f.document.querySelector('[data-romantic-mode]')!.classList.contains('is-active')).toBe(true);
+ expect(f.document.querySelector('[data-romantic-trigger]')!.getAttribute('aria-expanded')).toBe('true');
+ expect(f.document.querySelector('[data-romantic-trigger]')!.getAttribute('aria-pressed')).toBe('true');
+ expect(f.document.querySelector('[data-romantic-trigger]')!.getAttribute('aria-label')).toBe('Hide image');
+ expect(f.document.querySelector<import('happy-dom').HTMLElement>('[data-secret-card]')!.hidden).toBe(false);
+ expect(f.document.querySelector<import('happy-dom').HTMLElement>('[data-secret-card]')!.classList.contains('is-loading')).toBe(true);
+});
+
+test('mixed invalid and duplicate keys remain byte-for-byte while a valid layout key is consumed', () => {
+ const f = fixture(null, false, false, '#theme=Dark&header=open&media=shown&media=shown&x=%2f');
+ expect(f.window.location.hash).toBe('#theme=Dark&media=shown&media=shown&x=%2f');
+ expect(f.document.documentElement.dataset.headerHint).toBe('open');
+ expect(f.document.documentElement.dataset.mediaHint).toBeUndefined();
+ expect(f.saved()).toBeNull();
+});
+
+test('language href tracks real header toggles, portrait events, theme, storage, pageshow and cleanup', () => {
+ const f = fixture(); f.mount();
+ const header = f.document.querySelector('header')!;
+ header.insertAdjacentHTML('beforeend', '<div data-header-actions><div data-actions-panel></div><button data-actions-toggle></button></div>');
+ f.document.body.insertAdjacentHTML('beforeend', '<div data-romantic-mode><button data-romantic-trigger aria-expanded="false"></button></div>');
+ const cleanupHeader = bindHeaderActions(f.document.querySelector('[data-header-actions]') as unknown as HTMLElement);
+ const toggle = f.document.querySelector<import('happy-dom').HTMLButtonElement>('[data-actions-toggle]')!;
+ const portrait = f.document.querySelector('[data-romantic-trigger]')!;
+ toggle.click();
+ expect(f.link()).toBe('https://xuesiyuan.com/#header=open');
+ portrait.setAttribute('aria-expanded', 'true');
+ f.document.dispatchEvent(new f.window.Event('portraitchange'));
+ expect(f.link()).toBe('https://xuesiyuan.com/#header=open&media=shown');
+ toggle.click();
+ expect(f.link()).toBe('https://xuesiyuan.com/#media=shown');
+ f.toggle();
+ expect(f.link()).toBe('https://xuesiyuan.com/#theme=dark&media=shown');
+ f.restore('light');
+ expect(f.link()).toBe('https://xuesiyuan.com/#theme=light&media=shown');
+ f.restore(null, false);
+ f.window.dispatchEvent(new f.window.StorageEvent('storage', { key: 'color-mode' }));
+ expect(f.link()).toBe('https://xuesiyuan.com/#media=shown');
+ portrait.setAttribute('aria-expanded', 'false');
+ f.window.dispatchEvent(new f.window.Event('pageshow'));
+ expect(f.link()).toBe('https://xuesiyuan.com/');
+ cleanupHeader();
 });

@@ -1,6 +1,6 @@
 export type RomanticModeState = Readonly<{ active: boolean }>;
 
-/** A fresh page is always collapsed; no unlock counter or stored permission. */
+/** A fresh page defaults to collapsed; only an incoming page-view hint can open it. */
 export function createRomanticModeState(active = false): RomanticModeState {
  return { active };
 }

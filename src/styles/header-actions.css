@@ -10,6 +10,7 @@
   transform 240ms cubic-bezier(.165,.84,.44,1), visibility 0s linear 240ms;
 }
 .header-actions-row { display: flex; align-items: center; gap: 4px; width: max-content; padding-right: 4px; }
+html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .header-actions-panel,
 .header-controls[data-actions-expanded='true'] .header-actions-panel {
  max-width: 22rem;
  opacity: 1;
@@ -35,9 +36,11 @@
   pointer-events: none;
  }
  .header-controls > * { pointer-events: auto; }
- .header-controls[data-actions-expanded='true'] { padding-top: calc(var(--header-control-size) + 4px); transition-delay: 0s; }
+ html[data-header-hint='open'] .header-controls:not([data-actions-initialized]),
+.header-controls[data-actions-expanded='true'] { padding-top: calc(var(--header-control-size) + 4px); transition-delay: 0s; }
  .header-actions-panel { transition-duration: 160ms, 160ms, 160ms, 0s; transition-delay: 0s, 0s, 0s, 160ms; }
- .header-controls[data-actions-expanded='true'] .header-actions-panel { transition-delay: 80ms, 80ms, 80ms, 0s; }
+ html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .header-actions-panel,
+.header-controls[data-actions-expanded='true'] .header-actions-panel { transition-delay: 80ms, 80ms, 80ms, 0s; }
 }
 @media (max-width: 360px) {
  .header-actions-row { gap: 0; padding-right: 0; }
@@ -45,3 +48,9 @@
 @media (prefers-reduced-motion: reduce) {
  .header .header-controls, .header .header-actions-panel { transition: none !important; }
 }
+
+/* The head hint supplies layout even before streamed controls or their module arrive. */
+.header-controls:not([data-actions-initialized]),
+.header-controls:not([data-actions-initialized]) .header-actions-panel { transition: none !important; }
+html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .header-actions-open-icon { display: none; }
+html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .header-actions-close-icon { display: block; }
