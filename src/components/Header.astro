@@ -1,5 +1,7 @@
 ---
 import ThemeToggle from './ThemeToggle.astro';
+import HeaderActions from './HeaderActions.astro';
+import LanguageSwitch from './LanguageSwitch.astro';
 import { House, MessageCircleMore } from '@lucide/astro';
 import TocToggle from './TocToggle.astro';
 import { site } from '../data/site';
@@ -14,12 +16,13 @@ const Brand = isHome ? 'h1' : 'span';
 ---
 <header class="header" data-scroll-header={!isChat || undefined}><div class="container cc-narrow header-inner">
  <a href="/" class="header-name-link" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}><Brand class="header-name">{t(site.name)}</Brand></a>
- <div class="header-controls">
+ <HeaderActions>
   {showTocToggle && <TocToggle />}
   {!isHome && <a class="header-control-button header-home-link" href="/" aria-label={homeLabel} title={homeLabel}><House size={20} stroke-width={1.8} aria-hidden="true" /></a>}
   {!isChat && <a class="header-control-button header-chat-link" href="/chat/" aria-label={chatLabel} title={chatLabel}><MessageCircleMore size={20} stroke-width={1.8} aria-hidden="true" /></a>}
   <ThemeToggle />
- </div>
+  <LanguageSwitch />
+ </HeaderActions>
 </div></header>
 
 <script>

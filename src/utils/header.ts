@@ -17,6 +17,7 @@ export function bindHeader(document: Document): () => void {
   distance = 0;
  };
  const locked = () => previousY <= height
+  || header.dataset.actionsExpanded === 'true'
   || header.contains(document.activeElement)
   || (!wide.matches && tocToggle?.getAttribute('aria-expanded') === 'true');
  const setHidden = (hidden: boolean) => {
@@ -47,7 +48,13 @@ export function bindHeader(document: Document): () => void {
   else if (direction < 0 && distance >= 8) setHidden(false);
  };
  const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update); };
- const onResize = () => { height = header.getBoundingClientRect().height; refreshLocks(); };
+ const onResize = () => {
+  height = header.getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--header-current-height', `${height}px`);
+  refreshLocks();
+ };
+ const observer = new window.ResizeObserver(onResize);
+ observer.observe(header);
  refreshLocks();
  window.addEventListener('scroll', schedule, { passive: true });
  window.addEventListener('resize', onResize);
@@ -55,6 +62,7 @@ export function bindHeader(document: Document): () => void {
  document.addEventListener('focusin', refreshLocks);
  header.addEventListener('focusout', resetTravel);
  document.addEventListener('tocchange', refreshLocks);
+ document.addEventListener('headeractionschange', onResize);
  return () => {
   window.removeEventListener('scroll', schedule);
   window.removeEventListener('resize', onResize);
@@ -62,6 +70,8 @@ export function bindHeader(document: Document): () => void {
   document.removeEventListener('focusin', refreshLocks);
   header.removeEventListener('focusout', resetTravel);
   document.removeEventListener('tocchange', refreshLocks);
+  document.removeEventListener('headeractionschange', onResize);
+  observer.disconnect();
   if (frame) window.cancelAnimationFrame(frame);
   setHidden(false);
  };

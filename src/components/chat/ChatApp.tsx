@@ -22,6 +22,8 @@ import { Conversation, ConversationContent, ConversationScrollButton } from './a
 import { Message, MessageAction, MessageActions, MessageContent, MessageResponse } from './ai-elements/Message';
 import { ThinkingIndicator } from './ThinkingIndicator';
 import { chatChrome } from './chat-chrome';
+import { ChatHeaderActions } from './ChatHeaderActions';
+import type { LanguageSwitch } from '../../utils/langSwitch';
 import { site } from '../../data/site';
 import './chat.css';
 
@@ -33,7 +35,7 @@ export type ChatCopy = {
   inputHint: string; mobileInputHint: string; stopped: string; interrupted: string; recovery: string; storage: string;
   errors: ErrorCopy;
 };
-type ChatAppProps = { copy: ChatCopy; prompts: { label: string; text: string }[]; locale: 'en' | 'zh'; fetcher?: ChatFetch };
+type ChatAppProps = { copy: ChatCopy; prompts: { label: string; text: string }[]; locale: 'en' | 'zh'; languageLink: LanguageSwitch; fetcher?: ChatFetch };
 
 const retryable = new Set<ChatErrorCode>(['timeout', 'upstream_unavailable', 'interrupted', 'stream_error']);
 const activeStatuses = new Set<ChatStatus>(['submitted', 'streaming']);
@@ -64,7 +66,7 @@ function messageStatus(message: UIMessage, index: number, messages: UIMessage[],
   return statuses[message.id] ?? 'complete';
 }
 
-export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind(globalThis) }: ChatAppProps) {
+export function ChatApp({ copy, prompts, locale, languageLink, fetcher = globalThis.fetch.bind(globalThis) }: ChatAppProps) {
   const transport = useMemo(() => createXueChatTransport(fetcher), [fetcher]);
   const [input, setInput] = useState('');
   const [multiline, setMultiline] = useState(false);
@@ -257,11 +259,12 @@ export function ChatApp({ copy, prompts, locale, fetcher = globalThis.fetch.bind
       <header className="header xue-chat-header">
         <div className="container cc-narrow header-inner">
           <a className="header-name-link" href="/"><span className="header-name">{site.name[locale]}</span></a>
-          <div className="header-controls">
-            <button aria-label={chrome.newChat} className="header-control-button" onClick={newChat} title={chrome.newChat} type="button"><Plus aria-hidden="true" size={20} strokeWidth={1.8} /></button>
+          <ChatHeaderActions locale={locale}>
+            <button aria-label={chrome.newChat} className="header-control-button" data-close-actions="" onClick={newChat} title={chrome.newChat} type="button"><Plus aria-hidden="true" size={20} strokeWidth={1.8} /></button>
             <a aria-label={chrome.home} className="header-control-button header-home-link" href="/" title={chrome.home}><Home aria-hidden="true" size={20} strokeWidth={1.8} /></a>
             <button aria-label={chrome.dark} aria-pressed="false" className="header-control-button xue-theme-toggle" data-theme-toggle="" data-label-dark={chrome.dark} data-label-light={chrome.light} title={chrome.dark} type="button"><Sun aria-hidden="true" className="xue-theme-sun" size={20} strokeWidth={1.8} /><Moon aria-hidden="true" className="xue-theme-moon" size={20} strokeWidth={1.8} /></button>
-          </div>
+            <a className="header-control-button header-language-link" href={languageLink.href} hrefLang={languageLink.lang} lang={languageLink.lang} aria-label={languageLink.label} title={languageLink.label}>{languageLink.text}</a>
+          </ChatHeaderActions>
         </div>
       </header>
       <div className="xue-chat-main" data-chat-state={hasConversation ? 'conversation' : 'welcome'}>

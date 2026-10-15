@@ -105,6 +105,18 @@ test('the default-open desktop TOC does not lock header scrolling', () => {
  f.scroll(112); expect(hidden(f.header)).toBe(true);
 });
 
+test('expanded header actions keep the header visible even without header focus', () => {
+ const f = fixture(); f.scroll(100); bind(f.document);
+ f.scroll(112); expect(hidden(f.header)).toBe(true);
+ f.header.dataset.actionsExpanded = 'true';
+ f.document.dispatchEvent(new f.window.Event('headeractionschange') as unknown as Event);
+ expect(hidden(f.header)).toBe(false);
+ f.scroll(300); expect(hidden(f.header)).toBe(false);
+ f.header.dataset.actionsExpanded = 'false';
+ f.document.dispatchEvent(new f.window.Event('headeractionschange') as unknown as Event);
+ f.scroll(312); expect(hidden(f.header)).toBe(true);
+});
+
 test('resizing refreshes the full header height used for the top visibility lock', () => {
  const f = fixture(); f.scroll(100); bind(f.document);
  f.scroll(112); expect(hidden(f.header)).toBe(true);

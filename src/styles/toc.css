@@ -33,7 +33,7 @@
  inset: 0 auto 0 0;
  width: min(20vw, calc((100vw - var(--narrow)) / 2));
  height: 100dvh;
- padding: 130px 25px max(25px, env(safe-area-inset-bottom));
+ padding: max(130px, calc(var(--header-current-height, var(--header-height)) + 16px)) 25px max(25px, env(safe-area-inset-bottom));
  color: var(--fg);
  background: var(--bg);
  overflow-y: auto;
@@ -43,9 +43,7 @@
 }
 .toc-container[hidden], .toc-toggle[hidden] { display: none; }
 .toc-toggle {
- position: fixed;
- top: var(--header-pad-top);
- left: 12px;
+ position: static;
  width: var(--header-control-size);
  height: var(--header-control-size);
  color: var(--fg);

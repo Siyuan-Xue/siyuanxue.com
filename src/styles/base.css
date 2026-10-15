@@ -1,5 +1,6 @@
 @import './tokens.css';
 @import './prose.css';
+@import './header-actions.css';
 
 *,
 *::before,
@@ -239,7 +240,7 @@ a:is(:hover, :focus-visible)  {
 	transition: top 160ms ease;
 }
 .header[data-scroll-header][data-header-hidden='true'] {
-	top: calc(-1 * var(--header-height));
+	top: calc(-1 * var(--header-current-height, var(--header-height)));
 }
 .header[data-scroll-header]:focus-within {
 	top: 0;
@@ -291,6 +292,7 @@ a:is(:hover, :focus-visible)  {
 	align-items: center;
 	justify-content: center;
 	width: var(--header-control-size);
+	flex-shrink: 0;
 	height: var(--header-control-size);
 	box-sizing: border-box;
 	margin: 0;
@@ -431,17 +433,6 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 		--header-control-size: 2.75rem;
 	}
 	.header-controls { gap: 0.25rem; }
-}
-
-/* Keep the four mobile controls clear of the longer English name between breakpoints. */
-@media (max-width: 380px) {
-	html[data-lang='en'] { --font-size-header-name: clamp(1.25rem, calc(44vw - 138.4px), 1.8rem); }
-}
-
-@media (max-width: 360px) {
-	html[data-lang='en'] { --font-size-header-name: 1.25rem; }
-	.header-inner { gap: 0.5rem; }
-	.header-controls { gap: 0.125rem; }
 }
 
 

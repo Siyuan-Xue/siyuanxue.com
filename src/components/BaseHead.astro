@@ -63,12 +63,21 @@ const schema = galleryImages?.length
 <meta name="theme-color" content="#f0eee6" data-light="#f0eee6" data-dark="#1f1e1d" />
 <meta name="color-scheme" content="light" />
 <script is:inline set:html={themeScript} />
+<!-- With scripting disabled, expose the real navigation links before first paint. -->
+<noscript><style is:global>
+ .header-controls .header-actions-panel { max-width: none; opacity: 1; transform: none; visibility: visible; overflow: visible; }
+ .header-controls :is(button, .header-actions-toggle) { display: none; }
+ @media (max-width: 767px) {
+  .header-inner .header-controls { padding-top: calc(var(--header-control-size) + 4px); }
+ }
+</style></noscript>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 {baiduSiteVerification && <meta name="baidu-site-verification" content={baiduSiteVerification} />}
 {noindex && <meta name="robots" content="noindex, follow" />}
+{page.kind === 'redirect' && <meta http-equiv="refresh" content={`0;url=${new URL(canonical).pathname}`} />}
 <link rel="canonical" href={canonical} />
 {Object.entries(page.alternates).map(([language, url]) => <link rel="alternate" hreflang={language} href={url} />)}
 <link rel="alternate" type="application/rss+xml" title={t(site.title)} href="/rss.xml" />

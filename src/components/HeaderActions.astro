@@ -1,0 +1,16 @@
+---
+import { ChevronLeft, ChevronRight } from '@lucide/astro';
+import { t } from '../i18n/locale';
+import { site } from '../data/site';
+---
+<div class="header-controls" data-header-actions data-actions-expanded="false">
+ <div class="header-actions-panel" id="header-actions" data-actions-panel><div class="header-actions-row"><slot /></div></div>
+ <button type="button" class="header-control-button header-actions-toggle" data-actions-toggle aria-expanded="false" aria-controls="header-actions" aria-label={t(site.ui.showActions)} title={t(site.ui.showActions)} data-show-label={t(site.ui.showActions)} data-hide-label={t(site.ui.hideActions)}>
+  <ChevronLeft class="header-actions-open-icon" size={20} stroke-width={1.8} aria-hidden="true" />
+  <ChevronRight class="header-actions-close-icon" size={20} stroke-width={1.8} aria-hidden="true" />
+ </button>
+</div>
+<script>
+ import { bindHeaderActions } from '../utils/headerActions';
+ for (const root of document.querySelectorAll<HTMLElement>('[data-header-actions]')) bindHeaderActions(root);
+</script>

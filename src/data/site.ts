@@ -36,6 +36,8 @@ export const site = {
 	),
 
 	ui: {
+		showActions: bi('Show actions', '展开操作'),
+		hideActions: bi('Hide actions', '收起操作'),
 		backToTop: bi('Back to top', '回到顶部'),
 		blog: bi('Blog', '博客'),
 		essays: bi('Essays', '长文'),

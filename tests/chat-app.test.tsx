@@ -49,6 +49,7 @@ const copy = {
     stream_error: { title: 'The reply was interrupted', detail: 'What arrived is saved. You can try again.' },
   },
 };
+const languageLink = { href: 'https://xuesiyuan.com/chat/', lang: 'zh-CN' as const, text: '中文', label: 'Switch to Chinese (中文)' };
 const prompts = [{ label: 'Say hello', text: 'Hello xue' }];
 
 test('return-to-latest passes instant animation to the scroll library for reduced motion', () => {
@@ -91,19 +92,22 @@ afterEach(() => {
   browser.sessionStorage.clear();
 });
 
-test('chat exposes its controls in the header without a sidebar', () => {
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
+test('chat exposes its controls after expanding the header without a sidebar', () => {
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('unused')} />);
   expect(view.queryByRole('complementary') === null).toBe(true);
   expect(view.queryByRole('navigation', { name: 'Chat navigation' })).toBeNull();
   expect(view.queryByRole('button', { name: /sidebar/i })).toBeNull();
   const header = within(view.container.querySelector('header')!);
+  expect(header.queryByRole('button', { name: 'New chat' })).toBeNull();
+  fireEvent.click(header.getByRole('button', { name: 'Show actions' }));
+  expect(header.getByRole('link', { name: languageLink.label }).getAttribute('href')).toBe(languageLink.href);
   expect(header.getByRole('button', { name: 'New chat' })).toBeTruthy();
   expect(header.getByRole('button', { name: 'Switch to dark mode' })).toBeTruthy();
   expect(header.getByRole('link', { name: 'Home' })).toBeTruthy();
 });
 
 test('the homepage brand stays in the header after sending and starting a new chat', async () => {
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('An answer')} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('An answer')} />);
   const header = within(view.container.querySelector('header')!);
   expect(header.getByRole('link', { name: 'Siyuan Xue' }).getAttribute('href')).toBe('/');
   const input = view.getByLabelText('Your message');
@@ -112,6 +116,7 @@ test('the homepage brand stays in the header after sending and starting a new ch
   await waitFor(() => expect(view.getByText('An answer')).toBeTruthy());
   expect(header.getByRole('link', { name: 'Siyuan Xue' })).toBeTruthy();
   expect(header.queryByText('This question must never become the site name')).toBeNull();
+  fireEvent.click(header.getByRole('button', { name: 'Show actions' }));
   fireEvent.click(header.getByRole('button', { name: 'New chat' }));
   await waitFor(() => expect(view.getByRole('heading', { name: copy.welcome })).toBeTruthy());
   expect(header.getByRole('link', { name: 'Siyuan Xue' })).toBeTruthy();
@@ -136,12 +141,13 @@ test('starting a new chat stops the old stream and persists a fresh conversation
       },
     }), { headers: { 'Content-Type': 'text/event-stream' } });
   };
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={fetcher} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Old question' } });
   fireEvent.submit(input.closest('form')!);
   await waitFor(() => expect(view.getByText('Old partial answer')).toBeTruthy());
   fireEvent.input(input, { target: { value: 'Old draft' } });
+  fireEvent.click(view.getByRole('button', { name: 'Show actions' }));
   fireEvent.click(view.getByRole('button', { name: 'New chat' }));
   await waitFor(() => expect(view.getByRole('heading', { name: copy.welcome })).toBeTruthy());
   expect(signal?.aborted).toBe(true);
@@ -162,7 +168,7 @@ test('starting a new chat stops the old stream and persists a fresh conversation
 test('streams markdown through the React chat and sends the exact public bridge contract', async () => {
   const requests: RequestInit[] = [];
   const fetcher: ChatFetch = async (_input, init) => { requests.push(init!); return uiStream('Hello **there**'); };
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={fetcher} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Hi' } });
   fireEvent.submit(input.closest('form')!);
@@ -174,7 +180,7 @@ test('streams markdown through the React chat and sends the exact public bridge 
 
 test('shows one loader from submission until first text, without a composer status banner', async () => {
   let respond!: (response: Response) => void;
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={() => new Promise(resolve => { respond = resolve; })} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={() => new Promise(resolve => { respond = resolve; })} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Think about this' } });
   fireEvent.submit(input.closest('form')!);
@@ -190,7 +196,7 @@ test('a draft remains editable while waiting and streaming, with one loader and 
   let controller!: ReadableStreamDefaultController<Uint8Array>;
   const encoder = new TextEncoder();
   const push = (frame: unknown) => controller.enqueue(encoder.encode(`data: ${JSON.stringify(frame)}\n\n`));
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={() => new Promise(resolve => { respond = resolve; })} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={() => new Promise(resolve => { respond = resolve; })} />);
   const input = view.getByLabelText('Your message') as HTMLTextAreaElement;
   fireEvent.input(input, { target: { value: 'A question' } });
   fireEvent.submit(input.closest('form')!);
@@ -216,7 +222,7 @@ test('a draft remains editable while waiting and streaming, with one loader and 
 });
 
 test('copy success stays on its action icon and never creates a composer banner', async () => {
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('Copy this answer')} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('Copy this answer')} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Hello' } });
   fireEvent.submit(input.closest('form')!);
@@ -229,7 +235,7 @@ test('copy success stays on its action icon and never creates a composer banner'
 
 test('renders hostile model HTML as inert text and provides a code copy control', async () => {
   const response = '<script>window.pwned=true</script>\n\n[x](javascript:alert(1))\n\n```js\nconst safe = "<div>";\n```';
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream(response)} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream(response)} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Show code' } });
   fireEvent.submit(input.closest('form')!);
@@ -247,7 +253,7 @@ test('retry regenerates from the same user turn without duplicating it', async (
     attempts += 1;
     return attempts === 1 ? errorStream('upstream_unavailable') : uiStream('Recovered');
   };
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={fetcher} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Original question' } });
   fireEvent.submit(input.closest('form')!);
@@ -269,7 +275,7 @@ test('the latest completed answer can regenerate without duplicating its user tu
     attempts += 1;
     return uiStream(attempts === 1 ? 'First answer' : 'Regenerated answer');
   };
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={fetcher} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Same question' } });
   fireEvent.submit(input.closest('form')!);
@@ -284,7 +290,7 @@ test('the latest completed answer can regenerate without duplicating its user tu
 });
 
 test('quota errors are localized, actionable, and do not offer a blind retry', async () => {
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => errorStream('quota_exhausted')} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => errorStream('quota_exhausted')} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Hello' } });
   fireEvent.submit(input.closest('form')!);
@@ -295,7 +301,7 @@ test('quota errors are localized, actionable, and do not offer a blind retry', a
   await waitFor(() => expect(JSON.parse(browser.sessionStorage.getItem('xue-chat:v2')!).error).toBe('quota_exhausted'));
   view.unmount();
 
-  const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
+  const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('unused')} />);
   await waitFor(() => expect(restored.getByRole('alert').textContent).toContain('out of replies'));
   expect((restored.getByLabelText('Your message') as HTMLTextAreaElement).value).toBe('Keep this draft');
   expect(restored.queryByRole('status')).toBeNull();
@@ -309,7 +315,7 @@ test('a deliberate follow-up replaces an unanswered failed turn without duplicat
     attempts += 1;
     return attempts === 1 ? errorStream('quota_exhausted') : uiStream('A fresh answer');
   };
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={fetcher} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Old unanswered prompt' } });
   fireEvent.submit(input.closest('form')!);
@@ -341,7 +347,7 @@ test('a new submission replaces a stopped unanswered turn and survives reload', 
       },
     }), { headers: { 'Content-Type': 'text/event-stream' } });
   };
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={fetcher} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Question stopped before text' } });
   fireEvent.submit(input.closest('form')!);
@@ -368,7 +374,7 @@ test('a new submission replaces a stopped unanswered turn and survives reload', 
   });
   view.unmount();
 
-  const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
+  const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('unused')} />);
   await waitFor(() => expect(restored.getByText('Answer after stopping')).toBeTruthy());
   expect(within(restored.getByRole('log')).getAllByText('Replacement question')).toHaveLength(1);
   expect(restored.queryByText('Question stopped before text')).toBeNull();
@@ -395,7 +401,7 @@ test('a new submission drops an empty stopped assistant shell and survives reloa
       },
     }), { headers: { 'Content-Type': 'text/event-stream' } });
   };
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={fetcher} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Question with empty assistant shell' } });
   fireEvent.submit(input.closest('form')!);
@@ -422,7 +428,7 @@ test('a new submission drops an empty stopped assistant shell and survives reloa
   });
   view.unmount();
 
-  const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
+  const restored = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('unused')} />);
   await waitFor(() => expect(restored.getByText('Answer after empty shell')).toBeTruthy());
   expect(within(restored.getByRole('log')).getAllByText('Replacement after empty shell')).toHaveLength(1);
   expect(restored.queryByText('Question with empty assistant shell')).toBeNull();
@@ -448,7 +454,7 @@ test('stop keeps streamed partial text in persistence and the next submission', 
       },
     }), { headers: { 'Content-Type': 'text/event-stream' } });
   };
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={fetcher} />);
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={fetcher} />);
   const input = view.getByLabelText('Your message');
   fireEvent.input(input, { target: { value: 'Question' } });
   fireEvent.submit(input.closest('form')!);
@@ -475,7 +481,7 @@ test('tracks a keyboard-shrunk visual viewport so the composer stays in view', a
     removeEventListener: () => {},
   };
   Object.defineProperty(browser, 'visualViewport', { configurable: true, value: viewport });
-  render(<ChatApp copy={copy} prompts={prompts} locale="en" fetcher={async () => uiStream('unused')} />);
+  render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('unused')} />);
   await waitFor(() => expect(browser.document.documentElement.style.getPropertyValue('--xue-viewport-height')).toBe('300px'));
   viewport.height = 260;
   resize?.();

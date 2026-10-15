@@ -7,7 +7,6 @@ const locale = resolveLocale(process.env.SITE_LOCALE);
 export default defineConfig({
  site: localeOrigin(locale),
  outDir: `./.build/${locale}`,
- redirects: { '/gallery/probfun/': '/gallery/imathbook/' },
  integrations: [react(), discoveryIntegration(locale)],
  markdown: { processor: unified() },
  vite: {

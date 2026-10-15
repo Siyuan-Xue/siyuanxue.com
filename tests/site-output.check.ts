@@ -37,6 +37,44 @@ const variants = [
 const entryGallerySlugs = ['imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'family', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
+ test(`${v.lang}: every HTML page has a build-time language link to an existing route on the other site`, async () => {
+  const other = variants.find(candidate => candidate !== v)!;
+  const targetFiles = await htmlFiles(other.root);
+  const targets = new Set(targetFiles.map(file => file.slice(other.root.length).replace(/index\.html$/, '').replace(/404\.html$/, '404/')));
+  const locale = v.lang === 'en' ? 'en' : 'zh';
+  for (const file of await htmlFiles(v.root)) {
+   const path = file.slice(v.root.length).replace(/index\.html$/, '').replace(/404\.html$/, '404/');
+   const html = await readFile(file, 'utf8');
+   const { document } = parseHTML(html);
+   const links = document.querySelectorAll('a.header-language-link');
+   expect(links).toHaveLength(1);
+   const link = links[0];
+   let expectedPath = path;
+   if (path === '/404/') expectedPath = '/';
+   else if (path.startsWith('/gallery/') && path !== '/gallery/probfun/') {
+    const slug = path.split('/')[2];
+    const sources = await Promise.all(['en', 'zh'].map(language => readFile(`src/content/galleries/${slug}/${language}.json`, 'utf8').then(JSON.parse)));
+    if (sources.some(source => source.draft)) expectedPath = '/';
+   }
+   const url = new URL(link.getAttribute('href')!);
+   expect(url.href).toBe(v.other + expectedPath);
+   expect(url.origin).toBe(v.other);
+   expect(targets.has(url.pathname)).toBe(true);
+   expect(url.search).toBe(''); expect(url.hash).toBe('');
+   // HTML attributes are case-insensitive; linkedom preserves React SSR's hrefLang spelling.
+   expect(link.getAttribute('hreflang') ?? link.getAttribute('hrefLang')).toBe(other.lang);
+   expect(link.getAttribute('lang')).toBe(other.lang);
+   expect(link.textContent).toBe(locale === 'en' ? '中文' : 'English');
+   expect(link.getAttribute('aria-label')).toBe(locale === 'en' ? 'Switch to Chinese (中文)' : '切换到英文（English）');
+   expect(document.querySelector('.header-actions-row')?.lastElementChild).toBe(link);
+   const toggle = document.querySelector('[data-actions-toggle]')!;
+   expect(toggle.getAttribute('aria-expanded')).toBe('false');
+   expect(toggle.getAttribute('aria-label')).toBe(locale === 'en' ? 'Show actions' : '展开操作');
+   expect(document.getElementById(toggle.getAttribute('aria-controls')!)).not.toBeNull();
+   expect(document.querySelector('[data-header-actions]')?.getAttribute('data-actions-expanded')).toBe('false');
+   expect(document.head.querySelector('noscript')?.textContent).toContain('visibility: visible');
+  }
+ });
  test(`${v.lang}: essays and posts ship the scoped Dario typography contract`, async () => {
   for (const path of ['essay/embodied-agent/index.html', 'post/first-note/index.html']) {
    const { document } = parseHTML(await readFile(join(v.root, path), 'utf8'));
@@ -200,7 +238,7 @@ for (const v of variants) {
   windowWithMedia(document);
   let saved = 'light';
   const context = createContext({ document, window, localStorage: { getItem: () => saved, setItem: (_key: string, value: string) => { saved = value; } }, matchMedia: () => ({ matches: false, addEventListener() {} }) });
-  for (const script of document.querySelectorAll('script:not([src])')) {
+  for (const script of document.head.querySelectorAll('script:not([src])')) {
    if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
   }
   const button = document.querySelector<HTMLElement>('[data-theme-toggle]')!;
@@ -219,7 +257,7 @@ for (const v of variants) {
   for (const path of files) {
    const { document } = parseHTML(await readFile(path, 'utf8'));
    const pathname = path.slice(v.root.length).replace(/index\.html$/, '').replace(/404\.html$/, '404/');
-   // The merged project's legacy URL is a framework-generated redirect, checked above.
+   // The merged project's legacy redirect keeps its target canonical, checked above.
    if (pathname === '/gallery/probfun/') continue;
    expect(document.documentElement.lang).toBe(v.lang);
    expect(document.querySelectorAll('meta[name="theme-color"]').length).toBe(1);
@@ -228,7 +266,7 @@ for (const v of variants) {
    expect(document.querySelectorAll('h1').length).toBe(1);
    expect(document.querySelectorAll('.i18n-en,.i18n-zh,.lang-body-en,.lang-body-zh,[data-page-boot]').length).toBe(0);
    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(v.origin + pathname);
-   expect(document.querySelector('a.lang-toggle')).toBeNull();
+   expect(document.querySelector('a.header-language-link')).not.toBeNull();
    if (pathname !== '/') expect(document.querySelector('.header-home-link')?.getAttribute('href')).toBe('/');
    expect(document.querySelector('link[hreflang="en"]')?.getAttribute('href')).toBe('https://siyuanxue.com' + pathname);
    expect(document.querySelector('link[hreflang="zh-CN"]')?.getAttribute('href')).toBe('https://xuesiyuan.com' + pathname);
@@ -278,7 +316,7 @@ for (const v of variants) {
     expect(document.querySelectorAll('#site-toc a').length).toBe(count);
     expect(Boolean(document.querySelector('nav#site-toc[aria-labelledby="toc-title"]'))).toBe(count > 0);
     expect(Boolean(document.querySelector('[data-toc-toggle][aria-controls="site-toc"]'))).toBe(count > 0);
-    if (count > 0) expect(document.querySelector('.header-controls')?.firstElementChild?.hasAttribute('data-toc-toggle')).toBe(true);
+    if (count > 0) expect(document.querySelector('.header-actions-row')?.firstElementChild?.hasAttribute('data-toc-toggle')).toBe(true);
    }
   }
  });

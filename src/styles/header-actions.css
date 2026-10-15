@@ -1,0 +1,48 @@
+/* SSR starts collapsed. Visibility also excludes the row from keyboard/a11y before JS. */
+.header .header-controls { gap: 0; }
+.header-actions-panel {
+ max-width: 0;
+ opacity: 0;
+ transform: translateX(12px);
+ visibility: hidden;
+ overflow: clip;
+ transition: max-width 240ms cubic-bezier(.165,.84,.44,1), opacity 240ms ease,
+  transform 240ms cubic-bezier(.165,.84,.44,1), visibility 0s linear 240ms;
+}
+.header-actions-row { display: flex; align-items: center; gap: 4px; width: max-content; padding-right: 4px; }
+.header-controls[data-actions-expanded='true'] .header-actions-panel {
+ max-width: 22rem;
+ opacity: 1;
+ transform: none;
+ visibility: visible;
+ transition-delay: 0s;
+}
+.header .header-language-link { width: auto; min-width: 56px; padding-inline: 4px; font: 15px/1.2 var(--font-serif); letter-spacing: normal; white-space: nowrap; }
+.header-actions-panel .header-control-button:focus-visible { outline-offset: -2px; }
+.header-actions-close-icon, [aria-expanded='true'] > .header-actions-open-icon { display: none; }
+[aria-expanded='true'] > .header-actions-close-icon { display: block; }
+
+@media (max-width: 767px) {
+ /* The row opens below the brand, in flow, so neither brand nor content is covered.
+  * Move the arrow down first, then reveal the row leftwards beside it. */
+ html { --header-control-size: 44px; }
+ .header .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0; align-items: start; }
+ .header .header-name-link { grid-area: 1 / 1; min-height: var(--header-control-size); justify-self: start; align-self: start; }
+ .header .header-controls {
+  grid-area: 1 / 1 / 2 / 3;
+  justify-self: end;
+  padding-top: 0;
+  transition: padding-top 120ms cubic-bezier(.165,.84,.44,1) 120ms;
+  pointer-events: none;
+ }
+ .header-controls > * { pointer-events: auto; }
+ .header-controls[data-actions-expanded='true'] { padding-top: calc(var(--header-control-size) + 4px); transition-delay: 0s; }
+ .header-actions-panel { transition-duration: 160ms, 160ms, 160ms, 0s; transition-delay: 0s, 0s, 0s, 160ms; }
+ .header-controls[data-actions-expanded='true'] .header-actions-panel { transition-delay: 80ms, 80ms, 80ms, 0s; }
+}
+@media (max-width: 360px) {
+ .header-actions-row { gap: 0; padding-right: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+ .header .header-controls, .header .header-actions-panel { transition: none !important; }
+}

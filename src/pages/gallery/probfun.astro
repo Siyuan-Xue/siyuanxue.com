@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import { t } from '../../i18n/locale';
+---
+<!-- Preserve the legacy redirect while sharing the accessible site navigation. -->
+<Base>
+ <div class="container cc-narrow">
+  <h1>{t({ en: 'Redirecting', zh: '正在跳转' })}</h1>
+  <a href="/gallery/imathbook/">iMathBook · uMathHub</a>
+ </div>
+</Base>

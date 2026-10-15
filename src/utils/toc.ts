@@ -27,7 +27,11 @@ export function bindToc(document: Document): () => void {
   const coverArticle = open && !wide.matches;
   main.inert = coverArticle || initialInert;
   document.body.style.overflow = coverArticle ? 'hidden' : initialOverflow;
-  if (!open && (ownedFocus || returnFocus)) toggle.focus({ preventScroll: true });
+  if (!open && (ownedFocus || returnFocus)) {
+   const returnTarget = toggle.closest<HTMLElement>('[data-actions-panel]')?.inert
+    ? document.querySelector<HTMLButtonElement>('[data-actions-toggle]') : toggle;
+   returnTarget?.focus({ preventScroll: true });
+  }
   document.dispatchEvent(new window.Event('tocchange'));
  };
  const activate = (id: string | undefined) => {
@@ -59,7 +63,7 @@ export function bindToc(document: Document): () => void {
   if (open && !wide.matches && event.detail === 0) (nav.querySelector<HTMLAnchorElement>('[aria-current="location"]') ?? links[0])?.focus();
  };
  const onKey = (event: KeyboardEvent) => {
-  if (event.key === 'Escape' && open) { event.preventDefault(); setOpen(false, true); }
+  if (event.key === 'Escape' && open && !event.defaultPrevented) { event.preventDefault(); setOpen(false, true); }
  };
  const onLink = (event: MouseEvent) => {
   if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -73,6 +77,7 @@ export function bindToc(document: Document): () => void {
   }
  };
  const onBreakpoint = () => { setOpen(wide.matches); scheduleActive(); };
+ const onActionsClose = () => { if (!wide.matches && open) setOpen(false); };
  toggle.hidden = false;
  nav.dataset.tocReady = '';
  setOpen(wide.matches);
@@ -80,6 +85,7 @@ export function bindToc(document: Document): () => void {
  toggle.addEventListener('click', onToggle);
  nav.addEventListener('click', onLink);
  document.addEventListener('keydown', onKey);
+ document.addEventListener('headeractionsclose', onActionsClose);
  wide.addEventListener('change', onBreakpoint);
  window.addEventListener('scroll', scheduleActive, { passive: true });
  window.addEventListener('resize', scheduleActive);
@@ -92,6 +98,7 @@ export function bindToc(document: Document): () => void {
   toggle.removeEventListener('click', onToggle);
   nav.removeEventListener('click', onLink);
   document.removeEventListener('keydown', onKey);
+  document.removeEventListener('headeractionsclose', onActionsClose);
   wide.removeEventListener('change', onBreakpoint);
   window.removeEventListener('scroll', scheduleActive);
   window.removeEventListener('resize', scheduleActive);

@@ -10,7 +10,7 @@ html.prose-page {
  --font-size-header-name: 28.8px;
  --header-pad-top: 30px;
  --header-pad-bottom: 10px;
- --header-height: calc(var(--header-pad-top) + 28.8px + var(--header-pad-bottom));
+ --header-height: calc(var(--header-pad-top) + var(--header-control-size) + var(--header-pad-bottom));
  --article-footnote-bg: rgb(0 0 0 / 8%);
  --article-footnote-hover: rgb(0 0 0 / 15%);
  /* Match the reference's viewport centering, without the reserved 15px gutter. */
@@ -29,7 +29,6 @@ html.prose-page body {
 }
 
 .prose-page .header { margin-bottom: 25px; }
-.prose-page .header-controls { height: 28.8px; }
 .prose-page .header-name { font-size: 28.8px; line-height: 1; letter-spacing: normal; }
 .prose-page .post-header { display: flow-root; margin-bottom: 0; }
 .prose-page .post-title {
@@ -137,9 +136,6 @@ html.prose-page body {
 @media (min-width: 1024px) and (max-width: 1330px) {
  .prose-page .toc-container { width: 20vw; }
 }
-@media (min-width: 1024px) {
- .prose-page .toc-toggle { top: 22px; width: 44px; height: 44px; }
-}
 /* The 1024px controller breakpoint is retained with its focus/scroll-lock behavior. */
 @media (max-width: 1023px) {
  .prose-page .toc-container { width: 100%; }
@@ -157,14 +153,6 @@ html.prose-page body {
 }
 @media (max-width: 479px) {
  .prose-page .container.cc-narrow { width: 100%; padding-inline: 20px; }
-}
-/* Four existing 44px controls need room beside the name on narrow English pages. */
-@media (max-width: 380px) {
- .prose-page[data-lang='en'] .header-name { font-size: 20px; }
-}
-@media (max-width: 360px) {
- .prose-page .header-inner { gap: 0; }
- .prose-page .header-controls { gap: 0; }
 }
 
 /* CJK keeps its installed serif family and avoids synthetic italics. */

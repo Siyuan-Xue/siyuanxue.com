@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import { ChatApp, type ChatCopy } from '../components/chat/ChatApp';
 import { t, locale } from '../i18n/locale';
 import { site } from '../data/site';
+import { getLanguageSwitch } from '../utils/langSwitchContent';
+const languageLink = await getLanguageSwitch(Astro.url.pathname);
 
 const copy: ChatCopy = {
   title: t({ en: 'Chat with xue', zh: '与小薛聊聊' }),
@@ -43,5 +45,5 @@ const prompts = [
 ];
 ---
 <Base htmlClass="has-xue-chat" showHeader={false}>
-  <ChatApp client:load copy={copy} prompts={prompts} locale={locale} />
+  <ChatApp client:load copy={copy} prompts={prompts} locale={locale} languageLink={languageLink} />
 </Base>
