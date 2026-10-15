@@ -50,3 +50,7 @@
 - `bash ops/verify-public.sh 0d7ae91780b8359ddbdfcfabf5877de0bd91d691` 已通过：两域名完整 SHA、固定语言与旧照片 HTTP 410。
 - 两站正式 HTML 包含 head 里的 iPhone 分支，实际 `Base.fl2kosh9.css` 包含 `:root[data-header-tint=live] .header{backdrop-filter:none}`，基础 header 保留零半径滤镜。构建压缩器去掉冗余的前缀声明并将 blur(0px) 化简为 blur()；首次临时检查因期待原始声明串未匹配，读取实际规则后确认标准属性及分支均存在，没有为此修改产品代码。
 - 本次临时服务器和浏览器测试标签页已清理。工作树仍为原 `main`，归档分支、未推送历史及备份未改动。
+
+## 同日后续真机反馈
+
+用户明确确认“目前颜色问题确实已经修复”，因此基本主题同步已得到 iOS 27 普通 Safari 真机反馈。用户另报告顶栏和主页变色时机不同步；网站无背景过渡/延迟，WebKit 原生颜色延展有 100ms 动画，依据与边界见[时序审计](2026-10-15-safari-theme-timing.md)。此确认不扩展为全部滚动、旋转、BFCache、灯箱场景均已验收。
