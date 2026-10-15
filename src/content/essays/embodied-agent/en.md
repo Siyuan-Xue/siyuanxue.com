@@ -2,8 +2,8 @@
 title: An Agent with a Body
 subtitle: LLMs as the brain, VLA models as the hands
 date: 2026-10-14
-description: A graduation-project blueprint for an embodied agent that uses an LLM to plan, task-specific VLA models to act, and memory to connect tasks over time.
-seoDescription: "Miles (Siyuan Xue) proposes an embodied agent combining LLM planning, VLA tools, and stores for skills, execution traces and task relationships."
+description: A blueprint for an embodied agent that uses an LLM to plan, task-specific VLA models to act, and memory to connect tasks over time.
+seoDescription: "A proposed embodied agent combining LLM planning, VLA tools, and stores for skills, execution traces and task relationships."
 draft: false
 figures:
   - id: architecture
@@ -26,7 +26,7 @@ figures:
 
 I keep coming back to a question about embodied intelligence: how much should we ask one model to do? A robot needs to understand an instruction, work out a sequence of actions, and carry those actions out in the physical world. Those responsibilities belong to the same task, but they need not all belong to the same model.
 
-I’m Miles (Siyuan Xue), and I’m developing this idea as my final-year project. What follows is an early blueprint, drawn while I begin surveying the topic. It describes the system I want to build and the reasoning behind it; I do not yet have experimental results to report.
+This is an early blueprint drawn while surveying the topic. It describes the system I want to build and the reasoning behind it; there are no experimental results yet.
 
 ## 1. What it is
 
