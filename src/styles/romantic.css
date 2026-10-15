@@ -11,6 +11,8 @@
 
 .bio-copy {
 	min-width: 0;
+	/* Avoid one-word lines in the narrow column beside the portrait. */
+	text-wrap: pretty;
 }
 
 .bio-lead {

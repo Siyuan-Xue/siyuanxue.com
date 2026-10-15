@@ -14,9 +14,13 @@ html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .
 .header-actions-panel .header-control-button:focus-visible { outline-offset: -2px; }
 .header-actions-panel[inert], .header-actions-row > [inert] { pointer-events: none; }
 
-@media (max-width: 767px) {
- /* Keep touch targets large; the expanded row shares the brand's existing line. */
+/* 44px targets on phones and on any touch screen, including tablets at 768px+. */
+@media (pointer: coarse) {
  html:root { --header-control-size: 44px; }
+}
+@media (max-width: 767px) {
+ html:root { --header-control-size: 44px; }
+ /* The expanded row shares the brand's existing line. */
  .header .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0; align-items: start; }
  .header .header-name-link { grid-area: 1 / 1; min-height: var(--header-control-size); justify-self: start; align-self: start; }
  .header .header-controls {

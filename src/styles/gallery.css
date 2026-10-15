@@ -16,6 +16,9 @@
 .gallery-links { margin-top: var(--section-gap); }
 .gallery-links h2 { font-size: var(--font-size-h3); }
 .gallery-links ul { padding-left: 1.2em; }
+.gallery-links li + li { margin-top: 0.35em; }
+/* Inline padding enlarges each tap target without moving text. */
+.gallery-links li > a { padding-block: 0.35em; }
 .gallery-videos { margin-bottom: var(--section-gap); }
 .gallery-videos-demos { margin-bottom: 2rem; }
 .gallery-videos h2, .gallery-results-heading { font-size: var(--font-size-h3); }
