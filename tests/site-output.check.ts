@@ -5,6 +5,7 @@ import { createContext, runInContext } from 'node:vm';
 import { parseHTML, DOMParser } from 'linkedom';
 import { imageMedia, media } from '../src/utils/media';
 import { auditDiscoveryHtml, type DiscoveryPage } from '../src/utils/discovery';
+import postcss from 'postcss';
 const mediaPaths = new Set(Object.values(media).flatMap(asset => asset.kind === 'image' ? [asset.src, asset.cover.src, ...asset.variants.map(file => file.src)] : [asset.src]));
 async function checkAsset(root: string, path: string) {
  if (path.startsWith('/media/')) expect(mediaPaths.has(path)).toBe(true);
@@ -36,6 +37,45 @@ const variants = [
 const entryGallerySlugs = ['imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'family', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
+ test(`${v.lang}: essays and posts ship the scoped Dario typography contract`, async () => {
+  for (const path of ['essay/embodied-agent/index.html', 'post/first-note/index.html']) {
+   const { document } = parseHTML(await readFile(join(v.root, path), 'utf8'));
+   expect(document.documentElement.classList.contains('prose-page')).toBe(true);
+   const css = (await Promise.all([...document.querySelectorAll('link[rel="stylesheet"]')].map(node => readFile(join(v.root, node.getAttribute('href')!), 'utf8')))).join('\n');
+   const sheet = postcss.parse(css);
+   const declaration = (selector: string, property: string, value: string) => {
+    let matched = false;
+    sheet.walkRules(rule => {
+     if (rule.selectors.includes(selector)) rule.walkDecls(property, decl => { if (decl.value === value) matched = true; });
+    });
+    expect(matched).toBe(true);
+   };
+   declaration('html.prose-page', '--narrow', '38.75rem');
+   declaration('.prose-page .post-title', 'font-size', '62px');
+   declaration('.prose-page .post-title', 'font-size', '48px');
+   declaration('.prose-page .post-title', 'line-height', '1.1');
+   declaration('.prose-page .post-title', 'text-wrap', 'balance');
+   declaration('.prose-page .post-subtitle', 'font-size', '22px');
+   declaration('.prose-page .post-subtitle', 'font-style', 'italic');
+   declaration('.prose-page .post-date', 'margin', '2em 0 1em');
+   declaration('.prose-page .prose strong', 'font-weight', '600');
+   declaration('.prose-page .toc-link', 'opacity', '.5');
+   declaration('.prose-page .toc-link.cc-active', 'opacity', '1');
+   declaration('.prose-page .prose figure', 'margin', '4rem 0');
+   expect(css).toMatch(/newsreader-latin-standard-normal[^)]*\.woff2/);
+   expect(css).toMatch(/newsreader-latin-standard-italic[^)]*\.woff2/);
+   expect(css).toMatch(/font-variation-settings:["']opsz["'] 24/);
+   const time = document.querySelector('.post-date time')!;
+   const date = new Date(time.getAttribute('datetime')!);
+   expect(time.textContent).toBe(date.toLocaleDateString(v.lang === 'en' ? 'en-US' : 'zh-CN', { month: 'long', year: 'numeric', timeZone: 'UTC' }));
+   expect(document.querySelector('meta[property="article:published_time"]')?.getAttribute('content')).toBe(date.toISOString());
+   for (const image of document.querySelectorAll('.essay-figure img')) expect(image.getAttribute('sizes')).toBe('(max-width: 479px) calc(100vw - 40px), (max-width: 991px) calc(80vw - 20px), 580px');
+  }
+  for (const path of ['index.html', 'gallery/pixeldone/index.html', 'chat/index.html']) {
+   const { document } = parseHTML(await readFile(join(v.root, path), 'utf8'));
+   expect(document.documentElement.classList.contains('prose-page')).toBe(false);
+  }
+ });
  test(`${v.lang}: every generated route matches discovery policy and all sitemap URLs are indexable canonical pages`, async () => {
   const locale = v.lang === 'en' ? 'en' : 'zh';
   const inventory: DiscoveryPage[] = JSON.parse(await readFile(`.build/discovery/${locale}.json`, 'utf8'));

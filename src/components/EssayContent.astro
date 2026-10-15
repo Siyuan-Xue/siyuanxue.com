@@ -8,15 +8,13 @@ const blocks = splitEssayFigures(await Astro.slots.render('default') ?? '', Astr
 {blocks.map(block => block.type === 'html' ? <Fragment set:html={block.html} /> : (
  <figure class="essay-figure">
   <a href={block.figure.src.src} aria-describedby={`essay-figure-${block.figure.id}-caption`}>
-   <MediaPicture asset={block.figure.src} alt={block.figure.alt} sizes="(max-width: 480px) calc(100vw - 2rem), (max-width: 672px) calc(100vw - 3rem), 624px" />
+   <MediaPicture asset={block.figure.src} alt={block.figure.alt} sizes="(max-width: 479px) calc(100vw - 40px), (max-width: 991px) calc(80vw - 20px), 580px" />
   </a>
   <figcaption id={`essay-figure-${block.figure.id}-caption`}>{block.figure.caption}</figcaption>
  </figure>
 ))}
 <style>
- .essay-figure { margin: 2rem 0; }
  .essay-figure a, .essay-figure :global(picture), .essay-figure :global(img) { display: block; }
  .essay-figure :global(img) { width: 100%; height: auto; }
  .essay-figure a:is(:hover, :focus-visible) { outline: 2px solid var(--fg-interactive); outline-offset: 4px; }
- .essay-figure figcaption { margin-top: 0.65em; color: var(--fg-muted); font-size: var(--font-size-meta); line-height: 1.5; text-align: start; }
 </style>

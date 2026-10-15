@@ -1,0 +1,193 @@
+@import './article-fonts.css';
+
+/* Only Prose (essays and posts): home, gallery and chat retain their own metrics. */
+html.prose-page {
+ --narrow: 38.75rem; /* 620px outer box, 580px text column. */
+ --page-pad-x: 20px;
+ --font-newsreader: 'Newsreader Article Variable';
+ --font-size-body: 20px;
+ --line-height-body: 1.6;
+ --font-size-header-name: 28.8px;
+ --header-pad-top: 30px;
+ --header-pad-bottom: 10px;
+ --header-height: calc(var(--header-pad-top) + 28.8px + var(--header-pad-bottom));
+ --article-footnote-bg: rgb(0 0 0 / 8%);
+ --article-footnote-hover: rgb(0 0 0 / 15%);
+ /* Match the reference's viewport centering, without the reserved 15px gutter. */
+ scrollbar-gutter: auto;
+}
+
+html.prose-page.u-mode-invert {
+ --article-footnote-bg: rgb(255 255 255 / 15%);
+ --article-footnote-hover: rgb(255 255 255 / 40%);
+}
+
+html.prose-page body {
+ font-optical-sizing: none;
+ font-variation-settings: 'opsz' 24;
+ letter-spacing: normal;
+}
+
+.prose-page .header { margin-bottom: 25px; }
+.prose-page .header-controls { height: 28.8px; }
+.prose-page .header-name { font-size: 28.8px; line-height: 1; letter-spacing: normal; }
+.prose-page .post-header { display: flow-root; margin-bottom: 0; }
+.prose-page .post-title {
+ margin: .6em 0 .1em;
+ color: var(--fg);
+ font-size: 62px;
+ font-weight: 700;
+ line-height: 1.1;
+ letter-spacing: normal;
+ text-wrap: balance;
+}
+.prose-page .post-subtitle {
+ margin: 0;
+ color: var(--fg);
+ font-size: 22px;
+ font-weight: 400;
+ font-style: italic;
+ line-height: 1.6;
+ letter-spacing: normal;
+}
+.prose-page .post-date {
+ margin: 2em 0 1em;
+ color: var(--fg-muted);
+ font-size: 18px;
+ line-height: 1.6;
+}
+
+.prose-page .prose { text-wrap: pretty; }
+.prose-page .prose h2 {
+ margin: 1em 0 .5em;
+ font-size: 32px;
+ line-height: 1.2;
+}
+.prose-page .prose h3 {
+ margin: 1em 0 .7em;
+ font-size: 24px;
+ line-height: 1.2;
+}
+.prose-page .prose h4 { margin: 1em 0 .5em; font-size: 22px; font-weight: 400; line-height: 1.2; }
+.prose-page .prose :is(h2, h3, h4) { text-wrap: balance; }
+/* Equivalent 130px anchor clearance, without padding that would move TOC tracking. */
+.prose-page .prose :is(h2, h3)[id] { scroll-margin-top: calc(130px - var(--header-height)); }
+.prose-page .prose > :first-child { margin-top: 0; }
+.prose-page .prose strong { font-weight: 600; }
+.prose-page .prose :is(ul, ol) { padding-left: 2em; }
+.prose-page .prose li { margin-bottom: 6px; }
+.prose-page .prose li:last-child { margin-bottom: 0; }
+.prose-page .prose blockquote {
+ margin: 2em 0;
+ padding: .25em 0 .1em 1.25em;
+ border-left: 1px solid var(--border);
+ color: var(--fg);
+ font-size: 1em;
+ font-style: italic;
+ line-height: 1.5;
+}
+.prose-page .prose a {
+ color: inherit;
+ text-decoration-thickness: .08em;
+ text-underline-offset: .1em;
+ transition: color .2s linear;
+}
+.prose-page .prose a:is(:hover, :focus-visible) { color: var(--fg-muted); }
+.prose-page .prose figure { margin: 4rem 0; }
+.prose-page .prose figcaption {
+ margin-top: 1em;
+ color: color-mix(in srgb, var(--fg) 50%, var(--bg));
+ font-size: .9em;
+ line-height: 1.6;
+ text-align: center;
+}
+/* Astro/remark's existing footnote anchors; no extra content or tooltip markup. */
+.prose-page .prose a[data-footnote-ref] {
+ position: relative;
+ margin: 0 2px;
+ padding: 3px 3px 1px;
+ border-radius: 4px;
+ background: var(--article-footnote-bg);
+ font-size: .75rem;
+ font-weight: 500;
+ text-decoration: none;
+}
+.prose-page .prose a[data-footnote-ref]:is(:hover, :focus-visible) { background: var(--article-footnote-hover); }
+.prose-page .prose a[data-footnote-backref] { margin-left: .3em; font-size: .75em; text-decoration: none; }
+
+.prose-page .toc-title { font-size: 24px; line-height: 1.2; margin-bottom: .7em; }
+.prose-page .toc-list { margin-top: 30px; gap: 0; }
+.prose-page .toc-list_item { margin-bottom: 6px; }
+.prose-page .toc-list_item:last-child { margin-bottom: 0; }
+.prose-page .toc-list_item--h3 { padding-left: 0; }
+.prose-page .toc-link {
+ min-height: 0;
+ margin-bottom: .2em;
+ color: var(--fg);
+ font-size: 20px;
+ line-height: 1.6;
+ opacity: .5;
+ text-decoration: none;
+ overflow-wrap: normal;
+ transition: color .2s, opacity .3s cubic-bezier(.165,.84,.44,1);
+}
+.prose-page .toc-link.cc-active { opacity: 1; }
+.prose-page .toc-link:is(:hover, :focus-visible) { color: var(--fg-muted); text-decoration: none; }
+.prose-page .toc-container { width: min(22vw, 23rem, calc((100vw - var(--narrow)) / 2 + 20px)); }
+@media (min-width: 1024px) and (max-width: 1330px) {
+ .prose-page .toc-container { width: 20vw; }
+}
+@media (min-width: 1024px) {
+ .prose-page .toc-toggle { top: 22px; width: 44px; height: 44px; }
+}
+/* The 1024px controller breakpoint is retained with its focus/scroll-lock behavior. */
+@media (max-width: 1023px) {
+ .prose-page .toc-container { width: 100%; }
+ .prose-page .toc-link { min-height: 44px; padding-block: .3rem; }
+}
+@media (max-width: 991px) {
+ .prose-page .container.cc-narrow { width: 80%; max-width: none; padding-inline: 10px; }
+ .prose-page .prose figcaption { font-size: .9rem; }
+}
+@media (max-width: 767px) {
+ .prose-page .post-title { font-size: 48px; }
+ .prose-page .prose ol { padding-left: 1.5em; }
+ .prose-page .prose ul { padding-left: 1.25em; }
+ .prose-page .prose blockquote { font-size: 1.1rem; }
+}
+@media (max-width: 479px) {
+ .prose-page .container.cc-narrow { width: 100%; padding-inline: 20px; }
+}
+/* Four existing 44px controls need room beside the name on narrow English pages. */
+@media (max-width: 380px) {
+ .prose-page[data-lang='en'] .header-name { font-size: 20px; }
+}
+@media (max-width: 360px) {
+ .prose-page .header-inner { gap: 0; }
+ .prose-page .header-controls { gap: 0; }
+}
+
+/* CJK keeps its installed serif family and avoids synthetic italics. */
+html.prose-page[data-lang='zh'] { --font-size-body: 20px; --line-height-body: 1.6; }
+html.prose-page[data-lang='zh'] .header-name { letter-spacing: normal; }
+html.prose-page[data-lang='zh'] .post-title { letter-spacing: normal; line-height: 1.1; }
+html.prose-page[data-lang='zh'] .post-subtitle { font-style: normal; letter-spacing: normal; line-height: 1.6; }
+html.prose-page[data-lang='zh'] .prose { letter-spacing: normal; line-height: 1.6; text-align: start; }
+html.prose-page[data-lang='zh'] .prose p { margin-bottom: 1em; }
+html.prose-page[data-lang='zh'] .prose :is(h2, h3) { margin-top: 1em; letter-spacing: normal; line-height: 1.2; }
+html.prose-page[data-lang='zh'] .prose h2 { margin-bottom: .5em; }
+html.prose-page[data-lang='zh'] .prose h3 { margin-bottom: .7em; }
+html.prose-page[data-lang='zh'] .prose strong { font-weight: 600; letter-spacing: normal; }
+html.prose-page[data-lang='zh'] .prose li { line-height: 1.6; margin-bottom: 6px; }
+html.prose-page[data-lang='zh'] .prose blockquote { border-left-width: 1px; margin: 2em 0; padding-left: 1.25em; color: var(--fg); font-style: normal; }
+html.prose-page[data-lang='zh'] .toc-link { line-height: 1.6; letter-spacing: normal; }
+html.prose-page[data-lang='zh'] .prose > :first-child { margin-top: 0; }
+html.prose-page[data-lang='zh'] .prose > :last-child,
+html.prose-page[data-lang='zh'] .prose li:last-child { margin-bottom: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+ .prose-page .toc-link, .prose-page .prose a { transition: none; }
+}
+@media print {
+ .prose-page .container.cc-narrow { width: 100%; max-width: none; padding: 0; }
+}
