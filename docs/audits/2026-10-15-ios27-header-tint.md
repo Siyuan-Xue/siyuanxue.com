@@ -37,8 +37,16 @@
 | 双语首页/文章/聊天的共享 head、顶栏、主题测试 | 已更新；布局沿用用户确认有效的上一版 |
 | AGENTS、维护总览、原安全区审计 | 已更新当前规则/用户反馈；历史记录保留时间语义 |
 | 原生 iOS 27 Safari | 待真机复验，不能确认修复 |
-| Actions、两域名目标 SHA | 待本轮发布后核对 |
+| Actions、两域名目标 SHA | 已通过；生产为 `0d7ae91780b8359ddbdfcfabf5877de0bd91d691` |
 | 身份/正文/域名、账号、SEO、媒体、依赖/许可、CI 配置、secret | 不适用：无修改 |
 | Nginx/helper、bridge、Hermes、微信、模型/记忆、定时器、存储/备份 | 不适用：未安装或修改独立资源 |
 
 恢复：撤销本轮 `theme.js` 设备标记及 `base.css` 对应覆盖，并同步主题测试/当前规则，通过既有 Actions 发布。不要撤销用户确认有效的手机单行布局，也不需要撤销安全区联动；无存储迁移，归档分支与本地备份不动。
+
+## 发布核对
+
+- 代码提交 `0d7ae91780b8359ddbdfcfabf5877de0bd91d691` 已推送 `origin/main`，使用原 [Deploy production 38749655422](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38749655422) 流程。
+- Actions 最终成功：完整共享验证、双语部署/公网检查与 IndexNow 通知均通过。随后仅补充本段验收记录与维护总览，以 `[skip ci]` 文档提交推送；不改变上述静态 release。
+- `bash ops/verify-public.sh 0d7ae91780b8359ddbdfcfabf5877de0bd91d691` 已通过：两域名完整 SHA、固定语言与旧照片 HTTP 410。
+- 两站正式 HTML 包含 head 里的 iPhone 分支，实际 `Base.fl2kosh9.css` 包含 `:root[data-header-tint=live] .header{backdrop-filter:none}`，基础 header 保留零半径滤镜。构建压缩器去掉冗余的前缀声明并将 blur(0px) 化简为 blur()；首次临时检查因期待原始声明串未匹配，读取实际规则后确认标准属性及分支均存在，没有为此修改产品代码。
+- 本次临时服务器和浏览器测试标签页已清理。工作树仍为原 `main`，归档分支、未推送历史及备份未改动。
