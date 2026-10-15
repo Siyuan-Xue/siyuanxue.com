@@ -64,8 +64,19 @@ for (const v of variants) {
    // HTML attributes are case-insensitive; linkedom preserves React SSR's hrefLang spelling.
    expect(link.getAttribute('hreflang') ?? link.getAttribute('hrefLang')).toBe(other.lang);
    expect(link.getAttribute('lang')).toBe(other.lang);
-   expect(link.textContent).toBe(locale === 'en' ? '中文' : 'English');
-   expect(link.getAttribute('aria-label')).toBe(locale === 'en' ? 'Switch to Chinese (中文)' : '切换到英文（English）');
+   const label = locale === 'en' ? 'Switch to 中文' : '切换到 English';
+   expect(link.textContent.trim()).toBe('');
+   expect(link.getAttribute('aria-label')).toBe(label);
+   expect(link.getAttribute('title')).toBe(label);
+   expect(link.querySelectorAll('svg')).toHaveLength(1);
+   const icon = link.querySelector('svg')!;
+   expect(icon.getAttribute('aria-hidden')).toBe('true');
+   expect(icon.getAttribute('width')).toBe('20');
+   expect(icon.getAttribute('height')).toBe('20');
+   expect(icon.getAttribute('stroke-width')).toBe('1.8');
+   expect(icon.getAttribute('fill')).toBe('none');
+   expect(icon.getAttribute('stroke')).toBe('currentColor');
+   expect(icon.querySelector('path')).not.toBeNull();
    expect(document.querySelector('.header-actions-row')?.lastElementChild).toBe(link);
    const toggle = document.querySelector('[data-actions-toggle]')!;
    expect(toggle.getAttribute('aria-expanded')).toBe('false');

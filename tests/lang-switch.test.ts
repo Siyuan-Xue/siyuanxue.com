@@ -19,8 +19,7 @@ for (const from of ['en', 'zh'] as const) {
    const result = languageSwitch(path, from, routes);
    expect(result.href).toBe(localeOrigin(other) + path);
    expect(result.lang).toBe(other === 'zh' ? 'zh-CN' : 'en');
-   expect(result.text).toBe(other === 'zh' ? '中文' : 'English');
-   expect(result.label).toContain(result.text);
+   expect(result.label).toBe(from === 'en' ? 'Switch to 中文' : '切换到 English');
    if (path !== '/') expect(languageSwitch(path.slice(0, -1), from, routes)).toEqual(result);
    expect(languageSwitch(path + '?theme=dark&utm_source=test#section', from, routes)).toEqual(result);
    expect(languageSwitch(path + '#section?private=value', from, routes)).toEqual(result);

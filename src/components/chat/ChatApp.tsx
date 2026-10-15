@@ -1,6 +1,6 @@
 import { useChat } from '@ai-sdk/react';
 import type { ChatStatus, UIMessage } from 'ai';
-import { Baby, Check, Copy, CornerDownLeft, Home, Moon, Plus, RefreshCcw, Square, Sun, X } from 'lucide-react';
+import { Baby, Check, Copy, CornerDownLeft, Home, Languages, Moon, Plus, RefreshCcw, Square, Sun, X } from 'lucide-react';
 import { type FormEvent, type KeyboardEvent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   ChatInputError,
@@ -263,7 +263,7 @@ export function ChatApp({ copy, prompts, locale, languageLink, fetcher = globalT
             <button aria-label={chrome.newChat} className="header-control-button" data-close-actions="" onClick={newChat} title={chrome.newChat} type="button"><Plus aria-hidden="true" size={20} strokeWidth={1.8} /></button>
             <a aria-label={chrome.home} className="header-control-button header-home-link" href="/" title={chrome.home}><Home aria-hidden="true" size={20} strokeWidth={1.8} /></a>
             <button aria-label={chrome.dark} aria-pressed="false" className="header-control-button xue-theme-toggle" data-theme-toggle="" data-label-dark={chrome.dark} data-label-light={chrome.light} title={chrome.dark} type="button"><Sun aria-hidden="true" className="xue-theme-sun" size={20} strokeWidth={1.8} /><Moon aria-hidden="true" className="xue-theme-moon" size={20} strokeWidth={1.8} /></button>
-            <a className="header-control-button header-language-link" href={languageLink.href} hrefLang={languageLink.lang} lang={languageLink.lang} aria-label={languageLink.label} title={languageLink.label}>{languageLink.text}</a>
+            <a className="header-control-button header-language-link" href={languageLink.href} hrefLang={languageLink.lang} lang={languageLink.lang} aria-label={languageLink.label} title={languageLink.label}><Languages aria-hidden="true" size={20} strokeWidth={1.8} /></a>
           </ChatHeaderActions>
         </div>
       </header>

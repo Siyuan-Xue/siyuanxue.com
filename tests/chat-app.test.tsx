@@ -49,7 +49,7 @@ const copy = {
     stream_error: { title: 'The reply was interrupted', detail: 'What arrived is saved. You can try again.' },
   },
 };
-const languageLink = { href: 'https://xuesiyuan.com/chat/', lang: 'zh-CN' as const, text: '中文', label: 'Switch to Chinese (中文)' };
+const languageLink = { href: 'https://xuesiyuan.com/chat/', lang: 'zh-CN' as const, label: 'Switch to 中文' };
 const prompts = [{ label: 'Say hello', text: 'Hello xue' }];
 
 test('return-to-latest passes instant animation to the scroll library for reduced motion', () => {
@@ -92,19 +92,37 @@ afterEach(() => {
   browser.sessionStorage.clear();
 });
 
-test('chat exposes its controls after expanding the header without a sidebar', () => {
-  const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('unused')} />);
+for (const locale of ['en', 'zh'] as const) {
+test(`${locale}: chat exposes an accessible language icon last in the expanded action row`, () => {
+  const link = locale === 'en' ? languageLink : { href: 'https://siyuanxue.com/chat/', lang: 'en' as const, label: '切换到 English' };
+  const view = render(<ChatApp copy={copy} prompts={prompts} locale={locale} languageLink={link} fetcher={async () => uiStream('unused')} />);
   expect(view.queryByRole('complementary') === null).toBe(true);
   expect(view.queryByRole('navigation', { name: 'Chat navigation' })).toBeNull();
   expect(view.queryByRole('button', { name: /sidebar/i })).toBeNull();
   const header = within(view.container.querySelector('header')!);
-  expect(header.queryByRole('button', { name: 'New chat' })).toBeNull();
-  fireEvent.click(header.getByRole('button', { name: 'Show actions' }));
-  expect(header.getByRole('link', { name: languageLink.label }).getAttribute('href')).toBe(languageLink.href);
-  expect(header.getByRole('button', { name: 'New chat' })).toBeTruthy();
-  expect(header.getByRole('button', { name: 'Switch to dark mode' })).toBeTruthy();
-  expect(header.getByRole('link', { name: 'Home' })).toBeTruthy();
+  expect(header.queryByRole('link', { name: link.label })).toBeNull();
+  fireEvent.click(header.getByRole('button', { name: locale === 'en' ? 'Show actions' : '展开操作' }));
+  const language = header.getByRole('link', { name: link.label });
+  expect(language.getAttribute('href')).toBe(link.href);
+  expect(language.getAttribute('hreflang')).toBe(link.lang);
+  expect(language.getAttribute('lang')).toBe(link.lang);
+  expect(language.getAttribute('title')).toBe(link.label);
+  expect(language.textContent?.trim()).toBe('');
+  expect(language.querySelectorAll('svg')).toHaveLength(1);
+  const icon = language.querySelector('svg')!;
+  expect(icon.getAttribute('aria-hidden')).toBe('true');
+  expect(icon.getAttribute('width')).toBe('20');
+  expect(icon.getAttribute('height')).toBe('20');
+  expect(icon.getAttribute('stroke-width')).toBe('1.8');
+  expect(icon.getAttribute('fill')).toBe('none');
+  expect(icon.getAttribute('stroke')).toBe('currentColor');
+  expect(icon.querySelector('path')).not.toBeNull();
+  expect(view.container.querySelector('.header-actions-row')?.lastElementChild).toBe(language);
+  expect(header.getByRole('button', { name: locale === 'en' ? 'New chat' : '新对话' })).toBeTruthy();
+  expect(header.getByRole('button', { name: locale === 'en' ? 'Switch to dark mode' : '切换到深色模式' })).toBeTruthy();
+  expect(header.getByRole('link', { name: locale === 'en' ? 'Home' : '首页' })).toBeTruthy();
 });
+}
 
 test('the homepage brand stays in the header after sending and starting a new chat', async () => {
   const view = render(<ChatApp copy={copy} prompts={prompts} locale="en" languageLink={languageLink} fetcher={async () => uiStream('An answer')} />);

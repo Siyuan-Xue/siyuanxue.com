@@ -2,7 +2,7 @@
 
 维护负责人：Siyuan Xue / 薛思远。整理日期：2026-09-16。
 
-**2026-10-15 顶栏折叠与语言切换（本地，未发布）：**静态页与聊天页默认只显示姓名和左箭头；展开为目录（有时）、首页（非首页）、聊天（非聊天页）、主题、语言、右箭头，聊天页为新对话、首页、主题、语言、右箭头。语言作为用户明确例外固定靠右；≤767px 操作行在姓名下方占据布局空间，44px 点击区，无 JS 直接显示导航链接。展开/焦点/手机目录锁定顶栏显示，既有滚动显隐、聊天输入与 Safari 主题同步保留。入口为 `HeaderActions.astro` / `chat/ChatHeaderActions.tsx`、`headerActions.ts`、`header-actions.css`；语言链接由 `langSwitchContent.ts` 读取双语构建清单、`langSwitch.ts` 解析，始终使用 `locale.ts` 的 HTTPS apex（本地/preview 也指向正式另一站）。仅双方已发布同路径互链，缺译/草稿/404/未知页回退另一首页；不传 query/hash/主题/聊天状态，不做自动语言跳转或展开记忆。原 ProbFun 跳转改为共享布局页面，保留跳转目标、canonical/noindex/sitemap 行为。更新、验证、恢复与可选项见[本次审计](audits/2026-10-15-header-collapse-language-switch.md)；不提交、不推送、不部署，实体 Safari/iOS 与生产跨域点击仍待验收。
+**2026-10-15 顶栏折叠与语言切换（本地，未发布）：**静态页与聊天页默认只显示姓名和左箭头；展开为目录（有时）、首页（非首页）、聊天（非聊天页）、主题、语言、右箭头，聊天页为新对话、首页、主题、语言、右箭头。语言作为用户明确例外固定靠右，静态 `LanguageSwitch.astro` 与 React `chat/ChatApp.tsx` 均使用 Lucide `Languages` 无框图标（20px、1.8 描边），复用相邻按钮的 hover/focus-visible 样式；无可见文字，SVG `aria-hidden`，英文页 `aria-label`/`title` 为 `Switch to 中文`，中文页为 `切换到 English`，真实链接及目标 `lang`/`hreflang` 保留；≤767px 操作行在姓名下方占据布局空间，44px 点击区，无 JS 直接显示导航链接。展开/焦点/手机目录锁定顶栏显示，既有滚动显隐、聊天输入与 Safari 主题同步保留。入口为 `HeaderActions.astro` / `chat/ChatHeaderActions.tsx`、`headerActions.ts`、`header-actions.css`；语言链接由 `langSwitchContent.ts` 读取双语构建清单、`langSwitch.ts` 解析，始终使用 `locale.ts` 的 HTTPS apex（本地/preview 也指向正式另一站）。仅双方已发布同路径互链，缺译/草稿/404/未知页回退另一首页；不传 query/hash/主题/聊天状态，不做自动语言跳转或展开记忆。原 ProbFun 跳转改为共享布局页面，保留跳转目标、canonical/noindex/sitemap 行为。更新、验证、恢复与可选项见[本次审计](audits/2026-10-15-header-collapse-language-switch.md)；不提交、不推送、不部署，实体 Safari/iOS 与生产跨域点击仍待验收。
 
 **2026-10-15 文章排版对齐 Dario（本地，未发布）：**`Prose.astro` 的 essay/post 使用独立 `prose-page` 样式，正文列宽 580px、标题桌面 62px/手机 48px，英文副标题斜体、日期仅显示年月、目录透明度 .5/1；`article-fonts.css` 使用现有 OFL Newsreader 的双轴文件并固定 `opsz=24`，中文保留 Noto Serif SC 正体。`EssayContent.astro` 的响应式 `sizes` 与图注跟随新列宽，正文/媒体不变。首页、图集、聊天及 Safari 主题脚本/顶栏兼容措施保持原规则。更新与恢复入口为上述模板及 `src/styles/article*.css`；本次指定五项检查通过，Chrome 双语桌面/手机明暗计算值、许可、保留差异和恢复见[本次审计](audits/2026-10-15-dario-essay-style.md)。不提交、不推送、不发布；实体 Safari 验收仍待处理。
 
@@ -258,7 +258,7 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 | 域名 / 路径 | 注册与 DNS、www/HTTP 跳转、两个证书、Nginx 根目录、SEO/RSS/sitemap、语言链接、聊天 ALLOWED_ORIGINS、CI 变量与域名校验、GitHub 各处链接、搜索平台属性 |
 | 搜索平台 / 提交策略 | 中文站优先核查百度站点归属及账号实际开放能力；两站稳定 URL、现有 Google 验证与 Bing/AI 发现继续维护。按平台分别记录提交回执、抓取、索引、查询曝光及 AI 引用，不将一个平台的数据移作另一个平台的验收 |
 | 肖像 / 动效 | 正常肖像与占位肖像区分、人物比例/压缩/alt、单击展开、刷新折叠、灯箱可访问性、两站可见英文文案、reduced-motion、旧照片永久拒绝、图片缓存；不恢复状态标语块 |
-| 明暗 / 顶栏 / 导航 | 首页/文章/聊天、两种语言、明暗初次加载/切换/返回、不透明背景与图标可读性、静态页滚动显隐/顶部/焦点/操作行展开/手机目录显示锁、聊天顶栏常显、Lucide 无圆框按钮；默认折叠，语言固定为操作行最右且紧邻箭头，其他控件按既有相对顺序/「越小、越新越靠左」，DOM/键盘顺序一致；构建时双语同路径/草稿缺译回退、无 query/hash、无 JS 链接、Esc/外部点击/焦点返回/inert、44px 点击区/窄屏正常流布局、reduced-motion、桌面目录与锚点偏移；桌面结果不能当实体手机验收 |
+| 明暗 / 顶栏 / 导航 | 首页/文章/聊天、两种语言、明暗初次加载/切换/返回、不透明背景与图标可读性、静态页滚动显隐/顶部/焦点/操作行展开/手机目录显示锁、聊天顶栏常显、Lucide 无圆框按钮；语言为 `Languages` 图标（20px/1.8），无可见文字、SVG `aria-hidden`，两语言 `aria-label`/`title` 分别为 `Switch to 中文` / `切换到 English`，窄屏与相邻控件同为 44×44px；默认折叠，语言固定为操作行最右且紧邻箭头，其他控件按既有相对顺序/「越小、越新越靠左」，DOM/键盘顺序一致；构建时双语同路径/草稿缺译回退、无 query/hash、无 JS 链接、Esc/外部点击/焦点返回/inert、44px 点击区/窄屏正常流布局、reduced-motion、桌面目录与锚点偏移；桌面结果不能当实体手机验收 |
 | 聊天前端 / 协议 | 网站 CI、Node bridge 是否也需独立部署、真实 SSE/错误/停止/重试、会话恢复、两域名跨源配置、许可证归属 |
 | Hermes / 记忆 / 模型 | 服务与源码版本、profile overlays、实际工具白名单、主人路由、GLM 主/辅助端点、插件、语音模型、数据库扩展、timer、备份恢复；先核对归档与旧文档差异 |
 | 依赖 / 运行时 | `package.json`+锁文件、CI Bun/Node、服务器 bridge Node、Hermes/Python/数据库/模型分别版本；安全 overrides 是否仍需要；第三方许可 |

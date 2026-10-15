@@ -1,5 +1,6 @@
 ---
+import { Languages } from '@lucide/astro';
 import { getLanguageSwitch } from '../utils/langSwitchContent';
 const link = await getLanguageSwitch(Astro.url.pathname);
 ---
-<a class="header-control-button header-language-link" href={link.href} hreflang={link.lang} lang={link.lang} aria-label={link.label} title={link.label}>{link.text}</a>
+<a class="header-control-button header-language-link" href={link.href} hreflang={link.lang} lang={link.lang} aria-label={link.label} title={link.label}><Languages size={20} stroke-width={1.8} aria-hidden="true" /></a>

@@ -12,7 +12,7 @@ function fixture(reduce = false) {
  window.document.body.innerHTML = `<header class="header"><div data-header-actions data-actions-expanded="false" class="header-controls">
   <div id="header-actions" data-actions-panel class="header-actions-panel"><div class="header-actions-row">
    <button data-toc-toggle hidden aria-expanded="false" data-open-label="Open contents" data-close-label="Close contents">TOC</button>
-   <a href="/">Home</a><button data-close-actions>New chat</button><a href="https://xuesiyuan.com/" lang="zh-CN">中文</a>
+   <a href="/">Home</a><button data-close-actions>New chat</button><a class="header-control-button header-language-link" href="https://xuesiyuan.com/" hreflang="zh-CN" lang="zh-CN" aria-label="Switch to 中文" title="Switch to 中文"><svg width="20" height="20" stroke-width="1.8" aria-hidden="true"></svg></a>
   </div></div>
   <button data-actions-toggle aria-controls="header-actions" aria-expanded="false" data-show-label="Show actions" data-hide-label="Hide actions">Arrow</button>
  </div></header><nav id="site-toc"><a href="#first" data-toc-link="first">First</a></nav><main class="page-main"><button id="outside">Outside</button><h2 id="first">First</h2></main>`;
@@ -45,7 +45,7 @@ test('SSR is visually collapsed; activation updates ARIA, inert and labels in bo
 
 test('Escape returns focus to the arrow, excluding hidden actions from keyboard/a11y', () => {
  const f = fixture(); f.toggle.click();
- f.panel.querySelector<HTMLAnchorElement>('a')!.focus();
+ f.panel.querySelector<HTMLAnchorElement>('.header-language-link')!.focus();
  const event = new f.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
  f.window.document.dispatchEvent(event);
  expect(event.defaultPrevented).toBe(true);

@@ -2,7 +2,7 @@ import { localeOrigin } from '../i18n/locale';
 import type { Locale } from '../i18n/types';
 
 export interface LanguageRoute { locale: Locale; path: string; published: boolean }
-export interface LanguageSwitch { href: string; lang: 'en' | 'zh-CN'; text: string; label: string }
+export interface LanguageSwitch { href: string; lang: 'en' | 'zh-CN'; label: string }
 
 /** Path-only input: never carry queries, fragments, host aliases or visitor state. */
 export function languageSwitch(path: string, from: Locale, routes: readonly LanguageRoute[]): LanguageSwitch {
@@ -15,7 +15,6 @@ export function languageSwitch(path: string, from: Locale, routes: readonly Lang
  return {
   href: `${localeOrigin(other)}${target}`,
   lang: other === 'zh' ? 'zh-CN' : 'en',
-  text: other === 'zh' ? '中文' : 'English',
-  label: other === 'zh' ? 'Switch to Chinese (中文)' : '切换到英文（English）',
+  label: other === 'zh' ? 'Switch to 中文' : '切换到 English',
  };
 }
