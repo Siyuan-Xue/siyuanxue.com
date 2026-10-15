@@ -8,6 +8,17 @@ import {
 } from '../src/utils/romanticLightbox';
 
 describe('Romantic Mode lightbox layout', () => {
+	test('keeps the paper and caption inside the safe area in both orientations', () => {
+		for (const [viewport, safe] of [
+			[{ x: 430, y: 640 }, { top: 59, bottom: 34, left: 0, right: 0 }],
+			[{ x: 844, y: 390 }, { top: 0, bottom: 21, left: 44, right: 44 }],
+		] as const) {
+			const layout = getRomanticLightboxLayout(viewport, safe);
+			expect(layout.frameTop).toBeGreaterThanOrEqual(safe.top);
+			expect(layout.frameTop + layout.frameHeight).toBeLessThanOrEqual(viewport.y - safe.bottom);
+			expect((viewport.x - layout.frameWidth) / 2).toBeGreaterThanOrEqual(Math.max(safe.left, safe.right));
+		}
+	});
 	test('caps the portrait at 560px and reserves its paper footer on desktop', () => {
 		const layout = getRomanticLightboxLayout({ x: 1280, y: 900 });
 

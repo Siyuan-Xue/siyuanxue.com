@@ -1,4 +1,5 @@
-import type { PhotoSwipeOptions, SlideData } from 'photoswipe';
+import type { Padding, PhotoSwipeOptions, SlideData } from 'photoswipe';
+import { getSafeAreaInsets } from './safeArea';
 
 type GallerySlide = SlideData & { caption: string };
 type GalleryModule = { open: (items: GallerySlide[], index: number, reducedMotion: boolean) => () => void };
@@ -8,14 +9,17 @@ type Dependencies = {
  reducedMotion: () => boolean;
 };
 
-export function createGalleryLightboxOptions(reducedMotion: boolean): PhotoSwipeOptions {
+export function createGalleryLightboxOptions(reducedMotion: boolean, readInsets: () => Padding = getSafeAreaInsets): PhotoSwipeOptions {
  return {
   mainClass: 'gallery-lightbox', loop: false, escKey: true, arrowKeys: true,
   trapFocus: true, returnFocus: true, showHideAnimationType: 'none',
   showAnimationDuration: 0, hideAnimationDuration: 0,
   zoomAnimationDuration: reducedMotion ? 0 : 200,
   close: false, zoom: false, arrowPrev: false, arrowNext: false,
-  padding: { top: 64, bottom: 100, left: 24, right: 24 },
+  paddingFn: () => {
+   const safe = readInsets();
+   return { top: 64 + safe.top, bottom: 100 + safe.bottom, left: 24 + safe.left, right: 24 + safe.right };
+  },
  };
 }
 

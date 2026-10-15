@@ -265,8 +265,8 @@ html[data-media-hint='shown'] .romantic-portrait:not([data-initialized]) .romant
 .romantic-lightbox.pswp .romantic-lightbox_close {
 	position: absolute;
 	z-index: 4;
-	top: calc(var(--romantic-lightbox-frame-top) + 3px);
-	left: calc(50% + var(--romantic-lightbox-frame-half-width) - 43px);
+	top: max(var(--safe-area-top), calc(var(--romantic-lightbox-frame-top) + 3px));
+	left: clamp(var(--safe-area-left), calc(50% + var(--romantic-lightbox-frame-half-width) - 43px), calc(100% - var(--safe-area-right) - 44px));
 	display: inline-grid;
 	place-items: center;
 	width: 44px;

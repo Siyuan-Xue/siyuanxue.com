@@ -33,7 +33,7 @@
  inset: 0 auto 0 0;
  width: min(20vw, calc((100vw - var(--narrow)) / 2));
  height: 100dvh;
- padding: max(130px, calc(var(--header-current-height, var(--header-height)) + 16px)) 25px max(25px, env(safe-area-inset-bottom));
+ padding: max(calc(130px + var(--safe-area-top)), calc(var(--header-current-height, var(--header-height)) + 16px)) max(25px, var(--safe-area-right)) max(25px, var(--safe-area-bottom)) max(25px, var(--safe-area-left));
  color: var(--fg);
  background: var(--bg);
  overflow-y: auto;
@@ -53,7 +53,7 @@
 @media (max-width: 1023px) {
  .toc-toggle { position: static; width: var(--header-control-size); height: var(--header-control-size); }
  .toc-toggle svg { width: 20px; height: 20px; }
- .toc-container { width: 100%; padding-inline: var(--page-pad-x); }
+ .toc-container { width: 100%; padding-left: max(var(--page-pad-x), var(--safe-area-left)); padding-right: max(var(--page-pad-x), var(--safe-area-right)); }
  .toc-container:not([data-toc-ready]) { display: none; }
  .toc-link { min-height: 44px; padding-block: .3rem; }
 }

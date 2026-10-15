@@ -60,7 +60,7 @@ const schema = galleryImages?.length
  } : undefined;
 ---
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <!-- System colors are available to the parser, including when scripting is off. -->
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f0eee6" data-light="#f0eee6" data-dark="#1f1e1d" />
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1f1e1d" />
@@ -73,7 +73,7 @@ const schema = galleryImages?.length
  .header-controls .header-actions-row > * { opacity: 1; transform: none; }
  .header-controls :is(button, .header-actions-toggle) { display: none; }
  @media (max-width: 767px) {
-  .header-inner .header-controls { padding-top: calc(var(--header-control-size) + 4px); }
+  .header .header-inner { display: flex; gap: 0; }
  }
 </style></noscript>
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

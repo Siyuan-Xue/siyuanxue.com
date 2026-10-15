@@ -3,7 +3,7 @@ import { Window } from 'happy-dom';
 import { readFileSync } from 'node:fs';
 import { createHeaderActionsMotion, type HeaderAnimate } from '../src/utils/headerActionsMotion';
 
-test('all widths using the second row retain 44px targets after the base styles load', () => {
+test('all mobile widths retain 44px targets after the base styles load', () => {
  for (const width of [390, 481, 600, 767]) {
   const window = new Window({ width });
   // base.css imports header-actions first, then declares the desktop root defaults.
@@ -16,13 +16,47 @@ test('all widths using the second row retain 44px targets after the base styles 
  }
 });
 
+test('expanding mobile actions never adds a second row, including incoming hints', () => {
+ const f = fixture();
+ for (const open of [false, true, false]) {
+  f.set(open, true);
+  expect(f.window.getComputedStyle(f.root as never).paddingTop).toBe('0px');
+ }
+ f.set(true);
+ expect(f.calls.some(call => 'paddingTop' in call.values)).toBe(false);
+ f.motion.destroy();
+});
+
+test('brand collision measurement follows available width without shrinking controls', () => {
+ const window = new Window({ width: 390 });
+ window.document.head.innerHTML = `<style>${readFileSync('src/styles/header-actions.css', 'utf8')}</style>`;
+ window.document.body.innerHTML = `<header class="header"><div class="header-inner">
+  <a class="header-name-link" href="/">Siyuan Xue</a>
+  <div class="header-controls" data-actions-expanded="false"><div data-actions-panel><div class="header-actions-row"><button>Theme</button></div></div><button><span data-actions-icon>Arrow</span></button></div>
+ </div></header>`;
+ const root = window.document.querySelector('.header-controls') as unknown as HTMLElement;
+ const name = window.document.querySelector('.header-name-link')!;
+ const inner = window.document.querySelector('.header-inner')!;
+ let width = 350;
+ Object.defineProperty(inner, 'clientWidth', { get: () => width });
+ Object.defineProperty(root, 'offsetWidth', { get: () => 264 });
+ Object.defineProperty(name, 'offsetWidth', { get: () => 142 });
+ const motion = createHeaderActionsMotion(root);
+ motion.set(true, true); root.dataset.actionsExpanded = 'true';
+ expect(root.dataset.actionsCrowded).toBe('true');
+ width = 600;
+ motion.set(true, true); root.dataset.actionsExpanded = 'true';
+ expect(root.dataset.actionsCrowded).toBe('false');
+ motion.destroy(); window.happyDOM.abort();
+});
+
 function fixture() {
  const window = new Window();
  window.innerWidth = 390;
  window.document.head.innerHTML = `<style>${readFileSync('src/styles/header-actions.css', 'utf8')}</style>`;
- window.document.body.innerHTML = `<div class="header-controls" data-actions-expanded="false">
+ window.document.body.innerHTML = `<header class="header"><div class="header-controls" data-actions-expanded="false">
   <div class="header-actions-panel" data-actions-panel><div class="header-actions-row"><button>First</button><button>Middle</button><a href="/">Language</a></div></div>
-  <button><span class="header-actions-icon" data-actions-icon>Arrow</span></button></div>`;
+  <button><span class="header-actions-icon" data-actions-icon>Arrow</span></button></div></header>`;
  const root = window.document.querySelector('.header-controls') as unknown as HTMLElement;
  const panel = root.querySelector<HTMLElement>('[data-actions-panel]')!;
  const items = Array.from(root.querySelectorAll<HTMLElement>('.header-actions-row > *'));
@@ -62,15 +96,13 @@ test('interruption stops every old control, starts at the current values and ign
  // Simulate the computed WAAPI frame, including a partly rotated arrow/layout.
  f.items[0]!.style.transform = 'translate(7px, 3px)';
  f.items[0]!.style.opacity = '.4';
- f.root.style.paddingTop = '27px';
  f.root.querySelector<HTMLElement>('[data-actions-icon]')!.style.transform = 'rotate(72deg)';
  f.set(false);
  expect(opening.every(call => call.stopped)).toBe(true);
  const closing = f.calls.slice(opening.length);
  expect(closing.find(call => call.element === f.items[0] && 'transform' in call.values)!.values.transform![0]).toBe('translate(7px, 3px)');
  expect(Number(closing.find(call => call.element === f.items[0] && 'opacity' in call.values)!.values.opacity![0])).toBe(.4);
- expect(closing[0]!.values.paddingTop![0]).toBe('27px');
- expect(closing[1]!.values.transform![0]).toBe('rotate(72deg)');
+ expect(closing[0]!.values.transform![0]).toBe('rotate(72deg)');
  opening.forEach(call => call.options.onComplete?.());
  expect(f.root.dataset.actionsAnimating).toBe('true');
  expect(f.items.every(item => item.inert)).toBe(true);
@@ -104,7 +136,6 @@ test('unbind during the stagger stops pending controls and rejects late completi
 
 test('crossing the mobile breakpoint settles the current target and releases layout styles', () => {
  const f = fixture(); f.set(true);
- f.root.style.paddingTop = '27px';
  f.window.innerWidth = 1024;
  f.window.dispatchEvent(new f.window.Event('resize'));
  expect(f.calls.every(call => call.stopped)).toBe(true);

@@ -8,6 +8,13 @@ function fixture(count = 2) {
  return {window, root: window.document.querySelector('article')! as unknown as HTMLElement};
 }
 const tick = () => new Promise(resolve => setTimeout(resolve, 0));
+test('gallery image padding follows safe-area changes without reopening', () => {
+ let insets = { top: 59, bottom: 34, left: 0, right: 0 };
+ const options = createGalleryLightboxOptions(false, () => insets);
+ expect(options.paddingFn?.({ x: 390, y: 844 }, {}, 0)).toEqual({ top: 123, bottom: 134, left: 24, right: 24 });
+ insets = { top: 0, bottom: 21, left: 44, right: 44 };
+ expect(options.paddingFn?.({ x: 844, y: 390 }, {}, 0)).toEqual({ top: 64, bottom: 121, left: 68, right: 68 });
+});
 test('only ordinary image clicks request the module and open the selected slide', async () => {
  const {window, root} = fixture(); let loads = 0; let selected = -1;
  bindGalleryLightbox(root, {load: async()=>{loads++; return {open:(_items,index)=>{selected=index; return ()=>{};}};}, navigate:()=>{}, reducedMotion:()=>false});

@@ -21,8 +21,19 @@ export function createHeaderActionsMotion(root: HTMLElement, run: HeaderAnimate 
  // Small DOM fixtures/older cached markup can still use the semantic controller.
  if (!icon) return { set() {}, destroy() {} };
  const mobile = window.matchMedia('(max-width: 767px)');
- const elements = [root, icon, ...items];
- const styles = ['paddingTop', 'transform', 'opacity'] as const;
+ const inner = root.closest<HTMLElement>('.header-inner');
+ const name = inner?.querySelector<HTMLElement>('.header-name-link');
+ const measure = () => {
+  if (!inner || !name) return;
+  const css = window.getComputedStyle(inner);
+  const available = inner.clientWidth - (parseFloat(css.paddingLeft) || 0) - (parseFloat(css.paddingRight) || 0);
+  root.dataset.actionsCrowded = String(name.offsetWidth + root.offsetWidth + 8 > available);
+ };
+ // Font loading, text zoom and orientation changes can all change the fit.
+ const observer = typeof window.ResizeObserver === 'function' ? new window.ResizeObserver(measure) : null;
+ if (inner && name) [inner, name, root].forEach(element => observer?.observe(element));
+ const elements = [icon, ...items];
+ const styles = ['transform', 'opacity'] as const;
  let controls: { stop(): void }[] = [];
  let revision = 0;
  let target = false;
@@ -48,6 +59,7 @@ export function createHeaderActionsMotion(root: HTMLElement, run: HeaderAnimate 
   delete root.dataset.actionsAnimating;
  };
  const set = (open: boolean, instant: boolean) => {
+  measure();
   stop();
   target = open;
   // Keyboard activation/Tab, hints, BFCache, reduced motion and missing WAAPI all
@@ -57,7 +69,6 @@ export function createHeaderActionsMotion(root: HTMLElement, run: HeaderAnimate 
   const visible = items.filter(item => !item.hidden && window.getComputedStyle(item).display !== 'none');
   let pending = 0;
   const tween = (element: HTMLElement, property: typeof styles[number], to: string, options: Options, done?: () => void) => {
-   // WAAPI keyframe properties must be camelCase (hyphenated padding is ignored).
    const from = window.getComputedStyle(element)[property];
    pending++;
    controls.push(run(element, { [property]: [from, to] }, {
@@ -71,10 +82,6 @@ export function createHeaderActionsMotion(root: HTMLElement, run: HeaderAnimate 
   };
   root.dataset.actionsAnimating = 'true';
   panel.style.visibility = 'visible';
-  // No spring on layout: main content moves continuously, with no bounce or jump.
-  tween(root, 'paddingTop', mobile.matches && open ? '48px' : '0px', {
-   duration: .30, delay: open ? 0 : .08, ease: [.33, 0, .2, 1],
-  });
   tween(icon, 'transform', `rotate(${open ? 180 : 0}deg)`, {
    type: spring, duration: .42, bounce: .12,
   });
@@ -85,7 +92,7 @@ export function createHeaderActionsMotion(root: HTMLElement, run: HeaderAnimate 
    item.inert = true;
    item.setAttribute('aria-hidden', 'true');
    const wait = open ? delay(index, visible.length) : 0;
-   tween(item, 'transform', open ? 'translate(0px, 0px)' : `translate(16px, ${mobile.matches ? 8 : 0}px)`, {
+   tween(item, 'transform', open ? 'translate(0px, 0px)' : 'translate(16px, 0px)', {
     ...(open ? { type: spring, duration: .44, bounce: .16 } : { duration: .16, ease: 'easeOut' as const }),
     delay: wait,
    });
@@ -98,6 +105,6 @@ export function createHeaderActionsMotion(root: HTMLElement, run: HeaderAnimate 
  mobile.addEventListener('change', onBreakpoint);
  return {
   set,
-  destroy() { stop(); clear(); mobile.removeEventListener('change', onBreakpoint); },
+  destroy() { stop(); clear(); observer?.disconnect(); mobile.removeEventListener('change', onBreakpoint); },
  };
 }

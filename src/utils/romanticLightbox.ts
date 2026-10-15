@@ -1,5 +1,6 @@
 import type PhotoSwipe from 'photoswipe';
 import type { Padding, PhotoSwipeOptions, Point } from 'photoswipe';
+import { getSafeAreaInsets } from './safeArea';
 
 export const ROMANTIC_LIGHTBOX_ASPECT = 2 / 3;
 
@@ -40,11 +41,13 @@ export function isRomanticLightboxBackdropTarget(
 
 export function getRomanticLightboxLayout(
 	viewport: Pick<Point, 'x' | 'y'>,
+	safe: Padding = getSafeAreaInsets(),
 ): RomanticLightboxLayout {
 	const compact = viewport.x <= 720;
-	const side = compact ? 24 : Math.max(40, (viewport.x - 560) / 2);
-	const top = compact ? 28 : 48;
-	const bottom = compact ? 94 : 120;
+	// The proof is centered, so reserve the larger horizontal inset on both sides.
+	const side = (compact ? 24 : Math.max(40, (viewport.x - 560) / 2)) + Math.max(safe.left, safe.right);
+	const top = (compact ? 28 : 48) + safe.top;
+	const bottom = (compact ? 94 : 120) + safe.bottom;
 	const matte = compact ? 10 : 16;
 	const footerHeight = compact ? 64 : 72;
 	const availableWidth = Math.max(0, viewport.x - side * 2);

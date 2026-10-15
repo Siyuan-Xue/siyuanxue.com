@@ -12,7 +12,7 @@ html  {
 	--header-control-size: 2.25rem;
 	--header-pad-top: 1.25rem;
 	--header-pad-bottom: 0.75rem;
-	--header-height: calc(var(--header-pad-top) + var(--header-control-size) + var(--header-pad-bottom));
+	--header-height: calc(var(--safe-area-top) + var(--header-pad-top) + var(--header-control-size) + var(--header-pad-bottom));
 	-webkit-text-size-adjust: 100%;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -142,13 +142,16 @@ html[data-lang='zh'] .bio-para  {
 	display: flex;
 	flex-direction: column;
 	min-height: 100vh;
+	/* The canvas fills the screen; only readable content avoids the side cutouts. */
+	padding-left: var(--safe-area-left);
+	padding-right: var(--safe-area-right);
 	background-color: var(--bg);
 	color: var(--fg-body);
 }
 
 .page-main  {
 	flex: 1;
-	padding-bottom: 4rem;
+	padding-bottom: max(4rem, var(--safe-area-bottom));
 }
 
 .container  {
@@ -220,7 +223,9 @@ a:is(:hover, :focus-visible)  {
 	top: 0;
 	z-index: 20;
 	flex-shrink: 0;
-	padding: var(--header-pad-top) 0 var(--header-pad-bottom);
+	/* Draw the real theme background behind the status area instead of asking
+	 * Safari to extend a cached color outside the layout viewport. */
+	padding: calc(var(--header-pad-top) + var(--safe-area-top)) 0 var(--header-pad-bottom);
 	background-color: var(--bg);
 	/* Avoid Safari's cached solid edge tint; keep the header fully opaque.
 	 * A zero-radius filter changes sampling, not pixels. See the 2026-10-15 audit. */

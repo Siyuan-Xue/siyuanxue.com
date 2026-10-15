@@ -15,8 +15,7 @@ html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .
 .header-actions-panel[inert], .header-actions-row > [inert] { pointer-events: none; }
 
 @media (max-width: 767px) {
- /* base.css imports this file before its desktop html defaults. Keep every
-  * second-row width at 44px so the CSS endpoint matches Motion's 48px padding. */
+ /* Keep touch targets large; the expanded row shares the brand's existing line. */
  html:root { --header-control-size: 44px; }
  .header .header-inner { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0; align-items: start; }
  .header .header-name-link { grid-area: 1 / 1; min-height: var(--header-control-size); justify-self: start; align-self: start; }
@@ -27,15 +26,15 @@ html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .
   pointer-events: none;
  }
  .header-controls > * { pointer-events: auto; }
- .header-actions-row > * { transform: translate(16px, 8px); }
- html[data-header-hint='open'] .header-controls:not([data-actions-initialized]),
- .header-controls[data-actions-expanded='true'] { padding-top: calc(var(--header-control-size) + 4px); }
-}
-/* Six 44px targets = 264px; the 320px article has 280px available.
- * Remove gaps at the narrowest widths instead of shrinking targets or scrolling. */
-@media (max-width: 360px) {
  .header-actions-row { gap: 0; padding-right: 0; }
+ /* Before fonts/controllers arrive, an incoming open hint takes the safe endpoint.
+  * Once measured, only names that really collide yield to the controls. */
+ html[data-header-hint='open'] .header-inner:has(.header-controls:not([data-actions-initialized])) .header-name-link,
+ .header-inner:has(.header-controls:not([data-actions-crowded='false']):is([data-actions-expanded='true'], [data-actions-animating])) .header-name-link {
+  visibility: hidden;
+ }
 }
+/* Six 44px targets = 264px; the 320px article has 280px available. */
 /* No CSS transitions: Motion owns the visual layer. SSR/hash/reduced motion use
  * these endpoints directly, so streamed markup never animates on arrival. */
 /* Include SVG descendants: the site's global reduced-motion duration would
