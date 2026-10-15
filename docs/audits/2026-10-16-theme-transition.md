@@ -58,9 +58,13 @@ Safari 原生顶区仍有自己的取色与绘制流程。相同 100ms 只能使
 
 - **已更新：**主题源码、共享颜色、文章/聊天联动、测试、AGENTS、维护总览及本审计。
 - **不适用：**身份/域名/账号/仓库地址、媒体文件与清单、依赖/许可/锁文件、CI 配置、Nginx/helper、聊天 bridge、Hermes、微信、记忆服务、模型、secret 和备份。没有独立服务安装动作。
-- **待处理：**核对本次 Actions、两域名目标 SHA 后在下方记录；用户 iPhone 实机最终渐变观感尚未确认。
+- **待处理：**用户 iPhone 实机最终渐变观感尚未确认；桌面结果不代替真机验收。
 - **恢复：**通过 Git 撤销本轮产品提交并走原 Actions；须一起恢复主题脚本、调色板、文章和聊天引用，避免丢失脚注/强调色变量。无需存储迁移，已有 `color-mode` 和跨域状态格式不变。
 
 ## 发布记录
 
-待本轮自动提交推送后的实际发布结果。
+产品提交 [`109083d`](https://github.com/Siyuan-Xue/siyuanxue.com/commit/109083de26f9ec5139fc78401e202b96cec379b6) 已推送 `origin/main`。[Actions 38767262773](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38767262773) 最终成功：共享验证、发布及两域名资源校验、IndexNow 通知均通过。
+
+公网独立核对：`siyuanxue.com/__health` 与 `xuesiyuan.com/__health` 均为 `109083de26f9ec5139fc78401e202b96cec379b6`；首页语言分别为 `en` / `zh-CN`，旧 `/images/p-202.jpg` 均返回 410。两站正式 HTML 的主题引导、13 项颜色注册以及 `100ms / linear / 0s` 参数均已核对，未包含临时 probe 页面。
+
+本轮本地预览服务、测试标签页和视口覆盖已清理，工作区没有未提交产品改动。后续 `[skip ci]` 文档提交只记录验收，不改变上述生产静态版本。
