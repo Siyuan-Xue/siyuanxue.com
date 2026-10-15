@@ -13,6 +13,7 @@ async function checkAsset(root: string, path: string) {
 }
 function windowWithMedia(document: Document) {
  const window = document.defaultView!;
+ Object.defineProperty(window, 'location', { value: new URL('https://example.test/'), configurable: true });
  window.matchMedia = (() => ({ matches: false, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
  Object.defineProperty(window, 'scrollY', { value: 0, configurable: true });
  return window;
@@ -37,6 +38,64 @@ const variants = [
 const entryGallerySlugs = ['imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'family', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
 for (const v of variants) {
+ test(`${v.lang}: legacy redirect forwards the explicit in-memory hint even if storage cannot write`, async () => {
+  const { document } = parseHTML(await readFile(join(v.root, 'gallery/probfun/index.html'), 'utf8'));
+  const window = windowWithMedia(document);
+  Object.defineProperty(window, 'location', { value: new URL(`${v.origin}/gallery/probfun/#theme=dark`), configurable: true });
+  Object.defineProperty(window, 'history', { value: { state: null, replaceState() {} }, configurable: true });
+  const context = createContext({ document, window, localStorage: {
+   getItem: () => 'light', setItem() { throw new Error('QuotaExceededError'); },
+  }, matchMedia: () => ({ matches: false, addEventListener() {} }) });
+  for (const script of document.head.querySelectorAll('script:not([src]):not([type="application/ld+json"])')) runInContext(script.textContent ?? '', context);
+  expect(document.documentElement.classList.contains('u-mode-invert')).toBe(true);
+  expect(document.querySelector('meta[http-equiv="refresh"]')!.getAttribute('content')).toBe('0;url=/gallery/imathbook/#theme=dark');
+  expect(document.querySelector('link[rel="canonical"]')!.getAttribute('href')).toBe(v.origin + '/gallery/imathbook/');
+ });
+ test(`${v.lang}: every built head consumes the shared hint before applying stale storage`, async () => {
+  for (const file of await htmlFiles(v.root)) {
+   const { document } = parseHTML(await readFile(file, 'utf8'));
+   const window = windowWithMedia(document);
+   const url = new URL(`${v.origin}/?keep=yes#theme=dark`);
+   Object.defineProperty(window, 'location', { value: url, configurable: true });
+   const state = { preserved: true };
+   let cleaned = '';
+   Object.defineProperty(window, 'history', { value: { state, replaceState(nextState: unknown, _unused: string, path: string) { expect(nextState).toBe(state); cleaned = path; } }, configurable: true });
+   let saved = 'light';
+   const context = createContext({ document, window, localStorage: {
+    getItem() { throw new Error('Old preference must not be read'); },
+    setItem(key: string, value: string) { expect(key).toBe('color-mode'); saved = value; },
+   }, matchMedia: () => ({ matches: false, addEventListener() {} }) });
+   for (const script of document.head.querySelectorAll('script:not([src]):not([type="application/ld+json"])')) runInContext(script.textContent ?? '', context);
+   expect(saved).toBe('dark');
+   expect(cleaned).toBe('/?keep=yes');
+   expect(document.documentElement.classList.contains('u-mode-invert')).toBe(true);
+   expect(document.querySelector('meta[name="theme-color"]')!.getAttribute('content')).toBe('#1f1e1d');
+   expect(window.__siteTheme!.hintHref(document.querySelector('a.header-language-link')!.getAttribute('href')!)).toEndWith('#theme=dark');
+  }
+ });
+ test(`${v.lang}: all SEO URLs and build-time language links stay free of theme hints`, async () => {
+  for (const file of await htmlFiles(v.root)) {
+   const { document } = parseHTML(await readFile(file, 'utf8'));
+   const canonical = document.querySelector('link[rel="canonical"]')!.getAttribute('href')!;
+   const path = new URL(canonical).pathname;
+   expect(new URL(canonical).search).toBe('');
+   expect(new URL(canonical).hash).toBe('');
+   expect(document.querySelector('meta[property="og:url"]')!.getAttribute('content')).toBe(canonical);
+   const alternates = document.querySelectorAll('link[rel="alternate"][hreflang]');
+   expect(alternates).toHaveLength(3);
+   for (const [language, origin] of [['en', 'https://siyuanxue.com'], ['zh-CN', 'https://xuesiyuan.com'], ['x-default', 'https://siyuanxue.com']]) {
+    expect(document.querySelector(`link[hreflang="${language}"]`)!.getAttribute('href')).toBe(origin + path);
+   }
+   for (const node of document.querySelectorAll('link[rel="canonical"], link[hreflang], a.header-language-link')) {
+    const url = new URL(node.getAttribute('href')!);
+    expect(url.hash).toBe(''); expect(url.search).toBe('');
+   }
+   for (const schema of document.querySelectorAll('script[type="application/ld+json"]')) expect(schema.textContent).not.toContain('theme=');
+  }
+  for (const name of ['sitemap-index.xml', 'sitemap-0.xml', 'sitemap-images.xml', 'sitemap-videos.xml']) {
+   expect(await readFile(join(v.root, name), 'utf8')).not.toContain('theme=');
+  }
+ });
  test(`${v.lang}: every HTML page has a build-time language link to an existing route on the other site`, async () => {
   const other = variants.find(candidate => candidate !== v)!;
   const targetFiles = await htmlFiles(other.root);
@@ -235,7 +294,7 @@ for (const v of variants) {
  ] as const) {
   test(`${v.lang}: theme at first paint respects saved=${saved}, systemDark=${systemDark}`, async () => {
    const { document } = parseHTML(await readFile(join(v.root, 'index.html'), 'utf8'));
-   const context = createContext({ document, window: document.defaultView, localStorage: { getItem: () => saved }, matchMedia: () => ({ matches: systemDark, addEventListener() {} }) });
+   const context = createContext({ document, window: windowWithMedia(document), localStorage: { getItem: () => saved }, matchMedia: () => ({ matches: systemDark, addEventListener() {} }) });
    for (const script of document.head.querySelectorAll('script:not([src])')) {
     if (script.getAttribute('type') !== 'application/ld+json') runInContext(script.textContent ?? '', context);
    }

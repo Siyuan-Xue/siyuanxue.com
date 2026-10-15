@@ -1,16 +1,27 @@
 // Inlined in the head so the saved theme is applied before the first paint.
-(() => {
+// Receives the single themeHint implementation serialized by BaseHead.
+(hint) => {
  const root = document.documentElement;
  let themeColor = document.querySelector('meta[name="theme-color"]');
  const colorScheme = document.querySelector('meta[name="color-scheme"]');
  const systemTheme = matchMedia('(prefers-color-scheme: dark)');
  const preferredMode = () => systemTheme.matches ? 'dark' : 'light';
  let preference = null;
+ let unsavedPreference = false;
  const readPreference = () => {
+  if (unsavedPreference) return preference;
   try {
-   const saved = localStorage.getItem('color-mode');
-   return saved === 'dark' || saved === 'light' ? saved : null;
+   return hint.preference(localStorage.getItem('color-mode'));
   } catch { return preference; }
+ };
+ const savePreference = (mode) => {
+  preference = mode;
+  try { localStorage.setItem('color-mode', mode); unsavedPreference = false; }
+  catch { unsavedPreference = true; }
+ };
+ window.__siteTheme = {
+  getPreference: () => preference,
+  hintHref: (href) => hint.href(href, preference),
  };
 
  const syncButtons = () => {
@@ -35,17 +46,32 @@
    themeColor = next;
   }
   syncButtons();
+  document.dispatchEvent(new window.Event('site-theme-change'));
  };
 
- preference = readPreference();
+ const incoming = hint.parse(window.location.hash);
+ // An incoming explicit choice wins without reading/applying the origin's old value.
+ if (incoming) savePreference(incoming);
+ else preference = readPreference();
  applyTheme(preference ?? preferredMode());
+ if (incoming) {
+  const hash = hint.strip(window.location.hash);
+  try {
+   window.history.replaceState(window.history.state, '', window.location.pathname + window.location.search + hash);
+   // replaceState does not perform fragment scrolling. The target is not parsed yet.
+   document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.hash !== hash) return;
+    const id = hint.anchor(hash);
+    if (id) (document.getElementById(id) ?? document.getElementsByName(id)[0])?.scrollIntoView();
+   }, { once: true });
+  } catch {} // A restricted history API must not prevent theme controls from working.
+ }
  document.addEventListener('DOMContentLoaded', syncButtons, { once: true });
  document.addEventListener('click', (event) => {
   if (!event.target?.closest?.('[data-theme-toggle]')) return;
   const mode = root.classList.contains('u-mode-invert') ? 'light' : 'dark';
-  preference = mode; // Keep the manual override even if storage is unavailable.
+  savePreference(mode); // Keep the manual override even if storage is unavailable.
   applyTheme(mode);
-  try { localStorage.setItem('color-mode', mode); } catch {}
  });
  systemTheme.addEventListener('change', () => {
   if (preference === null) applyTheme(preferredMode());
@@ -56,4 +82,10 @@
   preference = readPreference();
   applyTheme(preference ?? preferredMode());
  });
-})();
+ // A choice in another tab on this origin also refreshes any open switch links.
+ window.addEventListener('storage', (event) => {
+  if (event.key !== 'color-mode' && event.key !== null) return;
+  preference = readPreference();
+  applyTheme(preference ?? preferredMode());
+ });
+}

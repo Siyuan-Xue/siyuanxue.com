@@ -1,5 +1,6 @@
 import { afterEach, expect, test } from 'bun:test';
 import { Window } from 'happy-dom';
+import { createThemeHint, type ThemePreference } from '../src/utils/themeHint';
 
 const browser = new Window({ url: 'https://example.test/chat/', settings: { device: { prefersReducedMotion: 'reduce' } } });
 browser.document.write('<!doctype html><html><head></head><body></body></html>');
@@ -90,6 +91,35 @@ function errorStream(code: string): Response {
 afterEach(() => {
   cleanup();
   browser.sessionStorage.clear();
+  delete (browser as unknown as globalThis.Window).__siteTheme;
+});
+
+test('chat binds the real language href on mount and theme changes without losing it on rerender', () => {
+  const hints = createThemeHint();
+  let preference: ThemePreference | null = 'dark';
+  (browser as unknown as globalThis.Window).__siteTheme = {
+    getPreference: () => preference,
+    hintHref: href => hints.href(href, preference),
+  };
+  const props = { copy, prompts, locale: 'en' as const, languageLink, fetcher: async () => uiStream('unused') };
+  const view = render(<ChatApp {...props} />);
+  const link = view.container.querySelector('a.header-language-link')!;
+  expect(link.getAttribute('href')).toBe(`${languageLink.href}#theme=dark`);
+  fireEvent.change(view.getByLabelText(copy.label), { target: { value: 'Keep this draft' } });
+  expect(link.getAttribute('href')).toBe(`${languageLink.href}#theme=dark`);
+  preference = 'light';
+  browser.document.dispatchEvent(new browser.Event('site-theme-change'));
+  expect(link.getAttribute('href')).toBe(`${languageLink.href}#theme=light`);
+  const fallback = { ...languageLink, href: 'https://xuesiyuan.com/' };
+  view.rerender(<ChatApp {...props} languageLink={fallback} />);
+  expect(link.getAttribute('href')).toBe(`${fallback.href}#theme=light`);
+  preference = null;
+  browser.document.dispatchEvent(new browser.Event('site-theme-change'));
+  expect(link.getAttribute('href')).toBe(fallback.href);
+  view.unmount();
+  preference = 'dark';
+  browser.document.dispatchEvent(new browser.Event('site-theme-change'));
+  expect(link.getAttribute('href')).toBe(fallback.href); // Listener was removed.
 });
 
 for (const locale of ['en', 'zh'] as const) {

@@ -24,6 +24,7 @@ import { ThinkingIndicator } from './ThinkingIndicator';
 import { chatChrome } from './chat-chrome';
 import { ChatHeaderActions } from './ChatHeaderActions';
 import type { LanguageSwitch } from '../../utils/langSwitch';
+import { bindThemeLink } from '../../utils/themeLink';
 import { site } from '../../data/site';
 import './chat.css';
 
@@ -79,12 +80,17 @@ export function ChatApp({ copy, prompts, locale, languageLink, fetcher = globalT
   const stopReason = useRef<'stopped' | 'interrupted'>('stopped');
   const messagesRef = useRef<UIMessage[]>([]);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const languageRef = useRef<HTMLAnchorElement>(null);
   const composeRef = useRef<HTMLDivElement>(null);
   const welcomeComposeRect = useRef<DOMRect | null>(null);
   const isMobile = useMedia('(max-width: 600px), (pointer: coarse)');
   const reduceMotion = useMedia('(prefers-reduced-motion: reduce)');
   const chrome = chatChrome[locale];
   const streamTranslations = useMemo(() => ({ copyCode: copy.codeCopy, copied: copy.copied }), [copy.codeCopy, copy.copied]);
+
+  useLayoutEffect(() => {
+    if (languageRef.current) return bindThemeLink(languageRef.current, languageLink.href);
+  }, [languageLink.href]);
 
   const { messages, sendMessage, regenerate, stop, status, clearError, setMessages } = useChat({
     transport,
@@ -263,7 +269,7 @@ export function ChatApp({ copy, prompts, locale, languageLink, fetcher = globalT
             <button aria-label={chrome.newChat} className="header-control-button" data-close-actions="" onClick={newChat} title={chrome.newChat} type="button"><Plus aria-hidden="true" size={20} strokeWidth={1.8} /></button>
             <a aria-label={chrome.home} className="header-control-button header-home-link" href="/" title={chrome.home}><Home aria-hidden="true" size={20} strokeWidth={1.8} /></a>
             <button aria-label={chrome.dark} aria-pressed="false" className="header-control-button xue-theme-toggle" data-theme-toggle="" data-label-dark={chrome.dark} data-label-light={chrome.light} title={chrome.dark} type="button"><Sun aria-hidden="true" className="xue-theme-sun" size={20} strokeWidth={1.8} /><Moon aria-hidden="true" className="xue-theme-moon" size={20} strokeWidth={1.8} /></button>
-            <a className="header-control-button header-language-link" href={languageLink.href} hrefLang={languageLink.lang} lang={languageLink.lang} aria-label={languageLink.label} title={languageLink.label}><Languages aria-hidden="true" size={20} strokeWidth={1.8} /></a>
+            <a ref={languageRef} className="header-control-button header-language-link" href={languageLink.href} hrefLang={languageLink.lang} lang={languageLink.lang} aria-label={languageLink.label} title={languageLink.label}><Languages aria-hidden="true" size={20} strokeWidth={1.8} /></a>
           </ChatHeaderActions>
         </div>
       </header>

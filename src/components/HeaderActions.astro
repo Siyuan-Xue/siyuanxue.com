@@ -12,5 +12,7 @@ import { site } from '../data/site';
 </div>
 <script>
  import { bindHeaderActions } from '../utils/headerActions';
+ import { bindThemeLink } from '../utils/themeLink';
  for (const root of document.querySelectorAll<HTMLElement>('[data-header-actions]')) bindHeaderActions(root);
+ for (const link of document.querySelectorAll<HTMLAnchorElement>('a.header-language-link')) bindThemeLink(link, link.getAttribute('href')!);
 </script>

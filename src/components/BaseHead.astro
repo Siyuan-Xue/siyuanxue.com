@@ -4,6 +4,7 @@ import { locale, localeOrigin, t } from '../i18n/locale';
 import '../styles/base.css';
 import 'site-fonts';
 import themeScript from '../scripts/theme.js?raw';
+import { inlineThemeScript } from '../utils/themeHint';
 import { imageMedia } from '../utils/media';
 import { getDiscoveryPage } from '../utils/discoveryContent';
 const page = await getDiscoveryPage(Astro.url.pathname);
@@ -62,7 +63,7 @@ const schema = galleryImages?.length
 <!-- One unconditional theme color: manual preference can differ from OS media queries. -->
 <meta name="theme-color" content="#f0eee6" data-light="#f0eee6" data-dark="#1f1e1d" />
 <meta name="color-scheme" content="light" />
-<script is:inline set:html={themeScript} />
+<script is:inline set:html={inlineThemeScript(themeScript)} />
 <!-- With scripting disabled, expose the real navigation links before first paint. -->
 <noscript><style is:global>
  .header-controls .header-actions-panel { max-width: none; opacity: 1; transform: none; visibility: visible; overflow: visible; }
@@ -77,7 +78,17 @@ const schema = galleryImages?.length
 <meta name="description" content={description} />
 {baiduSiteVerification && <meta name="baidu-site-verification" content={baiduSiteVerification} />}
 {noindex && <meta name="robots" content="noindex, follow" />}
-{page.kind === 'redirect' && <meta http-equiv="refresh" content={`0;url=${new URL(canonical).pathname}`} />}
+{page.kind === 'redirect' && <>
+ <meta http-equiv="refresh" content={`0;url=${new URL(canonical).pathname}`} />
+ <script is:inline>
+  // Carry an in-memory choice through the legacy same-origin redirect too.
+  // Run immediately after the refresh meta, before its navigation can start.
+  (() => {
+   const refresh = document.querySelector('meta[http-equiv="refresh"]');
+   if (refresh && window.__siteTheme) refresh.content = `0;url=${window.__siteTheme.hintHref(refresh.content.slice('0;url='.length))}`;
+  })();
+ </script>
+</>}
 <link rel="canonical" href={canonical} />
 {Object.entries(page.alternates).map(([language, url]) => <link rel="alternate" hreflang={language} href={url} />)}
 <link rel="alternate" type="application/rss+xml" title={t(site.title)} href="/rss.xml" />

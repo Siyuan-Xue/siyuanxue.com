@@ -92,3 +92,7 @@ Node **v22.23.3**（fnm；使用独立临时 `XDG_STATE_HOME`，解决并行启�
 - **不适用：**身份/GitHub 资料、文章正文/媒体/灯箱、域名/DNS/TLS、依赖/锁文件/CI/secret、nginx/server/ops、bridge/Hermes/微信/模型/记忆/数据存储/备份。本轮无上述资源改动，无媒体上传、服务安装或数据迁移。
 - **待处理 / 未验证：**实体 Safari/iOS/Android、真实软键盘和屏幕阅读器，以及发布后的真实跨域点击、Actions 与两域名目标 SHA；本轮明确不提交、不推送、不部署，也未发送生产模型聊天请求。
 - **恢复：**仅按本轮 diff 恢复 `LanguageSwitch.astro`、`ChatApp.tsx`、`header-actions.css`、`langSwitch.ts` 及对应测试/当前维护约定，可回到 `dc3078b` 的文字语言切换。保留初次折叠实现、历史审计和本地备份；无需服务或数据回滚。
+
+## 2026-10-15 后续：跨域主题提示
+
+用户已明确授权启用此前可选的主题传递：语言链接在浏览器中追加严格的 `#theme=light|dark`，只传明确选择，构建输出保持干净；接收端在 head 首帧前应用并清理提示。唯一 helper、存储异常修复、锚点规则、SEO 核对、测试与本地双 origin 证据见[跨域主题审计](2026-10-15-theme-across-domains.md)。上文“不传主题”和“可选未启用”为当时阶段记录；不新增自动语言重定向、cookies 或展开记忆。
