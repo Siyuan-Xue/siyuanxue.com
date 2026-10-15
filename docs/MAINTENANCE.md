@@ -2,6 +2,8 @@
 
 维护负责人：Siyuan Xue / 薛思远。整理日期：2026-09-16。
 
+**2026-10-16 full-site audit and upgrade (branch `audit/full-site-upgrade-2026-10-16`, pull request, not deployed):** Findings, severities and every fix-or-defer decision are in the [full-site audit](audits/2026-10-16-full-site-audit.md). Dependencies removed: `gsap` (lightbox and chat motion now use the Web Animations API and SVG `<animate>`), `marked` and `entities` (only the deleted pre-React chat used them), and `@astrojs/sitemap` (unused; the site writes its own sitemaps). `package.json` and `bun.lock` changed only by removal. Interface copy now lives in `src/data/site.ts` (`ui`, `gallery`, `chat`). Inactive article TOC entries use opacity 0.65 instead of the reference's 0.5 to meet WCAG AA, guarded by `tests/contrast.test.ts`. Header controls are 44px on any coarse pointer. The gallery lightbox fades (200/160ms; instant under reduced motion). Fixed-language domains, the hash-hint state, the Safari theme-colour logic, the header Motion spring and the 100ms theme fade are unchanged. Validation, screenshots and the iPhone checklist are in the pull request; real iPhone Safari is still unverified. Recovery: revert the branch's commits; there are no server, storage or CI-variable changes. Pending: translating this file and the older audits to English (see audit item 9.5).
+
 **2026-10-16 主题 100ms 渐变：**用户在确认基础顶色已修复后，明确要求网页明暗也渐变。共享调色板现以 `100ms linear / 0s delay` 插值背景、文字、边框、聊天强调色及脚注背景；首次加载/hash/BFCache、reduced-motion 和打印即时应用。主题状态、Safari meta 与跨域提示不延迟；文章链接移除重复的 200ms 颜色过渡。更新入口、逐帧证据、Apple/WebKit 来源、恢复和真机边界见[本轮审计](audits/2026-10-16-theme-transition.md)。本机检查、双语构建、275 项测试及桌面 Safari 已验证；[Actions 38767262773](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38767262773) 全部成功，两域名完整 SHA/固定语言/旧照片拒绝及正式 100ms 主题代码均已核对。生产静态版本为 `109083de26f9ec5139fc78401e202b96cec379b6`，后续 `[skip ci]` 文档提交不改变该版本。独立服务、媒体、依赖、身份及 CI 配置不适用。以下“无颜色过渡”为此前版本事实。
 
 **2026-10-15 用户确认顶色修复与时序续查：**用户确认 `0d7ae91` 已解决 iOS 27 普通 Safari 的颜色同步问题，另报告顶栏与主页变色有先后差异。源码与正式站计算样式确认网站主题同步执行、背景颜色无过渡/延迟，header 的 160ms 仅控制 top 显隐；WebKit 原生 `WKColorExtensionView` 的背景动画持续 100ms，可能解释原生区稍后完成变色，但不能当作用户设备精确实测值。本轮只更新文档、保留现有主题代码；基础明暗已获真机确认，完整场景与逐帧时差尚未全部验收。依据、代码提交入口、验证边界和恢复见[时序审计](audits/2026-10-15-safari-theme-timing.md)。以下“待复验”为较早记录；生产静态版本继续为 `0d7ae91780b8359ddbdfcfabf5877de0bd91d691`，本轮 `[skip ci]` 不触发重新发布。
@@ -95,9 +97,9 @@
 
 源码入口：[站点资料](../src/data/site.ts)、[页面元信息](../src/components/BaseHead.astro)、[构建脚本](../scripts/build.mjs)、[依赖和命令](../package.json)。文章按 `src/content/essays/<slug>/{en,zh}.md` 或 `src/content/posts/<slug>/{en,zh}.md` 配对。两语言必须一起发布。
 
-运行要求以 `package.json`、`bun.lock` 和工作流为准；本次基线为 Bun 1.3.14、Node ≥22.12。Astro 静态生成页面，聊天单独使用 React/AI SDK；PhotoSwipe/GSAP 按需加载，字体本地托管。无需为了维护另外引入 CMS。
+运行要求以 `package.json`、`bun.lock` 和工作流为准；本次基线为 Bun 1.3.14、Node ≥22.12。Astro 静态生成页面，聊天单独使用 React/AI SDK；PhotoSwipe 按需加载，字体本地托管。无需为了维护另外引入 CMS。
 
-**2026-10-11 用户更新媒体维护约定：**图片、视频和派生缩略图通过原生 SSH/rsync 直传服务器，不再进入当前 Git 源码或 CI 静态包；Git 仅保存 `src/data/media.json` 的资源 ID、哈希地址、尺寸、格式、大小与摘要。所有现有栅格图已迁移，正文和代码继续使用原 Actions 双语发布。提示词与生成依据仍放在对应审计记录；本机忽略目录 `media-local/` 保存素材和派生文件，临时预览图、浏览器缓存和工具会话不是备份。升级 PhotoSwipe、GSAP、Lucide、Fontsource 或适配的 AI Elements 代码时，一并检查版本、许可证和归属说明。
+**2026-10-11 用户更新媒体维护约定：**图片、视频和派生缩略图通过原生 SSH/rsync 直传服务器，不再进入当前 Git 源码或 CI 静态包；Git 仅保存 `src/data/media.json` 的资源 ID、哈希地址、尺寸、格式、大小与摘要。所有现有栅格图已迁移，正文和代码继续使用原 Actions 双语发布。提示词与生成依据仍放在对应审计记录；本机忽略目录 `media-local/` 保存素材和派生文件，临时预览图、浏览器缓存和工具会话不是备份。升级 PhotoSwipe、Lucide、Fontsource 或适配的 AI Elements 代码时，一并检查版本、许可证和归属说明。
 
 2026-10-08 悬停反馈调整：共享 `src/styles/tokens.css` 中的 Claude 粘土色系；悬停统一使用 `transition: none` 即时响应（已按后续要求取消80ms），覆盖首页、文章目录/正文与聊天控件；明暗模式分别使用可读的交互色，键盘焦点同步反馈。已通过[生产Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/37717307878)发布 `8d902f66a258e551fe414361160241bafc0af504`，两域名目标SHA、固定语言、HTTP/www跳转与旧照片410检查通过；更新、验收边界与恢复见[悬停反馈审计](audits/2026-10-08-hover-feedback.md)。
 

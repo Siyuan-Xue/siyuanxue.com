@@ -117,3 +117,33 @@ All verified by existing tests and the rendered build: build-time language links
 ## Out of scope
 
 Deployment workflow, secrets, DNS, server configuration, Hermes and the chat bridge, and media storage. Real iPhone Safari behaviour cannot be verified from this machine; see the manual checklist in the pull request.
+
+## Resolution (same branch, 2026-10-16)
+
+| Commit | Audit items | Change |
+|---|---|---|
+| `Remove the unused vanilla chat and dead exports` | 1.1, 1.6, 1.7, 9.1 | Deleted `src/utils/chat{,-ui,-session,-markdown}.ts` and their tests. Removed `marked`, `entities` and `@astrojs/sitemap`. Merged the reduced-motion blocks. |
+| `Centralize interface copy and locale pairing` | 1.3–1.6, 3.6, 3.7 | Interface labels now live in `site.ts` (`ui`, `gallery`, `chat`). One `groupLocalePairs()`, one `pairGalleryPages()`, one `languageTag()`. The 404 and redirect titles use the title style. WIP is not a live region. The gallery binds once. |
+| `Drive motion with native APIs and drop GSAP` | 1.2, 4.1–4.3, 7.1 | The lightbox uses Web Animations with the spec unchanged. The thinking ribbon uses SVG animation. The gallery lightbox fades 200/160ms. `gsap` removed. |
+| `Meet WCAG AA contrast and 44px touch targets` | 2.1, 2.11, 3.1–3.5, 3.9, 6.2 | TOC opacity 0.65, muted captions and chat text, a new contrast test. 44px header controls on coarse pointers; chat hit areas and chips on touch; list-link row targets. `svh` heights, balanced titles, `text-wrap: pretty` bio. |
+| `Add a self link and lastBuildDate to the RSS feeds` | 8.2 | Feeds are built from `getBlog()` with `atom:link rel="self"` and a content-derived `lastBuildDate`. |
+| `Stop phone pages scrolling sideways past the main column` | new, found in verification | Pre-existing: once the portrait was revealed, the card reached 2–11px past the edge at 320–430px (Chromium and WebKit), and Safari's `hanging-punctuation` made the zh gallery 1px wide. `.page-main { overflow-x: clip }`. |
+
+Deliberate deviation from the 2026-10-15 Dario reference: inactive TOC entries use opacity 0.65 instead of 0.5 so they meet WCAG AA. Essay captions use the muted token instead of a 50% ink mix.
+
+Verification on the final branch head (macOS; Python 3.12 via uv for the Python-backed tests):
+
+- `bun run check`: 0 errors, 0 warnings, 0 hints.
+- `bun run test`: 261 pass, 0 fail.
+- Python unit suites from `ops/verify.sh`: all OK. Six of the seven ops shell tests pass; `test-nginx-config.sh` needs Nginx, which is not installed locally, and is left to CI.
+- `bun run build` (both locales): 0 warnings, 20 audited routes per locale, 51 output checks pass. `bun run test:gallery`: pass.
+- Rendered both locales at 320/360/390/768/1280px, light and dark, home/essay/gallery/chat, in Chromium and WebKit (160 captures). All had 0px horizontal overflow, no wrapped top-bar row (collapsed or expanded) and no console errors.
+- Interaction checks:
+  - The portrait lightbox opens with the full sequence and closes on Escape, returning focus (Chromium).
+  - The gallery lightbox fades in over about 200ms.
+  - The chat indicator animates natively with no GSAP request, and is static under reduced motion.
+  - `#theme=dark&header=open` on a light system paints dark before `<body>` exists, then cleans the hash and keeps the expanded row.
+  - On a coarse-pointer tablet the header controls are 44×44px.
+- JS (gzip, full static import graph): chat page 322.1 KB → 295.9 KB; home 8.5 KB, essay 7.1 KB (unchanged); the header chunk stays at 6.9 KB.
+
+Still manual: real iPhone Safari (toolbar tint in both directions, safe areas, overscroll, keyboard with the chat composer), and the pre-existing WebKit focus-return difference after closing the portrait lightbox in Playwright's WebKit build. The deferred items above stay open.
