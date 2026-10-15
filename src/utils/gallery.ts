@@ -1,7 +1,8 @@
 import type { ImageMedia, VideoMedia } from './media';
 import { z } from 'astro/zod';
 import type { Locale } from '../i18n/types';
-import type { LinkItem } from '../data/site';
+import { WIP_HREF, type LinkItem } from '../data/site';
+import { groupLocalePairs, requireBoth } from './contentPairs';
 export type GalleryImage = { src: ImageMedia; alt: string; caption: string };
 export type GalleryVideo = { src: VideoMedia; poster: ImageMedia; label: string; caption: string; duration?: number; uploadDate?: string };
 export type GalleryComparison = { title: string; description: string };
@@ -18,20 +19,11 @@ export function createGallerySchema<T extends z.ZodType, V extends z.ZodType = z
  }).refine(({ imageSections, images }) => imageSections.every((section, index) => section.start < images.length && (index === 0 ? section.start === 0 : section.start > imageSections[index - 1].start)), { path: ['imageSections'], message: 'Image sections must partition images in order, starting at zero.' });
 }
 export function pairGalleries<T extends { id: string; data: GalleryData }>(entries: T[], language: Locale, includeDrafts = false): { slug: string; entry: T }[] {
- const groups = new Map<string, Partial<Record<Locale, T>>>();
- for (const entry of entries) {
-  const match = /^([a-z0-9]+(?:-[a-z0-9]+)*)\/(en|zh)$/.exec(entry.id);
-  if (!match) throw new Error(`Invalid gallery locale id: ${entry.id}`);
-  const [, slug, lang] = match;
-  const pair = groups.get(slug) ?? {};
-  if (pair[lang as Locale]) throw new Error(`Duplicate gallery locale entry: ${entry.id}`);
-  pair[lang as Locale] = entry;
-  groups.set(slug, pair);
- }
  const result: { slug: string; entry: T }[] = [];
- for (const [slug, { en, zh }] of groups) {
-  if (!includeDrafts && (en?.data.draft || zh?.data.draft)) continue;
-  if (!en || !zh) throw new Error(`Missing translation for gallery ${slug}`);
+ for (const pair of groupLocalePairs(entries, 'gallery', '[a-z0-9]+(?:-[a-z0-9]+)*')) {
+  if (!includeDrafts && (pair.en?.data.draft || pair.zh?.data.draft)) continue;
+  const { slug } = pair;
+  const { en, zh } = requireBoth(pair, 'gallery');
   if (en.data.category !== zh.data.category) throw new Error(`Mismatched gallery category for ${slug}`);
   if (en.data.order !== zh.data.order) throw new Error(`Mismatched gallery order for ${slug}`);
   if (Boolean(en.data.preview) !== Boolean(zh.data.preview)) throw new Error(`Mismatched gallery preview status for ${slug}`);
@@ -49,6 +41,15 @@ export function pairGalleries<T extends { id: string; data: GalleryData }>(entri
  }
  return result.sort((a, b) => a.entry.data.order - b.entry.data.order || a.slug.localeCompare(b.slug));
 }
+/** The designated layout sample is public for review but never indexed; ordinary drafts stay private. */
+export const GALLERY_PREVIEW_SLUG = 'layout-preview';
+export const isGalleryPreview = (entry: { id: string }) => entry.id.startsWith(`${GALLERY_PREVIEW_SLUG}/`);
+export function pairGalleryPages<T extends { id: string; data: GalleryData }>(entries: T[], language: Locale, includeDrafts = false) {
+ return [
+  ...pairGalleries(entries.filter(entry => !isGalleryPreview(entry)), language, includeDrafts),
+  ...pairGalleries(entries.filter(isGalleryPreview), language, true),
+ ];
+}
 export function galleryHomeItems<T extends { data: GalleryData }>(sources: LinkItem[], galleries: { slug: string; entry: T }[], category: GalleryData['category'], language: Locale): GalleryHomeItem[] {
  const available = galleries.filter(item => item.entry.data.category === category && !item.entry.data.draft);
  const bySlug = new Map(available.map(item => [item.slug, item]));
@@ -57,7 +58,7 @@ export function galleryHomeItems<T extends { data: GalleryData }>(sources: LinkI
  const result = sources.flatMap<GalleryHomeItem>(source => {
   const gallery = source.gallerySlug ? bySlug.get(source.gallerySlug) : undefined;
   if (gallery) { if (seen.has(gallery.slug)) return []; seen.add(gallery.slug); return [published(gallery)]; }
-  return [{ title: source.title[language], href: '/wip/', venue: source.venue?.[language], external: false }];
+  return [{ title: source.title[language], href: WIP_HREF, venue: source.venue?.[language], external: false }];
  });
  for (const gallery of available) if (!seen.has(gallery.slug)) { result.push(published(gallery)); seen.add(gallery.slug); }
  return result;

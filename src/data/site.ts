@@ -24,8 +24,10 @@ export type SecretPortrait = {
 	turnOffLabel: Bi;
 };
 
+const name = bi('Siyuan Xue', '薛思远');
+
 export const site = {
-	name: bi('Siyuan Xue', '薛思远'),
+	name,
 	/** Short brand for <title> fallback */
 	title: bi('Siyuan Xue', '薛思远'),
 	homeTitle: bi('Siyuan Xue（薛思远）｜Personal Website', '薛思远（Siyuan Xue）｜个人网站'),
@@ -35,23 +37,51 @@ export const site = {
 		'薛思远（Siyuan Xue）的个人网站。北京邮电大学智能科学与技术专业的学生，热衷于探索未知，追求极致与完美，对产品与技术倾注热情。',
 	),
 
+	/** Interface copy. Every visible or accessible label is authored here as an en/zh pair. */
 	ui: {
 		showActions: bi('Show actions', '展开操作'),
 		hideActions: bi('Hide actions', '收起操作'),
 		backToTop: bi('Back to top', '回到顶部'),
+		home: bi('Home', '首页'),
+		backHome: bi('Back home', '返回首页'),
 		blog: bi('Blog', '博客'),
-		essays: bi('Essays', '长文'),
-		posts: bi('Short posts', '短记'),
 		projects: bi('Projects', '项目'),
 		research: bi('Research', '研究'),
-		externalWriting: bi('Writing', '写作与表达'),
 		appearances: bi('Interests', '兴趣爱好'),
-		switchToEnglish: bi('Switch to English', '切换到英文'),
-		switchToChinese: bi('Switch to Chinese', '切换到中文'),
+		inPreparation: bi('In preparation', '整理中'),
 		switchToLight: bi('Switch to light mode', '切换到浅色模式'),
 		switchToDark: bi('Switch to dark mode', '切换到深色模式'),
+		contents: bi('Contents', '目录'),
 		openContents: bi('Open contents', '打开目录'),
 		closeContents: bi('Close contents', '关闭目录'),
+		loading: bi('Loading', '加载中'),
+		notFound: bi('Page not found', '页面未找到'),
+		notFoundDetail: bi('This page does not exist.', '这个页面不存在。'),
+		underConstruction: bi('Under construction…', '正在施工...'),
+		redirecting: bi('Redirecting', '正在跳转'),
+		imageLoadError: bi('The image could not be loaded. Please try again.', '图片加载失败，请重试。'),
+	},
+
+	gallery: {
+		role: bi('My role', '本人角色'),
+		videos: bi('Videos', '视频'),
+		simulationResults: bi('Simulation results', '模拟器结果'),
+		videoFallback: bi('Your browser cannot play this video. Use the download link below.', '浏览器无法播放此视频时，可使用下方链接下载。'),
+		downloadVideo: bi('Download video', '下载视频'),
+		realRobot: bi('Real robot experiments', '真机实验'),
+		related: bi('Related material', '相关资料'),
+	},
+
+	chat: {
+		title: bi('Chat with xue', '与小薛聊聊'),
+		intro: bi(
+			`I’m ${name.en}’s AI assistant—he’s my Boss. Welcome! Ask about his projects and writing, or just stay for a chat. A little wit comes with the welcome.`,
+			`我是${name.zh}的 AI 助手，他是我的 Boss。聊项目、读文章，或者随便坐坐——正经介绍，偶尔贫嘴。`,
+		),
+		newChat: bi('New chat', '新对话'),
+		starters: bi('Conversation starters', '从这里开始聊'),
+		disclaimer: bi('xue is AI and can make mistakes. Please double-check responses.', '小薛是 AI，也可能出错。请核实重要信息。'),
+		assistant: bi('AI assistant', 'AI 助手'),
 	},
 
 	bio: {
@@ -141,8 +171,6 @@ export const site = {
 			external: false,
 		},
 	] satisfies LinkItem[],
-
-	externalWriting: [] as LinkItem[],
 
 	appearances: [
 		{

@@ -1,12 +1,12 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
-import { locale } from '../i18n/locale';
+import { languageTag, locale } from '../i18n/locale';
 interface Props { htmlClass?: string; showTocToggle?: boolean; hasToc?: boolean; showHeader?: boolean }
 const { htmlClass = '', showTocToggle = false, hasToc = false, showHeader = true } = Astro.props;
 ---
 <!doctype html>
-<html id="top" lang={locale === 'zh' ? 'zh-CN' : 'en'} data-lang={locale} class={htmlClass}>
+<html id="top" lang={languageTag()} data-lang={locale} class={htmlClass}>
  <head><BaseHead /></head>
  <body class:list={[hasToc && 'has-toc']}>
   <div class="page-wrapper">
