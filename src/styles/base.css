@@ -223,14 +223,20 @@ a:is(:hover, :focus-visible)  {
 	top: 0;
 	z-index: 20;
 	flex-shrink: 0;
-	/* Draw the real theme background behind the status area instead of asking
-	 * Safari to extend a cached color outside the layout viewport. */
+	/* Extend the page background into the safe area while keeping controls clear. */
 	padding: calc(var(--header-pad-top) + var(--safe-area-top)) 0 var(--header-pad-bottom);
 	background-color: var(--bg);
-	/* Avoid Safari's cached solid edge tint; keep the header fully opaque.
-	 * A zero-radius filter changes sampling, not pixels. See the 2026-10-15 audit. */
+	/* Mac/iPad can retain a solid edge tint after interaction. A zero-radius
+	 * filter avoids that path without changing the opaque pixels. */
 	-webkit-backdrop-filter: blur(0px);
 	backdrop-filter: blur(0px);
+}
+
+/* iPhone resamples the edge after interaction. Even blur(0px) prevents
+ * WebKit from using this live background color. See the iOS 27 tint audit. */
+:root[data-header-tint='live'] .header {
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
 }
 
 .header-inner  {

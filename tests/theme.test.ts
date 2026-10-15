@@ -12,8 +12,8 @@ const styles = ['theme-colors', 'tokens', 'base'].map(name => readFileSync(new U
 const windows: Window[] = [];
 afterEach(() => { for (const window of windows.splice(0)) window.happyDOM.abort(); });
 
-function fixture(saved: string | null = null, systemDark = false, blocked: boolean | 'write' = false, hash = '', historyBlocked = false) {
- const window = new Window({ url: `https://example.test/essay/a/?keep=yes${hash}` });
+function fixture(saved: string | null = null, systemDark = false, blocked: boolean | 'write' = false, hash = '', historyBlocked = false, userAgent = '') {
+ const window = new Window({ url: `https://example.test/essay/a/?keep=yes${hash}`, settings: { navigator: { userAgent } } });
  windows.push(window);
  const { document } = window;
  document.head.innerHTML = head.match(/<meta name="(?:theme-color|color-scheme)"[^>]*>/g)!.join('') + `<style>${styles}</style>`;
@@ -212,16 +212,21 @@ test('invalid preferences follow system changes instead of pinning a theme', () 
  f.changeSystem(true); expectTheme(f, true);
 });
 
-test('header retains its opaque theme background and sticky layout with the sampling workaround', () => {
- const f = fixture(); f.mount();
+for (const [device, userAgent, filter] of [
+ ['iPhone', 'Mozilla/5.0 (iPhone; CPU iPhone OS 27_0 like Mac OS X) AppleWebKit/605.1.15 Version/27.0 Mobile/15E148 Safari/604.1', 'none'],
+ ['Mac', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Version/27.0 Safari/605.1.15', 'blur(0px)'],
+ ['iPad', 'Mozilla/5.0 (iPad; CPU OS 27_0 like Mac OS X) AppleWebKit/605.1.15 Version/27.0 Mobile/15E148 Safari/604.1', 'blur(0px)'],
+ ['Android', 'Mozilla/5.0 (Linux; Android 16) AppleWebKit/537.36 Chrome/140.0.0.0 Mobile Safari/537.36', 'blur(0px)'],
+] as const) test(`${device} keeps an opaque sticky header with its platform-specific edge sampling`, () => {
+ const f = fixture(null, false, false, '', false, userAgent); f.mount();
  const header = f.document.querySelector('header')!;
- for (const dark of [false, true]) {
-  if (dark) f.toggle();
+ for (const dark of [true, false, true]) {
+  f.toggle();
   expectTheme(f, dark);
   const computed = f.window.getComputedStyle(header);
   expect(computed.position).toBe('sticky');
   expect(computed.top).toBe('0px');
-  expect(computed.backdropFilter).toBe('blur(0px)');
+  expect(computed.backdropFilter).toBe(filter);
  }
 });
 

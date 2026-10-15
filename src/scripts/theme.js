@@ -2,6 +2,10 @@
 // Receives the single themeHint implementation serialized by BaseHead.
 (hint) => {
  const root = document.documentElement;
+ // WebKit keeps resampling the top edge on iPhone, unlike Mac/iPad. Its
+ // native UI preference has no web feature query; scope the CSS exception
+ // by device, not viewport width (rotation and narrow iPads differ).
+ if (/\biPhone\b/.test(window.navigator.userAgent)) root.dataset.headerTint = 'live';
  const themeColors = Array.from(document.querySelectorAll('meta[name="theme-color"]'));
  const colors = themeColors[0].dataset;
  let overrideColor = null;
