@@ -1,5 +1,7 @@
+import { createHeaderActionsMotion, type HeaderActionsMotionFactory } from './headerActionsMotion';
+
 /** Shared by the static header and the hydrated chat header. No persisted state. */
-export function bindHeaderActions(root: HTMLElement): () => void {
+export function bindHeaderActions(root: HTMLElement, createMotion: HeaderActionsMotionFactory = createHeaderActionsMotion): () => void {
  const document = root.ownerDocument;
  const window = document.defaultView;
  const toggle = root.querySelector<HTMLButtonElement>('[data-actions-toggle]');
@@ -7,13 +9,17 @@ export function bindHeaderActions(root: HTMLElement): () => void {
  if (!window || !toggle || !panel) return () => {};
  const header = root.closest<HTMLElement>('header');
  const wide = window.matchMedia('(min-width: 1024px)');
+ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+ const motion = createMotion(root);
  let open = false;
- const setOpen = (next: boolean, returnFocus = false) => {
+ const setOpen = (next: boolean, returnFocus = false, instant = false) => {
   if (!next) {
    // Close the mobile TOC and release its main-content lock before hiding its button.
    document.dispatchEvent(new window.Event('headeractionsclose'));
    if (returnFocus || panel.contains(document.activeElement)) toggle.focus({ preventScroll: true });
   }
+  // Capture the current CSS/WAAPI frame before publishing the new CSS endpoint.
+  motion.set(next, instant || reduced.matches);
   open = next;
   root.dataset.actionsExpanded = String(open);
   if (header) header.dataset.actionsExpanded = String(open);
@@ -26,10 +32,11 @@ export function bindHeaderActions(root: HTMLElement): () => void {
   document.dispatchEvent(new window.Event('headeractionschange'));
  };
  const onToggle = (event: MouseEvent) => {
-  setOpen(!open);
+  setOpen(!open, false, event.detail === 0);
   if (open && event.detail === 0) panel.querySelector<HTMLElement>('a[href], button:not([hidden])')?.focus({ preventScroll: true });
  };
  const onKey = (event: KeyboardEvent) => {
+  if (event.key === 'Tab' && open && root.contains(document.activeElement)) motion.set(open, true);
   if (event.key !== 'Escape' || !open || event.defaultPrevented) return;
   const toc = document.querySelector('#site-toc');
   const tocOpen = document.querySelector('[data-toc-toggle]')?.getAttribute('aria-expanded') === 'true';
@@ -47,8 +54,9 @@ export function bindHeaderActions(root: HTMLElement): () => void {
   const target = event.target as Element;
   if (open && !root.contains(target) && !target.closest('#site-toc')) setOpen(false);
  };
- const onPageShow = (event: PageTransitionEvent) => { if (event.persisted) setOpen(open); };
- setOpen(document.documentElement.dataset.headerHint === 'open');
+ const onPageShow = (event: PageTransitionEvent) => { if (event.persisted) setOpen(open, false, true); };
+ const onReducedMotion = () => { if (reduced.matches) motion.set(open, true); };
+ setOpen(document.documentElement.dataset.headerHint === 'open', false, true);
  // Commit the starting layout while transitions are disabled, before taking ownership.
  void panel.offsetWidth;
  root.dataset.actionsInitialized = 'true';
@@ -57,11 +65,14 @@ export function bindHeaderActions(root: HTMLElement): () => void {
  document.addEventListener('click', onClick);
  document.addEventListener('focusin', onFocus);
  window.addEventListener('pageshow', onPageShow);
+ reduced.addEventListener('change', onReducedMotion);
  return () => {
   toggle.removeEventListener('click', onToggle);
   document.removeEventListener('keydown', onKey, true);
   document.removeEventListener('click', onClick);
   document.removeEventListener('focusin', onFocus);
   window.removeEventListener('pageshow', onPageShow);
+  reduced.removeEventListener('change', onReducedMotion);
+  motion.destroy();
  };
 }

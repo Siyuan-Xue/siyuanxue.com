@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import { site } from '../../data/site';
 import { bindHeaderActions } from '../../utils/headerActions';
@@ -11,8 +11,7 @@ export function ChatHeaderActions({ locale, children }: { locale: Locale; childr
  return <div className="header-controls" data-header-actions="" data-actions-expanded="false" ref={root}>
   <div className="header-actions-panel" id="header-actions" data-actions-panel=""><div className="header-actions-row">{children}</div></div>
   <button type="button" className="header-control-button header-actions-toggle" data-actions-toggle="" aria-expanded="false" aria-controls="header-actions" aria-label={show} title={show} data-show-label={show} data-hide-label={site.ui.hideActions[locale]}>
-   <ChevronLeft className="header-actions-open-icon" size={20} strokeWidth={1.8} aria-hidden="true" />
-   <ChevronRight className="header-actions-close-icon" size={20} strokeWidth={1.8} aria-hidden="true" />
+   <span className="header-actions-icon" data-actions-icon="" aria-hidden="true"><ChevronLeft size={20} strokeWidth={1.8} aria-hidden="true" /></span>
   </button>
  </div>;
 }

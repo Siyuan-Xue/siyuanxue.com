@@ -1,6 +1,7 @@
 import { expect, test } from 'bun:test';
 import { readFile, readdir, access } from 'node:fs/promises';
 import { join } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import { createContext, runInContext } from 'node:vm';
 import { parseHTML, DOMParser } from 'linkedom';
 import { imageMedia, media } from '../src/utils/media';
@@ -29,6 +30,24 @@ test('chat browser bundle does not eagerly carry the gallery media inventory', a
  for (const file of files) {
   const script = await readFile(join('dist/_astro', file), 'utf8');
   for (const path of mediaPaths) expect(script.includes(path)).toBe(false);
+ }
+});
+test('shared header JS stays below 8 KiB gzip without loading React or the lightbox engine', async () => {
+ for (const dir of ['dist/_astro', 'dist/zh/_astro']) {
+  const entries = (await readdir(dir)).filter(name => /^HeaderActions\..*\.js$/.test(name));
+  expect(entries).toHaveLength(1);
+  const visited = new Set<string>();
+  let gzipBytes = 0;
+  const visit = async (file: string): Promise<void> => {
+   if (visited.has(file)) return;
+   visited.add(file);
+   expect(file).not.toMatch(/gsap|lightbox|ChatApp|client\./i);
+   const script = await readFile(join(dir, file), 'utf8');
+   gzipBytes += gzipSync(script).length;
+   for (const match of script.matchAll(/(?:from|import)\s*["']\.\/([^"']+\.js)["']/g)) await visit(match[1]!);
+  };
+  await visit(entries[0]!);
+  expect(gzipBytes).toBeLessThan(8 * 1024);
  }
 });
 const variants = [

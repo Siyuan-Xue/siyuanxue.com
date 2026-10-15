@@ -67,6 +67,7 @@ const schema = galleryImages?.length
 <!-- With scripting disabled, expose the real navigation links before first paint. -->
 <noscript><style is:global>
  .header-controls .header-actions-panel { max-width: none; opacity: 1; transform: none; visibility: visible; overflow: visible; }
+ .header-controls .header-actions-row > * { opacity: 1; transform: none; }
  .header-controls :is(button, .header-actions-toggle) { display: none; }
  @media (max-width: 767px) {
   .header-inner .header-controls { padding-top: calc(var(--header-control-size) + 4px); }

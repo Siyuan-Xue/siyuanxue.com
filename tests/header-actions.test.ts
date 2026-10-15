@@ -14,7 +14,7 @@ function fixture(reduce = false, incoming = false) {
    <button data-toc-toggle hidden aria-expanded="false" data-open-label="Open contents" data-close-label="Close contents">TOC</button>
    <a href="/">Home</a><button data-close-actions>New chat</button><a class="header-control-button header-language-link" href="https://xuesiyuan.com/" hreflang="zh-CN" lang="zh-CN" aria-label="Switch to 中文" title="Switch to 中文"><svg width="20" height="20" stroke-width="1.8" aria-hidden="true"></svg></a>
   </div></div>
-  <button data-actions-toggle aria-controls="header-actions" aria-expanded="false" data-show-label="Show actions" data-hide-label="Hide actions">Arrow</button>
+  <button data-actions-toggle aria-controls="header-actions" aria-expanded="false" data-show-label="Show actions" data-hide-label="Hide actions"><span data-actions-icon>Arrow</span></button>
  </div></header><nav id="site-toc"><a href="#first" data-toc-link="first">First</a></nav><main class="page-main"><button id="outside">Outside</button><h2 id="first">First</h2></main>`;
  const document = window.document as unknown as Document;
  const root = document.querySelector<HTMLElement>('[data-header-actions]')!;
@@ -24,8 +24,13 @@ function fixture(reduce = false, incoming = false) {
  if (incoming) document.documentElement.dataset.headerHint = 'open';
  let initialTransition = '';
  Object.defineProperty(panel, 'offsetWidth', { get: () => { initialTransition = window.getComputedStyle(panel as never).transition; return 0; } });
- const cleanup = bindHeaderActions(root);
- return { window, document, root, panel, toggle, outside, cleanup, initialTransition };
+ const motionCalls: { open: boolean; instant: boolean }[] = [];
+ let destroyed = false;
+ const cleanup = bindHeaderActions(root, () => ({
+  set: (open, instant) => { motionCalls.push({ open, instant }); },
+  destroy: () => { destroyed = true; },
+ }));
+ return { window, document, root, panel, toggle, outside, cleanup, initialTransition, motionCalls, get destroyed() { return destroyed; } };
 }
 
 test('SSR is visually collapsed; activation updates ARIA, inert and labels in both directions', () => {
@@ -106,6 +111,7 @@ test('reduced motion removes transitions while preserving all toggle behavior', 
  expect(f.window.getComputedStyle(f.root as never).transition).toBe('none');
  f.toggle.click(); expect(f.panel.inert).toBe(false);
  f.toggle.click(); expect(f.panel.inert).toBe(true);
+ expect(f.motionCalls.every(call => call.instant)).toBe(true);
 });
 
 test('the desktop TOC returns focus to the visible arrow when its own toggle is collapsed', () => {
@@ -120,6 +126,7 @@ test('the desktop TOC returns focus to the visible arrow when its own toggle is 
 
 test('incoming open initializes before transitions, with matching ARIA, focusability and header lock', () => {
  const f = fixture(false, true);
+ expect(f.motionCalls).toEqual([{ open: true, instant: true }]);
  expect(f.initialTransition).toBe('none');
  expect(f.root.dataset.actionsExpanded).toBe('true');
  expect(f.document.querySelector('header')!.dataset.actionsExpanded).toBe('true');
@@ -131,4 +138,35 @@ test('incoming open initializes before transitions, with matching ARIA, focusabi
  f.toggle.click();
  expect(f.panel.inert).toBe(true);
  expect(f.root.dataset.actionsExpanded).toBe('false');
+});
+
+test('pointer animation never delays state/hint events; rapid reversals, Escape and outside clicks agree', () => {
+ const f = fixture();
+ const states: string[] = [];
+ f.document.addEventListener('headeractionschange', () => states.push(f.root.dataset.actionsExpanded!));
+ const pointer = () => f.toggle.dispatchEvent(new f.window.MouseEvent('click', { bubbles: true, detail: 1 }) as unknown as Event);
+ for (let i = 0; i < 11; i++) pointer();
+ expect(f.motionCalls.at(-1)).toEqual({ open: true, instant: false });
+ expect(f.toggle.getAttribute('aria-expanded')).toBe('true');
+ expect(f.panel.inert).toBe(false);
+ f.window.document.dispatchEvent(new f.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+ expect(f.panel.inert).toBe(true);
+ expect(f.document.activeElement).toBe(f.toggle);
+ pointer(); f.outside.click();
+ expect(f.motionCalls.at(-1)).toEqual({ open: false, instant: false });
+ expect(states.at(-1)).toBe('false');
+ expect(f.toggle.title).toBe('Show actions');
+ f.cleanup(); expect(f.destroyed).toBe(true);
+});
+
+test('keyboard activation and Tab during pointer opening settle before moving focus', () => {
+ const f = fixture();
+ f.toggle.click();
+ expect(f.motionCalls.at(-1)).toEqual({ open: true, instant: true });
+ expect(f.document.activeElement).toBe(f.panel.querySelector('a'));
+ f.toggle.click();
+ f.toggle.focus();
+ f.toggle.dispatchEvent(new f.window.MouseEvent('click', { bubbles: true, detail: 1 }) as unknown as Event);
+ f.window.document.dispatchEvent(new f.window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+ expect(f.motionCalls.at(-1)).toEqual({ open: true, instant: true });
 });
