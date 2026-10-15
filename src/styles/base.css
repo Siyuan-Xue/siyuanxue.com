@@ -156,6 +156,9 @@ html[data-lang='zh'] .bio-para  {
 .page-main  {
 	flex: 1;
 	padding-bottom: max(4rem, var(--safe-area-bottom));
+	/* The revealed portrait card and Safari's hanging CJK punctuation can reach a few
+	 * pixels past a phone's edge. Clip (not hidden) keeps sticky and fixed layout intact. */
+	overflow-x: clip;
 }
 
 .container  {
