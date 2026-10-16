@@ -21,7 +21,6 @@ import {
 import { Conversation, ConversationContent, ConversationScrollButton } from './ai-elements/Conversation';
 import { Message, MessageAction, MessageActions, MessageContent, MessageResponse } from './ai-elements/Message';
 import { ThinkingIndicator } from './ThinkingIndicator';
-import { chatChrome } from './chat-chrome';
 import { ChatHeaderActions } from './ChatHeaderActions';
 import type { LanguageSwitch } from '../../utils/langSwitch';
 import { bindThemeLink } from '../../utils/themeLink';
@@ -85,7 +84,11 @@ export function ChatApp({ copy, prompts, locale, languageLink, fetcher = globalT
   const welcomeComposeRect = useRef<DOMRect | null>(null);
   const isMobile = useMedia('(max-width: 600px), (pointer: coarse)');
   const reduceMotion = useMedia('(prefers-reduced-motion: reduce)');
-  const chrome = chatChrome[locale];
+  const chrome = {
+    newChat: site.chat.newChat[locale], home: site.ui.home[locale], starters: site.chat.starters[locale],
+    disclaimer: site.chat.disclaimer[locale], assistant: site.chat.assistant[locale],
+    light: site.ui.switchToLight[locale], dark: site.ui.switchToDark[locale],
+  };
   const streamTranslations = useMemo(() => ({ copyCode: copy.codeCopy, copied: copy.copied }), [copy.codeCopy, copy.copied]);
 
   useLayoutEffect(() => {

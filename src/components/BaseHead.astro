@@ -1,6 +1,6 @@
 ---
 import { site } from '../data/site';
-import { locale, localeOrigin, t } from '../i18n/locale';
+import { languageTag, locale, localeOrigin, t } from '../i18n/locale';
 import '../styles/base.css';
 import 'site-fonts';
 import themeScript from '../scripts/theme.js?raw';
@@ -19,7 +19,7 @@ const cover = shareImage ?? { src: defaultCover.src, width: defaultCover.width, 
 const image = new URL(cover.src, localeOrigin(locale)).href;
 const isHome = Astro.url.pathname === '/';
 const baiduSiteVerification = locale === 'zh' && isHome ? process.env.BAIDU_SITE_VERIFICATION_ZH?.trim() : undefined;
-const language = locale === 'zh' ? 'zh-CN' : 'en';
+const language = languageTag();
 const person = {
  '@type': 'Person', '@id': `${localeOrigin('en')}/#person`,
  name: t(site.name), alternateName: [locale === 'zh' ? site.name.en : site.name.zh, 'Miles'],

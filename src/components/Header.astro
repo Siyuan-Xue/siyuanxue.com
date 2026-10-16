@@ -8,8 +8,8 @@ import { site } from '../data/site';
 import { t } from '../i18n/locale';
 interface Props { showTocToggle?: boolean }
 const { showTocToggle = false } = Astro.props;
-const chatLabel = t({ en: 'Chat with xue', zh: '与小薛聊聊' });
-const homeLabel = t({ en: 'Home', zh: '首页' });
+const chatLabel = t(site.chat.title);
+const homeLabel = t(site.ui.home);
 const isChat = Astro.url.pathname === '/chat/' || Astro.url.pathname === '/chat';
 const isHome = Astro.url.pathname === '/';
 const Brand = isHome ? 'h1' : 'span';

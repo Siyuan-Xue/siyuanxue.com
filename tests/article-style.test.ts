@@ -40,7 +40,7 @@ for (const language of ['en', 'zh']) {
   expect(f.css('.prose strong').fontWeight).toBe('600');
   expect(f.css('.prose h2').fontSize).toBe('32px');
   expect(f.css('.prose h3').fontSize).toBe('24px');
-  expect(Number(f.css('.toc-link:not(.cc-active)').opacity)).toBe(.5);
+  expect(Number(f.css('.toc-link:not(.cc-active)').opacity)).toBe(.65);
   expect(f.css('.toc-link.cc-active').opacity).toBe('1');
   expect(f.css('.toc-list_item--h3').paddingLeft).toBe('0px');
   expect(f.css('.prose blockquote').borderLeftWidth).toBe('1px');

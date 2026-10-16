@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test';
 import { getRomanticLightboxMotionProfile } from '../src/utils/romanticLightbox';
-import { getRomanticLightboxMotionSpec } from '../src/utils/romanticLightboxMotion';
+import { createRomanticLightboxMotion, getRomanticLightboxMotionSpec, toRomanticLightboxKeyframe } from '../src/utils/romanticLightboxMotion';
 
 describe('Romantic Mode darkroom motion', () => {
 	test('reveals the paper, photograph, sweep, and proof in a deliberate sequence', () => {
@@ -98,5 +98,59 @@ describe('Romantic Mode darkroom motion', () => {
 				sweep: { opacity: 0, yPercent: 115 },
 			},
 		});
+	});
+});
+
+describe('Romantic Mode Web Animations driver', () => {
+	type Call = { keyframes: Keyframe[]; options: KeyframeAnimationOptions };
+	const element = () => {
+		const calls: Call[] = [];
+		const style: Record<string, string> & { removeProperty(name: string): void } = {
+			removeProperty(name: string) { delete style[name.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())]; },
+		} as never;
+		const node = {
+			style,
+			calls,
+			animate(keyframes: Keyframe[], options: KeyframeAnimationOptions) {
+				calls.push({ keyframes, options });
+				return { commitStyles() {}, cancel() {} } as unknown as Animation;
+			},
+		};
+		return node as unknown as HTMLElement & { calls: Call[]; style: Record<string, string> };
+	};
+	const elements = () => ({ frame: element(), image: [element()], reveal: element(), footer: element(), proof: element(), close: element(), sweep: element() });
+
+	test('converts spec units to interpolable CSS keyframes', () => {
+		expect(toRomanticLightboxKeyframe({ opacity: 0, scale: 0.96, clipPath: 'inset(49% 0 49% 0 round 2px)' })).toEqual({ clipPath: 'inset(49% 0 49% 0 round 2px)', opacity: '0', transform: 'translateY(0px) scale(0.96)' });
+		expect(toRomanticLightboxKeyframe({ opacity: 0.72, yPercent: 115 })).toEqual({ opacity: '0.72', transform: 'translateY(115%) scale(1)' });
+		expect(toRomanticLightboxKeyframe({ opacity: 1, y: 0 })).toEqual({ opacity: '1', transform: 'translateY(0px) scale(1)' });
+	});
+
+	test('schedules the open sequence at the spec times and keeps final frames', () => {
+		const targets = elements();
+		createRomanticLightboxMotion(targets, getRomanticLightboxMotionProfile({ x: 1280, y: 900 }, false)).playOpen();
+		const frame = targets.frame.calls[0]!;
+		expect(frame.options).toMatchObject({ delay: 0, duration: 1100, fill: 'both' });
+		expect(frame.keyframes.at(-1)).toEqual({ clipPath: 'inset(0% 0 0% 0 round 2px)', opacity: '1', transform: 'translateY(0px) scale(1)' });
+		expect(targets.reveal.calls[0]!.options).toMatchObject({ delay: 40, duration: 1200 });
+		expect(targets.sweep.calls.map(call => call.options.delay)).toEqual([180, 940]);
+		expect(targets.footer.calls[0]!.options).toMatchObject({ delay: 820, duration: 420 });
+		expect(targets.proof.calls[0]!.options.delay).toBe(900);
+		expect(targets.close.calls[0]!.options).toMatchObject({ delay: 1000, duration: 320 });
+		expect(targets.image[0]!.style.filter).toBe('none');
+	});
+
+	test('reduced motion sets end states without animating, and destroy clears them', () => {
+		const targets = elements();
+		const motion = createRomanticLightboxMotion(targets, getRomanticLightboxMotionProfile({ x: 1280, y: 900 }, true));
+		motion.playOpen();
+		expect([targets.frame, targets.reveal, targets.footer, targets.sweep].every(target => target.calls.length === 0)).toBe(true);
+		expect(targets.frame.style.opacity).toBe('1');
+		expect(targets.reveal.style.opacity).toBe('0');
+		motion.playClose();
+		expect(targets.footer.style.opacity).toBe('0');
+		motion.destroy();
+		expect(targets.frame.style.opacity).toBeUndefined();
+		expect(targets.frame.style.clipPath).toBeUndefined();
 	});
 });

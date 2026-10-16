@@ -1,16 +1,9 @@
 import { getCollection } from 'astro:content';
 import { locale } from '../i18n/locale';
-import { pairGalleries } from './gallery';
-export const GALLERY_PREVIEW_SLUG = 'layout-preview';
-const isPreview = (entry: { id: string }) => entry.id.startsWith(`${GALLERY_PREVIEW_SLUG}/`);
+import { isGalleryPreview, pairGalleries, pairGalleryPages } from './gallery';
 export async function getGalleries(includeDrafts = false) {
- return pairGalleries((await getCollection('gallery')).filter(entry => !isPreview(entry)), locale, includeDrafts);
+ return pairGalleries((await getCollection('gallery')).filter(entry => !isGalleryPreview(entry)), locale, includeDrafts);
 }
-/** The designated layout sample is public for review; ordinary drafts stay private. */
 export async function getGalleryPages(includeDrafts = false) {
- const entries = await getCollection('gallery');
- return [
-  ...pairGalleries(entries.filter(entry => !isPreview(entry)), locale, includeDrafts),
-  ...pairGalleries(entries.filter(isPreview), locale, true),
- ];
+ return pairGalleryPages(await getCollection('gallery'), locale, includeDrafts);
 }

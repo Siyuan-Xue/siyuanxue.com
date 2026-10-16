@@ -194,7 +194,7 @@ for (const v of variants) {
    declaration('.prose-page .post-subtitle', 'font-style', 'italic');
    declaration('.prose-page .post-date', 'margin', '2em 0 1em');
    declaration('.prose-page .prose strong', 'font-weight', '600');
-   declaration('.prose-page .toc-link', 'opacity', '.5');
+   declaration('.prose-page .toc-link', 'opacity', '.65');
    declaration('.prose-page .toc-link.cc-active', 'opacity', '1');
    declaration('.prose-page .prose figure', 'margin', '4rem 0');
    expect(css).toMatch(/newsreader-latin-standard-normal[^)]*\.woff2/);

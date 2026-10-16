@@ -89,7 +89,8 @@ html.prose-page body {
 .prose-page .prose figure { margin: 4rem 0; }
 .prose-page .prose figcaption {
  margin-top: 1em;
- color: color-mix(in srgb, var(--fg) 50%, var(--bg));
+ /* The reference's 50% ink mix is 3.1:1; the muted token meets WCAG AA in both themes. */
+ color: var(--fg-muted);
  font-size: .9em;
  line-height: 1.6;
  text-align: center;
@@ -119,7 +120,8 @@ html.prose-page body {
  color: var(--fg);
  font-size: 20px;
  line-height: 1.6;
- opacity: .5;
+ /* 0.65 keeps inactive entries recessive at 4.9:1 (light) / 6.8:1 (dark), above WCAG AA. */
+ opacity: .65;
  text-decoration: none;
  overflow-wrap: normal;
  transition: opacity .3s cubic-bezier(.165,.84,.44,1);

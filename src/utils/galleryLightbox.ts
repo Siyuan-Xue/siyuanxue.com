@@ -12,8 +12,10 @@ type Dependencies = {
 export function createGalleryLightboxOptions(reducedMotion: boolean, readInsets: () => Padding = getSafeAreaInsets): PhotoSwipeOptions {
  return {
   mainClass: 'gallery-lightbox', loop: false, escKey: true, arrowKeys: true,
-  trapFocus: true, returnFocus: true, showHideAnimationType: 'none',
-  showAnimationDuration: 0, hideAnimationDuration: 0,
+  trapFocus: true, returnFocus: true,
+  // A short fade matches the zoom timing; closing is slightly quicker than opening.
+  showHideAnimationType: reducedMotion ? 'none' : 'fade',
+  showAnimationDuration: reducedMotion ? 0 : 200, hideAnimationDuration: reducedMotion ? 0 : 160,
   zoomAnimationDuration: reducedMotion ? 0 : 200,
   close: false, zoom: false, arrowPrev: false, arrowNext: false,
   paddingFn: () => {

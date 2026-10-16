@@ -2,10 +2,10 @@ import { createHash } from 'node:crypto';
 import { parseHTML } from 'linkedom';
 import { z } from 'astro/zod';
 import { site } from '../data/site';
-import { localeOrigin } from '../i18n/locale';
+import { languageTag, localeOrigin } from '../i18n/locale';
 import type { Locale } from '../i18n/types';
 import { pairEntries } from './contentPairs';
-import { pairGalleries, type GalleryData } from './gallery';
+import { GALLERY_PREVIEW_SLUG, pairGalleryPages, type GalleryData } from './gallery';
 import { imageMedia, media } from './media';
 import type { GalleryMetadataImage, GalleryMetadataVideo, ShareImage } from './pageMetadata';
 
@@ -23,13 +23,10 @@ export type DiscoverySources = { essay: ArticleEntry[]; post: ArticleEntry[]; ga
 /** Every non-content HTML route has an explicit policy. New content comes from the paired collections. */
 export const staticPagePolicies = [
  { path: '/', kind: 'profile', indexable: true, title: site.title, description: site.description },
- { path: '/chat/', kind: 'chat', indexable: true, title: { en: 'Chat with xue', zh: '与小薛聊聊' }, description: {
-  en: `I’m ${site.name.en}’s AI assistant—he’s my Boss. Welcome! Ask about his projects and writing, or just stay for a chat. A little wit comes with the welcome.`,
-  zh: `我是${site.name.zh}的 AI 助手，他是我的 Boss。聊项目、读文章，或者随便坐坐——正经介绍，偶尔贫嘴。`,
- } },
+ { path: '/chat/', kind: 'chat', indexable: true, title: site.chat.title, description: site.chat.intro },
  { path: '/wip/', kind: 'placeholder', indexable: false, title: { en: 'Under construction', zh: '正在施工' }, description: { en: 'This page is still under construction.', zh: '这个页面还在施工中。' } },
- { path: '/404/', kind: 'not-found', indexable: false, title: { en: 'Page not found', zh: '页面未找到' }, description: site.description },
- { path: '/gallery/probfun/', kind: 'redirect', indexable: false, title: { en: 'Redirecting', zh: '正在跳转' }, description: site.description, target: '/gallery/imathbook/' },
+ { path: '/404/', kind: 'not-found', indexable: false, title: site.ui.notFound, description: site.description },
+ { path: '/gallery/probfun/', kind: 'redirect', indexable: false, title: site.ui.redirecting, description: site.description, target: '/gallery/imathbook/' },
 ] as const;
 
 export function buildDiscoveryInventory(sources: DiscoverySources, locale: Locale, includeDrafts = false): DiscoveryPage[] {
@@ -47,11 +44,9 @@ export function buildDiscoveryInventory(sources: DiscoverySources, locale: Local
   const data = entry.data;
   pages.push({ ...make(`/${kind}/${slug}/`, kind, data.title, data.seoDescription ?? data.description, true), structuredDescription: data.description, datePublished: data.date.toISOString(), ...(data.updatedDate ? { dateModified: data.updatedDate.toISOString() } : {}) });
  }
- const isSample = (entry: { id: string }) => entry.id.startsWith('layout-preview/');
- const galleries = [...pairGalleries(sources.gallery.filter(entry => !isSample(entry)), locale, includeDrafts), ...pairGalleries(sources.gallery.filter(isSample), locale, true)];
- for (const { slug, entry: { data } } of galleries) {
+ for (const { slug, entry: { data } } of pairGalleryPages(sources.gallery, locale, includeDrafts)) {
   const first = data.images[0];
-  pages.push({ ...make(`/gallery/${slug}/`, 'gallery', data.title, data.seoDescription ?? data.description, !includeDrafts && !data.draft && !data.preview && slug !== 'layout-preview'), structuredDescription: data.description,
+  pages.push({ ...make(`/gallery/${slug}/`, 'gallery', data.title, data.seoDescription ?? data.description, !includeDrafts && !data.draft && !data.preview && slug !== GALLERY_PREVIEW_SLUG), structuredDescription: data.description,
    ...(data.datePublished ? { datePublished: new Date(data.datePublished).toISOString() } : {}),
    ...(data.dateModified ? { dateModified: new Date(data.dateModified).toISOString() } : {}),
    shareImage: { src: first.src.cover.src, width: first.src.cover.width, height: first.src.cover.height, alt: first.alt },
@@ -158,7 +153,7 @@ export function auditDiscoveryHtml(path: string, html: string, inventory: Discov
  const noindex = /\bnoindex\b/.test(document.querySelector('meta[name="robots"]')?.getAttribute('content') ?? '');
  if (noindex === page.indexable) fail('indexability does not match inventory');
  if (page.kind === 'redirect') return page;
- if (document.documentElement.lang !== (page.locale === 'en' ? 'en' : 'zh-CN')) fail('incorrect document language');
+ if (document.documentElement.lang !== languageTag(page.locale)) fail('incorrect document language');
  if (document.title !== page.fullTitle) fail('title does not match inventory');
  for (const selector of ['meta[name="description"]', 'meta[property="og:description"]', 'meta[name="twitter:description"]']) if (document.querySelector(selector)?.getAttribute('content') !== page.description) fail('description does not match inventory');
  for (const [language, url] of Object.entries(page.alternates)) if (document.querySelector(`link[hreflang="${language}"]`)?.getAttribute('href') !== url) fail(`missing or incorrect ${language} alternate`);

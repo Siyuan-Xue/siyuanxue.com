@@ -36,7 +36,7 @@ html.has-xue-chat {
 .xue-welcome-icon { color: var(--xue-accent); flex: none; height: 34px; width: 34px; }
 .xue-welcome h1 { color: var(--fg); font: 400 clamp(27px, 2.8vw, 36px)/1.25 var(--font-serif); letter-spacing: normal; margin: 0; }
 .xue-prompts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 18px; }
-.xue-chat .xue-prompts button { border: 1px solid var(--border-soft); border-radius: 9px; color: var(--fg-muted); font: 12px/1.5 var(--font-serif); min-height: 34px; padding: 7px 12px; }
+.xue-chat .xue-prompts button { border: 1px solid var(--border-soft); border-radius: 9px; color: var(--fg-muted); font: 13px/1.5 var(--font-serif); min-height: 34px; padding: 7px 12px; }
 .xue-message { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; width: 100%; }
 .xue-message.is-user { align-items: flex-end; }
 .xue-message-content { min-width: 0; }
@@ -74,14 +74,15 @@ html.has-xue-chat {
 .xue-composer:has(textarea:focus) { border-color: var(--fg-faint); }
 .xue-composer textarea { appearance: none; background: transparent; border: 0; color: var(--fg); display: block; font: var(--font-size-body)/1.5 var(--font-serif); grid-column: 2; grid-row: 1; max-height: 220px; min-height: 32px; min-width: 0; outline: 0; overflow-y: auto; padding: calc(2px + var(--xue-text-offset)) 8px calc(2px - var(--xue-text-offset)); resize: none; width: 100%; }
 .xue-composer textarea:focus-visible { outline: 0 !important; }
-.xue-composer textarea::placeholder { color: var(--fg-faint); opacity: 1; }
+/* Readable text uses the muted token (AA); faint stays for decoration and disabled states. */
+.xue-composer textarea::placeholder { color: var(--fg-muted); opacity: 1; }
 .xue-composer-toolbar { align-items: center; display: flex; grid-column: 3; grid-row: 1; height: 32px; }
 .xue-chat .xue-send { align-items: center; border-radius: 6px; color: var(--fg); display: inline-flex; height: 32px; justify-content: center; padding: 0; width: 32px; }
 .xue-send:disabled { color: var(--fg-faint); opacity: .5; }
 .xue-chat .xue-stop { background: var(--fg); border-radius: 50%; color: var(--bg); }
-.xue-composer-footer { align-items: center; color: var(--fg-faint); display: flex; font-size: 12px; gap: 12px; justify-content: space-between; line-height: 18px; margin: 11px 16px 0; }
+.xue-composer-footer { align-items: center; color: var(--fg-muted); display: flex; font-size: 12px; gap: 12px; justify-content: space-between; line-height: 18px; margin: 11px 16px 0; }
 .xue-composer-footer p { margin: 0; }
-.xue-identity { align-items: center; color: var(--fg-faint); display: inline-flex; flex: none; font-size: 12px; gap: 8px; line-height: 18px; white-space: nowrap; }
+.xue-identity { align-items: center; color: var(--fg-muted); display: inline-flex; flex: none; font-size: 12px; gap: 8px; line-height: 18px; white-space: nowrap; }
 .xue-identity svg { color: var(--xue-accent); }
 .xue-identity strong { color: var(--fg); font-size: 13px; font-weight: 400; line-height: 18px; }
 .xue-starters-menu { grid-column: 1; grid-row: 1; }
@@ -124,21 +125,27 @@ html.has-xue-chat[data-lang='zh'] { --xue-text-offset: 1px; }
   .xue-welcome h1 { font-size: 28px; }
   html[data-lang='en'] .xue-welcome h1 { font-size: clamp(22px, 7vw, 28px); }
   .xue-message.is-user .xue-message-content { max-width: 94%; }
-  .xue-compose-area { padding-bottom: max(10px, env(safe-area-inset-bottom)); }
+  .xue-compose-area { padding-bottom: max(10px, var(--safe-area-bottom)); }
   .xue-composer { border-radius: 16px; padding: 8px; }
   .xue-composer textarea { padding-left: 4px; padding-right: 4px; }
   .xue-composer-footer { font-size: 10px; justify-content: center; margin: 10px 2px 0; text-align: center; }
   .xue-identity { display: none; }
   .xue-composer-identity { display: inline-flex; }
   .xue-prompts { gap: 6px; margin-top: 14px; }
-  .xue-chat .xue-prompts button { font-size: 11px; min-height: 36px; padding: 8px 10px; }
+  .xue-chat .xue-prompts button { font-size: 13px; min-height: 36px; padding: 8px 10px; }
   .xue-error-card { align-items: flex-start; }
 }
 @media (pointer: coarse) {
-  .xue-chat .xue-message-action { height: 40px; width: 40px; }
+  .xue-chat .xue-message-action { height: 44px; width: 44px; }
   .xue-chat .xue-send, .xue-starters-menu summary { height: 36px; width: 36px; }
   .xue-composer-toolbar { height: 36px; }
   .xue-composer { grid-template-columns: 36px minmax(0, 1fr) 36px; }
+  /* Keep the composer's visual size; invisible insets make 44px touch targets. */
+  .xue-chat :is(.xue-send, .xue-starters-menu summary) { position: relative; }
+  .xue-chat :is(.xue-send, .xue-starters-menu summary)::after { content: ''; inset: -4px; position: absolute; }
+  .xue-chat .xue-scroll-latest::after { content: ''; inset: -5px; position: absolute; }
+  .xue-chat :is(.xue-prompts button, .xue-starters-popover button) { min-height: 44px; }
+  .xue-chat .xue-error-card button { height: 44px; width: 44px; }
 }
 @media (max-height: 480px) {
   .xue-chat-main[data-chat-state='welcome'] { padding-bottom: 0; }

@@ -1,6 +1,7 @@
 ---
 import '../styles/loading.css';
-import { locale } from '../i18n/locale';
+import { t } from '../i18n/locale';
+import { site } from '../data/site';
 /**
  * Blocks-shuffle loading placeholder.
  * Color inherits via currentColor — set `color` on the host or use size/tone modifiers.
@@ -27,7 +28,7 @@ const {
 	size = 'md',
 	tone = 'muted',
 	class: className = '',
-	label = locale === 'en' ? 'Loading' : '加载中',
+	label = t(site.ui.loading),
 	decorative = false,
 } = Astro.props;
 

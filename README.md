@@ -34,7 +34,7 @@ bun run preview:zh
 
 ## Content
 
-Site labels and lists are authored as `{ en, zh }` pairs in `src/data/site.ts`. Pages render only the selected language.
+Site labels and lists are authored as `{ en, zh }` pairs in `src/data/site.ts`, including every interface label (`ui`, `gallery`, `chat`). Components read them through `t()`; avoid inline locale ternaries. Pages render only the selected language.
 
 Each article has `en.md` and `zh.md` under `src/content/essays/<slug>/` or `src/content/posts/<slug>/`. Published pairs require matching dates and valid unique IDs. Missing translations or mismatched dates fail the build; a draft in either language excludes the pair. Article headings and TOC anchors come from the same Markdown renderer.
 
@@ -44,7 +44,7 @@ Each language has its own RSS feed at `/rss.xml`, sitemap, canonical URLs and re
 
 Photos and videos live in independent server media storage, with IDs and metadata in `src/data/media.json`. Prepare responsive images locally and upload them directly with SSH/rsync before publishing references; see [direct media uploads](ops/README.md#direct-media-uploads). Git and CI keep no raster/photo/video payloads. Both dev and preview proxy media to production.
 
-Clicking the normal portrait once reveals the abstract portrait placeholder; PhotoSwipe/GSAP load on demand. Each fresh page starts collapsed. The old secret photograph is removed, and its former URL is explicitly denied by Nginx even when reverting an older release.
+Clicking the normal portrait once reveals the abstract portrait placeholder; PhotoSwipe loads on demand. Motion uses the Web Animations API, native SVG animation and Motion's mini spring for the top bar; there is no other animation runtime. Each fresh page starts collapsed. The old secret photograph is removed, and its former URL is explicitly denied by Nginx even when reverting an older release.
 
 Fonts are bundled locally using Fontsource. Chinese font files use Unicode ranges and are not referenced by English font CSS. Feature styles are separate from shared typography/layout. Transitive dependency overrides keep the affected packages above the security-fix versions; review them when updating Astro/Vite.
 

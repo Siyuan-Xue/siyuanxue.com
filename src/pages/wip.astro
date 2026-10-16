@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
-import { locale } from '../i18n/locale';
+import { t } from '../i18n/locale';
+import { site } from '../data/site';
 import '../styles/wip.css';
 import { House } from '@lucide/astro';
 
@@ -8,7 +9,7 @@ import { House } from '@lucide/astro';
 
 <Base>
 	<div class="container cc-narrow wip">
-		<div class="wip-panel" role="status" aria-live="polite">
+		<div class="wip-panel">
 			{/*
 			  Animated gavel based on Streamline “Justice Hammer” paths.
 			  Colors use currentColor (site --fg) for light/dark.
@@ -99,11 +100,11 @@ import { House } from '@lucide/astro';
 			</div>
 
 			<h1 class="wip-text">
-				{locale === 'en' ? 'Under construction…' : '正在施工...'}
+				{t(site.ui.underConstruction)}
 			</h1>
 
 			<p class="wip-back">
-				<a href="/" class="header-control-button" aria-label={locale === 'en' ? 'Back home' : '返回首页'} title={locale === 'en' ? 'Back home' : '返回首页'}>
+				<a href="/" class="header-control-button" aria-label={t(site.ui.backHome)} title={t(site.ui.backHome)}>
 					<House size={20} stroke-width={1.8} aria-hidden="true" />
 				</a>
 			</p>

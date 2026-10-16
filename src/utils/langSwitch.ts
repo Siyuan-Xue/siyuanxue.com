@@ -1,4 +1,4 @@
-import { localeOrigin } from '../i18n/locale';
+import { languageTag, localeOrigin } from '../i18n/locale';
 import type { Locale } from '../i18n/types';
 
 export interface LanguageRoute { locale: Locale; path: string; published: boolean }
@@ -14,7 +14,7 @@ export function languageSwitch(path: string, from: Locale, routes: readonly Lang
  const target = available(from) && available(other) ? normalized : '/';
  return {
   href: `${localeOrigin(other)}${target}`,
-  lang: other === 'zh' ? 'zh-CN' : 'en',
+  lang: languageTag(other),
   label: other === 'zh' ? 'Switch to 中文' : '切换到 English',
  };
 }
