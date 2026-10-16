@@ -146,4 +146,6 @@ Verification on the final branch head (macOS; Python 3.12 via uv for the Python-
   - On a coarse-pointer tablet the header controls are 44×44px.
 - JS (gzip, full static import graph): chat page 322.1 KB → 295.9 KB; home 8.5 KB, essay 7.1 KB (unchanged); the header chunk stays at 6.9 KB.
 
+Deployment: [PR #5](https://github.com/Siyuan-Xue/siyuanxue.com/pull/5) was merged as `588fd1fccc0c83f72006db5cd1d6e6fc9fbfcf49`. [Actions 38833627827](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/38833627827) succeeded: verify, deploy and IndexNow passed, and rollback was skipped. `ops/verify-public.sh` passed for that SHA on both domains, and the live stylesheets match the local build's hashes.
+
 Still manual: real iPhone Safari (toolbar tint in both directions, safe areas, overscroll, keyboard with the chat composer), and the pre-existing WebKit focus-return difference after closing the portrait lightbox in Playwright's WebKit build. The deferred items above stay open.
