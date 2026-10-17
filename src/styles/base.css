@@ -232,7 +232,13 @@ a:is(:hover, :focus-visible)  {
 	flex-shrink: 0;
 	/* Extend the page background into the safe area while keeping controls clear. */
 	padding: calc(var(--header-pad-top) + var(--safe-area-top)) 0 var(--header-pad-bottom);
-	background-color: var(--bg);
+	/* iOS Safari extends this element's computed background-color into the
+	 * status-bar strip and runs its own 0.1s linear fade on every new value. The
+	 * sampled colour therefore switches once, while the visible 100ms fade is
+	 * painted by an opaque gradient layer from the shared --bg. Both fades start
+	 * on the same frame. See the 2026-10-16 Safari toolbar sync audit. */
+	background-color: var(--bg-target);
+	background-image: linear-gradient(var(--bg), var(--bg));
 	/* Mac/iPad can retain a solid edge tint after interaction. A zero-radius
 	 * filter avoids that path without changing the opaque pixels. */
 	-webkit-backdrop-filter: blur(0px);
@@ -448,6 +454,7 @@ html.u-mode-invert .theme-toggle_icon--moon  {
 @media print {
  :root, :root.u-mode-invert {
   --bg: #fff;
+  --bg-target: #fff;
   --bg-elevated: #fff;
   --bg-soft: #fff;
   --fg: #000;

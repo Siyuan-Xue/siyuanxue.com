@@ -352,3 +352,18 @@ test('critical palette precedes the blocking script and no-JS dark palette match
  const css = readFileSync(new URL('../src/styles/theme-colors.css', import.meta.url), 'utf8');
  expect(css.match(/html\.u-mode-invert \{([^}]+)\}/)![1]).toBe(css.match(/:root:not\(\[data-theme\]\) \{([^}]+)\}/)![1]);
 });
+
+test('Safari samples a one-step header colour while the visible header shares the page fade', () => {
+ const css = readFileSync(new URL('../src/styles/theme-colors.css', import.meta.url), 'utf8');
+ const base = readFileSync(new URL('../src/styles/base.css', import.meta.url), 'utf8');
+ // Registered or transitioned, it would feed WebKit a new sample every frame.
+ expect(css).not.toMatch(/@property --bg-target\b/);
+ expect(css.match(/transition-property:([^;]+);/)![1]).not.toContain('--bg-target');
+ for (const selector of [':root {', 'html.u-mode-invert {', ':root:not([data-theme]) {']) {
+  const block = css.slice(css.indexOf(selector), css.indexOf('}', css.indexOf(selector)));
+  expect(block.match(/--bg-target: (#[0-9a-f]{6});/)![1]).toBe(block.match(/--bg: (#[0-9a-f]{6});/)![1]);
+ }
+ const header = base.slice(base.indexOf('.header  {'), base.indexOf('}', base.indexOf('.header  {')));
+ expect(header).toContain('background-color: var(--bg-target);');
+ expect(header).toContain('background-image: linear-gradient(var(--bg), var(--bg));');
+});

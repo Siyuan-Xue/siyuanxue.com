@@ -46,6 +46,9 @@
  const applyTheme = (mode, animate = false) => {
   // Only live changes fade. First paint, incoming hints and BFCache restoration
   // apply immediately; metadata, storage and controls never wait for animation.
+  // This one synchronous call starts every surface in the same frame: the CSS
+  // fade of --bg, the one-step --bg-target that iOS Safari samples for its own
+  // 0.1s top tint, and the theme-color pair.
   root.toggleAttribute('data-theme-transition', animate);
   root.classList.toggle('u-mode-invert', mode === 'dark');
   root.dataset.theme = mode;
