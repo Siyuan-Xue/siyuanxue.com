@@ -8,6 +8,7 @@ import themeColors from '../styles/theme-colors.css?raw';
 import { inlineThemeScript } from '../utils/themeHint';
 import { imageMedia } from '../utils/media';
 import { getDiscoveryPage } from '../utils/discoveryContent';
+import { BLOG_ENABLED } from '../features';
 const page = await getDiscoveryPage(Astro.url.pathname);
 const { title, description, structuredDescription, canonical, fullTitle, shareImage } = page;
 const noindex = !page.indexable;
@@ -95,7 +96,7 @@ const schema = galleryImages?.length
 </>}
 <link rel="canonical" href={canonical} />
 {Object.entries(page.alternates).map(([language, url]) => <link rel="alternate" hreflang={language} href={url} />)}
-<link rel="alternate" type="application/rss+xml" title={t(site.title)} href="/rss.xml" />
+{BLOG_ENABLED && <link rel="alternate" type="application/rss+xml" title={t(site.title)} href="/rss.xml" />}
 <meta property="og:type" content={articleDate ? 'article' : 'website'} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />

@@ -8,6 +8,7 @@ import { pairEntries } from './contentPairs';
 import { GALLERY_PREVIEW_SLUG, pairGalleryPages, type GalleryData } from './gallery';
 import { imageMedia, media } from './media';
 import type { GalleryMetadataImage, GalleryMetadataVideo, ShareImage } from './pageMetadata';
+import { BLOG_ENABLED } from '../features';
 
 export type DiscoveryKind = 'profile' | 'chat' | 'placeholder' | 'not-found' | 'redirect' | 'essay' | 'post' | 'gallery';
 export interface DiscoveryPage {
@@ -29,7 +30,7 @@ export const staticPagePolicies = [
  { path: '/gallery/probfun/', kind: 'redirect', indexable: false, title: site.ui.redirecting, description: site.description, target: '/gallery/imathbook/' },
 ] as const;
 
-export function buildDiscoveryInventory(sources: DiscoverySources, locale: Locale, includeDrafts = false): DiscoveryPage[] {
+export function buildDiscoveryInventory(sources: DiscoverySources, locale: Locale, includeDrafts = false, blog = BLOG_ENABLED): DiscoveryPage[] {
  const make = (path: string, kind: DiscoveryKind, title: string, description: string, indexable: boolean, target = path): DiscoveryPage => ({
   locale, kind, path, title, description, structuredDescription: description, indexable,
   fullTitle: path === '/' ? site.homeTitle[locale] : `${title} — ${site.name[locale]}`,
@@ -41,6 +42,8 @@ export function buildDiscoveryInventory(sources: DiscoverySources, locale: Local
  const portrait = imageMedia('portrait');
  pages[0].images = [{ src: portrait.src, width: portrait.width, height: portrait.height, alt: site.portrait.alt[locale], caption: site.portrait.alt[locale] }];
  for (const kind of ['essay', 'post'] as const) for (const { slug, entry } of pairEntries(sources[kind], locale)) {
+  // Pairing is validated above either way; hidden blog pages are not routes.
+  if (!blog) continue;
   const data = entry.data;
   pages.push({ ...make(`/${kind}/${slug}/`, kind, data.title, data.seoDescription ?? data.description, true), structuredDescription: data.description, datePublished: data.date.toISOString(), ...(data.updatedDate ? { dateModified: data.updatedDate.toISOString() } : {}) });
  }

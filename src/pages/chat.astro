@@ -4,6 +4,7 @@ import { ChatApp, type ChatCopy } from '../components/chat/ChatApp';
 import { t, locale } from '../i18n/locale';
 import { site } from '../data/site';
 import { getLanguageSwitch } from '../utils/langSwitchContent';
+import { BLOG_ENABLED } from '../features';
 const languageLink = await getLanguageSwitch(Astro.url.pathname);
 
 const copy: ChatCopy = {
@@ -40,7 +41,8 @@ const copy: ChatCopy = {
 const prompts = [
   { label: t({ en: 'Meet Siyuan Xue', zh: '认识一下薛思远' }), text: t({ en: 'Tell me a little about Siyuan Xue.', zh: '给我介绍一下薛思远吧。' }) },
   { label: t({ en: 'Explore projects', zh: '看看做过什么' }), text: t({ en: 'What projects has Siyuan Xue been working on?', zh: '薛思远做过哪些有意思的项目？' }) },
-  { label: t({ en: 'Find a good read', zh: '找篇文章读读' }), text: t({ en: 'Help me find something to read on this website.', zh: '帮我找找这个网站有什么值得读的文章。' }) },
+  // Asks for articles, so it follows the blog.
+  ...(BLOG_ENABLED ? [{ label: t({ en: 'Find a good read', zh: '找篇文章读读' }), text: t({ en: 'Help me find something to read on this website.', zh: '帮我找找这个网站有什么值得读的文章。' }) }] : []),
   { label: t({ en: 'Just say hello', zh: '随便聊两句' }), text: t({ en: 'Hi, xue. Let’s chat about something fun.', zh: '嗨，小薛，我们随便聊点有趣的吧。' }) },
 ];
 ---

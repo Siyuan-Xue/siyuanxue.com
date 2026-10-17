@@ -7,6 +7,7 @@ import { parseHTML, DOMParser } from 'linkedom';
 import { imageMedia, media } from '../src/utils/media';
 import { auditDiscoveryHtml, type DiscoveryPage } from '../src/utils/discovery';
 import postcss from 'postcss';
+import { BLOG_ENABLED } from '../src/features';
 const mediaPaths = new Set(Object.values(media).flatMap(asset => asset.kind === 'image' ? [asset.src, asset.cover.src, ...asset.variants.map(file => file.src)] : [asset.src]));
 async function checkAsset(root: string, path: string) {
  if (path.startsWith('/media/')) expect(mediaPaths.has(path)).toBe(true);
@@ -173,6 +174,10 @@ for (const v of variants) {
   }
  });
  test(`${v.lang}: essays and posts ship the scoped Dario typography contract`, async () => {
+  if (!BLOG_ENABLED) {
+   for (const path of ['essay/embodied-agent/index.html', 'post/first-note/index.html']) expect(await access(join(v.root, path)).then(() => true, () => false)).toBe(false);
+   return;
+  }
   for (const path of ['essay/embodied-agent/index.html', 'post/first-note/index.html']) {
    const { document } = parseHTML(await readFile(join(v.root, path), 'utf8'));
    expect(document.documentElement.classList.contains('prose-page')).toBe(true);
@@ -283,11 +288,13 @@ for (const v of variants) {
   expect(profile.mainEntity.sameAs).toContain('https://github.com/Siyuan-Xue');
   expect(profile.mainEntity.sameAs).toContain('https://xuesiyuan.com/');
   expect(graph.find((node: { '@type': string }) => node['@type'] === 'WebSite').url).toBe(v.origin + '/');
-  const { document: article } = parseHTML(await readFile(join(v.root, 'essay/why-this-site/index.html'), 'utf8'));
-  const articleSchema = JSON.parse(article.querySelector('script[type="application/ld+json"]')!.textContent!);
-  expect(articleSchema.author['@id']).toBe(profile.mainEntity['@id']);
+  if (BLOG_ENABLED) {
+   const { document: article } = parseHTML(await readFile(join(v.root, 'essay/why-this-site/index.html'), 'utf8'));
+   const articleSchema = JSON.parse(article.querySelector('script[type="application/ld+json"]')!.textContent!);
+   expect(articleSchema.author['@id']).toBe(profile.mainEntity['@id']);
+  }
  });
- for (const page of ['index.html', 'essay/why-this-site/index.html', 'chat/index.html']) {
+ for (const page of ['index.html', BLOG_ENABLED ? 'essay/why-this-site/index.html' : 'gallery/pixeldone/index.html', 'chat/index.html']) {
  test(`${v.lang}: ${page} theme controls work when browser storage throws`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, page), 'utf8'));
   const storage = { getItem() { throw new Error('SecurityError'); }, setItem() { throw new Error('SecurityError'); } };
@@ -473,7 +480,9 @@ for (const v of variants) {
   const sections = [...document.querySelectorAll('.home-container > section')];
   expect(sections[0].classList.contains('bio')).toBe(true);
   const headings = sections.slice(1).map(section => section.querySelector('h2')?.textContent);
-  expect(headings).toEqual(v.lang === 'en' ? ['Projects', 'Research', 'Interests', 'Blog'] : ['项目', '研究', '兴趣爱好', '博客']);
+  const galleryHeadings = v.lang === 'en' ? ['Projects', 'Research', 'Interests'] : ['项目', '研究', '兴趣爱好'];
+  // With the blog off the section is omitted entirely, not left empty.
+  expect(headings).toEqual(BLOG_ENABLED ? [...galleryHeadings, v.lang === 'en' ? 'Blog' : '博客'] : galleryHeadings);
   for (const meta of document.querySelectorAll('.bullet-list_meta')) expect(meta.textContent).not.toMatch(/(?:19|20)\d{2}/);
   for (const section of sections.slice(1, 4)) {
    expect(section.querySelectorAll('a[href^="http"],a[target="_blank"]')).toHaveLength(0);
@@ -485,6 +494,7 @@ for (const v of variants) {
    }
   }
   expect(sections.slice(1, 4).flatMap(section => [...section.querySelectorAll('.bullet-list_link')].map(link => link.getAttribute('href')))).toEqual(entryGallerySlugs.map(slug => `/gallery/${slug}/`));
+  if (!BLOG_ENABLED) return;
   const blogLinks = [...sections[4].querySelectorAll('.bullet-list_link')].map(link => link.getAttribute('href')!);
   expect(new Set(blogLinks).size).toBe(blogLinks.length);
   const rss = new DOMParser().parseFromString(await readFile(join(v.root, 'rss.xml'), 'utf8'), 'text/xml');
@@ -519,10 +529,14 @@ for (const v of variants) {
   expect(chatControl.getAttribute('aria-label')).toBe(v.homeLabel);
  });
  test(`${v.lang}: localized feeds, sitemap and noindex placeholders`, async () => {
-  const rss = new DOMParser().parseFromString(await readFile(join(v.root,'rss.xml'), 'utf8'), 'text/xml');
-  expect(rss.querySelector('channel > title')?.textContent).toBe(v.title);
-  expect(rss.querySelectorAll('item').length).toBe(4);
-  for (const link of rss.querySelectorAll('item > link')) expect(link.textContent).toStartWith(v.origin);
+  if (BLOG_ENABLED) {
+   const rss = new DOMParser().parseFromString(await readFile(join(v.root,'rss.xml'), 'utf8'), 'text/xml');
+   expect(rss.querySelector('channel > title')?.textContent).toBe(v.title);
+   expect(rss.querySelectorAll('item').length).toBe(4);
+   for (const link of rss.querySelectorAll('item > link')) expect(link.textContent).toStartWith(v.origin);
+  } else {
+   expect(await access(join(v.root, 'rss.xml')).then(() => true, () => false)).toBe(false);
+  }
   const sitemap = await readFile(join(v.root,'sitemap-0.xml'), 'utf8'); expect(sitemap).toContain(v.origin); expect(sitemap).not.toContain('/wip'); expect(sitemap).not.toContain('/404'); expect(sitemap).not.toContain('/gallery/layout-preview/'); expect(sitemap).not.toContain('/dev/');
   const { document: preview } = parseHTML(await readFile(join(v.root, 'gallery/layout-preview/index.html'), 'utf8'));
   expect(preview.querySelector('meta[name="robots"]')?.getAttribute('content')).toContain('noindex');
@@ -536,6 +550,33 @@ for (const v of variants) {
 }
 
 for (const v of variants) {
+ test(`${v.lang}: the blog appears everywhere or nowhere, and every internal link resolves`, async () => {
+  const exists = (path: string) => access(join(v.root, path)).then(() => true, () => false);
+  expect(await exists('essay')).toBe(BLOG_ENABLED);
+  expect(await exists('post')).toBe(BLOG_ENABLED);
+  expect(await exists('rss.xml')).toBe(BLOG_ENABLED);
+  const blogUrl = /\/(?:essay|post)\/|\/rss\.xml/;
+  for (const name of ['sitemap-0.xml', 'sitemap-images.xml', 'sitemap-videos.xml', 'indexnow-manifest.json']) {
+   const listed = blogUrl.test(await readFile(join(v.root, name), 'utf8'));
+   // Pages and IndexNow list the blog when it is on; no file mentions it when off.
+   if (BLOG_ENABLED && (name === 'sitemap-0.xml' || name === 'indexnow-manifest.json')) expect(listed).toBe(true);
+   if (!BLOG_ENABLED) expect(listed).toBe(false);
+  }
+  const { document: chat } = parseHTML(await readFile(join(v.root, 'chat/index.html'), 'utf8'));
+  expect(chat.body.textContent!.includes(v.lang === 'en' ? 'Find a good read' : '找篇文章读读')).toBe(BLOG_ENABLED);
+  for (const file of await htmlFiles(v.root)) {
+   const { document } = parseHTML(await readFile(file, 'utf8'));
+   expect(Boolean(document.querySelector('link[type="application/rss+xml"]'))).toBe(BLOG_ENABLED);
+   for (const node of document.querySelectorAll('a[href]')) {
+    const href = node.getAttribute('href')!;
+    if (!BLOG_ENABLED) expect(href).not.toMatch(blogUrl);
+    if (!href.startsWith('/') || href.startsWith('//')) continue;
+    const path = href.split(/[?#]/, 1)[0];
+    if (path.startsWith('/media/')) { expect(mediaPaths.has(path)).toBe(true); continue; }
+    expect(await exists(path.endsWith('/') ? `${path}index.html` : path)).toBe(true);
+   }
+  }
+ });
  test(`${v.lang}: all homepage galleries expose distinct pages with indexing appropriate to their preview status`, async () => {
   const locale = v.lang === 'en' ? 'en' : 'zh';
   const sitemap = new DOMParser().parseFromString(await readFile(join(v.root, 'sitemap-0.xml'), 'utf8'), 'text/xml');

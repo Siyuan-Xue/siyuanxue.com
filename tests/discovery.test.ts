@@ -1,10 +1,12 @@
 import { expect, test } from 'bun:test';
-import { buildDiscoveryInventory, pageSitemap, imageSitemap, videoSitemap, auditDiscoveryHtml, contentDigest, collectReferencedMedia } from '../src/utils/discovery';
+import { buildDiscoveryInventory as buildInventory, pageSitemap, imageSitemap, videoSitemap, auditDiscoveryHtml, contentDigest, collectReferencedMedia } from '../src/utils/discovery';
 import { imageMedia, media } from '../src/utils/media';
 
 const article = (id: string, changes = {}) => ({ id, data: { title: 'Article', description: 'Visible summary', seoDescription: 'Search summary', date: new Date('2026-01-02'), draft: false, ...changes } });
 const photo = imageMedia('portrait');
 const gallery = (id: string, changes = {}) => ({ id, data: { title: 'Gallery', description: 'Gallery description', role: 'Author', category: 'projects' as const, order: 0, draft: false, images: [{ src: photo, alt: 'Portrait', caption: 'Public photograph' }], links: [], ...changes } });
+// These tests describe the blog-on inventory explicitly, whatever BLOG_ENABLED is for this build.
+const buildDiscoveryInventory = (sources: Parameters<typeof buildInventory>[0], locale: 'en' | 'zh', includeDrafts = false) => buildInventory(sources, locale, includeDrafts, true);
 const source = () => ({ essay: [article('new/en'), article('new/zh')], post: [], gallery: [gallery('work/en'), gallery('work/zh')] });
 
 test('new paired content joins discovery automatically; edits and removal are reflected without a slug list', () => {
@@ -133,4 +135,12 @@ test('rendered videos accept public HTTP URLs only and their explicit metadata a
  expect(page.videos).toEqual([]);
  const html = articleVideo(`<source src="${movie.src}">`);
  expect(contentDigest(html)).not.toBe(contentDigest(html.replace('2026-10-10', '2026-10-11')));
+});
+
+test('with the blog off, essays and posts leave the inventory but their pairing is still validated', () => {
+ const pages = buildInventory(source(), 'en', false, false);
+ expect(pages.some(page => page.kind === 'essay' || page.kind === 'post')).toBe(false);
+ expect(pages.some(page => page.path === '/gallery/work/')).toBe(true);
+ expect(pageSitemap(pages)).not.toContain('/essay/');
+ expect(() => buildInventory({ ...source(), essay: [article('new/en')] }, 'en', false, false)).toThrow('translation');
 });

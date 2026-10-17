@@ -61,7 +61,8 @@ test('published bilingual gallery survives a real Astro build with crawlable con
   for (const { locale, language, origin } of variants) {
    const build = spawnSync('node', ['node_modules/astro/bin/astro.mjs', 'build'], {
     // Bun tests set NODE_ENV=test; the child must model a production deployment.
-    cwd: temporary, env: { ...process.env, NODE_ENV: 'production', SITE_LOCALE: locale, ASTRO_TELEMETRY_DISABLED: '1' },
+    // The essay-figure pipeline is checked with the blog on, so it stays covered while hidden.
+    cwd: temporary, env: { ...process.env, NODE_ENV: 'production', SITE_LOCALE: locale, ASTRO_TELEMETRY_DISABLED: '1', BLOG_ENABLED: 'true' },
     encoding: 'utf8', timeout: 120_000, maxBuffer: 16 * 1024 * 1024,
    });
    if (build.error || build.status !== 0) throw new Error(`Astro ${locale} fixture build failed: ${build.error ?? build.signal ?? build.status}\n${build.stdout}\n${build.stderr}`);
