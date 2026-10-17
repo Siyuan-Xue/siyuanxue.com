@@ -8,3 +8,10 @@ test('mobile and touch header controls share the global 44px target across pages
   expect(css).toMatch(/@media\s*\(pointer:\s*coarse\)\s*\{\s*html:root\s*\{\s*--header-control-size:\s*44px/);
   expect(chatCss).not.toContain('--header-control-size:');
 });
+
+test('the chat body clips without becoming the sticky header scroller', async () => {
+  const chatCss = await readFile(new URL('../src/components/chat/chat.css', import.meta.url), 'utf8');
+  // iOS Safari stops extending a sticky header whose scroller is not the viewport.
+  expect(chatCss).toMatch(/\.has-xue-chat body \{[^}]*overflow: clip;/);
+  expect(chatCss).not.toMatch(/\.has-xue-chat body \{[^}]*overflow: hidden/);
+});

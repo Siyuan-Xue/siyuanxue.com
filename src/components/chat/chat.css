@@ -7,7 +7,9 @@ html.has-xue-chat {
   overflow: hidden;
   scrollbar-gutter: auto;
 }
-.has-xue-chat body { height: 100%; min-height: 0; overflow: hidden; }
+/* clip, not hidden: a scrolling body would become the sticky header's scroller, and iOS
+ * Safari then stops extending the header into the status-bar strip on theme changes. */
+.has-xue-chat body { height: 100%; min-height: 0; overflow: clip; }
 .has-xue-chat .page-wrapper { height: 100%; min-height: 0; }
 .has-xue-chat .page-main { min-height: 0; padding-bottom: 0; }
 .has-xue-chat astro-island { display: block; height: 100%; }
