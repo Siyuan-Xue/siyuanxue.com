@@ -36,9 +36,11 @@ bun run preview:zh
 
 Site labels and lists are authored as `{ en, zh }` pairs in `src/data/site.ts`, including every interface label (`ui`, `gallery`, `chat`). Components read them through `t()`; avoid inline locale ternaries. Pages render only the selected language.
 
+The blog (essays, posts and their RSS feeds) is currently **off**. `BLOG_ENABLED` in `src/features.ts` is the single switch: set its default to `true` to publish it again. While it is off, no blog pages or feeds are built and old blog URLs return the normal 404 page, but the content stays in the repository and its translation pairing is still validated.
+
 Each article has `en.md` and `zh.md` under `src/content/essays/<slug>/` or `src/content/posts/<slug>/`. Published pairs require matching dates and valid unique IDs. Missing translations or mismatched dates fail the build; a draft in either language excludes the pair. Article headings and TOC anchors come from the same Markdown renderer.
 
-Each language has its own RSS feed at `/rss.xml`, sitemap, canonical URLs and reciprocal language alternates. Incomplete homepage entries are visibly marked; the compatibility `/wip/` page is not indexed.
+When the blog is on, each language has its own RSS feed at `/rss.xml`. Each also has its own sitemap, canonical URLs and reciprocal language alternates. Incomplete homepage entries are visibly marked; the compatibility `/wip/` page is not indexed.
 
 ## Assets and interaction
 
