@@ -11,7 +11,7 @@
  * environment variable (`true`/`false`) overrides it for a single build, which the
  * tests use to check both modes; production builds use the default.
  */
-export const BLOG_ENABLED = resolveFlag(process.env.BLOG_ENABLED, true);
+export const BLOG_ENABLED = resolveFlag(process.env.BLOG_ENABLED, false);
 
 export function resolveFlag(value: string | undefined, fallback: boolean): boolean {
  if (value === undefined || value === '') return fallback;
