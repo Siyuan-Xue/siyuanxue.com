@@ -1,8 +1,8 @@
 # Siyuan Xue / 薛思远
 
-The personal website and blog of **Siyuan Xue (薛思远 / Miles)**, a student in Intelligence Science and Technology at Beijing University of Posts and Telecommunications (BUPT). Projects and writing on AI systems, agents, and full-stack engineering.
+The personal website and blog of **Siyuan Xue (薛思远 / Miles)**, studying Intelligence Science and Technology at Beijing University of Posts and Telecommunications (BUPT) and continuing his master’s studies at the School of Information and Communication Engineering. Projects and writing on AI systems, agents, and full-stack engineering.
 
-**薛思远的个人网站与博客**：分享 AI 系统、智能体与全栈工程的项目和思考。
+**薛思远的个人网站与博客**：就读于北京邮电大学智能科学与技术专业，并将在信息与通信工程学院继续攻读硕士学位，分享 AI 系统、智能体与全栈工程的项目和思考。
 
 Built with Astro and Markdown, with serif typography, light/dark themes and a single-click portrait reveal. Visual inspiration: [Dario Amodei](https://darioamodei.com/).
 

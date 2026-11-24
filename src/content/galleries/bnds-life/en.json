@@ -1,6 +1,6 @@
 {
   "title": "BNDS.life",
-  "description": "At the start of my final year at university, I spent some spare time revisiting old videos from my final year of high school. Those moments with friends still meant a lot to me, so I wanted to collect them on a publicly accessible website where we could return to them together. I built the main features of BNDS.life in one week in September 2026; the project is now largely complete. Inspired by YouTube's browsing and playback design, I organized a year's worth of memories into longer videos grouped by month and short clips in a continuous vertical feed. Both formats let us write down the stories behind the footage, keeping those memories alongside the videos.",
+  "description": "At the start of his final year at university, he spent spare moments revisiting old videos from his senior year of high school. Those days with friends still meant a great deal to him, prompting him to gather the footage onto a publicly accessible website where everyone could return to it together. He built the core features of BNDS.life in one week in September 2026, and the project is now largely complete. Inspired by YouTube’s browsing and playback design, he organized a year’s worth of memories into longer videos grouped by month and short clips in a continuous vertical feed—both with space for written stories so the memories behind the footage stay alongside the videos.",
   "period": "September 2026 · one week of development",
   "homeMeta": "video streaming platform",
   "role": "Project concept, website design and development, video curation and deployment",
@@ -12,7 +12,7 @@
     {
       "src": "bnds-life/home",
       "alt": "BNDS.life homepage with administrator-selected videos in the For You section and a chronological video list below",
-      "caption": "Homepage: recommended videos selected by the administrator appear at the top. Longer videos and short clips give friends two ways to revisit our memories."
+      "caption": "Homepage: recommended videos selected by the administrator appear at the top. Longer videos and short clips give friends two ways to revisit shared memories."
     },
     {
       "src": "bnds-life/long-videos",

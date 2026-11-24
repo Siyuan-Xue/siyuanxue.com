@@ -33,8 +33,8 @@ export const site = {
 	homeTitle: bi('Siyuan Xue（薛思远）｜Personal Website', '薛思远（Siyuan Xue）｜个人网站'),
 	github: 'https://github.com/Siyuan-Xue',
 	description: bi(
-		'Siyuan Xue (薛思远), a BUPT student of Intelligence Science and Technology, passionate about products and technology, exploring the unknown, and pursuing excellence and perfection.',
-		'薛思远（Siyuan Xue）的个人网站。北京邮电大学智能科学与技术专业的学生，热衷于探索未知，追求极致与完美，对产品与技术倾注热情。',
+		'Siyuan Xue (薛思远), studying Intelligence Science and Technology at BUPT and continuing his master’s studies at the School of Information and Communication Engineering, driven to explore the unknown and pursue excellence and perfection.',
+		'薛思远（Siyuan Xue）的个人网站。就读于北京邮电大学智能科学与技术专业，并将在信息与通信工程学院继续攻读硕士学位，热衷于探索未知，追求极致与完美。',
 	),
 
 	/** Interface copy. Every visible or accessible label is authored here as an en/zh pair. */
@@ -63,7 +63,7 @@ export const site = {
 	},
 
 	gallery: {
-		role: bi('My role', '本人角色'),
+		role: bi('Role', '角色'),
 		videos: bi('Videos', '视频'),
 		simulationResults: bi('Simulation results', '模拟器结果'),
 		videoFallback: bi('Your browser cannot play this video. Use the download link below.', '浏览器无法播放此视频时，可使用下方链接下载。'),
@@ -86,13 +86,13 @@ export const site = {
 
 	bio: {
 		lead: bi(
-			'Siyuan Xue is a student of Intelligence Science and Technology at Beijing University of Posts and Telecommunications. He is passionate about exploring the unknown and pursuing excellence and perfection. He pours his passion into products and technology, finding joy in making things himself and bringing moments of surprise to everyday life.',
-			'薛思远是北京邮电大学智能科学与技术专业的学生。他热衷于探索未知，追求极致与完美。他对产品与技术倾注热情，享受亲手做出一些东西的快乐，给生活带来惊喜。',
+			'Siyuan Xue studies Intelligence Science and Technology at Beijing University of Posts and Telecommunications, and will continue his master’s studies at the School of Information and Communication Engineering. He is driven to explore the unknown and pursue excellence and perfection.',
+			'薛思远就读于北京邮电大学智能科学与技术专业，并将在信息与通信工程学院继续攻读硕士学位。他热衷于探索未知，追求极致与完美。',
 		),
 		more: [
 			bi(
-				'His favorite saying is “Stay hungry. Stay foolish.”',
-				'他最喜欢的一句话是：“Stay hungry. Stay foolish.”',
+				'“Stay hungry. Stay foolish.”',
+				'“Stay hungry. Stay foolish.”',
 			),
 		],
 	},
