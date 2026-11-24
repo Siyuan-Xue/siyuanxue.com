@@ -52,7 +52,11 @@
   - `BLOG_ENABLED=false bun run build` + `BLOG_ENABLED=false bun run test:output`：两语言各构建 16 页；`53 pass / 0 fail`（`9228 expect() calls`）。
   - `bun run test:gallery`：`1 pass / 0 fail`（`346 expect() calls`）。
   - 产物 HTML 抽检：确认 `dist/index.html`、`dist/zh/index.html` 及图集页已包含定稿中英文简介、独立格言、`Role / 角色` 与 B-Spline Policy 新增研究生方向表述。
-- **生产发布与公网验收**：待随本次提交推送触发 GitHub Actions 后补充实际 run ID、部署 SHA 与 `bash ops/verify-public.sh <SHA>` 结果。
+- **生产发布与公网验收**：
+  - [生产 Actions 45432411687](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/45432411687) 已成功发布提交 `ffbac6842bf0012c4cbfc81e783fc18b34bcd546`：`verify / Validate both locales and deployment`、`Deploy verified release`、`Notify IndexNow after successful release` 均为 `success`，`Roll back production` 为 `skipped`。
+  - 独立公网验收 `bash ops/verify-public.sh ffbac6842bf0012c4cbfc81e783fc18b34bcd546` 通过：`siyuanxue.com` 与 `xuesiyuan.com` 的 `/__health` 均返回完整目标 SHA、固定语言标签正确、旧照片 `/images/p-202.jpg` 返回 `410`。
+  - 额外公网 HTML 抽检通过：`https://xuesiyuan.com/`、`https://siyuanxue.com/` 及其图集页（`imathbook`、`b-spline-policy`、`volleyball`、`family`）均返回 HTTP 200，新版中英文简介、独立格言、`description` 摘要、`Role / 角色` 与第三人称图集文案（含 B-Spline Policy 研究生方向表述）均已在线生效。
+  - 后续 `[skip ci]` 文档提交仅补充本次发布验收证据，不改变上述生产静态版本。
 
 ## 恢复
 
