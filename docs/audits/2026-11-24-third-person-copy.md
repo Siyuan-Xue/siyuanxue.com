@@ -57,6 +57,7 @@
   - 独立公网验收 `bash ops/verify-public.sh ffbac6842bf0012c4cbfc81e783fc18b34bcd546` 通过：`siyuanxue.com` 与 `xuesiyuan.com` 的 `/__health` 均返回完整目标 SHA、固定语言标签正确、旧照片 `/images/p-202.jpg` 返回 `410`。
   - 额外公网 HTML 抽检通过：`https://xuesiyuan.com/`、`https://siyuanxue.com/` 及其图集页（`imathbook`、`b-spline-policy`、`volleyball`、`family`）均返回 HTTP 200，新版中英文简介、独立格言、`description` 摘要、`Role / 角色` 与第三人称图集文案（含 B-Spline Policy 研究生方向表述）均已在线生效。
   - 后续 `[skip ci]` 文档提交仅补充本次发布验收证据，不改变上述生产静态版本。
+  - **同日后续首句微调**：按用户确认将 `src/content/galleries/imathbook/zh.json` 首句改为「这是他参与的第一个项目，他为之倾注了对产品的激情，在实践中锤炼出扎实的工程能力。」（补回主语「他」并去「也」）。本机 `bun run check`、`bun run test`（Python 3.12 环境下 265 pass / 0 fail）、`bun run build`、`bun run test:output`（53 pass / 0 fail）全部通过；隔离提交 `4e22199e755df0ea6794a0858da28ec6ffbff805` 经 [Actions 45518765937](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/45518765937) 发布成功，`bash ops/verify-public.sh 4e22199e755df0ea6794a0858da28ec6ffbff805` 及线上 `https://xuesiyuan.com/gallery/imathbook/` 正文抽检通过。
 
 ## 恢复
 
