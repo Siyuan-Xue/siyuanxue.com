@@ -57,7 +57,7 @@
 | 为什么建站 `/essay/why-this-site/` | 双语 Markdown 本人文章 | 观点文章，保留实际发布日期，无需包装外部佐证 |
 | AI 额度 `/post/congrats-you-hit-the-limit/` | 双语 Markdown 本人文章 | 观点文章，不将定价讨论写成最新厂商价格信息 |
 | 开站短记 `/post/first-note/` | 双语 Markdown 本人短记 | 站点发布回忆，不将文字日期替代部署 SHA 的时间证据 |
-| 聊天 `/chat/` | 静态入口和公开使用说明 | 用户消息、动态回复、持久化会话和服务记忆不进入内容清单或 sitemap 媒体 |
+| 聊天 `/chat/`（2026-11-26 已删除） | 无；页面和入口已删除，返回普通 404，不做跳转 | 已从内容清单、sitemap 和 IndexNow 清单移除；各平台移除旧收录的时间没有核对 |
 
 `yuheng`、`layout-preview`、`wip`、`404` 和 `probfun` 重定向不属于索引候选；不能因这里提到它们就加入 sitemap。
 

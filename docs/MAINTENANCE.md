@@ -2,6 +2,8 @@
 
 维护负责人：Siyuan Xue / 薛思远。整理日期：2026-09-16。
 
+**2026-11-26 取消智能体功能（网站与服务器）：**按所有者要求，网站的 `/chat/` 页面、顶栏聊天按钮、聊天代码与依赖、仓库里的桥接源码和安装脚本全部删除；服务器上的 OpenClaw 两个网关与程序、微信登录、访客副本同步、网站桥接及其 Nginx 路由、相关账号和密钥，以及为智能体装的 PostgreSQL、Chrome、ffmpeg 和缓存全部删除，对外监听只剩 22、80、443，根分区占用从 16G 降到 9.6G。魔丸主工作区在删除前推送到私有仓库 `Siyuan-Xue/mowan`（`fdb655e`）。[Actions 45853549863](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/45853549863) 成功发布 `f9a12c090a30034b4b612db2539e8ab24def701d`（verify、deploy、IndexNow 均成功，rollback skipped）；`ops/verify-public.sh` 通过，两域名的 `/chat/` 与 `/chat-api` 返回 404。本机 `bun run check` 0 错误，`bun run test` 226 通过、2 个媒体上传测试因本机 Python 3.9 缺 `hashlib.file_digest` 失败（与本次改动无关，CI 通过），博客开关两种模式的构建与产物检查各 51 通过。遗留：GitHub 上 `mowan` 仓库的部署密钥登记未删、模型中转密钥未在服务商侧作废、微信一侧未核对，见第 7 节。当前状态见第 4 节，逐项清单与恢复边界见[清理记录](audits/2026-11-26-agent-retirement.md)；后续 `[skip ci]` 文档提交不改变该静态版本。
+
 **2026-11-24 全站文案第三人称统一与首页简介更新：**按用户要求并经逐项审阅确认，将 `src/data/site.ts` 图集角色标签（`My role / 本人角色` → `Role / 角色`）及全部 11 组双语图集（`src/content/galleries/*/{zh,en}.json`）的正文、英文时期、角色与图注统一为第三人称（图集内以 `他 / he` 叙述），并在 `B-Spline Policy` 补充实习激发具身智能研究兴趣及选择相关研究生方向的真实经历；同时按用户批准的精修 A 更新首页个人简介与分享摘要（补入信息与通信工程学院硕士去向，格言 `“Stay hungry. Stay foolish.”` 独立成段），并同步更新网站 `README.md` 与独立 GitHub 主页 `Siyuan-Xue/Siyuan-Xue` 的 `README.md`（提交 `ddbd5a9`，旧版快照见本机 `.git/seo-backups/2026-11-24/`）。聊天页「小薛」口吻及已隐藏博客原文不变；GitHub 账号侧栏 Bio 因 `gh` 令牌无 `user` 权限待手动同步。本机已补齐 Homebrew `node@24`（`v24.22.3`）与 `bun`（`1.4.5`）并完成 `bun run check`（0 errors/warnings）、`bun run test`（265 pass）、`BLOG_ENABLED=true/false` 双模式构建与 `test:output`（各 53 pass）及 `test:gallery`（1 pass）。[Actions 45432411687](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/45432411687) 已成功发布 `ffbac6842bf0012c4cbfc81e783fc18b34bcd546`（verify、deploy、IndexNow 均成功，rollback skipped）；独立公网 `bash ops/verify-public.sh ffbac6842bf0012c4cbfc81e783fc18b34bcd546` 与两站线上 HTML 抽检全部通过。同日按用户确认将 `imathbook/zh.json` 首句微调为「这是他参与的第一个项目，他为之倾注了对产品的激情，在实践中锤炼出扎实的工程能力。」，由 [Actions 45518765937](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/45518765937) 成功发布 `4e22199e755df0ea6794a0858da28ec6ffbff805` 并通过 `ops/verify-public.sh` 与线上中文页验收；后续 `[skip ci]` 文档提交不改变该静态版本。详情与恢复入口见[第三人称文案与简介审计](audits/2026-11-24-third-person-copy.md)。
 
 **2026-10-17 blog hidden behind a feature flag:** At the user's request the blog is off on both domains. `BLOG_ENABLED` in `src/features.ts` (default `false`) controls essay/post pages, the homepage Blog section, RSS feeds and head links, blog entries in sitemaps and the IndexNow manifest, language-switch routes and the chat reading prompt. Content and code stay; translation pairing is still validated. Old blog URLs and `/rss.xml` return the Nginx 404 page. The first deploy with the flag off sends the removed blog URLs to IndexNow as changed, so engines will see the 404s; re-enabling resubmits them. To re-enable, set the default to `true` (or revert the "Turn the blog off" commit), then run the usual checks. Details: [audit](audits/2026-10-17-blog-feature-flag.md).
@@ -64,7 +66,7 @@
 
 当前行为看代码，实际安装状态看服务器，历史审计看其日期。设计稿和计划不代表已经上线。若三者冲突，先记录差异、核对实际配置，再修改；不能直接把旧模板整份覆盖上去。
 
-**已知文档差异：**早期 Hermes 说明是「8 个公共只读工具、普通 GLM API 端点、原生文件记忆」基线。9 月 15 日后续部署记录增加长期记忆的 4 个只读工具，公共 profile 共 12 个，并统一到 GLM Coding Plan。`ops/README.md`、`services/hermes-chat` 下的旧 overlay/验证器尚未完整表达这一后续状态。恢复或升级前必须核对第 4 节，不能按旧的“必须恰好 8 个工具”撤掉长期记忆，也不能未经检查修改测试来掩盖差异。
+**已知文档差异：**2026-11-26 起智能体、聊天和记忆服务全部删除（见第 4 节）。更早的审计记录、计划和设计稿里关于 Hermes、OpenClaw、工具数量、模型端点的描述都只是当时的历史，不能当作可恢复的现状。
 
 ## 2. GitHub、域名、服务器与搜索资源
 
@@ -103,9 +105,9 @@
 
 源码入口：[站点资料](../src/data/site.ts)、[页面元信息](../src/components/BaseHead.astro)、[构建脚本](../scripts/build.mjs)、[依赖和命令](../package.json)。文章按 `src/content/essays/<slug>/{en,zh}.md` 或 `src/content/posts/<slug>/{en,zh}.md` 配对。两语言必须一起发布。
 
-运行要求以 `package.json`、`bun.lock` 和工作流为准；本次基线为 Bun 1.3.14、Node ≥22.12。Astro 静态生成页面，聊天单独使用 React/AI SDK；PhotoSwipe 按需加载，字体本地托管。无需为了维护另外引入 CMS。
+运行要求以 `package.json`、`bun.lock` 和工作流为准；本次基线为 Bun 1.3.14、Node ≥22.12。Astro 静态生成页面（2026-11-26 起不再有 React 或 AI SDK，聊天已删除）；PhotoSwipe 按需加载，字体本地托管。无需为了维护另外引入 CMS。
 
-**2026-10-11 用户更新媒体维护约定：**图片、视频和派生缩略图通过原生 SSH/rsync 直传服务器，不再进入当前 Git 源码或 CI 静态包；Git 仅保存 `src/data/media.json` 的资源 ID、哈希地址、尺寸、格式、大小与摘要。所有现有栅格图已迁移，正文和代码继续使用原 Actions 双语发布。提示词与生成依据仍放在对应审计记录；本机忽略目录 `media-local/` 保存素材和派生文件，临时预览图、浏览器缓存和工具会话不是备份。升级 PhotoSwipe、Lucide、Fontsource 或适配的 AI Elements 代码时，一并检查版本、许可证和归属说明。
+**2026-10-11 用户更新媒体维护约定：**图片、视频和派生缩略图通过原生 SSH/rsync 直传服务器，不再进入当前 Git 源码或 CI 静态包；Git 仅保存 `src/data/media.json` 的资源 ID、哈希地址、尺寸、格式、大小与摘要。所有现有栅格图已迁移，正文和代码继续使用原 Actions 双语发布。提示词与生成依据仍放在对应审计记录；本机忽略目录 `media-local/` 保存素材和派生文件，临时预览图、浏览器缓存和工具会话不是备份。升级 PhotoSwipe、Lucide、Fontsource 或 Motion 时，一并检查版本、许可证和归属说明。
 
 2026-10-08 悬停反馈调整：共享 `src/styles/tokens.css` 中的 Claude 粘土色系；悬停统一使用 `transition: none` 即时响应（已按后续要求取消80ms），覆盖首页、文章目录/正文与聊天控件；明暗模式分别使用可读的交互色，键盘焦点同步反馈。已通过[生产Actions](https://github.com/Siyuan-Xue/siyuanxue.com/actions/runs/37717307878)发布 `8d902f66a258e551fe414361160241bafc0af504`，两域名目标SHA、固定语言、HTTP/www跳转与旧照片410检查通过；更新、验收边界与恢复见[悬停反馈审计](audits/2026-10-08-hover-feedback.md)。
 
@@ -161,7 +163,7 @@
 - [CI 工作流](../.github/workflows/ci.yml) 调用 `bash ops/verify.sh`，完成类型、行为、部署脚本、隔离 Nginx、双语构建及产物检查，再打包同一份产物；Actions artifact 保留 7 天，不能当长期备份。
 - [生产工作流](../.github/workflows/deploy.yml) 在 push `main` 后运行；`production` 并发不主动取消前次发布。上传已验证包及校验和，激活版本，验证公网两域名，最后保留 5 个成功 release。
 - 手动运行支持 `operation=deploy` 或 `rollback`；回滚需要保留版本的完整 40 位 SHA。`migrate_domains=true` 仅用于已有管理员准备的首次迁移，日常不用。
-- **推送网站代码只自动发布静态产物。**不会自动安装新版 Nginx 配置、`siyuanxue-release`、Node 聊天桥接、Hermes profile/plugin、记忆服务、模型或数据库。
+- **推送网站代码只自动发布静态产物。**不会自动安装新版 Nginx 配置或 `siyuanxue-release`。
 - 网页代码和文字继续通过现有 GitHub CI/CD 同步发布两域名。2026-10-11 起图片、视频原文件与缩略图改为 SSH/rsync 直传，不通过 GitHub artifact；不手动切换网站 release。SSH 还用于必要的独立服务维护和诊断。
 
 2026-09-16 已重新读取 GitHub `production` 环境变量与 secret **名称**：
@@ -190,52 +192,35 @@
 | `/var/backups/siyuanxue-media-nginx-20261010T164421Z/` | 本轮实际 Nginx 路由变更前两域名配置备份；恢复时先恢复引用媒体的网页版本，再还原配置并 `nginx -t` / reload |
 | `/usr/local/bin/siyuanxue-release` | 安装自 [ops/release.sh](../ops/release.sh)，服务器副本需单独升级 |
 | `/usr/local/lib/siyuanxue-https` | HTTPS helper 和模板；源码在 `ops/` |
-| `/etc/nginx/` | 已启用域名配置、聊天 snippet；源码模板在 [ops/nginx](../ops/nginx) |
+| `/etc/nginx/` | 已启用域名配置；源码模板在 [ops/nginx](../ops/nginx)。2026-11-26 已去掉聊天 snippet 及其 include，改动前的两个站点配置和 snippet 备份在 `/var/backups/siyuanxue-nginx-chat-removal-20261126T155511Z/` |
 | `/etc/letsencrypt/renewal-hooks/deploy/reload-nginx` | 续期后先检查再 reload，源码为 [renewal hook](../ops/reload-nginx-after-renewal.sh) |
 | `/var/backups/siyuanxue-dual-domain-20260911` | 首次双域名迁移备份，root 私有；早期布局仅供管理员灾难恢复 |
 
-发布验收必须同时检查 Actions 结果、两个 `/__health` 的目标 SHA、语言、跳转与旧照片封禁。可运行 `bash ops/verify-public.sh <完整SHA>`。聊天需要独立验收，静态发布成功不证明模型可用。
+发布验收必须同时检查 Actions 结果、两个 `/__health` 的目标 SHA、语言、跳转与旧照片封禁。可运行 `bash ops/verify-public.sh <完整SHA>`。
 
 故障恢复优先用 Actions 的 rollback 操作；首次双语迁移以前的单语言包不是正常回滚目标。始终保留 `/images/p-202.jpg` 的 410 拒绝规则。慢上传时先读取最新 job/step 状态，再决定是否取消或重试，不能依据过期状态打断已开始的激活。
 
 SSH 早期报错使用了错误 IP `87.156.77.131`；正确 IP 曾验证成功。近期无交互公钥失败只说明该次本地凭据不可用，不能推断服务器封禁，更不能因此关闭防火墙或 Fail2ban。
 
-## 4. 小薛聊天、微信、模型与长期记忆
+## 4. 智能体、聊天、微信与记忆（2026-11-26 已全部取消）
 
-当前状态：小薛运行在 OpenClaw 上，2026-11-26 已重置为全新状态，旧 Hermes 已从服务器删除（见下面两条补记和第 5 节）。更早日期的补记保留为历史。桥接说明见 [聊天桥接说明](../services/hermes-chat/README.md)。
+**当前状态：没有任何智能体功能。**2026-11-26 所有者要求取消所有智能体功能、清理服务器和网站。网站不再有聊天页，服务器上不再运行或保存任何智能体程序、数据、密钥和账号。完整经过、逐项清单和验收见[清理记录](audits/2026-11-26-agent-retirement.md)。
 
-**2026-11-24 补记：**当日登录服务器把 Hermes 升级到 v0.23.4，并在 23:37–23:52 完成隔离修复和模型切换（GLM 失效，改用用户提供的 Anthropic 兼容接口）。下表中标注该日期的行是当日实际观察；gateway 拓扑、API 入口路径、工具集迁移行为和模型提供方都变了。网站聊天已在两个域名实测；微信、记忆整理未验证。未标注该日期的行仍是 9 月记录，未在当日复验。完整经过、验收与待办见[升级审计](audits/2026-11-24-hermes-v0.23.4-upgrade.md)。
-
-**2026-11-25 补记：**当日完成一次全面安全审查（未发现密钥泄露），并按用户逐项批准做了四项修复：堵住微信访客读取服务器文件的两条路径、修复主人微信消息的分流、把含密钥的备份移到仅 root 可读的位置、禁用 root 的 SSH 登录；随后安装全部安全更新并重启，重启后两个域名的网站聊天实测可用。下表标注该日期的内容是当日实际观察。微信仍未用真实账号实测；小薛的人设与记忆重建只完成了清单和草稿，等用户挑拣，服务器上未实施。见[加固记录](audits/2026-11-25-hermes-hardening-and-audit.md)。
-
-**2026-11-25 晚补记：**用户决定改用 OpenClaw。当日 22:18–23:20 在服务器上安装 OpenClaw 2026.11.10，建了两个只听本机的网关，并把两个域名的网站聊天切到 OpenClaw。经过见[迁移记录](audits/2026-11-25-openclaw-migration.md)；该记录里关于人设、记忆、旧日记迁入和 Hermes 保留的部分，已被下面的重置补记取代。
-
-**2026-11-26 重置补记（当前运行状态）：**所有者要求把小薛重置为全新的 OpenClaw，由其手动逐步重建。当日在服务器上：停掉两个网关；删除三个档案的工作区、会话、记忆索引、媒体和日志，以及随旧数据库失效的客户端凭据和服务记录（不删它们网关会因 `Existing client credentials belong to a previous shared database` 拒绝启动）；保留配置、两个 `.env`、插件、微信登录和网站桥接。去掉 `agents.defaults.skipBootstrap` 后，由 OpenClaw 自己生成官方起始文件，与随包模板逐字一致，三个档案的显示名也已清除。`main` 保留 `BOOTSTRAP.md`，出生仪式还没进行；两个访客档案删掉了 `BOOTSTRAP.md`（访客不该替所有者给它起名），其余仍是空白模板。**现在没有任何人设和记忆**，网站访客遇到的是一个空白的通用助手，这是所有者接受的过渡状态。工具限制、微信分流绑定和访客工具白名单仍在配置里。验收：两个域名聊天 200，网关 ready，微信通道 running，`openclaw security audit` 0 个高危。同日 `main` 工作区的初始状态推送到私有仓库 `Siyuan-Xue/mowan`，旧 Hermes 与记忆库全部从服务器删除（见第 5 节）。
-
-| 层 / 资源（OpenClaw，当前运行） | 权威位置、作用与更新边界 |
+| 资源 | 现状 |
 |---|---|
-| 程序 | `/opt/openclaw`（root 所有、只读）：Node 26.12.1 与 `openclaw@2026.11.10`，入口 `/usr/local/bin/openclaw`。经 npm 镜像安装，镜像与官方 npm 的完整性哈希核对一致。检查更新已关闭（`update.checkOnStart: false`）；升级要人工进行：以 root 在 `/opt/openclaw/app` 重装指定版本后，分别重启两个网关并重做迁移记录第 6 节的验收。不要用 `openclaw update` 自动升级：程序目录归 root，且微信插件与主程序版本有兼容要求 |
-| 个人网关 | 用户服务 `openclaw-gateway.service`（ubuntu 账号，依赖 linger），`127.0.0.1:18789`。状态目录 `~/.openclaw`，配置 `~/.openclaw/openclaw.json`，密钥 `~/.openclaw/.env`（0600，含模型接口密钥和网关令牌，不入库）。档案：`main`（主人，工作区 `~/.openclaw/workspace`）和 `wechat-guest`（只读，工作区 `~/.openclaw/workspace-wechat-guest`）。改配置用 `openclaw config set` 或直接编辑后 `openclaw config validate`；配置非法时网关拒绝启动 |
-| 公开网关 | 系统服务 `openclaw-gateway-public.service`，账号 `openclaw-public`（无登录、无 sudo），`127.0.0.1:19089`。状态目录 `/var/lib/openclaw-public/.openclaw`（配置、`.env`、工作区都在里面）。只有档案 `website-guest`。命令要以该账号运行：`sudo -u openclaw-public -H openclaw …`。记忆类离线命令（`openclaw memory status/index`）要求先停对应网关 |
-| 为什么是两个网关 | OpenClaw 官方的信任模型是一个网关一个信任边界，OpenAI 兼容接口的令牌等同于整个网关的管理员凭据。匿名访客因此单独放在公开网关里，那里没有主人的记忆、会话和微信凭据。不要把 `chatCompletions` 接口开在个人网关上，也不要让桥接指向 18789 |
-| 网站桥接 | 仍是 `hermes-chat.service` 与 `/opt/hermes-chat/server.mjs`（名称沿用）。`/etc/hermes-chat.env`：`HERMES_API_URL=http://127.0.0.1:19089/v1/chat/completions`，`HERMES_API_KEY` 必须等于公开网关 `.env` 里的 `OPENCLAW_GATEWAY_TOKEN`，`CHAT_UPSTREAM_MODEL=openclaw/website-guest`，`CHAT_DAILY_LIMIT=200`（每天总量上限，计数在内存里，重启清零）。桥接是独立安装，改 `server.mjs` 后要手工复制到服务器并重启；本机先跑 `node --test --experimental-strip-types tests/hermes-chat.node.ts` |
-| 人设、规则、记忆 | 每个档案的工作区里是 OpenClaw 官方起始文件：`AGENTS.md`、`SOUL.md`、`IDENTITY.md`、`USER.md`（`main` 另有 `BOOTSTRAP.md`），没有 `MEMORY.md` 和 `memory/`。2026-11-26 已清空，等所有者手动重建；旧人设、记忆原件、清单和脚本已随本机的 `private-agent-review/` 一起删除，不可恢复。访客工作区以后只放可对外讲的内容 |
-| 记忆机制 | OpenClaw 内置记忆：纯文件加每个档案自己的 SQLite 索引。检索设为只用关键词（`memory.search.provider: none`，中文用 trigram 分词），不向第三方发送内容。个人网关每天 03:00 运行官方的后台整理（dreaming），把反复用到的内容提炼进 `main` 的 `MEMORY.md`，改动摘要写在 `DREAMS.md`；公开网关关闭了后台整理和压缩前写入。**不要用 scp 或编辑器直接改线上 `main` 的 `MEMORY.md` / `USER.md`**：OpenClaw 记录这两个文件的来源，外部改动后再由小薛写入会被标成不可信并停止自动加载；需要人工改时停网关再改，改后用 `openclaw doctor` 查 `memory-provenance` |
-| 权限 | 访客档案的工具白名单只有 `memory_search`、`memory_get`、`web_search`、`web_fetch`、`session_status`。`main` 可以读写自己工作区、检索以往会话、查网页、设提醒，不能执行命令（用户 2026-11-25 的决定；要恢复需先装容器沙箱）。全局关闭提权执行、跨档案会话和后台自学习。升级或改配置后用 `openclaw security audit --deep` 和迁移记录第 6 节的方法复核 |
-| 微信 | 插件 `@tencent-weixin/openclaw-weixin@2.4.10`（npm 固定版本）装在个人网关。2026-11-26 09:19 所有者扫码登录；当日重置时保留了登录凭据（`~/.openclaw/openclaw-weixin/`），重启后通道 running，主人分流绑定和命令所有者仍在配置里。**重置后还没有收发过微信消息。**需要重新登录时运行服务器上的 `~/.openclaw/bin/wechat-login.sh`：终端出二维码（约两分钟过期、自动续出，Ctrl-C 取消），成功后自动运行同目录的 `finish_wechat.py`，把扫码者绑定到 `main`；这两个脚本只在服务器上有副本，本机源稿已随 `private-agent-review/` 删除。底层命令是 `openclaw channels login --channel openclaw-weixin`。插件默认只放行扫码的那个微信号；放行其他人要改插件的名单文件，名单非空时必须同时包含主人，被放行的人进 `wechat-guest`。微信身份 ID 与登录凭据只在 `~/.openclaw` 内 |
-| 网页搜索 | 官方 `@openclaw/parallel-plugin` 的免密钥通道（`tools.web.search.provider: parallel-free`）。从这台服务器 DuckDuckGo 不可达 |
-| 模型提供方 | 与 11-24 相同的 Anthropic 兼容中转接口和模型，在 OpenClaw 里是自定义提供方 `relay`（`api: anthropic-messages`），密钥变量 `XUE_RELAY_API_KEY` 分别在两个网关的 `.env` 里。换密钥要改两处并重启两个网关。费用按用量计，服务商侧没有消费上限 |
-| 备份 | `main` 工作区已按官方建议做成 git 仓库，初始提交（官方起始文件，未改动）于 2026-11-26 推送到私有仓库 `Siyuan-Xue/mowan`，用服务器上专用的部署密钥推送，该密钥只对这一个仓库有写权限（GitHub 上标题为 `siyuanxue server workspace push`，私钥在服务器 `~/.ssh/`，不入库）。之后的改动要手动 `git add` / `commit` / `push`，没有自动任务。状态目录（配置、凭据、会话）没有备份，用 `openclaw backup create --verify`。见第 7 节 |
+| 网站聊天 | `/chat/` 页面、顶栏聊天按钮、React 聊天应用、聊天文案和测试已从仓库删除；依赖里不再有 React、AI SDK、Streamdown 等。两个域名的 `/chat/` 与 `/chat-api` 返回普通 404，不做跳转。`/chat/` 已从 sitemap 和 IndexNow 清单移除 |
+| 网站桥接 `hermes-chat` | 源码（`services/hermes-chat/`）、单元文件、安装脚本、Nginx snippet 和测试已从仓库删除。服务器上的服务、`/opt/hermes-chat`、`/opt/hermes-chat-runtime`、`/etc/hermes-chat.env`、账号 `hermes-chat`、`/etc/nginx/snippets/hermes-chat.conf` 及两个站点配置里的 include 已删除 |
+| OpenClaw | 两个网关（`openclaw-gateway.service`、`openclaw-gateway-public.service`）已停用并删除；`/opt/openclaw`、`/usr/local/bin/openclaw`、`~/.openclaw`（配置、两个档案的工作区、会话、记忆索引、模型密钥）、`/var/lib/openclaw-public`、账号 `openclaw-public` 已删除 |
+| 微信 | 插件和登录凭据（`~/.openclaw/openclaw-weixin/`）随 `~/.openclaw` 删除，服务器不再收发微信消息。手机微信一侧是否还显示这次登录，没有核对，见第 7 节 |
+| 访客副本同步 | 用户服务 `mowan-share.path` / `.timer` / `.service` 与 `/var/lib/mowan-shared` 已删除；`ubuntu` 的 linger 已关闭 |
+| 魔丸的人设与记忆 | 主工作区的最终状态在删除前提交并推送到私有仓库 `Siyuan-Xue/mowan`（最后提交 `fdb655ea1550c8d91639a258dc70d34a1cbfc32b`，与服务器删除前的本地提交一致）。这是唯一的副本；两个访客工作区（接待人设）没有备份，已删除。仓库是否保留由所有者决定 |
+| 模型接口 | 两个网关 `.env` 里的中转接口密钥已随文件删除。密钥本身在服务商一侧仍然有效，建议所有者在服务商后台作废，见第 7 节 |
+| 为智能体装的其他软件 | PostgreSQL 16（含 pgvector、pgroonga，删除前确认没有业务库和用户表）、Google Chrome、ffmpeg 及它们的 142 个孤立依赖已卸载，对应的 apt 源（`google-chrome.sources`、`groonga.sources`）和账号 `postgres` 已删除；`~/.cache` 下的 huggingface、uv、pip 缓存、`~/.npm`、`~/.local/share/uv`、家目录里的 Chrome 安装包、`~/.local/bin` 里四个失效链接已删除 |
+| 网络边界 | 2026-11-26 23:57（北京时间）核对：对外监听只有 22、80、443，本机回环上只剩系统 DNS；8643、18789、19089、5432 都不再监听 |
 
-| 层 / 资源（网站聊天，仍然有效） | 权威位置、作用与更新边界 |
-|---|---|
-| 网站聊天 UI | 当前主分支 React/AI SDK 实现；随网站 CI 发布，浏览器 `sessionStorage` 只保留本次访问的有限聊天与草稿。2026-10-02 无侧栏改版保留 Baby 图标，字体与明暗配色共用主页 tokens；当前保留固定主页姓名/顶栏位置、控件与页脚居中、首次发送下沉及中英文流式淡入。[首次发布](audits/2026-10-02-chat-main-only.md)与[动态/对齐修正](audits/2026-10-02-chat-dynamics-alignment.md)记录验证与实际上线。后续[手机键盘修正](audits/2026-10-02-chat-mobile-keyboard.md)按用户要求撤回，源码与两域名已恢复到此前release `1df24e4`，见[回退审计](audits/2026-10-02-chat-mobile-rollback.md)；手机键盘反馈仍未标记为解决 |
-| Node 桥接 | 源码 `services/hermes-chat/server.mjs`；安装到 `/opt/hermes-chat/server.mjs`；系统服务 `hermes-chat.service`，Node ≥22.12；**独立安装** |
-| 网络边界 | 桥接 `127.0.0.1:8643` → 公开网关 `127.0.0.1:19089`；Nginx 对外仅 `/chat-api` 与 `/chat-api/health`；`/chat-api/sessions` 拒绝；不要暴露两个内网端口。2026-11-26 核对：对外监听只有 22、80、443 |
+没有删除、与智能体无关的资源：网站 release、`shared/media/` 与媒体快照、Nginx 与证书、`siyuanxue-release`、HTTPS helper、Fail2ban、CI 的 `deploy` 账号、`~/.cache/siyuan-media`（媒体上传缓存）。
 
-Hermes 时期（2026-11-26 之前）的服务器配置、profile、语音、记忆库与定时器的逐项描述已随 Hermes 一起删除。历史经过只留在带日期的记录里：[升级审计](audits/2026-11-24-hermes-v0.23.4-upgrade.md)、[加固记录](audits/2026-11-25-hermes-hardening-and-audit.md)、[迁移记录](audits/2026-11-25-openclaw-migration.md)，它们描述的是当时的状态，不是现在。
-
-2026-11-26 旧长期记忆（Hindsight、PostgreSQL 记忆库、日记定时器）已连同 Hermes 从服务器删除。它的源码归档（仅本地分支 `archive/local-notes-and-hermes-memory-2026-09-16`）在当前 checkout 里本来就找不到（见第 5 节补记），现在也没有可恢复到的运行环境。
+历史经过只留在带日期的记录里：[9 月的聊天与工具记录](audits/2026-09-13-hermes-tooling.md)、[升级审计](audits/2026-11-24-hermes-v0.23.4-upgrade.md)、[加固记录](audits/2026-11-25-hermes-hardening-and-audit.md)、[OpenClaw 迁移记录](audits/2026-11-25-openclaw-migration.md)。它们描述的系统都已不存在。重新引入聊天或智能体是新项目：被删的网站代码在 Git 历史里（`f9a12c0` 之前），服务器侧没有任何可恢复的状态。
 
 ## 5. 备份、归档与恢复资源
 
@@ -246,9 +231,11 @@ Hermes 时期（2026-11-26 之前）的服务器配置、profile、语音、记�
 | 个人主页名称修正前备份 | 2026-10-11 原文及 API/差异验收临时保存在 `/tmp/pixeldone-profile-20261011/`；长期依据为独立仓库旧提交 `2de81af53ebe2241e2ef0869ec20463a46175562` | `/tmp` 不是长期备份。恢复时撤销 `7edf6cfb902f98a77dfa1129bfabf81037d500cc`，或核对后续改动后用当前 blob SHA 写回旧文；不能覆盖后续合法修改 |
 | Git 整理备份 | 本机仓库 `.git/cleanup-backups/2026-09-16/` | `refs.bundle`、`archive.bundle`、35 文件 tar、SHA-256 manifest、整理前 refs/worktrees、删除分支清单及恢复 README；**仅本机** |
 | GitHub 资料修改前备份 | 本机 `.git/seo-backups/2026-09-16/github-before.json` | 选定公开资料字段的旧值，非完整账号备份；仅本机 |
-| 网站旧 release | 服务器 `releases/` 与 `previous` | 正常保留 5 个成功版本；不等于服务器/聊天数据备份 |
+| 网站旧 release | 服务器 `releases/` 与 `previous` | 正常保留 5 个成功版本；不等于服务器备份。`f9a12c0` 之前的 release 仍带聊天页，回滚到它们会重新出现一个无法使用的聊天入口 |
 | Nginx 双域名迁移备份 | `/var/backups/siyuanxue-dual-domain-20260911` | 恢复该网站配置、helper、链接与内容；不能覆盖整个机器配置 |
-| 桥接安装备份 | `/var/backups/hermes-chat.*`；历史 UI 更新还有 `/var/backups/hermes-chat-ui-*` | 按实际变更记录找对应版本，恢复 bridge/unit/snippet，检查 Nginx 后重启对应服务 |
+| 桥接安装备份 | 2026-11-26 已删除 `/var/backups/hermes-chat-nginx-20260913-123841` 与两个 `/var/backups/hermes-chat-ui-*` | 不可恢复；桥接本身也已删除 |
+| 聊天路由移除前的 Nginx 备份 | `/var/backups/siyuanxue-nginx-chat-removal-20261126T155511Z/`（root 私有）：两个站点配置和聊天 snippet 的原件 | 只在需要核对改动时使用；改动只是删掉三行 include。同盘副本，不是灾备 |
+| 魔丸工作区 | 私有仓库 `Siyuan-Xue/mowan`，最后提交 `fdb655e` | 唯一副本。仓库上还留着一把部署密钥的登记（标题 `siyuanxue server workspace push`），对应私钥已从服务器删除，见第 7 节 |
 | Hermes 与记忆库的服务器备份 | 2026-11-26 已全部删除：`/var/backups/` 下含密钥的 Hermes 目录、`~/.hermes`（含 `backups/`）、`~/hermes-memory-runtime`（含加密备份和 `backup.key`）、PostgreSQL 数据库 `xue_memory` 及其角色 | **不可恢复，没有留副本。**唯一已知的旧记忆副本是下一行的 Mac 快照 |
 | Mac 独立记忆快照 | `/Users/milesxue/.local/share/xue-memory-backups/` | 9 月 16 日记录的 `20260916T000756Z.aesgcm` 及恢复密钥；目录0700/文件0600，校验与认证解密通过；**一次性拷贝，不是自动异地同步**。2026-11-26 服务器上的记忆库已删除，这份 9 月的快照（只含当时的内容）若还在，就是旧记忆唯一的加密副本；本次清理没有碰它，也没有核对它是否仍在 |
 | 云实例快照 / 异地备份 | 腾讯云及另行指定的私有备份位置 | 策略、频率、留存、告警和恢复负责人待确认；不能从有本地快照推断已有灾备 |
@@ -271,19 +258,17 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 
 | 修改内容 | 同时检查 |
 |---|---|
-| 姓名、身份、简介、项目、联系方式 | `src/data/site.ts` 中英资料、BaseHead Person/WebSite/ProfilePage/BlogPosting、站点 README、GitHub 账号 name/bio/blog、个人主页 README、两仓库 About；小薛人设/精选记忆仅在事实相关时更新 |
+| 姓名、身份、简介、项目、联系方式 | `src/data/site.ts` 中英资料、BaseHead Person/WebSite/ProfilePage/BlogPosting、站点 README、GitHub 账号 name/bio/blog、个人主页 README、两仓库 About |
 | 文章 | 中英文配对、日期/ID/草稿、标题/描述、canonical/hreflang、RSS/sitemap、站内链接；不要把未完成占位页加入索引 |
 | 媒体上传 / 存储 | 本机 Sharp 准备、媒体清单、原生 SSH/rsync 与严格主机校验、服务器摘要/大小验证、两站媒体类型/缓存/Range、CI 无图片视频、独立媒体恢复与磁盘容量；先上传再发布，禁止密码入库 |
 | 图集 / 首页内容目录 | `src/content/galleries` 双语 JSON、真实角色/介绍/图片/alt/图注、来源资料与 `site.ts` 的 gallerySlug、双语 preview 一致、可选时间字段与独立首页 `homeMeta` 两语言显示一致，仅简短说明/不回退时间及无空括号、可选图片分区的标题/起点/顺序与连续灯箱、草稿隔离、首页站内入口、封面/canonical/hreflang/ImageGallery；sitemap 按内容 draft/preview 状态筛选；`bun run test:gallery` 在临时目录验证正式图集可索引，生产产物测试验证条目预览可由首页进入但 noindex/不进 sitemap、固定版式样例额外不进首页、普通草稿不出页；不改变博客 RSS 身份 |
-| 域名 / 路径 | 注册与 DNS、www/HTTP 跳转、两个证书、Nginx 根目录、SEO/RSS/sitemap、语言链接、聊天 ALLOWED_ORIGINS、CI 变量与域名校验、GitHub 各处链接、搜索平台属性 |
+| 域名 / 路径 | 注册与 DNS、www/HTTP 跳转、两个证书、Nginx 根目录、SEO/RSS/sitemap、语言链接、CI 变量与域名校验、GitHub 各处链接、搜索平台属性 |
 | 搜索平台 / 提交策略 | 中文站优先核查百度站点归属及账号实际开放能力；两站稳定 URL、现有 Google 验证与 Bing/AI 发现继续维护。按平台分别记录提交回执、抓取、索引、查询曝光及 AI 引用，不将一个平台的数据移作另一个平台的验收 |
 | 肖像 / 动效 | 正常肖像与占位肖像区分、人物比例/压缩/alt、单击展开、无提示刷新折叠、语言切换时 media=shown 首帧展开/按需加载/错误重试/不打开灯箱、灯箱可访问性、两站可见英文文案、reduced-motion、旧照片永久拒绝、图片缓存；不恢复状态标语块 |
-| 明暗 / 顶栏 / 导航 | 首页/文章/聊天、两种语言、明暗初次加载/切换/返回、不透明背景与图标可读性、静态页滚动显隐/顶部/焦点/操作行展开/手机目录显示锁、聊天顶栏常显、Lucide 无圆框按钮；语言为 `Languages` 图标（20px/1.8），无可见文字、SVG `aria-hidden`，两语言 `aria-label`/`title` 分别为 `Switch to 中文` / `切换到 English`，窄屏与相邻控件同为 44×44px；默认折叠，语言固定为操作行最右且紧邻箭头，其他控件按既有相对顺序/「越小、越新越靠左」，DOM/键盘顺序一致；构建时双语同路径/草稿缺译回退及干净 href、运行时三项非默认 hash（theme/header/media）/系统主题不携带/首帧布局与语义一致/按键独立验证及清理/锚点字节保留/仅主题存储/存储异常/BFCache 保留当前视图并同步链接、无 JS 链接、Esc/外部点击/焦点返回/inert、44px 点击区/窄屏姓名和按钮同一行（不足时展开暂隐姓名，320px 六项不得换行或页面溢出）/展开高度稳定/viewport-fit=cover 及安全区覆盖目录、聊天跳转链接和灯箱图片留白、首屏内联根画布/系统 meta 配对及显式相反偏好覆盖/系统变化重算配对、100ms 主题渐变/零延迟/颜色逐帧一致/文章链接不得叠加拖尾/快速反向/首帧及 BFCache 无动画、reduced-motion、Motion mini spring/stagger/旋转逐帧与中断、布局无跳动、初始 hint 无动画、<8 KiB gzip、桌面目录与锚点偏移；桌面结果不能当实体手机验收 |
-| 聊天前端 / 协议 | 网站 CI、Node bridge 是否也需独立部署、真实 SSE/错误/停止/重试、会话恢复、两域名跨源配置、许可证归属 |
-| 小薛（OpenClaw）/ 记忆 / 模型 | 2026-11-25 晚起的运行系统。程序版本与两个网关的配置、三个档案的工作区文件（人设、规则、`USER.md`、`MEMORY.md`、主题稿）、访客工作区与主人侧事实是否同步、工具白名单与 `openclaw security audit`、微信插件版本与放行名单、桥接的 `HERMES_API_KEY` 与公开网关令牌是否一致、两个 `.env` 里的模型密钥、每日上限；改完用两个域名真实聊天和主人微信各验收一次。见第 4 节第一张表 |
-| Hermes / 记忆 / 模型（已删除） | 2026-11-26 起服务器上已没有 Hermes、Hindsight 记忆库和相关定时器；这一行只在重新引入旧方案时使用，先读第 4、5 节的删除记录 |
-| 依赖 / 运行时 | `package.json`+锁文件、CI Bun/Node、服务器 bridge Node、Hermes/Python/数据库/模型分别版本；安全 overrides 是否仍需要；第三方许可 |
-| SSH / 服务器迁移 | 管理员与 CI 两套登录、主机指纹及 GitHub secret、DNS/TLS、Nginx/helper/bridge/Hermes/记忆、私有备份、磁盘和续费；不关闭严格主机校验 |
+| 明暗 / 顶栏 / 导航 | 首页/文章/图集、两种语言、明暗初次加载/切换/返回、不透明背景与图标可读性、静态页滚动显隐/顶部/焦点/操作行展开/手机目录显示锁、Lucide 无圆框按钮；语言为 `Languages` 图标（20px/1.8），无可见文字、SVG `aria-hidden`，两语言 `aria-label`/`title` 分别为 `Switch to 中文` / `切换到 English`，窄屏与相邻控件同为 44×44px；默认折叠，语言固定为操作行最右且紧邻箭头，其他控件按既有相对顺序/「越小、越新越靠左」，DOM/键盘顺序一致；构建时双语同路径/草稿缺译回退及干净 href、运行时三项非默认 hash（theme/header/media）/系统主题不携带/首帧布局与语义一致/按键独立验证及清理/锚点字节保留/仅主题存储/存储异常/BFCache 保留当前视图并同步链接、无 JS 链接、Esc/外部点击/焦点返回/inert、44px 点击区/窄屏姓名和按钮同一行（不足时展开暂隐姓名，320px 文章页五项不得换行或页面溢出）/展开高度稳定/viewport-fit=cover 及安全区覆盖目录和灯箱图片留白、首屏内联根画布/系统 meta 配对及显式相反偏好覆盖/系统变化重算配对、100ms 主题渐变/零延迟/颜色逐帧一致/文章链接不得叠加拖尾/快速反向/首帧及 BFCache 无动画、reduced-motion、Motion mini spring/stagger/旋转逐帧与中断、布局无跳动、初始 hint 无动画、<8 KiB gzip、桌面目录与锚点偏移；桌面结果不能当实体手机验收 |
+| 智能体 / 聊天（已删除） | 2026-11-26 起网站和服务器上都没有聊天、智能体、微信接入、记忆库和模型接口。这一行只在所有者明确要求重新引入时使用：先读第 4 节和[清理记录](audits/2026-11-26-agent-retirement.md)，按新项目处理（入口、依赖、服务账号、密钥、Nginx 路由、费用上限、备份、文档逐项重新设计） |
+| 依赖 / 运行时 | `package.json`+锁文件、CI Bun/Node；安全 overrides 是否仍需要；第三方许可 |
+| SSH / 服务器迁移 | 管理员与 CI 两套登录、主机指纹及 GitHub secret、DNS/TLS、Nginx/helper、媒体与私有备份、磁盘和续费；不关闭严格主机校验 |
 | 分支 / 工作树清理 | 是否还有 agent 工作、未提交/未跟踪文件、未推送提交、squash 合并差异、archive 分支、bundle 校验、独立备份；不得仅凭分支名删除 |
 
 ### 开工前
@@ -297,37 +282,35 @@ git fetch .git/cleanup-backups/2026-09-16/archive.bundle \
 
 - [ ] 对照联动表逐项标记「已更新 / 不适用及原因 / 待处理」，不要只检查当前改动文件。
 - [ ] 跑与改动匹配的验证：网站代码走共享 CI；文档检查链接、路径、差异及敏感信息；服务器服务另做安装和功能验收。
-- [ ] 网站需发布时检查 Actions 成功与公网两域名目标 SHA；仓库推送、工作流开始、bridge health 都不能单独当最终验收。
+- [ ] 网站需发布时检查 Actions 成功与公网两域名目标 SHA；仓库推送、工作流开始都不能单独当最终验收。
 - [ ] 记录外部资源操作的结果与证据；未完成的权限、网络、平台审核保持待办。
 - [ ] 更新本文件中的资源/边界/待办，并为值得追溯的行为或部署新增 `docs/audits/<日期>-<主题>.md`。
 - [ ] 清点工作区与备份，交付实际变更、验证、未完成项和恢复入口；不把私有备份推到公开 GitHub。
 
 ### 建议的定期维护（尚未创建自动任务）
 
-- 每次发布后：两域名语言、TLS、`__health`、关键交互；聊天相关更新再做模型与记忆验收。
-- 每周：Actions 失败、服务失败、磁盘/共享资源、记忆队列积压、备份最近成功时间；备份未自动清理。
-- 每月：依赖与服务器更新、证书自动续期、模型额度/账单、账号权限、域名/云实例续费日期；中文站优先检查百度抓取、收录和中文查询曝光，同时维护 Google/Bing 与 AI 引用准确性；搜索平台未接入时明确记录证据缺口。
+- 每次发布后：两域名语言、TLS、`__health`、关键交互。
+- 每周：Actions 失败、服务失败、磁盘/共享资源、备份最近成功时间；备份未自动清理。
+- 每月：依赖与服务器更新、证书自动续期、账号权限、域名/云实例续费日期；中文站优先检查百度抓取、收录和中文查询曝光，同时维护 Google/Bing 与 AI 引用准确性；搜索平台未接入时明确记录证据缺口。
 - 每季度及迁移前：隔离恢复演练、备份异地可用性、维护清单与运行状态的一致性；复核搜索与 AI 爬虫官方政策，分别检查搜索、用户发起读取、训练用途。尚未创建定时自动任务。
 
 ## 7. 仍需跟进的事项
 
 | 优先级 | 事项 | 完成标准 |
 |---|---|---|
-| 低 | 历史长期记忆源码归档在当前 checkout 中未找到 | 旧长期记忆方案已于 2026-11-26 连同 Hermes 删除，源码归档不再有运行环境可恢复到。是否保留 9 月的 Mac 快照和本地归档由所有者决定 |
+| 低 | 历史长期记忆的旧副本 | 旧长期记忆方案已于 2026-11-26 连同 Hermes 删除，本地分支归档在当前 checkout 中未找到。9 月的 Mac 加密快照（见第 5 节）若还在，是旧记忆唯一的副本；是否保留由所有者决定 |
 | 高 | 备份连续性与容量 | 定期验证服务器备份；确定异地自动备份与留存策略；目前 Mac 只是一份快照 |
 | 中 | 域名到期与云资源续费/快照策略待补 | 2026-10-10 已核对 Lighthouse 实例 ID、地域、套餐和到期日；2026-10-11 NS 查询确认两域名使用 DNSPod。仍需补注册商、域名到期日、自动续费、解析记录导出、快照策略、告警入口和负责人 |
 | 中 | `gh` 账号资料编辑权限尚未完成 | 现有 repo/workflow 权限可管理仓库；账号侧栏已通过网页更新，但保存到 CLI 的 token 仍未确认具备 `user`。需单独完成经明确授权的权限更新并验证；不能把网页显示 Existing access 当作 CLI 凭据已刷新 |
 | 高 | 中文站百度接入 / 收录观察 | apex 已验证；手动 14 URL 提交返回当日上限，没有成功回执。用户直接确认网站号 `京ICP备2026004164号-4` 和主体号 `京ICP备2026004164号`；两者均被百度提示暂未查到信息，关闭表单后主体备案号仍显示未填写，未保存成功，不据此否定真实备案。用户随后明确“暂不备案，收尾任务”，百度侧备案登记和反馈按要求暂缓，不再等待材料或继续平台操作；这不撤销或否定既有备案。sitemap 日额度 0 是约 21:10–21:15 的上次结果，本轮未重新检查，未确认恢复。14 URL 和 sitemap 均无成功回执；相关登记/反馈待用户恢复时再继续。平台索引、明确时间范围内 PC/移动查询及抓取表现保留待观察，不创建自动任务。Robots 已检测生效不等于 HTML 实际抓取，诊断也因独立验证码未完成 |
 | 中 | 其他搜索平台 / AI 发现维护 | Google 中文两份 XML 实时抓取成功但报告仍 Couldn't fetch、原因未知；既有 SSH 认证失败，未取到请求日志，待平台细节与授权日志访问定位，不直接改 XML/DNS。Bing 已导入两站、提交两份 index/28 候选并完成两首页实时 HTTP 200；两 index 已 Success、中文三子文件 Success，英文子文件明细待更新，其他 26 页未做逐页抓取/索引检查。继续观察详情抓取、索引与查询曝光。两站 AI Performance Beta 在 Microsoft Copilots and Partners、2026-07-11–10-10 的 3M 区间均显示 0 citations/0 cited pages、无查询数据；新接入报告处理中且为样本，不能推广到全平台/全时段或当天 Gemini。见[Bing 接入审计](audits/2026-10-11-bing-onboarding.md)和[后续审计](audits/2026-10-11-search-followup.md)；各平台索引、曝光与引用独立取证 |
-| 中 | Node 26 聊天并发测试兼容性 | 2026-10-11 未修改聊天源码；Node 26.5.0 隔离并发测试出现实际 200 / 预期 429，Node 24.19.0 的 21 个 Node 子测试及完整 Bun 测试通过。只读诊断确认保留流式 Response 引用后 Node 26 也正确限流，差异涉及测试响应生命周期与运行时清理行为；后续运行时升级前复核测试。当前不据此改聊天实现，CI 未单独固定 Node 版本，实际结果按各次运行核对 |
-| 按需 | SuperGrok 服务器网络与认证 | 网络恢复、官方授权及一次真实推理均验收后才标启用；保留既有 GLM，不自动加付费回退。2026-11-24 起 GLM 已失效并被替换，见第 4 节「模型提供方」 |
-| 中 | 微信在 OpenClaw 上的重置后验收 | 2026-11-26 09:19 所有者已扫码，重置前主人分流已实测；重置后还没有收发过微信消息。重建好人设后：所有者发一条消息，确认进 `main` 并有回复；让它记一件事，确认新建的 `MEMORY.md` / `USER.md` 仍自动加载（`openclaw doctor` 的 `memory-provenance` 无告警）；发一条语音看能否读到文字。`wechat-guest` 要等放行第二个微信号后才能实测。见[迁移记录](audits/2026-11-25-openclaw-migration.md)第 9 节 |
-| 高 | 小薛的人设与记忆（等所有者手动重建） | 2026-11-26 已重置：三个档案都是官方起始文件，没有人设和记忆；`main` 的出生仪式（`BOOTSTRAP.md`）还没进行，三个档案也都还没有名字和 diary agent 定位。重建时按官方分工：偏好、关系、在做的事写进 `USER.md`（4000 字上限，写成“始终 / 不要 / 优先”式指令），`MEMORY.md` 只放主人私聊里的非档案类事实；访客档案里不放主人侧私密内容；不要用 scp 或编辑器直接改线上 `main` 的 `MEMORY.md` / `USER.md`。旧人设、记忆原稿、清单与脚本已删除，没有副本 |
-| 中 | 2026-11-25 审查的未处理项 | 方向见[加固记录](audits/2026-11-25-hermes-hardening-and-audit.md)第 6 节。迁到 OpenClaw 后其中几项不再适用或已解决：桥接每日总量上限已上线；访客侧不再有日记工具和跨 profile 读取；记忆服务已停，回环接口不再监听；自建只读插件不再使用。仍然有效的：模型服务商侧的消费上限、桥接在上游快速失败时的报错文案、CI 发布密钥的命令限制、管理员登录密钥的保护方式、记忆数据库口令、GitHub 分支保护与依赖告警、域名的 SPF / DMARC / CAA、Nginx 的 HSTS、一条 10 月的密码登录记录待所有者确认。逐项处理前向用户说明具体改动并取得批准 |
-| 高 | 模型接口的费用上限 | 桥接的每日总量上限已于 2026-11-25 晚上线（200 条 / 天）。仍需所有者在模型服务商后台核对实际计费并给密钥设消费上限。OpenClaw 没有内置的花费上限，微信侧也没有频率限制；`main` 的思考强度为 high、访客为 medium，每条消息带约 1 到 2 万 token 的固定上下文 |
-| 低 | Hindsight 记忆库的去留 | 已完成：2026-11-26 删除 `~/hermes-memory-runtime`、数据库 `xue_memory` 及其角色、日记与记忆定时器。PostgreSQL 程序本身保留，目前没有业务库；是否卸载由所有者决定 |
-| 低 | Hermes 的去留 | 已完成：2026-11-26 删除 `~/.hermes`、`~/.local/bin/hermes*`、三个用户单元文件、家目录下的 `hermes-*` / `xue-*` 日志与暂存目录，以及 `/var/backups` 里含密钥的 Hermes 备份和切换前备份。网站桥接 `hermes-chat` 保留；`~/.cache/uv` 里的 hermes 编译缓存没有删（不含数据）。没有回退路径 |
-| 中 | OpenClaw 的备份与升级 | `main` 工作区已有私有仓库 `Siyuan-Xue/mowan` 的初始提交（2026-11-26），之后的改动要手动提交并推送，没有自动任务；状态目录（配置、凭据、会话）还没有备份，用 `openclaw backup create --verify`。升级为人工操作，升级前看微信插件是否声明支持新版本，升级后重做迁移记录第 6 节的验收。另有三项留给所有者决定：给用户级服务加关机收尾时间的 systemd drop-in（官方体检的建议）；安装容器运行时以便对访客档案启用官方建议的沙箱，并在沙箱里恢复 `main` 的执行命令能力；微信没给文字的语音是否加本地转写 |
+| 中 | GitHub 上 `Siyuan-Xue/mowan` 的部署密钥登记 | 服务器上的私钥已于 2026-11-26 删除，这把密钥已无法使用；仓库设置里标题为 `siyuanxue server workspace push` 的登记（有写权限）还在。当日用 `gh` 删除它被权限策略拦下，等所有者在仓库 Settings → Deploy keys 里删除，或明确同意后由维护者删除 |
+| 中 | 模型中转接口密钥 | 服务器上保存它的两个 `.env` 已删除，密钥在服务商一侧仍然有效。建议所有者在服务商后台作废该密钥并核对账单；本仓库和文档里没有它的值 |
+| 低 | 微信一侧的登录状态 | 服务器上的微信登录凭据已删除，不再收发消息。手机微信里是否还列着这次登录，没有核对；所有者可在微信的登录设备 / 授权管理里查看并移除 |
+| 低 | 私有仓库 `Siyuan-Xue/mowan` 的去留 | 保存着魔丸主工作区的最终状态（人设文件和少量记忆），是唯一副本。保留或删除由所有者决定；删除后不可恢复 |
+| 低 | 搜索平台里的 `/chat/` | `/chat/` 以前可索引并在 sitemap 里，2026-11-26 起返回 404 并从 sitemap、IndexNow 清单移除；发布时 IndexNow 已通知变更。各平台何时移除旧收录没有核对，下次查看 Google / Bing / 百度时顺带确认，不需要另做跳转 |
+| 中 | 2026-11-25 审查的未处理项 | 方向见[加固记录](audits/2026-11-25-hermes-hardening-and-audit.md)第 6 节。智能体删除后，其中关于模型消费上限、桥接报错文案、记忆数据库口令、访客工具的各项不再适用。仍然有效的：CI 发布密钥的命令限制、管理员登录密钥的保护方式、GitHub 分支保护与依赖告警、域名的 SPF / DMARC / CAA、Nginx 的 HSTS、一条 10 月的密码登录记录待所有者确认。逐项处理前向用户说明具体改动并取得批准 |
+| 低 | 服务器上的零散残留 | 这次没有处理的：`~/.cache/siyuan-media/nginx-test-20261011/`（10 月媒体路由测试留下的 Nginx 模板副本，里面有一份旧的聊天 snippet 文本）、`~/.cache` 下的 `ms-playwright`、`Microsoft`、`fontconfig`（合计不到 1 MB）、`ubuntu` 的 shell 历史（含以往维护智能体时敲过的命令）、journald 里智能体服务的旧日志（没有查看内容，随系统轮转）。是否清除由所有者决定 |
 
 上一轮 `gh auth refresh` 的最终网页授权被自动审批拦截，原因是权限页包含私有仓库、全部用户资料和工作流等广泛范围；尚未得到这组具体范围的新确认。本次仅复核现有权限可读内容，不重试授权，也不把设备码或会话信息写进长期文档。
 
