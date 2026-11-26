@@ -4,9 +4,11 @@
 
 - 先查 Git 状态、分支和工作树。保留他人改动；有并行修改时协调或隔离工作树。未经核对不要删除 `archive/local-notes-and-hermes-memory-2026-09-16`、未推送提交和本地备份。
 - 网页代码与文字通过现有 GitHub Actions CI/CD 同步发布两语言。图片、视频原文件及缩略图通过 SSH/rsync 直传服务器 `shared/media/`，不进入 Git 或 CI 静态包；仓库只维护 `src/data/media.json` 中的资源 ID 与元数据。先上传校验，再发布页面引用。具体流程见 `ops/README.md`。
-- 推送静态产物不会更新服务器 Nginx/helper、聊天 bridge、Hermes、微信、记忆服务或模型；涉及这些资源时单独说明安装与验收。
+- 推送静态产物不会更新服务器 Nginx/helper、聊天 bridge、OpenClaw、微信、记忆服务或模型；涉及这些资源时单独说明安装与验收。
 - 项目展示名两语言均为 `Pixel Done`，不使用中文译名；保留 `/gallery/pixeldone/` 与实际 GitHub 仓库 URL。
-- 当前代码、实际运行状态、带日期的历史记录分别核对；设计计划不等于已实现。旧 Hermes 文档/overlay 的 8 工具和普通 API 端点基线，与后续 12 工具/Coding Plan 记录有差异；不得直接覆盖已安装 profile。
+- 当前代码、实际运行状态、带日期的历史记录分别核对；设计计划不等于已实现。2026-11-26 起服务器上已没有 Hermes，文档里带 Hermes 字样的旧描述只是历史，不是现状。
+- 2026-11-24 的 Hermes v0.23.4 升级和 2026-11-25 的加固（微信分流、严格模式等）描述的都是已从服务器删除的 Hermes，只作历史参考，见 `docs/audits/` 下对应记录，不要照着操作。其中的运维约束仍然有效：服务器 `root` 的 SSH 登录已禁用；`ubuntu` 的密码登录是用户明确要求保留的，不要擅自关闭；含密钥的备份只放在仅 root 可读的位置。
+- 2026-11-26（用户明确要求）：小薛已重置为全新的 OpenClaw 2026.11.10，所有记忆和人设都已清空，由用户手动逐步重建；旧 Hermes、记忆库和本机的 `private-agent-review/` 已删除且不可恢复，不要尝试重建它们。当前结构：程序在 `/opt/openclaw`（root 只读）；个人网关是 ubuntu 的用户服务 `openclaw-gateway.service`（127.0.0.1:18789，档案 `main` 与只读的 `wechat-guest`，状态目录 `~/.openclaw`）；公开网关是系统服务 `openclaw-gateway-public.service`（账号 `openclaw-public`，127.0.0.1:19089，只有只读档案 `website-guest`，状态目录 `/var/lib/openclaw-public/.openclaw`）。网站桥接仍叫 `hermes-chat`，`/etc/hermes-chat.env` 指向公开网关，`HERMES_API_KEY` 必须等于公开网关的 `OPENCLAW_GATEWAY_TOKEN`，`CHAT_UPSTREAM_MODEL=openclaw/website-guest`，每天上限 200 条。不要把 OpenAI 兼容接口开在个人网关上，也不要让桥接指向 18789：该接口的令牌等同于整个网关的管理员凭据。访客档案的工具只有读记忆、查网页、取时间五个；`main` 不能执行命令（用户决定，恢复前先装容器沙箱）。不要用 scp 或编辑器直接改线上 `main` 工作区的 `MEMORY.md` / `USER.md`（OpenClaw 会把之后的写入标成不可信并停止自动加载）；两个访客工作区只放可对外讲的内容，不含主人侧私密笔记。小薛的定位是 diary agent（日记智能体），不是“AI 小孩”；人设里的年龄只是把握性格的内部参照，不对外说。微信插件 2.4.10 默认只放行扫码的微信号，微信登录凭据在重置时保留，重新登录用服务器上的 `~/.openclaw/bin/wechat-login.sh`。`main` 工作区是私有仓库 `Siyuan-Xue/mowan`，服务器用只对该仓库有写权限的部署密钥手动推送。详见 `docs/MAINTENANCE.md` 第 4 节与[迁移记录](docs/audits/2026-11-25-openclaw-migration.md)（人设和记忆部分已被 2026-11-26 的重置取代）。
 - 新增或修改域名、账号资料、GitHub 仓库、CI 变量、secret、服务、定时器、模型、数据存储或备份时，同步更新 `docs/MAINTENANCE.md` 的位置、更新方式、验证、恢复及待办。身份信息修改要检查网站、GitHub 账号、独立主页 README 和仓库 About。
 - 不提交密码、令牌、设备码、私有配置、微信身份 ID、日记或恢复密钥。文档只记名称、路径和非敏感状态；不要为整理清单而读取其内容。
 - 保持两域名固定语言、单击肖像展开、无模式提示块、两站灯箱可见英文文案、Lucide 无圆框按钮及旧照片 URL 拒绝，除非用户明确变更需求。

@@ -132,6 +132,80 @@ test('requires allowed Origin, restricts paths and methods, and returns safe hea
   } finally { f.close(); }
 });
 
+test('daily cap rejects further requests and reports seconds until local midnight', async () => {
+  const f = await fixture(undefined, {
+    dailyLimit: 1,
+    dailyTimeZone: 'Asia/Shanghai',
+  });
+  try {
+    const first = await f.post();
+    assert.equal(first.status, 200);
+    await first.text();
+    const second = await f.post();
+    assert.equal(second.status, 429);
+    const body = (await second.json()) as { error?: string };
+    assert.equal(body.error, 'rate_limited');
+    const retryAfter = Number(second.headers.get('retry-after'));
+    assert.ok(Number.isInteger(retryAfter), 'retry-after is an integer');
+    assert.ok(retryAfter > 0 && retryAfter <= 86400, 'retry-after points at the next midnight');
+  } finally {
+    f.close();
+  }
+});
+
+test('forwards the operator-configured upstream model and never a visitor-supplied one', async () => {
+  const requests: Array<Record<string, unknown>> = [];
+  const f = await fixture(async (request, response) => {
+    const chunks: Buffer[] = [];
+    for await (const chunk of request) chunks.push(chunk as Buffer);
+    requests.push(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+    response.writeHead(200, { 'Content-Type': 'text/event-stream' });
+    response.end(
+      'data: {"choices":[{"index":0,"delta":{"content":"ok"},"finish_reason":null}]}\n\n' +
+      'data: {"choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}\n\n' +
+      'data: [DONE]\n\n',
+    );
+  }, { upstreamModel: 'openclaw/website-guest' });
+  try {
+    const ok = await f.post();
+    assert.equal(ok.status, 200);
+    assert.match(await ok.text(), /ok/);
+    assert.equal(requests[0].model, 'openclaw/website-guest');
+    // A visitor cannot pick the upstream target: extra body keys are rejected outright.
+    const injected = await f.post({ messages: [{ role: 'user', content: 'hi' }], model: 'openclaw/main' });
+    assert.equal(injected.status, 400);
+    assert.equal(requests.length, 1);
+  } finally {
+    f.close();
+  }
+});
+
+test('maps an OpenClaw stream error frame to a safe error without leaking its text', async () => {
+  const f = await fixture((_request, response) => {
+    response.writeHead(200, { 'Content-Type': 'text/event-stream' });
+    response.end(
+      'data: {"choices":[{"index":0,"delta":{"role":"assistant"},"finish_reason":null}]}\n\n' +
+      'data: {"error":{"message":"internal error","type":"api_error"}}\n\n' +
+      'data: [DONE]\n\n',
+    );
+  }, { upstreamModel: 'openclaw/website-guest' });
+  try {
+    const response = await f.post();
+    const text = await response.text();
+    assert.doesNotMatch(text, /internal error/);
+    assert.match(text, /stream_error|upstream_unavailable/);
+  } finally {
+    f.close();
+  }
+});
+
+test('rejects an invalid upstream model at startup', () => {
+  assert.throws(
+    () => createChatServer({ apiKey: 'k', upstreamModel: 'bad model\n' }),
+    /CHAT_UPSTREAM_MODEL is invalid/,
+  );
+});
+
 test('legacy protocol sanitizes byte-split SSE and uses fresh fixed-model sessions', async () => {
   const requests: Array<{ body: Record<string, unknown>; auth: string | undefined }> = [];
   const f = await fixture(async (request, response) => {

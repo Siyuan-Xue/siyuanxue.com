@@ -24,6 +24,32 @@ class SafeUpstreamError extends Error {
   }
 }
 
+function localDayKey(ms, timeZone) {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(ms));
+}
+
+function secondsUntilLocalMidnight(ms, timeZone) {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23',
+    })
+      .formatToParts(new Date(ms))
+      .map((part) => [part.type, part.value]),
+  );
+  const elapsed =
+    (Number(parts.hour) % 24) * 3600 + Number(parts.minute) * 60 + Number(parts.second);
+  return Math.max(1, 86400 - elapsed);
+}
+
 export function validMessages(body) {
   if (!body || Object.keys(body).length !== 1 || !Array.isArray(body.messages))
     return false;
@@ -193,8 +219,19 @@ export function createChatServer({
   ).split(','),
   timeoutMs = 120000,
   downstreamWriteTimeoutMs = 5000,
+  dailyLimit = Number(process.env.CHAT_DAILY_LIMIT || 0),
+  dailyTimeZone = process.env.CHAT_DAILY_TZ || 'Asia/Shanghai',
+  // The upstream `model` field. Hermes took the alias `hermes`; an OpenClaw
+  // gateway treats it as an agent target such as `openclaw/website-guest`.
+  // It is fixed by the operator and never taken from a visitor's request.
+  upstreamModel = process.env.CHAT_UPSTREAM_MODEL || 'hermes',
 } = {}) {
   if (!apiKey?.trim()) throw new Error('HERMES_API_KEY is required');
+  if (!/^[A-Za-z0-9][A-Za-z0-9._:\/-]{0,127}$/.test(upstreamModel))
+    throw new Error('CHAT_UPSTREAM_MODEL is invalid');
+  const dailyCap = Number.isFinite(Number(dailyLimit))
+    ? Math.max(0, Math.trunc(Number(dailyLimit)))
+    : 0;
   const endpoint = new URL(apiUrl);
   if (
     endpoint.protocol !== 'http:' ||
@@ -203,6 +240,9 @@ export function createChatServer({
 
   const clients = new Map();
   let active = 0;
+  // A global cap on model calls per local day; 0 keeps the bridge unlimited.
+  // Counters live in memory, so a restart starts the day afresh.
+  let daily = { key: localDayKey(Date.now(), dailyTimeZone), count: 0 };
   const server = createServer(async (req, res) => {
     const json = (status, error, { retryAfter } = {}) => {
       if (res.destroyed || res.writableEnded) return;
@@ -230,6 +270,12 @@ export function createChatServer({
     const uiProtocol = requestedProtocol === UI_MESSAGE_PROTOCOL;
 
     const now = Date.now();
+    const today = localDayKey(now, dailyTimeZone);
+    if (daily.key !== today) daily = { key: today, count: 0 };
+    if (dailyCap > 0 && daily.count >= dailyCap)
+      return json(429, 'rate_limited', {
+        retryAfter: String(secondsUntilLocalMidnight(now, dailyTimeZone)),
+      });
     for (const [key, value] of clients)
       if (!value.active && now - value.last >= 60000) clients.delete(key);
     // The reverse proxy must overwrite X-Real-IP. Direct callers can only reach loopback.
@@ -248,6 +294,7 @@ export function createChatServer({
     client.times.push(now);
     client.active++;
     active++;
+    daily.count++;
 
     const controller = new AbortController();
     let timedOut = false;
@@ -357,7 +404,7 @@ export function createChatServer({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'hermes',
+          model: upstreamModel,
           stream: true,
           messages: body.messages,
           session_id: randomUUID(),

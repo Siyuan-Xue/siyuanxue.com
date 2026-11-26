@@ -3,7 +3,6 @@ set -Eeuo pipefail
 cd "$(dirname "$0")/.."
 bun run check
 bun run test
-python3 -m unittest discover -s tests -p test_hermes_readonly.py
 python3 -m unittest discover -s tests -p test_release_transfer.py
 python3 -m unittest discover -s tests -p test_media_install.py
 python3 -m unittest discover -s tests -p test_media_public.py
