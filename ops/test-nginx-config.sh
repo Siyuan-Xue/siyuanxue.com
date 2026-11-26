@@ -23,7 +23,6 @@ command -v "$NGINX_BIN" >/dev/null 2>&1 \
 	}
 
 mkdir -p "$TEST_ROOT/etc/nginx/snippets"
-cp "$SCRIPT_DIR/nginx/hermes-chat.conf" "$TEST_ROOT/etc/nginx/snippets/hermes-chat.conf"
 mkdir -p \
 	"$TEST_ROOT/conf.d" \
 	"$TEST_ROOT/etc/letsencrypt/live" \

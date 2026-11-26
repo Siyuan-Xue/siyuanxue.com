@@ -2,8 +2,8 @@
  * Site feature switches, read at build time only.
  *
  * BLOG_ENABLED controls the blog: essay and post pages, the homepage "Blog"
- * section, the RSS feed and its <link>, blog entries in the sitemaps and IndexNow
- * manifest, and the chat's "Find a good read" prompt. Content in src/content/essays
+ * section, the RSS feed and its <link>, and blog entries in the sitemaps and IndexNow
+ * manifest. Content in src/content/essays
  * and src/content/posts and all blog code stay in the repository either way, and
  * their translation pairing is still validated while the blog is off.
  *

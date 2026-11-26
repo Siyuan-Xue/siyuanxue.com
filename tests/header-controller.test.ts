@@ -4,13 +4,13 @@ import { bindToc } from '../src/utils/toc';
 
 import { bindHeader } from '../src/utils/header';
 
-function fixture(wide = false, chat = false) {
+function fixture(wide = false, pinned = false) {
  const window = new Window({ url: 'https://example.test/essay/test/' });
  const media = new window.EventTarget() as unknown as MediaQueryList;
  let matches = wide;
  Object.defineProperty(media, 'matches', { get: () => matches });
  window.matchMedia = () => media as never;
- window.document.body.innerHTML = `<header class="header${chat ? ' xue-chat-header' : ''}" ${chat ? '' : 'data-scroll-header'}><a href="/">Home</a><button data-toc-toggle data-open-label="Open" data-close-label="Close" aria-expanded="false">Contents</button></header><nav id="site-toc"><a href="#first" data-toc-link="first">First</a></nav><main class="page-main" tabindex="-1"><h2 id="first">First</h2></main>`;
+ window.document.body.innerHTML = `<header class="header" ${pinned ? '' : 'data-scroll-header'}><a href="/">Home</a><button data-toc-toggle data-open-label="Open" data-close-label="Close" aria-expanded="false">Contents</button></header><nav id="site-toc"><a href="#first" data-toc-link="first">First</a></nav><main class="page-main" tabindex="-1"><h2 id="first">First</h2></main>`;
  const document = window.document as unknown as Document;
  const browserWindow = document.defaultView!;
  const header = document.querySelector<HTMLElement>('header')!;
@@ -126,7 +126,7 @@ test('resizing refreshes the full header height used for the top visibility lock
  f.scroll(132); expect(hidden(f.header)).toBe(true);
 });
 
-test('chat headers remain visible and never schedule scroll work', () => {
+test('headers without the scroll marker remain visible and never schedule scroll work', () => {
  const f = fixture(false, true); bind(f.document);
  f.scroll(200, false);
  expect(hidden(f.header)).toBe(false);

@@ -7,7 +7,7 @@ declare global {
 }
 
 /** Bind the real href, so keyboard, middle-click and the context menu all agree.
- * React calls this after hydration; its server-rendered href remains clean.
+ * The server-rendered href stays clean; hints are added in the browser only.
  */
 export function bindThemeLink(link: HTMLAnchorElement, baseHref: string): () => void {
  const document = link.ownerDocument;

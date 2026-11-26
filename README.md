@@ -6,7 +6,7 @@ The personal website and blog of **Siyuan Xue (薛思远 / Miles)**, studying In
 
 Built with Astro and Markdown, with serif typography, light/dark themes and a single-click portrait reveal. Visual inspiration: [Dario Amodei](https://darioamodei.com/).
 
-Maintenance starts with the [resource inventory and update checklist](docs/MAINTENANCE.md) (中文). It covers both GitHub repositories, account metadata, domains, CI/CD, server services, Hermes/Weixin, memory and backups. See the [work summary](docs/WORK-SUMMARY-2026-09-16.md) for completed changes and remaining gaps, and [AGENTS.md](AGENTS.md) for contributor maintenance rules.
+Maintenance starts with the [resource inventory and update checklist](docs/MAINTENANCE.md) (中文). It covers both GitHub repositories, account metadata, domains, CI/CD, server services and backups. See the [work summary](docs/WORK-SUMMARY-2026-09-16.md) for completed changes and remaining gaps, and [AGENTS.md](AGENTS.md) for contributor maintenance rules.
 
 - **English:** https://siyuanxue.com
 - **中文：** https://xuesiyuan.com
@@ -34,7 +34,7 @@ bun run preview:zh
 
 ## Content
 
-Site labels and lists are authored as `{ en, zh }` pairs in `src/data/site.ts`, including every interface label (`ui`, `gallery`, `chat`). Components read them through `t()`; avoid inline locale ternaries. Pages render only the selected language.
+Site labels and lists are authored as `{ en, zh }` pairs in `src/data/site.ts`, including every interface label (`ui`, `gallery`). Components read them through `t()`; avoid inline locale ternaries. Pages render only the selected language.
 
 The blog (essays, posts and their RSS feeds) is currently **off**. `BLOG_ENABLED` in `src/features.ts` is the single switch: set its default to `true` to publish it again. While it is off, no blog pages or feeds are built and old blog URLs return the normal 404 page, but the content stays in the repository and its translation pairing is still validated.
 

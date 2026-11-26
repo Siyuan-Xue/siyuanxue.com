@@ -27,7 +27,7 @@ test('untranslated publication fails, either draft stays private, and previews h
  expect(entries.some(page => page.path === '/essay/new/')).toBe(false);
  expect(entries.find(page => page.path === '/gallery/sample/')?.indexable).toBe(false);
  for (const sitemap of [pageSitemap(entries), imageSitemap(entries), videoSitemap(entries).xml]) expect(sitemap).not.toContain('/gallery/sample/');
- expect(entries.find(page => page.path === '/chat/')?.indexable).toBe(true);
+ expect(entries.some(page => page.path === '/chat/')).toBe(false);
  expect(entries.find(page => page.path === '/gallery/probfun/')?.canonical).toBe('https://siyuanxue.com/gallery/imathbook/');
 });
 

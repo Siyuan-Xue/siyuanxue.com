@@ -1,6 +1,6 @@
 @import './article-fonts.css';
 
-/* Only Prose (essays and posts): home, gallery and chat retain their own metrics. */
+/* Only Prose (essays and posts): home and gallery retain their own metrics. */
 html.prose-page {
  --narrow: 38.75rem; /* 620px outer box, 580px text column. */
  --page-pad-x: 20px;

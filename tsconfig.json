@@ -11,10 +11,7 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "types": [
-      "bun",
-      "react",
-      "react-dom"
-    ],
-    "jsx": "react-jsx"
+      "bun"
+    ]
   }
 }

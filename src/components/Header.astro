@@ -2,24 +2,21 @@
 import ThemeToggle from './ThemeToggle.astro';
 import HeaderActions from './HeaderActions.astro';
 import LanguageSwitch from './LanguageSwitch.astro';
-import { House, MessageCircleMore } from '@lucide/astro';
+import { House } from '@lucide/astro';
 import TocToggle from './TocToggle.astro';
 import { site } from '../data/site';
 import { t } from '../i18n/locale';
 interface Props { showTocToggle?: boolean }
 const { showTocToggle = false } = Astro.props;
-const chatLabel = t(site.chat.title);
 const homeLabel = t(site.ui.home);
-const isChat = Astro.url.pathname === '/chat/' || Astro.url.pathname === '/chat';
 const isHome = Astro.url.pathname === '/';
 const Brand = isHome ? 'h1' : 'span';
 ---
-<header class="header" data-scroll-header={!isChat || undefined}><div class="container cc-narrow header-inner">
+<header class="header" data-scroll-header><div class="container cc-narrow header-inner">
  <a href="/" class="header-name-link" aria-current={Astro.url.pathname === '/' ? 'page' : undefined}><Brand class="header-name">{t(site.name)}</Brand></a>
  <HeaderActions>
   {showTocToggle && <TocToggle />}
   {!isHome && <a class="header-control-button header-home-link" href="/" aria-label={homeLabel} title={homeLabel}><House size={20} stroke-width={1.8} aria-hidden="true" /></a>}
-  {!isChat && <a class="header-control-button header-chat-link" href="/chat/" aria-label={chatLabel} title={chatLabel}><MessageCircleMore size={20} stroke-width={1.8} aria-hidden="true" /></a>}
   <ThemeToggle />
   <LanguageSwitch />
  </HeaderActions>

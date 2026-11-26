@@ -1,5 +1,4 @@
 import { discoveryIntegration } from './src/utils/discoveryIntegration.ts';
-import react from '@astrojs/react';
 import { defineConfig } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
 import { resolveLocale, localeOrigin } from './src/i18n/locale.ts';
@@ -7,7 +6,7 @@ const locale = resolveLocale(process.env.SITE_LOCALE);
 export default defineConfig({
  site: localeOrigin(locale),
  outDir: `./.build/${locale}`,
- integrations: [react(), discoveryIntegration(locale)],
+ integrations: [discoveryIntegration(locale)],
  markdown: { processor: unified() },
  vite: {
   resolve: { alias: { 'site-fonts': new URL(`./src/styles/fonts-${locale}.css`, import.meta.url).pathname } },

@@ -38,7 +38,7 @@ html[data-header-hint='open'] .header-controls:not([data-actions-initialized]) .
   visibility: hidden;
  }
 }
-/* Six 44px targets = 264px; the 320px article has 280px available. */
+/* Five 44px targets = 220px; the 320px article has 280px available. */
 /* No CSS transitions: Motion owns the visual layer. SSR/hash/reduced motion use
  * these endpoints directly, so streamed markup never animates on arrival. */
 /* Include SVG descendants: the site's global reduced-motion duration would

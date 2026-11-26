@@ -15,7 +15,7 @@ async function collectRoutes(): Promise<LanguageRoute[]> {
  }));
 }
 
-/** Server/build only. React receives one resolved URL, never the content inventory. */
+/** Server/build only. Pages receive one resolved URL, never the content inventory. */
 export async function getLanguageSwitch(path: string) {
  const routes = await (import.meta.env.DEV ? collectRoutes() : (productionRoutes ??= collectRoutes()));
  return languageSwitch(path, locale, routes);

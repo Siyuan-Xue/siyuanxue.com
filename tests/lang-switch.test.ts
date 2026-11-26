@@ -3,7 +3,7 @@ import { languageSwitch, type LanguageRoute } from '../src/utils/langSwitch';
 import { localeOrigin } from '../src/i18n/locale';
 
 const routes: LanguageRoute[] = (['en', 'zh'] as const).flatMap(locale =>
- ['/', '/chat/', '/wip/', '/essay/a-long-slug/', '/post/a-note/', '/gallery/pixeldone/'].map(path => ({ locale, path, published: true })));
+ ['/', '/wip/', '/essay/a-long-slug/', '/post/a-note/', '/gallery/pixeldone/'].map(path => ({ locale, path, published: true })));
 routes.push(
  { locale: 'en', path: '/essay/english-only/', published: true },
  { locale: 'zh', path: '/gallery/chinese-only/', published: true },
@@ -14,7 +14,7 @@ routes.push(
 );
 for (const from of ['en', 'zh'] as const) {
  const other = from === 'en' ? 'zh' : 'en';
- for (const path of ['/', '/chat/', '/wip/', '/essay/a-long-slug/', '/post/a-note/', '/gallery/pixeldone/']) {
+ for (const path of ['/', '/wip/', '/essay/a-long-slug/', '/post/a-note/', '/gallery/pixeldone/']) {
   test(`${from}: ${path} maps only to the published counterpart`, () => {
    const result = languageSwitch(path, from, routes);
    expect(result.href).toBe(localeOrigin(other) + path);

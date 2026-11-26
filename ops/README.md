@@ -1,6 +1,6 @@
 # Deployment operations
 
-Start with the [maintenance inventory and update checklist](../docs/MAINTENANCE.md). Static GitHub releases do not install server helpers, bridge or OpenClaw changes. Hermes was removed from the server on 2026-11-26; the chat section below describes the current OpenClaw setup. See section 4 of the inventory.
+Start with the [maintenance inventory and update checklist](../docs/MAINTENANCE.md). Static GitHub releases do not install server helpers or Nginx changes. The website chat, its bridge and every agent service (Hermes, OpenClaw) were removed in November 2026; see section 4 of the inventory.
 
 Production is Ubuntu 24.04 / Nginx on Tencent Lighthouse. Connect to the verified public address:
 
@@ -94,31 +94,6 @@ The Actions manual `rollback` operation accepts a retained, successful bilingual
 
 Read `sudo nginx -t`, `sudo journalctl -u nginx --since '15 minutes ago'`, `sudo readlink /var/www/siyuanxue.com/current`, and both public `/__health` endpoints. Keep the old image denial active during recovery. Do not restart SSH or disable Fail2ban to diagnose an unrelated website issue.
 
-## Public chat (OpenClaw)
+## Public chat (removed)
 
-**Current setup (OpenClaw since 2026-11-25; Hermes was removed from the server on 2026-11-26):** the assistant runs on OpenClaw. The bridge keeps its name and path but talks to the public OpenClaw gateway on `127.0.0.1:19089`: set `HERMES_API_URL=http://127.0.0.1:19089/v1/chat/completions`, `HERMES_API_KEY` to that gateway's token, `CHAT_UPSTREAM_MODEL=openclaw/website-guest` and `CHAT_DAILY_LIMIT=200` (`CHAT_DAILY_TZ` defaults to `Asia/Shanghai`). Never point the bridge at the personal gateway on 18789: an OpenClaw gateway token is an operator credential for that whole gateway. Layout, verification and rollback are in [the maintenance inventory](../docs/MAINTENANCE.md) section 4 and [the migration record](../docs/audits/2026-11-25-openclaw-migration.md).
-
-As root, securely create `/etc/hermes-chat.env` owned by root with mode `0600`. It contains `HERMES_API_KEY=<public-gateway-token>` and optional settings below. Do not put a model provider key in this file or commit any secret.
-
-```text
-HERMES_API_URL=http://127.0.0.1:19089/v1/chat/completions
-CHAT_UPSTREAM_MODEL=openclaw/website-guest
-CHAT_DAILY_LIMIT=200
-CHAT_HOST=127.0.0.1
-CHAT_PORT=8643
-ALLOWED_ORIGINS=https://siyuanxue.com,https://xuesiyuan.com
-```
-
-Keep default host/port for the supplied Nginx and health checks. Install reviewed files from the checked-out release source (not the static build archive):
-
-```sh
-sudo bash ops/install-hermes-chat.sh /usr/bin/node
-```
-
-Use an absolute executable Node 22.12+ binary path; symlinks and paths containing spaces are rejected. It must be outside protected home directories and accessible by the `hermes-chat` service account. The idempotent installer fails closed without a root-owned mode 600 key file, installs into `/opt/hermes-chat`, records backups in `/var/backups/hermes-chat.*`, installs/enables/restarts the hardened `hermes-chat.service`, and checks loopback health. It validates Nginx before and after snippet installation; it preserves existing vhosts and does not reload Nginx.
-
-Back up the active domain configs, then add `include /etc/nginx/snippets/hermes-chat.conf;` only inside both HTTPS apex content servers (and optionally the existing public-IP content server). The tracked templates already contain these includes; install the snippet before installing those templates. Preserve all certificates, default-deny servers, release roots, redirects and `/images/p-202.jpg` denial. Run `sudo nginx -t`, then `sudo systemctl reload nginx`. On validation failure restore the vhost backups before proceeding. Only the exact chat and health routes proxy; nested management paths return 404. Nginx overwrites client IP and strips Authorization/Cookie before bridge forwarding.
-
-Verify both public `/chat/` pages, anonymous streamed replies, `/chat-api/health`, rejection of `/chat-api/sessions`, and existing locale/HTTPS/photo-denial checks. Neither 8642 nor 8643 may be exposed externally. Bridge health is not a model health probe. Restore bridge/service/snippet from the recorded backups and restart the service to roll back; ordinary static release activation remains unchanged.
-
-The browser's `sessionStorage` holds only the current visit's bounded visible chat and draft; the bridge supplies that history to fresh upstream session IDs. There is no website chat database. OpenClaw's public gateway keeps its own session records and prunes them after seven days.
+The `/chat/` page, the `hermes-chat` bridge, its systemd unit, env file, service account and the `/chat-api` Nginx snippet were removed on 2026-11-26. The tracked Nginx templates no longer include a chat snippet, and nothing on the server listens on 8643, 18789 or 19089. `/chat/` and `/chat-api` now fall through to the normal 404. The removed sources are in Git history before the removal commit; reinstalling them is a new project, not a restore step.

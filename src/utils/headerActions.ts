@@ -1,6 +1,6 @@
 import { createHeaderActionsMotion, type HeaderActionsMotionFactory } from './headerActionsMotion';
 
-/** Shared by the static header and the hydrated chat header. No persisted state. */
+/** Controls the collapsible header action row. No persisted state. */
 export function bindHeaderActions(root: HTMLElement, createMotion: HeaderActionsMotionFactory = createHeaderActionsMotion): () => void {
  const document = root.ownerDocument;
  const window = document.defaultView;
@@ -48,7 +48,7 @@ export function bindHeaderActions(root: HTMLElement, createMotion: HeaderActions
  const onClick = (event: MouseEvent) => {
   const target = event.target as Element;
   if (!open || target.closest('#site-toc')) return;
-  if (!root.contains(target) || target.closest('[data-close-actions]')) setOpen(false);
+  if (!root.contains(target)) setOpen(false);
  };
  const onFocus = (event: FocusEvent) => {
   const target = event.target as Element;

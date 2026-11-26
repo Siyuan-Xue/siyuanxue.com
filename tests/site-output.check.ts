@@ -25,12 +25,15 @@ test('release contains no photo/video binaries or media directory; image payload
  expect(paths.filter(path => /\.(png|jpe?g|webp|avif|gif|mp4|webm|mov|m4v|mkv)$/i.test(path))).toEqual([]);
  expect(paths.some(path => /^media(?:\/|$)/.test(path))).toBe(false);
 });
-test('chat browser bundle does not eagerly carry the gallery media inventory', async () => {
- const files = (await readdir('dist/_astro')).filter(name => /^ChatApp\..*\.js$/.test(name));
- expect(files.length).toBeGreaterThan(0);
- for (const file of files) {
-  const script = await readFile(join('dist/_astro', file), 'utf8');
-  for (const path of mediaPaths) expect(script.includes(path)).toBe(false);
+test('the retired chat page, its bundle and every link to it are absent', async () => {
+ for (const root of ['dist', 'dist/zh']) {
+  expect(await access(join(root, 'chat')).then(() => true, () => false)).toBe(false);
+  expect((await readdir(join(root, '_astro'))).filter(name => /chat|react/i.test(name))).toEqual([]);
+  for (const name of ['sitemap-0.xml', 'indexnow-manifest.json']) expect(await readFile(join(root, name), 'utf8')).not.toContain('/chat');
+  for (const file of await htmlFiles(root)) {
+   const html = await readFile(file, 'utf8');
+   expect(html).not.toMatch(/href="\/chat\/?"|chat-api|astro-island/);
+  }
  }
 });
 test('shared header JS stays below 8 KiB gzip without loading React or the lightbox engine', async () => {
@@ -52,8 +55,8 @@ test('shared header JS stays below 8 KiB gzip without loading React or the light
  }
 });
 const variants = [
- { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', chatLabel: 'Chat with xue', homeLabel: 'Home' },
- { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', chatLabel: '与小薛聊聊', homeLabel: '首页' },
+ { root: 'dist', lang: 'en', origin: 'https://siyuanxue.com', other: 'https://xuesiyuan.com', title: 'Siyuan Xue', homeLabel: 'Home' },
+ { root: 'dist/zh', lang: 'zh-CN', origin: 'https://xuesiyuan.com', other: 'https://siyuanxue.com', title: '薛思远', homeLabel: '首页' },
 ];
 const entryGallerySlugs = ['imathbook', 'leda-agent', 'pixeldone', 'b-spline-policy', 'bnds-life', 'yuheng', 'walking-with-light', 'finding-li-bai', 'family', 'volleyball'];
 async function htmlFiles(root: string): Promise<string[]> { const result: string[] = []; for (const file of await readdir(root, { withFileTypes: true })) { if (file.name === 'zh' || file.name === '_astro') continue; const path = join(root, file.name); if (file.isDirectory()) result.push(...await htmlFiles(path)); else if (path.endsWith('.html')) result.push(path); } return result; }
@@ -211,7 +214,7 @@ for (const v of variants) {
    expect(document.querySelector('meta[property="article:published_time"]')?.getAttribute('content')).toBe(date.toISOString());
    for (const image of document.querySelectorAll('.essay-figure img')) expect(image.getAttribute('sizes')).toBe('(max-width: 479px) calc(100vw - 40px), (max-width: 991px) calc(80vw - 20px), 580px');
   }
-  for (const path of ['index.html', 'gallery/pixeldone/index.html', 'chat/index.html']) {
+  for (const path of ['index.html', 'gallery/pixeldone/index.html']) {
    const { document } = parseHTML(await readFile(join(v.root, path), 'utf8'));
    expect(document.documentElement.classList.contains('prose-page')).toBe(false);
   }
@@ -294,7 +297,7 @@ for (const v of variants) {
    expect(articleSchema.author['@id']).toBe(profile.mainEntity['@id']);
   }
  });
- for (const page of ['index.html', BLOG_ENABLED ? 'essay/why-this-site/index.html' : 'gallery/pixeldone/index.html', 'chat/index.html']) {
+ for (const page of ['index.html', BLOG_ENABLED ? 'essay/why-this-site/index.html' : 'gallery/pixeldone/index.html']) {
  test(`${v.lang}: ${page} theme controls work when browser storage throws`, async () => {
   const { document } = parseHTML(await readFile(join(v.root, page), 'utf8'));
   const storage = { getItem() { throw new Error('SecurityError'); }, setItem() { throw new Error('SecurityError'); } };
@@ -520,13 +523,11 @@ for (const v of variants) {
   expect(document.querySelector('[data-secret-src]')?.getAttribute('data-secret-src')).toBe(imageMedia('portrait-study').src);
   expect(document.querySelector('[data-secret-image-slot]')?.children.length).toBe(0);
   expect(await access(join(v.root, 'images/p-202.jpg')).then(() => true, () => false)).toBe(false);
-  const homeControl = document.querySelector<HTMLAnchorElement>('.header-chat-link')!;
-  expect(homeControl.getAttribute('href')).toBe('/chat/');
-  expect(homeControl.getAttribute('aria-label')).toBe(v.chatLabel);
-  const { document: chat } = parseHTML(await readFile(join(v.root, 'chat/index.html'), 'utf8'));
-  const chatControl = chat.querySelector<HTMLAnchorElement>('.header-home-link')!;
-  expect(chatControl.getAttribute('href')).toBe('/');
-  expect(chatControl.getAttribute('aria-label')).toBe(v.homeLabel);
+  expect(document.querySelector('.header-home-link')).toBeNull();
+  const { document: inner } = parseHTML(await readFile(join(v.root, 'gallery/pixeldone/index.html'), 'utf8'));
+  const homeControl = inner.querySelector<HTMLAnchorElement>('.header-home-link')!;
+  expect(homeControl.getAttribute('href')).toBe('/');
+  expect(homeControl.getAttribute('aria-label')).toBe(v.homeLabel);
  });
  test(`${v.lang}: localized feeds, sitemap and noindex placeholders`, async () => {
   if (BLOG_ENABLED) {
@@ -562,8 +563,6 @@ for (const v of variants) {
    if (BLOG_ENABLED && (name === 'sitemap-0.xml' || name === 'indexnow-manifest.json')) expect(listed).toBe(true);
    if (!BLOG_ENABLED) expect(listed).toBe(false);
   }
-  const { document: chat } = parseHTML(await readFile(join(v.root, 'chat/index.html'), 'utf8'));
-  expect(chat.body.textContent!.includes(v.lang === 'en' ? 'Find a good read' : '找篇文章读读')).toBe(BLOG_ENABLED);
   for (const file of await htmlFiles(v.root)) {
    const { document } = parseHTML(await readFile(file, 'utf8'));
    expect(Boolean(document.querySelector('link[type="application/rss+xml"]'))).toBe(BLOG_ENABLED);

@@ -72,18 +72,6 @@ export const site = {
 		related: bi('Related material', '相关资料'),
 	},
 
-	chat: {
-		title: bi('Chat with xue', '与小薛聊聊'),
-		intro: bi(
-			`I’m ${name.en}’s AI assistant—he’s my Boss. Welcome! Ask about his projects and writing, or just stay for a chat. A little wit comes with the welcome.`,
-			`我是${name.zh}的 AI 助手，他是我的 Boss。聊项目、读文章，或者随便坐坐——正经介绍，偶尔贫嘴。`,
-		),
-		newChat: bi('New chat', '新对话'),
-		starters: bi('Conversation starters', '从这里开始聊'),
-		disclaimer: bi('xue is AI and can make mistakes. Please double-check responses.', '小薛是 AI，也可能出错。请核实重要信息。'),
-		assistant: bi('AI assistant', 'AI 助手'),
-	},
-
 	bio: {
 		lead: bi(
 			'Siyuan Xue studies Intelligence Science and Technology at Beijing University of Posts and Telecommunications, and will continue his master’s studies at the School of Information and Communication Engineering. He is driven to explore the unknown and pursue excellence and perfection.',

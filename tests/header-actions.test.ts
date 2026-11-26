@@ -12,7 +12,7 @@ function fixture(reduce = false, incoming = false) {
  window.document.body.innerHTML = `<header class="header"><div data-header-actions data-actions-expanded="false" class="header-controls">
   <div id="header-actions" data-actions-panel class="header-actions-panel"><div class="header-actions-row">
    <button data-toc-toggle hidden aria-expanded="false" data-open-label="Open contents" data-close-label="Close contents">TOC</button>
-   <a href="/">Home</a><button data-close-actions>New chat</button><a class="header-control-button header-language-link" href="https://xuesiyuan.com/" hreflang="zh-CN" lang="zh-CN" aria-label="Switch to 中文" title="Switch to 中文"><svg width="20" height="20" stroke-width="1.8" aria-hidden="true"></svg></a>
+   <a href="/">Home</a><button data-theme-toggle>Theme</button><a class="header-control-button header-language-link" href="https://xuesiyuan.com/" hreflang="zh-CN" lang="zh-CN" aria-label="Switch to 中文" title="Switch to 中文"><svg width="20" height="20" stroke-width="1.8" aria-hidden="true"></svg></a>
   </div></div>
   <button data-actions-toggle aria-controls="header-actions" aria-expanded="false" data-show-label="Show actions" data-hide-label="Hide actions"><span data-actions-icon>Arrow</span></button>
  </div></header><nav id="site-toc"><a href="#first" data-toc-link="first">First</a></nav><main class="page-main"><button id="outside">Outside</button><h2 id="first">First</h2></main>`;
@@ -74,11 +74,9 @@ test('outside click closes, returning owned focus but preserving an outside focu
  expect(f.toggle.getAttribute('aria-expanded')).toBe('false');
 });
 
-test('new chat dismisses the row; repeat clicks and BFCache never leave hidden actions active', () => {
+test('repeat clicks and BFCache never leave hidden actions active', () => {
  const f = fixture();
  for (let i = 0; i < 5; i++) { f.toggle.click(); f.toggle.click(); }
- expect(f.panel.inert).toBe(true);
- f.toggle.click(); f.panel.querySelector<HTMLButtonElement>('[data-close-actions]')!.click();
  expect(f.panel.inert).toBe(true);
  f.toggle.click();
  const event = new f.window.Event('pageshow'); Object.defineProperty(event, 'persisted', { value: true });

@@ -10,7 +10,7 @@ import { imageMedia, media } from './media';
 import type { GalleryMetadataImage, GalleryMetadataVideo, ShareImage } from './pageMetadata';
 import { BLOG_ENABLED } from '../features';
 
-export type DiscoveryKind = 'profile' | 'chat' | 'placeholder' | 'not-found' | 'redirect' | 'essay' | 'post' | 'gallery';
+export type DiscoveryKind = 'profile' | 'placeholder' | 'not-found' | 'redirect' | 'essay' | 'post' | 'gallery';
 export interface DiscoveryPage {
  locale: Locale; kind: DiscoveryKind; path: string; canonical: string;
  alternates: Record<'en' | 'zh-CN' | 'x-default', string>;
@@ -24,7 +24,6 @@ export type DiscoverySources = { essay: ArticleEntry[]; post: ArticleEntry[]; ga
 /** Every non-content HTML route has an explicit policy. New content comes from the paired collections. */
 export const staticPagePolicies = [
  { path: '/', kind: 'profile', indexable: true, title: site.title, description: site.description },
- { path: '/chat/', kind: 'chat', indexable: true, title: site.chat.title, description: site.chat.intro },
  { path: '/wip/', kind: 'placeholder', indexable: false, title: { en: 'Under construction', zh: '正在施工' }, description: { en: 'This page is still under construction.', zh: '这个页面还在施工中。' } },
  { path: '/404/', kind: 'not-found', indexable: false, title: site.ui.notFound, description: site.description },
  { path: '/gallery/probfun/', kind: 'redirect', indexable: false, title: site.ui.redirecting, description: site.description, target: '/gallery/imathbook/' },
